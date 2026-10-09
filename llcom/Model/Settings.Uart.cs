@@ -230,7 +230,10 @@ partial class Settings
                 {
                     MainWindowTop?.Invoke(value, EventArgs.Empty);
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Tools.Logger.Swallowed("topmost event", ex);
+                }
                 Save();
             }
         }
@@ -259,7 +262,7 @@ partial class Settings
                 SetProperty(ref _encoding, value);
                 Save();
             }
-            catch { } //获取出错说明编码不对
+            catch { /* 忽略：GetEncoding 抛异常说明编码无效，保持原值 */ }
         }
     }
 

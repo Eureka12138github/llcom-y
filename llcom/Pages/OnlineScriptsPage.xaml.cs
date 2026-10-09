@@ -121,7 +121,7 @@ public partial class OnlineScriptsPage : Page, INotifyPropertyChanged
                         scripts.Add(d);
                 });
             }
-            catch { }
+            catch (System.Exception ex) { Tools.Logger.Swallowed("online scripts", ex); }
         });
         UnLoading();
     }
@@ -154,7 +154,7 @@ public partial class OnlineScriptsPage : Page, INotifyPropertyChanged
         {
             System.Diagnostics.Process.Start("https://github.com/chenxuuu/llcom/discussions/87");
         }
-        catch { }
+        catch (System.Exception ex) { Tools.Logger.Swallowed("online scripts", ex); }
     }
 
     /// <summary>
@@ -237,6 +237,6 @@ public partial class OnlineScriptsPage : Page, INotifyPropertyChanged
         {
             System.Diagnostics.Process.Start(ScriptNow.Url);
         }
-        catch { }
+        catch (System.Exception ex) { Tools.Logger.Swallowed("online scripts", ex); }
     }
 }

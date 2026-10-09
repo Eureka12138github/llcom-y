@@ -281,7 +281,10 @@ public partial class MainViewModel : ObservableObject
                     return m.Success && !currentPorts.Contains(m.Value.Trim('(', ')'));
                 });
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Tools.Logger.Swallowed("filter ports by registry", ex);
+            }
 
             //加上缺少的com口
             try
@@ -304,7 +307,10 @@ public partial class MainViewModel : ObservableObject
                         strs.Add($"Serial Port {pp} ({pp})");
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Tools.Logger.Swallowed("add missing ports", ex);
+            }
 
             Application.Current.Dispatcher.Invoke(() =>
             {

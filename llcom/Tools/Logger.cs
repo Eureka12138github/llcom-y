@@ -110,6 +110,24 @@ namespace llcom.Tools
         }
 
         /// <summary>
+        /// 记录一处被吞掉的异常（debug 级）。把"静默 catch"变为可追踪：
+        /// 不改变容错行为，但让问题在日志中可见，便于排查。
+        /// </summary>
+        /// <param name="context">发生位置/操作说明</param>
+        /// <param name="ex">被吞掉的异常</param>
+        public static void Swallowed(string context, Exception ex)
+        {
+            try
+            {
+                AddUartLogDebug($"[swallowed] {context}: {ex?.GetType().Name} {ex?.Message}");
+            }
+            catch
+            {
+                // 记录日志本身失败时，绝不能再抛出
+            }
+        }
+
+        /// <summary>
         /// 初始化lua日志文件
         /// </summary>
         public static void InitLuaLog()

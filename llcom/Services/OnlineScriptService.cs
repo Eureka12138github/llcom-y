@@ -83,7 +83,10 @@ internal static class OnlineScriptService
                     n.Url = u;
                     scripts.Add(n);
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Tools.Logger.Swallowed("parse online script", ex);
+                }
             }
             callback?.Invoke(pages, total / 100); //回调，上报进度
             if (!hasNextPage)

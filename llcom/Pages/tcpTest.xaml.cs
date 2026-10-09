@@ -118,7 +118,7 @@ public partial class tcpTest : Page, INotifyPropertyChanged
                 if (IsConnected)
                     ws.Send("{}");
             }
-            catch { }
+            catch (System.Exception ex) { Tools.Logger.Swallowed("tcp test", ex); }
         };
 
         Timer heartbeatV6 = new Timer();
@@ -131,7 +131,7 @@ public partial class tcpTest : Page, INotifyPropertyChanged
                 if (IsConnected)
                     wsV6.Send("{}");
             }
-            catch { }
+            catch (System.Exception ex) { Tools.Logger.Swallowed("tcp test", ex); }
         };
 
         //允许所有tls协议版本

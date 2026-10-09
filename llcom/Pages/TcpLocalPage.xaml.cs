@@ -124,7 +124,7 @@ public partial class TcpLocalPage : Page, INotifyPropertyChanged
                     temp.Add(ipa.ToString());
             }
         }
-        catch { }
+        catch (System.Exception ex) { Tools.Logger.Swallowed("tcp server", ex); }
         //去重
         temp.Distinct().ToList().ForEach(ip => IpListComboBox.Items.Add(ip));
         IpListComboBox.SelectedIndex = 0;
@@ -197,14 +197,14 @@ public partial class TcpLocalPage : Page, INotifyPropertyChanged
                     s.Close();
                     s.Dispose();
                 }
-                catch { }
+                catch (System.Exception ex) { Tools.Logger.Swallowed("tcp server", ex); }
                 ShowData($"☠ {name}");
                 LuaApis.SendChannelsReceived(
                     "tcp-server",
                     new { from = "disconnected", data = name }
                 );
             }
-            catch { }
+            catch (System.Exception ex) { Tools.Logger.Swallowed("tcp server", ex); }
         }
     }
 
@@ -263,7 +263,7 @@ public partial class TcpLocalPage : Page, INotifyPropertyChanged
                     //恢复服务端的回调函数，方便下次接收
                     Server.BeginAcceptSocket(newConnectionCb, Server);
                 }
-                catch { }
+                catch (System.Exception ex) { Tools.Logger.Swallowed("tcp server", ex); }
             }
         );
         try
@@ -298,7 +298,7 @@ public partial class TcpLocalPage : Page, INotifyPropertyChanged
                         new { from = "disconnected", data = name }
                     );
                 }
-                catch { }
+                catch (System.Exception ex) { Tools.Logger.Swallowed("tcp server", ex); }
             Clients.Clear();
         }
         Server?.Stop();
@@ -334,7 +334,7 @@ public partial class TcpLocalPage : Page, INotifyPropertyChanged
             IsConnected = false;
             ShowData($"🚫 server closed");
         }
-        catch { }
+        catch (System.Exception ex) { Tools.Logger.Swallowed("tcp server", ex); }
     }
 
     private bool _hexMode = false;
@@ -366,7 +366,7 @@ public partial class TcpLocalPage : Page, INotifyPropertyChanged
                     {
                         c.Send(buff);
                     }
-                    catch { }
+                    catch (System.Exception ex) { Tools.Logger.Swallowed("tcp server", ex); }
             }
             ShowData($"💥 broadcast", buff, true);
             return true;

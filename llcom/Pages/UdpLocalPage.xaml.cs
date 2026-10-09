@@ -92,7 +92,7 @@ public partial class UdpLocalPage : Page, INotifyPropertyChanged
                     temp.Add(ipa.ToString());
             }
         }
-        catch { }
+        catch (System.Exception ex) { Tools.Logger.Swallowed("udp server", ex); }
         //去重
         temp.Distinct().ToList().ForEach(ip => IpListComboBox.Items.Add(ip));
         IpListComboBox.SelectedIndex = 0;
@@ -146,7 +146,7 @@ public partial class UdpLocalPage : Page, INotifyPropertyChanged
                     );
                     Server.BeginReceive(newConnectionCb, ar.AsyncState);
                 }
-                catch { }
+                catch (System.Exception ex) { Tools.Logger.Swallowed("udp server", ex); }
             }
         );
         UdpState s = new UdpState();
@@ -204,7 +204,7 @@ public partial class UdpLocalPage : Page, INotifyPropertyChanged
             IsConnected = false;
             ShowData($"🚫 server closed");
         }
-        catch { }
+        catch (System.Exception ex) { Tools.Logger.Swallowed("udp server", ex); }
     }
 }
 

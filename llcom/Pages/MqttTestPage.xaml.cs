@@ -196,7 +196,7 @@ public partial class MqttTestPage : Page, INotifyPropertyChanged
                 {
                     await mqttClient.DisconnectAsync();
                 }
-                catch { }
+                catch (System.Exception ex) { Tools.Logger.Swallowed("mqtt", ex); }
             });
         }
         else
@@ -301,7 +301,7 @@ public partial class MqttTestPage : Page, INotifyPropertyChanged
                 {
                     await mqttClient.ConnectAsync(options, CancellationToken.None);
                 }
-                catch { }
+                catch (System.Exception ex) { Tools.Logger.Swallowed("mqtt", ex); }
             });
         }
     }
@@ -343,7 +343,7 @@ public partial class MqttTestPage : Page, INotifyPropertyChanged
                         )
                     );
                 }
-                catch { }
+                catch (System.Exception ex) { Tools.Logger.Swallowed("mqtt", ex); }
             });
         }
     }
@@ -420,7 +420,7 @@ public partial class MqttTestPage : Page, INotifyPropertyChanged
                         break;
                 }
             }
-            catch { }
+            catch (System.Exception ex) { Tools.Logger.Swallowed("mqtt", ex); }
         }
     }
 }

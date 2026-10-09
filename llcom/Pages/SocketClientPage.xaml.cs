@@ -358,7 +358,7 @@ public partial class SocketClientPage : Page, INotifyPropertyChanged
                         ssl.Close();
                         ssl.Dispose();
                     }
-                    catch { }
+                    catch (System.Exception ex) { Tools.Logger.Swallowed("socket client", ex); }
                     socketNow = null;
                     IsConnected = false;
                     if (!Tools.Global.setting.tcpReconnect)
@@ -367,7 +367,7 @@ public partial class SocketClientPage : Page, INotifyPropertyChanged
                     ShowData("❌ Server disconnected");
                 }
             }
-            catch { }
+            catch (System.Exception ex) { Tools.Logger.Swallowed("socket client", ex); }
 
             return;
         }
@@ -399,7 +399,7 @@ public partial class SocketClientPage : Page, INotifyPropertyChanged
                     s.Close();
                     s.Dispose();
                 }
-                catch { }
+                catch (System.Exception ex) { Tools.Logger.Swallowed("socket client", ex); }
                 socketNow = null;
                 IsConnected = false;
                 if (!Tools.Global.setting.tcpReconnect)
@@ -408,7 +408,7 @@ public partial class SocketClientPage : Page, INotifyPropertyChanged
                 ShowData("❌ Server disconnected");
             }
         }
-        catch { }
+        catch (System.Exception ex) { Tools.Logger.Swallowed("socket client", ex); }
     }
 
     private void Reconnect_TextInputCheck(object sender, TextCompositionEventArgs e)
@@ -427,7 +427,7 @@ public partial class SocketClientPage : Page, INotifyPropertyChanged
             {
                 socketNow.Close();
             }
-            catch { }
+            catch (System.Exception ex) { Tools.Logger.Swallowed("socket client", ex); }
             socketNow = null;
             IsConnected = false;
             Changeable = true;

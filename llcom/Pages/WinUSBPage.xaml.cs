@@ -144,7 +144,7 @@ public partial class WinUSBPage : Page, INotifyPropertyChanged
                                 list.Add(info);
                         }
                     }
-                    catch { }
+                    catch (System.Exception ex) { Tools.Logger.Swallowed("winusb", ex); }
                     usbRegistry.Close();
                 }
             }
@@ -161,7 +161,7 @@ public partial class WinUSBPage : Page, INotifyPropertyChanged
             {
                 r = GetUsbList();
             }
-            catch { }
+            catch (System.Exception ex) { Tools.Logger.Swallowed("winusb", ex); }
         });
         UsbListComboBox.Items.Clear();
         if (r != null)
@@ -300,7 +300,7 @@ public partial class WinUSBPage : Page, INotifyPropertyChanged
                                 {
                                     device.Close();
                                 }
-                                catch { }
+                                catch (System.Exception ex) { Tools.Logger.Swallowed("winusb", ex); }
                                 allDevices.Dispose();
                                 context.Dispose();
                                 IsConnected = false;
@@ -351,7 +351,7 @@ public partial class WinUSBPage : Page, INotifyPropertyChanged
                             {
                                 device.Close();
                             }
-                            catch { }
+                            catch (System.Exception ex) { Tools.Logger.Swallowed("winusb", ex); }
                             allDevices.Dispose();
                             context.Dispose();
                             IsConnected = false;
@@ -365,7 +365,7 @@ public partial class WinUSBPage : Page, INotifyPropertyChanged
                         {
                             device.Close();
                         }
-                        catch { }
+                        catch (System.Exception ex) { Tools.Logger.Swallowed("winusb", ex); }
                         allDevices.Dispose();
                         context.Dispose();
                         IsConnected = false;

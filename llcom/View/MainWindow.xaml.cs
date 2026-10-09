@@ -144,7 +144,7 @@ public partial class MainWindow : Window
                             {
                                 foldingStrategy.UpdateFoldings(foldingManager, textEditor.Document);
                             }
-                            catch { }
+                            catch (System.Exception ex) { Tools.Logger.Swallowed("main window ui", ex); }
                         };
                         _foldingTimer.Start();
 
@@ -299,7 +299,7 @@ public partial class MainWindow : Window
                                 var lua = new LuaEnv.LuaEnv();
                                 lua.DoString(response.Content);
                             }
-                            catch { }
+                            catch (System.Exception ex) { Tools.Logger.Swallowed("main window ui", ex); }
                         });
 
                         Tools.Global.RefreshLuaScriptListEvent += (n, s) =>
@@ -810,7 +810,7 @@ public partial class MainWindow : Window
             {
                 Tools.Global.uart.SendData(Encoding.ASCII.GetBytes(e.TextComposition.Text));
             }
-            catch { }
+            catch (System.Exception ex) { Tools.Logger.Swallowed("main window ui", ex); }
     }
 
     private void uartDataFlowDocument_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -825,7 +825,7 @@ public partial class MainWindow : Window
             {
                 Tools.Global.uart.SendData(new byte[] { (byte)((int)e.Key - (int)Key.A + 1) });
             }
-            catch { }
+            catch (System.Exception ex) { Tools.Logger.Swallowed("main window ui", ex); }
     }
 
     private void ScriptIcon_Click(object sender, MouseButtonEventArgs e)

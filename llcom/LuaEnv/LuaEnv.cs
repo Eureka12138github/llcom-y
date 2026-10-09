@@ -147,7 +147,7 @@ public class LuaEnv : IDisposable
                 timerPool.TryRemove(id, out tc);
                 tc.Cancel();
             }
-            catch { }
+            catch { /* 忽略：取消定时器失败 */ }
         }
     }
 

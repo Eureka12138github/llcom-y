@@ -82,17 +82,17 @@ class SerialPortService : ISerialPortService
             {
                 lastPortBaseStream?.Dispose();
             }
-            catch { }
+            catch { /* 忽略：释放旧串口资源失败不影响主流程 */ }
             try
             {
                 serial.BaseStream.Dispose();
             }
-            catch { }
+            catch { /* 忽略：释放旧串口资源失败不影响主流程 */ }
             try
             {
                 serial.Dispose();
             }
-            catch { }
+            catch { /* 忽略：释放旧串口资源失败不影响主流程 */ }
         });
         lock (useless) //存起来
             useless.Add(serial);
@@ -256,7 +256,10 @@ class SerialPortService : ISerialPortService
                     UartDataRecived(r, EventArgs.Empty); //回调事件
                     LuaApis.SendChannelsReceived("uart", r);
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Tools.Logger.Swallowed("uart receive callback", ex);
+                }
         }
     }
 }

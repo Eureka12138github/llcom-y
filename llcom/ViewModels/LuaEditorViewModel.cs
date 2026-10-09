@@ -154,7 +154,10 @@ public partial class LuaEditorViewModel : ObservableObject
                 _lastFileTime = File.GetLastWriteTime(FullPath(fileName));
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Tools.Logger.Swallowed("save lua file", ex);
+        }
     }
 
     /// <summary>编辑器文本变化（标记已修改，供自动保存判断）</summary>

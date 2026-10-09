@@ -180,7 +180,7 @@ public partial class SerialMonitorPage : Page
             {
                 sl.Add($"{p.ProcessName}[{p.Id}]");
             }
-            catch { }
+            catch (System.Exception ex) { Tools.Logger.Swallowed("serial monitor", ex); }
         }
         sl.Sort();
         foreach (var i in sl)

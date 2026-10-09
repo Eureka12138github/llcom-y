@@ -135,7 +135,7 @@ namespace llcom.LuaEnv
                     pool.TryRemove(id, out tc);
                     tc.Cancel();
                 }
-                catch { }
+                catch { /* 忽略：取消定时器失败 */ }
             }
             pool.TryAdd(id, timerToken);
             var timer = new System.Timers.Timer(time);
@@ -168,7 +168,7 @@ namespace llcom.LuaEnv
                     pool.TryRemove(id, out tc);
                     tc.Cancel();
                 }
-                catch { }
+                catch { /* 忽略：取消定时器失败 */ }
             }
         }
 

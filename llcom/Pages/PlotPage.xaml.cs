@@ -78,7 +78,7 @@ public partial class PlotPage : Page
             {
                 Plot.Render();
             }
-            catch { }
+            catch (System.Exception ex) { Tools.Logger.Swallowed("plot render", ex); }
         };
         _refreshTimer.Start();
         Unloaded += (_, _) => _refreshTimer.Stop();
