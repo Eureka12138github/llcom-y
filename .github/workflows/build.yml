@@ -31,6 +31,15 @@ jobs:
       - name: Build
         run: msbuild llcom/llcom.csproj /p:Configuration=Release /p:Platform=x64 /v:normal
 
+      - name: Restore test project packages
+        run: dotnet restore tests/llcom.Tests/llcom.Tests.csproj
+
+      - name: Build unit tests
+        run: msbuild tests/llcom.Tests/llcom.Tests.csproj /p:Configuration=Release /p:Platform=x64 /v:normal
+
+      - name: Run unit tests
+        run: dotnet vstest tests/llcom.Tests/bin/x64/Release/net48/llcom.Tests.dll
+
       - name: Clean build output
         shell: cmd
         run: |

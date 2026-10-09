@@ -21,6 +21,9 @@ using System.Windows;
 //请将此类型的 ComVisible 特性设置为 true。
 [assembly: ComVisible(false)]
 
+// 测试工程可访问 internal 成员（EncodingHelper/AppPaths/Global 等）
+[assembly: InternalsVisibleTo("llcom.Tests")]
+
 //若要开始生成可本地化的应用程序，请设置
 //.csproj 文件中的 <UICulture>CultureYouAreCodingWith</UICulture>
 //例如，如果您在源文件中使用的是美国英语，
