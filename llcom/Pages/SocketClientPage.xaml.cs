@@ -21,7 +21,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using llcom.LuaEnv;
-using static llcom.Pages.SocketClientPage;
+using llcom.Model;
 
 namespace llcom.Pages;
 
@@ -131,17 +131,8 @@ public partial class SocketClientPage : Page, INotifyPropertyChanged
         };
     }
 
-    private void ShowData(string title, byte[] data = null, bool send = false)
-    {
-        Tools.Logger.ShowDataRaw(
-            new Tools.DataShowRaw
-            {
-                title = $"🔗 socket client: {title}",
-                data = data ?? new byte[0],
-                color = send ? Brushes.DarkRed : Brushes.DarkGreen,
-            }
-        );
-    }
+    private void ShowData(string title, byte[] data = null, bool send = false) =>
+        Tools.NetworkLog.Show("🔗 socket client: ", title, data, send);
 
     private System.Timers.Timer reconnectTimer = null;
 
@@ -469,52 +460,4 @@ public partial class SocketClientPage : Page, INotifyPropertyChanged
         }
     }
 
-    public class StateObject
-    {
-        public Socket workSocket = null;
-        public SslStream workStream = null;
-        public const int BUFFER_SIZE = 204800;
-        public byte[] buffer = new byte[BUFFER_SIZE];
-        public bool isSSL = false;
     }
-
-    public class SocketObj
-    {
-        Socket socket;
-        SslStream sslStream;
-
-        public SocketObj(Socket s)
-        {
-            socket = s;
-        }
-
-        public SocketObj(SslStream ssl)
-        {
-            sslStream = ssl;
-        }
-
-        public void Send(byte[] buff)
-        {
-            if (socket != null)
-                socket.Send(buff);
-            else if (sslStream != null)
-            {
-                sslStream.Write(buff);
-            }
-        }
-
-        public void Close()
-        {
-            if (socket != null)
-            {
-                socket.Close();
-                socket.Dispose();
-            }
-            else if (sslStream != null)
-            {
-                sslStream.Close();
-                sslStream.Dispose();
-            }
-        }
-    }
-}

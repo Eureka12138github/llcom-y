@@ -363,17 +363,8 @@ public partial class tcpTest : Page, INotifyPropertyChanged
         );
     }
 
-    private void ShowData(string title, byte[] data = null, bool send = false)
-    {
-        Tools.Logger.ShowDataRaw(
-            new Tools.DataShowRaw
-            {
-                title = $"🚀 public socket server: {title}",
-                data = data ?? new byte[0],
-                color = send ? Brushes.DarkRed : Brushes.DarkGreen,
-            }
-        );
-    }
+    private void ShowData(string title, byte[] data = null, bool send = false) =>
+        Tools.NetworkLog.Show("🚀 public socket server: ", title, data, send);
 
     private bool _connecting = false;
     public bool Connecting

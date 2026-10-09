@@ -17,7 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using static llcom.Pages.SocketClientPage;
+using llcom.Model;
 
 namespace llcom.Pages;
 
@@ -98,17 +98,8 @@ public partial class UdpLocalPage : Page, INotifyPropertyChanged
         IpListComboBox.SelectedIndex = 0;
     }
 
-    private void ShowData(string title, byte[] data = null, bool send = false)
-    {
-        Tools.Logger.ShowDataRaw(
-            new Tools.DataShowRaw
-            {
-                title = $"🗑 local udp server: {title}",
-                data = data ?? new byte[0],
-                color = send ? Brushes.DarkRed : Brushes.DarkGreen,
-            }
-        );
-    }
+    private void ShowData(string title, byte[] data = null, bool send = false) =>
+        Tools.NetworkLog.Show("🗑 local udp server: ", title, data, send);
 
     private UdpClient Server = null;
 
@@ -206,10 +197,4 @@ public partial class UdpLocalPage : Page, INotifyPropertyChanged
         }
         catch (System.Exception ex) { Tools.Logger.Swallowed("udp server", ex); }
     }
-}
-
-public struct UdpState
-{
-    public UdpClient u;
-    public IPEndPoint e;
 }

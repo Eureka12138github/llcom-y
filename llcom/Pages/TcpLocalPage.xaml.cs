@@ -21,7 +21,7 @@ using System.Windows.Shapes;
 using System.Xml.Linq;
 using CoAP.Server;
 using llcom.LuaEnv;
-using static llcom.Pages.SocketClientPage;
+using llcom.Model;
 
 namespace llcom.Pages;
 
@@ -130,17 +130,8 @@ public partial class TcpLocalPage : Page, INotifyPropertyChanged
         IpListComboBox.SelectedIndex = 0;
     }
 
-    private void ShowData(string title, byte[] data = null, bool send = false)
-    {
-        Tools.Logger.ShowDataRaw(
-            new Tools.DataShowRaw
-            {
-                title = $"🛰 local tcp server: {title}",
-                data = data ?? new byte[0],
-                color = send ? Brushes.DarkRed : Brushes.DarkGreen,
-            }
-        );
-    }
+    private void ShowData(string title, byte[] data = null, bool send = false) =>
+        Tools.NetworkLog.Show("🛰 local tcp server: ", title, data, send);
 
     /// <summary>
     /// 获取客户端的名字
