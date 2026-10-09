@@ -105,30 +105,8 @@ public partial class TcpLocalPage : Page, INotifyPropertyChanged
     /// <summary>
     /// 刷新本机ip列表
     /// </summary>
-    private void RefreshIp()
-    {
-        IpListComboBox.Items.Clear();
-        IpListComboBox.Items.Add("0.0.0.0");
-        IpListComboBox.Items.Add("::");
-        var temp = new List<string>();
-        try
-        {
-            string name = Dns.GetHostName();
-            IPAddress[] ipadrlist = Dns.GetHostAddresses(name);
-            foreach (IPAddress ipa in ipadrlist)
-            {
-                if (
-                    ipa.AddressFamily == AddressFamily.InterNetwork
-                    || ipa.AddressFamily == AddressFamily.InterNetworkV6
-                )
-                    temp.Add(ipa.ToString());
-            }
-        }
-        catch (System.Exception ex) { Tools.Logger.Swallowed("tcp server", ex); }
-        //去重
-        temp.Distinct().ToList().ForEach(ip => IpListComboBox.Items.Add(ip));
-        IpListComboBox.SelectedIndex = 0;
-    }
+    private void RefreshIp() =>
+        Tools.NetworkHelper.FillLocalIpComboBox(IpListComboBox, "tcp server");
 
     private void ShowData(string title, byte[] data = null, bool send = false) =>
         Tools.NetworkLog.Show("🛰 local tcp server: ", title, data, send);
