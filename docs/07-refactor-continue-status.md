@@ -27,25 +27,26 @@
 | `bb8261b` | **refactor(threading)**：AvalonEdit 折叠刷新、`PlotPage` 绘制刷新 → `DispatcherTimer`；`LuaLogPrintTask`/USB 收发线程设后台；热更改 `Task.Run` |
 | `ad0382f` | **refactor(usb)**：USB 热插拔防抖 → `DispatcherTimer`（替换原无效的计数器忙等 hack） |
 | `7b954ff` | **refactor**：`LuaRunEnv.canRun` 忙等改 `ManualResetEventSlim` 事件等待（可取消）；`LuaRunEnv`/`LuaApis` 事件调用加 `?.Invoke`；补充 `QuickSendViewModel`/`LuaEditorViewModel` 单测 |
+| `013e242` | **poc(sdk-style)**：主工程迁移为 **SDK-style csproj**（`Microsoft.NET.Sdk` + `UseWPF`/`UseWindowsForms` + `PackageReference` + 隐式 globbing）；删除 `packages.config`；移除老旧源包 `Walterlv.Environment.Source`（改用本地 `Services/NdpInfo.cs`）；CI 改 `dotnet build`/`dotnet test`。验证：四配置构建、单文件、`dotnet build`/`dotnet test`、20 测试全通过 |
 
 ---
 
 ## 三、验证状态（截至该里程碑）
 
 - **构建**：`llcom` 四种配置全部成功 —— x86/x64 × Debug/Release（单文件 `llcom.exe`）。
+  迁移 SDK-style 后 **`dotnet build` 亦可**（x86/x64 需各自还原）。
 - **测试**：`tests/llcom.Tests` 共 **20 个用例全部通过**（Debug/Release x64 均验证）。
 - **冒烟**：清空输出目录模拟全新安装 → 正常启动（主窗口标题正确）+ 生成完整文件结构；
   正常关闭（CloseMainWindow）退出码 0、`lock` 清理、`settings.json` 落盘。
 
 ---
 
-## 四、后续计划（未完成）
+## 四、后续计划
 
-### Phase 1 剩余
-- [ ] **SDK-style csproj 迁移 PoC**（*高风险*）
-  - 目标：`Microsoft.NET.Sdk` + `UseWPF` + `PackageReference` + 隐式 globbing。
-  - 风险点：Costura 单文件绿色版、双平台 baml、`Walterlv.Environment.Source` T4、CI 流程。
-  - 做法：**副本分支**上试迁移，先验证「单文件产物 + 双平台 + CI」再合并。
+### Phase 1（已完成）
+- [x] 环境打通（net462 参考程序集包）、单元测试工程、CI 接入、**SDK-style csproj 迁移**（提交 `013e242`）。
+  - SDK-style 结果：`dotnet build`/`dotnet test` 均可直接使用；x86/x64 需各自还原
+    （.NET Framework exe 工程按 `PlatformTarget` 推断 RID：`win-x64`/`win-x86`）。
 
 ### Phase 2 剩余
 - [ ] **保守 DI**：引入 `Microsoft.Extensions.DependencyInjection`，建组合根，
@@ -65,31 +66,26 @@
 
 ---
 
-## 五、构建与测试命令（本机）
-
-> 关键：主工程是**旧式 WPF 工程**，**不能用 `dotnet test`/`dotnet build` 直接构建**；
-> 必须用 VS 2022 的 MSBuild。详见 `AGENTS.md`、`04-maintenance.md`。
+## 五、构建与测试命令（本机，SDK-style 后）
 
 ```powershell
-# 还原（packages.config + 测试工程 PackageReference）
-& nuget.exe restore llcom.sln
-dotnet restore tests\llcom.Tests\llcom.Tests.csproj
+# 构建主程序（x64 Debug 示例；x86 换 -p:Platform=x86，会自动按该平台还原）
+dotnet build llcom\llcom.csproj -c Debug -p:Platform=x64
 
-# 构建主程序（x64 Debug 示例；Platform 可为 x86/x64，Configuration 为 Debug/Release）
-& "D:\Microsoft Visual Studio\MSBuild\Current\Bin\MSBuild.exe" llcom\llcom.csproj /p:Configuration=Debug /p:Platform=x64
-
-# 构建并运行测试
-& "D:\Microsoft Visual Studio\MSBuild\Current\Bin\MSBuild.exe" tests\llcom.Tests\llcom.Tests.csproj /p:Configuration=Debug /p:Platform=x64
-dotnet vstest tests\llcom.Tests\bin\x64\Debug\net48\llcom.Tests.dll
+# 运行单元测试
+dotnet test tests\llcom.Tests\llcom.Tests.csproj -p:Platform=x64
 ```
+
+> VS MSBuild（`D:\Microsoft Visual Studio\MSBuild\Current\Bin\MSBuild.exe`）亦可。详见 `AGENTS.md`。
 
 ---
 
 ## 六、交接注意事项
 
 - **本机无 ripgrep**：内置 `grep`/`glob` 工具不可用，改用 `shell` + `Select-String`/`Get-ChildItem`（见 `AGENTS.md`）。
-- **本机缺 .NET Framework 4.6.2 目标包**：已用 `Microsoft.NETFramework.ReferenceAssemblies.net462` 解决；
-  装了 Dev Pack 的机器/CI 该包为空操作。
+- **本机缺 .NET Framework 4.6.2 目标包**：已用 NuGet 包 `Microsoft.NETFramework.ReferenceAssemblies.net462` 解决。
+- **SDK-style 注意**：.NET Framework 的 exe 工程按 `PlatformTarget` 推断 RID（`win-x64`/`win-x86`），
+  x86/x64 需各自还原（`dotnet build -p:Platform=x86` 会自动处理）。
 - **exe 运行约束**：必须叫 `llcom.exe`，且不能在压缩包/临时目录直接运行（源码 `ProfileInitializer.Initial()` 校验）。
 - **已知坑**沿用 `docs/architecture.md` 第四节与 `AGENTS.md`：WPF Page 需手写 INPC、AvalonEdit Text 不可绑定、
   `Settings.quickSend` 必须 `[JsonIgnore]`、串口 SafeHandle 释放勿改同步等。
