@@ -15,11 +15,7 @@
   Loaded="Page_Loaded"
   mc:Ignorable="d"
 >
-  <Page.Resources>
-    <local:boolVisibe x:Key="boolVisibeConverter" />
-    <local:boolNotVisibe x:Key="boolNotVisibeConverter" />
-    <local:boolNot x:Key="boolNotConverter" />
-  </Page.Resources>
+  
   <Grid>
     <Grid Visibility="{Binding IsLoding, Converter={StaticResource boolNotVisibeConverter}}">
       <Grid Visibility="{Binding IsInList, Converter={StaticResource boolVisibeConverter}}">

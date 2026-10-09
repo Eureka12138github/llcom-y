@@ -16,9 +16,6 @@
   mc:Ignorable="d"
 >
   <Page.Resources>
-    <local:boolVisibe x:Key="boolVisibeConverter" />
-    <local:boolNotVisibe x:Key="boolNotVisibeConverter" />
-    <local:showHexFormat x:Key="showHexFormatConverter" />
     <Style x:Key="DataShowStyle" TargetType="{x:Type ListBoxItem}">
       <Setter Property="Template">
         <Setter.Value>

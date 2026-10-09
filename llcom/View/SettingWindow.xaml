@@ -20,9 +20,7 @@
   <Window.Style>
     <Style BasedOn="{StaticResource {x:Type Window}}" TargetType="Window" />
   </Window.Style>
-  <Window.Resources>
-    <local_page:boolVisibe x:Key="boolVisibeConverter" />
-  </Window.Resources>
+  
   <Grid>
     <TabControl>
       <TabItem Header="{DynamicResource SettingBasic}">

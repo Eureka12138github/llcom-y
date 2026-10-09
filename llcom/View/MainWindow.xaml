@@ -22,13 +22,7 @@
   <Window.Style>
     <Style BasedOn="{StaticResource {x:Type Window}}" TargetType="Window" />
   </Window.Style>
-  <Window.Resources>
-    <local_page:boolVisibe x:Key="boolVisibeConverter" />
-    <local_page:boolNotVisibe x:Key="boolNotVisibeConverter" />
-    <local_page:rsTooltip x:Key="rsToolTipConverter" />
-    <local_page:rsOpacity x:Key="rsOpacityConverter" />
-    <local_page:boolOpacity x:Key="boolOpacityConverter" />
-  </Window.Resources>
+  
   <Window.InputBindings>
     <KeyBinding Key="Return" Command="{Binding SendCommand}" Gesture="Ctrl+Return" />
   </Window.InputBindings>

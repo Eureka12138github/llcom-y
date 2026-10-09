@@ -11,11 +11,7 @@
   Loaded="Page_Loaded"
   mc:Ignorable="d"
 >
-  <Page.Resources>
-    <local:boolConnected x:Key="boolConnectedConverter" />
-    <local:boolNot x:Key="boolNotConverter" />
-    <local:boolVisibe x:Key="boolVisibeConverter" />
-  </Page.Resources>
+  
 
   <Grid>
     <TabControl>

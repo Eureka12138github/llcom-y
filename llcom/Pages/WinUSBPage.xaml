@@ -14,11 +14,7 @@
   Loaded="Page_Loaded"
   mc:Ignorable="d"
 >
-  <Page.Resources>
-    <local:boolVisibe x:Key="boolVisibeConverter" />
-    <local:boolNotVisibe x:Key="boolNotVisibeConverter" />
-    <local:boolNot x:Key="boolNotConverter" />
-  </Page.Resources>
+  
   <Grid Name="MainGrid">
     <Grid.RowDefinitions>
       <RowDefinition Height="auto" />
