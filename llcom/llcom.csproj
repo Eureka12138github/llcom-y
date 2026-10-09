@@ -50,7 +50,7 @@
     <Prefer32Bit>true</Prefer32Bit>
     <LangVersion>latest</LangVersion>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-    <CompilerGeneratedFilesOutputPath>$(IntermediateOutputPath)generated</CompilerGeneratedFilesOutputPath>
+    <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)generated</CompilerGeneratedFilesOutputPath>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
@@ -526,4 +526,6 @@
   <Import Project="..\packages\Fody.6.6.0\build\Fody.targets" Condition="Exists('..\packages\Fody.6.6.0\build\Fody.targets')" />
   <Import Project="..\packages\Costura.Fody.5.7.0\build\Costura.Fody.targets" Condition="Exists('..\packages\Costura.Fody.5.7.0\build\Costura.Fody.targets')" />
   <Import Project="..\packages\Walterlv.Environment.Source.7.2.0\build\Walterlv.Environment.Source.targets" Condition="Exists('..\packages\Walterlv.Environment.Source.7.2.0\build\Walterlv.Environment.Source.targets')" />
+  <!-- 无 .NET Framework 4.6.2 目标包的机器（如本机/CI 未装 Dev Pack）使用 NuGet 参考程序集包；装了 Dev Pack 则为空操作 -->
+  <Import Project="..\packages\Microsoft.NETFramework.ReferenceAssemblies.net462.1.0.3\build\Microsoft.NETFramework.ReferenceAssemblies.net462.targets" Condition="Exists('..\packages\Microsoft.NETFramework.ReferenceAssemblies.net462.1.0.3\build\Microsoft.NETFramework.ReferenceAssemblies.net462.targets')" />
 </Project>
