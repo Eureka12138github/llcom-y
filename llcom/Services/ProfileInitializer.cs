@@ -88,7 +88,7 @@ internal static class ProfileInitializer
     public static void Initial()
     {
         //检查.net版本
-        var currentVersion = Walterlv.NdpInfo.GetCurrentVersionName();
+        var currentVersion = NdpInfo.GetCurrentVersionName();
         try
         {
             if (currentVersion.StartsWith("4."))
