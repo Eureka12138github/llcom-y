@@ -119,6 +119,13 @@ public partial class MainWindow : Window
                         );
 
                         (PresentationSource.FromVisual(this) as HwndSource)?.AddHook(WndProc);
+                        //USB 防抖定时器触发：刷新端口列表（含自动重连）
+                        _usbDebounceTimer.Tick += (_, _) =>
+                        {
+                            _usbDebounceTimer.Stop();
+                            _vm.OnUsbDeviceChanged();
+                            Logger.AddUartLogInfo($"[USB拔插事件] {DateTime.Now:HH:mm:ss.fff}");
+                        };
                         //刷新设备列表
                         _vm.RefreshPorts();
 
@@ -334,29 +341,17 @@ public partial class MainWindow : Window
         Tools.Logger.ShowData(sender as byte[], false);
     }
 
-    private static int UsbPluginDeley = 0;
+    /// <summary>USB 热插拔防抖定时器（WM_DEVICECHANGE 会连续触发多次）</summary>
+    private readonly System.Windows.Threading.DispatcherTimer _usbDebounceTimer =
+        new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromMilliseconds(800) };
 
     private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
         if (msg == 0x219 && !Tools.Global.uart.IsOpen()) // 监听USB设备插拔消息
         {
-            if (UsbPluginDeley == 0)
-            {
-                ++UsbPluginDeley; // Task启动需要准备时间,这里提前对公共变量加一
-                Task.Run(() =>
-                {
-                    do Task.Delay(100).Wait();
-                    while (++UsbPluginDeley < 10);
-                    UsbPluginDeley = 0;
-                    Dispatcher.Invoke(() =>
-                    {
-                        _vm.OnUsbDeviceChanged();
-                    });
-                    Logger.AddUartLogInfo($"[USB拔插事件] {DateTime.Now:HH:mm:ss.fff}");
-                });
-            }
-            else
-                UsbPluginDeley = 1;
+            //防抖：每次事件都重置定时器，停止触发 800ms 后再刷新端口列表（含自动重连）
+            _usbDebounceTimer.Stop();
+            _usbDebounceTimer.Start();
             handled = true;
         }
         return IntPtr.Zero;
@@ -386,6 +381,7 @@ public partial class MainWindow : Window
         //自动保存脚本
         _vm.LuaEditor.OnAutoSave();
         _foldingTimer.Stop();
+        _usbDebounceTimer.Stop();
         Tools.Global.isMainWindowsClosed = true;
         foreach (Window win in App.Current.Windows)
         {
