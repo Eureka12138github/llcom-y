@@ -373,7 +373,7 @@ public partial class WinUSBPage : Page, INotifyPropertyChanged
                         break;
                     }
                 }
-            }).Start();
+            }) { IsBackground = true }.Start();
         }
     }
 

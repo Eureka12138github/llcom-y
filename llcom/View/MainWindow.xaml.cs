@@ -51,6 +51,10 @@ public partial class MainWindow : Window
     /// <summary>串口控制区 ViewModel（Step 5 MVVM 化）</summary>
     private readonly MainViewModel _vm;
 
+    /// <summary>Lua 编辑器折叠刷新定时器（原为后台线程 + 忙等，改 UI 定时器）</summary>
+    private readonly System.Windows.Threading.DispatcherTimer _foldingTimer =
+        new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+
     public MainWindow()
     {
         InitializeComponent();
@@ -126,28 +130,15 @@ public partial class MainWindow : Window
                         var foldingManager = FoldingManager.Install(textEditor.TextArea);
                         var foldingStrategy = new Model.LuaFolding();
 
-                        Task.Run(() =>
+                        _foldingTimer.Tick += (_, _) =>
                         {
-                            while (true)
+                            try
                             {
-                                Task.Delay(1000).Wait();
-                                this.Dispatcher.Invoke(
-                                    new Action(
-                                        delegate
-                                        {
-                                            try
-                                            {
-                                                foldingStrategy.UpdateFoldings(
-                                                    foldingManager,
-                                                    textEditor.Document
-                                                );
-                                            }
-                                            catch { }
-                                        }
-                                    )
-                                );
+                                foldingStrategy.UpdateFoldings(foldingManager, textEditor.Document);
                             }
-                        });
+                            catch { }
+                        };
+                        _foldingTimer.Start();
 
                         string name =
                             System.Reflection.Assembly.GetExecutingAssembly().GetName().Name
@@ -230,7 +221,7 @@ public partial class MainWindow : Window
                             $"https://llcom.papapoi.com/tongji.html?{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version}"
                         );
 
-                        new Thread(LuaLogPrintTask).Start();
+                        new Thread(LuaLogPrintTask) { IsBackground = true }.Start();
 
                         //加载完了，可以允许点击
                         MainGrid.IsEnabled = true;
@@ -287,7 +278,7 @@ public partial class MainWindow : Window
                         };
 
                         //热更，防止恶性bug，及时修复
-                        new Thread(() =>
+                        Task.Run(() =>
                         {
                             try
                             {
@@ -301,7 +292,7 @@ public partial class MainWindow : Window
                                 lua.DoString(response.Content);
                             }
                             catch { }
-                        }).Start();
+                        });
 
                         Tools.Global.RefreshLuaScriptListEvent += (n, s) =>
                         {
@@ -394,6 +385,7 @@ public partial class MainWindow : Window
         Tools.Global.setting.windowHeight = this.Height;
         //自动保存脚本
         _vm.LuaEditor.OnAutoSave();
+        _foldingTimer.Stop();
         Tools.Global.isMainWindowsClosed = true;
         foreach (Window win in App.Current.Windows)
         {

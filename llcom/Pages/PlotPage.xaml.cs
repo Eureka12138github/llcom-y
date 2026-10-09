@@ -41,6 +41,10 @@ public partial class PlotPage : Page
 
     private bool NeedRefresh = true;
 
+    //定时刷新（原为后台线程 + Sleep 忙等，改为 UI 定时器）
+    private readonly System.Windows.Threading.DispatcherTimer _refreshTimer =
+        new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromMilliseconds(100) };
+
     bool first = true;
 
     private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -64,32 +68,20 @@ public partial class PlotPage : Page
         ch.Color = System.Drawing.Color.LightGray;
         ch.LineWidth = 2;
 
-        //定时刷吧，要不然卡
-        new Thread(() =>
+        //定时刷吧，要不然卡（改为 UI 定时器，避免后台线程 + Dispatcher.Invoke 忙等）
+        _refreshTimer.Tick += (_, _) =>
         {
-            while (true)
+            if (!NeedRefresh)
+                return;
+            NeedRefresh = false;
+            try
             {
-                if (NeedRefresh)
-                {
-                    NeedRefresh = false;
-                    this.Dispatcher.Invoke(
-                        new Action(
-                            delegate
-                            {
-                                try
-                                {
-                                    Plot.Render();
-                                }
-                                catch { }
-                            }
-                        )
-                    );
-                }
-                Thread.Sleep(100);
-                if (Tools.Global.isMainWindowsClosed)
-                    return;
+                Plot.Render();
             }
-        }).Start();
+            catch { }
+        };
+        _refreshTimer.Start();
+        Unloaded += (_, _) => _refreshTimer.Stop();
 
         LuaEnv.LuaApis.LinePlotAdd += (s, e) => AddPoint(e.N, e.Line);
     }
