@@ -1,0 +1,97 @@
+# 07 · 重构继续 — 进度与后续计划
+
+> 分支：`feature/refactor-continue`（基于上游 `origin/refactor`）
+> 目的：记录本次「继续重构优化」的已完成项、验证状态、后续计划与交接注意事项，方便后续接手。
+
+---
+
+## 一、背景与基线
+
+- 上游已有两条现成路线：
+  - `origin/refactor`：WPF + net462 的 **MVVM 渐进重构版**（拆上帝类、去 Fody、修 8 个 bug、带 `docs/`）。
+  - `origin/next`：**全新重写**（net10 + Avalonia + NLua + DI + LiteDB，v2.0，功能未对齐）。
+- 本分支选择以 **`origin/refactor` 为基线**继续（低风险、保留全部功能与绿色单文件形态）。
+- 总体分阶段：Phase 0 基线 → Phase 1 工程化（环境/构建/SDK-style/单测/CI）→
+  Phase 2 架构深化（DI/线程/健壮性）→ Phase 3 终点形态决策（WPF-modern vs Avalonia）。
+
+---
+
+## 二、已完成（提交按时间序，均在 `feature/refactor-continue`）
+
+| 提交 | 内容 |
+|---|---|
+| `0afa865` | **build**：引入 NuGet 包 `Microsoft.NETFramework.ReferenceAssemblies.net462`（带 `Exists` 条件），支持在**缺少 net462 目标包**的机器上构建，解决 `MSB3644`；修正 `CompilerGeneratedFilesOutputPath`（原 `$(IntermediateOutputPath)` 未定义，源生成输出错误落到 `llcom/generated/`，改用 `$(BaseIntermediateOutputPath)`） |
+| `d36e410` | **fix**：修复**全新安装启动崩溃**。根因：`MainWindow` 先建 `MainViewModel` → `LuaEditorViewModel.RefreshList()` 扫描尚未创建的 `user_script_run/`，抛未处理的 `DirectoryNotFoundException`。修法：把 `Global.Initial()` 提前到 VM 构造之前；`LuaEditorViewModel` 增加目录缺失容错 |
+| `fba0147` | **docs**：新增 `AGENTS.md`（环境注意事项、构建、已知坑） |
+| `a6ab1a7` | **test**：新增 `tests/llcom.Tests`（xUnit/net48）并接入 CI；主程序集加 `InternalsVisibleTo`；清理 `llcom.sln` 的 `Any CPU` 配置 |
+| `bb8261b` | **refactor(threading)**：AvalonEdit 折叠刷新、`PlotPage` 绘制刷新 → `DispatcherTimer`；`LuaLogPrintTask`/USB 收发线程设后台；热更改 `Task.Run` |
+| `ad0382f` | **refactor(usb)**：USB 热插拔防抖 → `DispatcherTimer`（替换原无效的计数器忙等 hack） |
+| `7b954ff` | **refactor**：`LuaRunEnv.canRun` 忙等改 `ManualResetEventSlim` 事件等待（可取消）；`LuaRunEnv`/`LuaApis` 事件调用加 `?.Invoke`；补充 `QuickSendViewModel`/`LuaEditorViewModel` 单测 |
+
+---
+
+## 三、验证状态（截至该里程碑）
+
+- **构建**：`llcom` 四种配置全部成功 —— x86/x64 × Debug/Release（单文件 `llcom.exe`）。
+- **测试**：`tests/llcom.Tests` 共 **20 个用例全部通过**（Debug/Release x64 均验证）。
+- **冒烟**：清空输出目录模拟全新安装 → 正常启动（主窗口标题正确）+ 生成完整文件结构；
+  正常关闭（CloseMainWindow）退出码 0、`lock` 清理、`settings.json` 落盘。
+
+---
+
+## 四、后续计划（未完成）
+
+### Phase 1 剩余
+- [ ] **SDK-style csproj 迁移 PoC**（*高风险*）
+  - 目标：`Microsoft.NET.Sdk` + `UseWPF` + `PackageReference` + 隐式 globbing。
+  - 风险点：Costura 单文件绿色版、双平台 baml、`Walterlv.Environment.Source` T4、CI 流程。
+  - 做法：**副本分支**上试迁移，先验证「单文件产物 + 双平台 + CI」再合并。
+
+### Phase 2 剩余
+- [ ] **保守 DI**：引入 `Microsoft.Extensions.DependencyInjection`，建组合根，
+  注册 `Settings`/`ISerialPortService`/各 VM；`Global` 保留为兼容外观层转发。
+  - 注意：调用点大量使用 `Tools.Global.setting`/`Tools.Global.uart`，需逐步迁移，避免一次性大改。
+- [ ] **收敛 code-behind**：`MainWindow` 的导航/Lua 运行/日志打印；工具页弹窗（依赖 Popup，收益低，可保留）。
+- [ ] **更多健壮性**：
+  - `LuaLoader.Run` 里的 `while(GetInPath<string>("!file!") != pathIn) SetInPath(...)` 自旋循环。
+  - 其他 `catch {}` 吞异常处按需加日志。
+
+### Phase 3（终点形态，决策闸口）
+- [ ] 用 PoC 对比 **WPF on net8/net9-windows** vs **Avalonia（复用 `origin/next`）**，再决定并升级老化依赖
+      （RestSharp 106、MQTTnet 3、ScottPlot 4、LibUsbDotNet alpha、无维护的 XLua 等）。
+
+### 收尾
+- [ ] 推分支 / 发起 PR / 合并到 `master`（合并后跑一次 CI 与发布冒烟）。
+
+---
+
+## 五、构建与测试命令（本机）
+
+> 关键：主工程是**旧式 WPF 工程**，**不能用 `dotnet test`/`dotnet build` 直接构建**；
+> 必须用 VS 2022 的 MSBuild。详见 `AGENTS.md`、`04-maintenance.md`。
+
+```powershell
+# 还原（packages.config + 测试工程 PackageReference）
+& nuget.exe restore llcom.sln
+dotnet restore tests\llcom.Tests\llcom.Tests.csproj
+
+# 构建主程序（x64 Debug 示例；Platform 可为 x86/x64，Configuration 为 Debug/Release）
+& "D:\Microsoft Visual Studio\MSBuild\Current\Bin\MSBuild.exe" llcom\llcom.csproj /p:Configuration=Debug /p:Platform=x64
+
+# 构建并运行测试
+& "D:\Microsoft Visual Studio\MSBuild\Current\Bin\MSBuild.exe" tests\llcom.Tests\llcom.Tests.csproj /p:Configuration=Debug /p:Platform=x64
+dotnet vstest tests\llcom.Tests\bin\x64\Debug\net48\llcom.Tests.dll
+```
+
+---
+
+## 六、交接注意事项
+
+- **本机无 ripgrep**：内置 `grep`/`glob` 工具不可用，改用 `shell` + `Select-String`/`Get-ChildItem`（见 `AGENTS.md`）。
+- **本机缺 .NET Framework 4.6.2 目标包**：已用 `Microsoft.NETFramework.ReferenceAssemblies.net462` 解决；
+  装了 Dev Pack 的机器/CI 该包为空操作。
+- **exe 运行约束**：必须叫 `llcom.exe`，且不能在压缩包/临时目录直接运行（源码 `ProfileInitializer.Initial()` 校验）。
+- **已知坑**沿用 `docs/architecture.md` 第四节与 `AGENTS.md`：WPF Page 需手写 INPC、AvalonEdit Text 不可绑定、
+  `Settings.quickSend` 必须 `[JsonIgnore]`、串口 SafeHandle 释放勿改同步等。
+- **测试约定**：涉及静态全局状态（`Global.setting`/`AppPaths.ProfilePath`），已禁用并行；
+  访问 `internal` 成员靠 `InternalsVisibleTo("llcom.Tests")`。
