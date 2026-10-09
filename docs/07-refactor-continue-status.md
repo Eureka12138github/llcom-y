@@ -28,6 +28,8 @@
 | `ad0382f` | **refactor(usb)**：USB 热插拔防抖 → `DispatcherTimer`（替换原无效的计数器忙等 hack） |
 | `7b954ff` | **refactor**：`LuaRunEnv.canRun` 忙等改 `ManualResetEventSlim` 事件等待（可取消）；`LuaRunEnv`/`LuaApis` 事件调用加 `?.Invoke`；补充 `QuickSendViewModel`/`LuaEditorViewModel` 单测 |
 | `013e242` | **poc(sdk-style)**：主工程迁移为 **SDK-style csproj**（`Microsoft.NET.Sdk` + `UseWPF`/`UseWindowsForms` + `PackageReference` + 隐式 globbing）；删除 `packages.config`；移除老旧源包 `Walterlv.Environment.Source`（改用本地 `Services/NdpInfo.cs`）；CI 改 `dotnet build`/`dotnet test`。验证：四配置构建、单文件、`dotnet build`/`dotnet test`、20 测试全通过 |
+| `387a6c5` | **docs**：更新进度文档，标记 SDK-style 完成 |
+| `4ddf297` | **refactor(di)**：引入组合根 `Services/AppHost.cs`（`Microsoft.Extensions.DependencyInjection` 7.0.0），注册既有单例与 `MainViewModel`，`MainWindow` 改为从容器解析（DI 第一步） |
 
 ---
 
@@ -49,9 +51,9 @@
     （.NET Framework exe 工程按 `PlatformTarget` 推断 RID：`win-x64`/`win-x86`）。
 
 ### Phase 2 剩余
-- [ ] **保守 DI**：引入 `Microsoft.Extensions.DependencyInjection`，建组合根，
-  注册 `Settings`/`ISerialPortService`/各 VM；`Global` 保留为兼容外观层转发。
-  - 注意：调用点大量使用 `Tools.Global.setting`/`Tools.Global.uart`，需逐步迁移，避免一次性大改。
+- [~] **保守 DI**：*第一步（组合根 `AppHost`）已完成*（提交 `4ddf297`）。
+  - 剩余：把调用点从 `Tools.Global.setting`/`Tools.Global.uart` 逐步迁移为构造函数注入，
+    并陆续把 `QuickSendViewModel`/`LuaEditorViewModel`/工具页也纳入容器。
 - [ ] **收敛 code-behind**：`MainWindow` 的导航/Lua 运行/日志打印；工具页弹窗（依赖 Popup，收益低，可保留）。
 - [ ] **更多健壮性**：
   - `LuaLoader.Run` 里的 `while(GetInPath<string>("!file!") != pathIn) SetInPath(...)` 自旋循环。
