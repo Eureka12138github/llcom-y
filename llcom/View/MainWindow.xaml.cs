@@ -36,6 +36,7 @@ using llcom.LuaEnv;
 using llcom.Model;
 using llcom.Tools;
 using llcom.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
@@ -62,7 +63,7 @@ public partial class MainWindow : Window
         //必须在构造 MainViewModel 之前生成文件结构：
         //LuaEditorViewModel 构造时会扫描 user_script_run 目录，目录不存在会抛 DirectoryNotFoundException
         Tools.Global.Initial();
-        _vm = new MainViewModel();
+        _vm = AppHost.Services.GetRequiredService<MainViewModel>();
         DataContext = _vm;
         if (
             Tools.Global.setting.windowHeight != 0
