@@ -74,3 +74,24 @@
 - 本审计属于 Phase 2「架构深化」的一部分；第 1 项即 Phase 2 剩余项（DI 完善），
   第 2/3 项即 Phase 2「收敛 code-behind」的扩展。
 - 详见 `07-refactor-continue-status.md`。
+
+---
+
+## 六、网络工具页去重进展
+
+参照对 5 个网络工具页的重复分析，已按「低风险 → 高」完成以下几批：
+
+- [x] **状态类归位**：`StateObject` / `SocketObj` / `UdpState` → `Model/NetworkStates.cs`，
+  删除 `TcpLocalPage`/`UdpLocalPage` 对 `SocketClientPage` 的 `using static` 跨页耦合（`ce4b4c8`）
+- [x] **日志出口统一**：`Tools/NetworkLog.cs`；`SocketClient`/`tcpTest`/`TcpLocal`/`UdpLocal`
+  重复的 `ShowData` 方法体改为一行转发（`ce4b4c8`）
+- [x] **值转换器集中**：`App.xaml` 统一声明 8 个转换器，删除 9 处页面/窗口重复声明（`5a5f710`）
+- [x] **`RefreshIp` 去重**：抽到 `Tools/NetworkHelper.cs`（`64e388d`）
+
+尚未做（中高风险，建议后续逐步、每步独立提交）：
+
+- [ ] 共享网络 VM 基类（消除 5 份 `SetProperty` / `IsConnected` 等样板；注意 WPF Page 不能自定义基类，需组合）
+- [ ] 本地监听面板 / 发送面板 UserControl（`TcpLocal`/`UdpLocal`/`SocketClient`/`tcpTest`）
+- [ ] `LuaChannelBridge`（统一通道注册/注销；需先给 `LuaApis` 补注销 API）
+- [ ] `tcpTest` 内部 `ws`/`wsV6` 双份去重（单文件，自包含）
+- [ ] Mqtt 内联 `ShowDataRaw`（6 处）统一走 helper（其标题/颜色各异，需逐个核对）
