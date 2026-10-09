@@ -22,7 +22,22 @@ namespace llcom.LuaEnv
         private static XLua.LuaFunction triggerCB = null;
 
         public static bool isRunning = false;
-        public static bool canRun = false;
+
+        //用事件替代轮询忙等：UI 准备好后 Set，New() 里 Wait（可被取消）
+        private static readonly ManualResetEventSlim canRunEvent = new ManualResetEventSlim(false);
+
+        /// <summary>Lua 运行环境是否已准备好（由 UI 设置）</summary>
+        public static bool canRun
+        {
+            get => canRunEvent.IsSet;
+            set
+            {
+                if (value)
+                    canRunEvent.Set();
+                else
+                    canRunEvent.Reset();
+            }
+        }
 
         private static void addTigger(int id, string type = "timer", byte[] data = null)
         {
@@ -162,7 +177,7 @@ namespace llcom.LuaEnv
         /// </summary>
         public static void StopLua(string ex)
         {
-            LuaRunError(null, EventArgs.Empty);
+            LuaRunError?.Invoke(null, EventArgs.Empty);
             if (ex != "")
                 LuaApis.PrintLog("lua代码报错了：\r\n" + ex);
             else
@@ -191,11 +206,18 @@ namespace llcom.LuaEnv
             //文件不存在
             if (!File.Exists(Tools.Global.ProfilePath + file))
                 return;
+            var token = tokenSource.Token;
             Task.Run(
                 () =>
                 {
-                    while (!canRun)
-                        Task.Delay(100).Wait();
+                    try
+                    {
+                        canRunEvent.Wait(token); //等待 UI 准备好，可被取消
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        return;
+                    }
                     try
                     {
                         lua = new XLua.LuaEnv();
@@ -214,7 +236,7 @@ namespace llcom.LuaEnv
                         StopLua(ex.ToString());
                     }
                 },
-                tokenSource.Token
+                token
             );
         }
     }

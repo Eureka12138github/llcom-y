@@ -18,7 +18,7 @@ namespace llcom.LuaEnv
         public static void PrintLog(string log)
         {
             Tools.Logger.AddLuaLog(log);
-            PrintLuaLog(DateTime.Now.ToString("[HH:mm:ss:ffff]") + log, EventArgs.Empty);
+            PrintLuaLog?.Invoke(DateTime.Now.ToString("[HH:mm:ss:ffff]") + log, EventArgs.Empty);
         }
 
         /// <summary>
