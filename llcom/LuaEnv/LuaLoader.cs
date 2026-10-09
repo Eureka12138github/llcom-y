@@ -117,7 +117,12 @@ end
             {
                 var pathIn = Tools.Global.ProfilePath + path + file;
                 luaRunner.Global.SetInPath("!file!", pathIn);
-                while (luaRunner.Global.GetInPath<string>("!file!") != pathIn)
+                //防御性重试（原为无界 while，设置失败会死循环）
+                for (
+                    int i = 0;
+                    i < 100 && luaRunner.Global.GetInPath<string>("!file!") != pathIn;
+                    i++
+                )
                     luaRunner.Global.SetInPath("!file!", pathIn);
 
                 if (args != null)
@@ -129,8 +134,11 @@ end
                 XLua.LuaFunction f = null;
                 try
                 {
-                    while (f == null)
+                    //有界重试，避免原无界 while 死循环
+                    for (int i = 0; i < 100 && f == null; i++)
                         f = luaRunner.Global.Get<XLua.LuaFunction>("!once!");
+                    if (f == null)
+                        throw new Exception("Lua 运行环境未就绪：未找到 !once! 函数");
                     var lr = f.Call(null, new Type[] { typeof(byte[]) });
                     var r = lr[0] as byte[];
                     return r;
