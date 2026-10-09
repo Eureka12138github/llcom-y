@@ -56,7 +56,9 @@ public partial class LuaEditorViewModel : ObservableObject
         _onReload = onReload ?? (() => { });
         _onLoaded = onLoaded ?? (_ => { });
         RefreshList();
-        LoadFile(getCurrent());
+        //目录可能尚未创建（首次运行），此时暂不加载；待 Initial() 生成文件结构后再刷新
+        if (Directory.Exists(Tools.Global.ProfilePath + _folderName))
+            LoadFile(getCurrent());
     }
 
     /// <summary>
@@ -79,13 +81,17 @@ public partial class LuaEditorViewModel : ObservableObject
     /// </summary>
     public void RefreshList()
     {
-        var dir = new DirectoryInfo(Tools.Global.ProfilePath + _folderName);
+        var dirPath = Tools.Global.ProfilePath + _folderName;
         _loading = true;
         Files.Clear();
-        foreach (var f in dir.GetFileSystemInfos())
+        //目录可能尚未创建（首次运行、文件结构由 Initial() 生成）——此时不应崩溃
+        if (Directory.Exists(dirPath))
         {
-            if (f is FileInfo file && file.Name.ToLower().EndsWith(".lua"))
-                Files.Add(file.Name.Substring(0, file.Name.Length - 4));
+            foreach (var f in new DirectoryInfo(dirPath).GetFileSystemInfos())
+            {
+                if (f is FileInfo file && file.Name.ToLower().EndsWith(".lua"))
+                    Files.Add(file.Name.Substring(0, file.Name.Length - 4));
+            }
         }
         _lastFile = _getCurrentScript();
         //注意：SelectedFile 赋值必须在 _loading=false 之前，

@@ -55,6 +55,9 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         Tools.Global.LoadSetting();
+        //必须在构造 MainViewModel 之前生成文件结构：
+        //LuaEditorViewModel 构造时会扫描 user_script_run 目录，目录不存在会抛 DirectoryNotFoundException
+        Tools.Global.Initial();
         _vm = new MainViewModel();
         DataContext = _vm;
         if (
@@ -89,8 +92,7 @@ public partial class MainWindow : Window
                         Tools.Global.uart.UartDataSent += Uart_UartDataSent;
                         Tools.Global.uart.UartDataRawSent += Uart_UartDataRawSent;
 
-                        //初始化所有数据
-                        Tools.Global.Initial();
+                        //初始化已在 MainWindow 构造函数中完成（需早于 ViewModel 构造）
 
                         //重写关闭窗口代码
                         this.Closing += MainWindow_Closing;
