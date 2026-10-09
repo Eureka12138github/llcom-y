@@ -55,9 +55,9 @@
   - 剩余：把调用点从 `Tools.Global.setting`/`Tools.Global.uart` 逐步迁移为构造函数注入，
     并陆续把 `QuickSendViewModel`/`LuaEditorViewModel`/工具页也纳入容器。
 - [ ] **收敛 code-behind**：`MainWindow` 的导航/Lua 运行/日志打印；工具页弹窗（依赖 Popup，收益低，可保留）。
-- [ ] **更多健壮性**：
-  - `LuaLoader.Run` 里的 `while(GetInPath<string>("!file!") != pathIn) SetInPath(...)` 自旋循环。
-  - 其他 `catch {}` 吞异常处按需加日志。
+- [~] **更多健壮性**：
+  - [x] `LuaLoader.Run` 两处无界忙等改有界重试（提交 `51aff1e`）。
+  - [ ] 其他 `catch {}` 吞异常处按需加日志。
 
 ### Phase 3（终点形态，决策闸口）
 - [ ] 用 PoC 对比 **WPF on net8/net9-windows** vs **Avalonia（复用 `origin/next`）**，再决定并升级老化依赖
