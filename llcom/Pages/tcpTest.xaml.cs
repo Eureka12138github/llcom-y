@@ -107,32 +107,10 @@ public partial class tcpTest : Page, INotifyPropertyChanged
         //绑定
         MainGrid.DataContext = this;
         ClientList.ItemsSource = clients;
-        //心跳
-        Timer heartbeat = new Timer();
-        heartbeat.Interval = 30000;
-        heartbeat.AutoReset = true;
-        heartbeat.Elapsed += (ss, ee) =>
-        {
-            try
-            {
-                if (IsConnected)
-                    ws.Send("{}");
-            }
-            catch (System.Exception ex) { Tools.Logger.Swallowed("tcp test", ex); }
-        };
 
-        Timer heartbeatV6 = new Timer();
-        heartbeatV6.Interval = 30000;
-        heartbeatV6.AutoReset = true;
-        heartbeatV6.Elapsed += (ss, ee) =>
-        {
-            try
-            {
-                if (IsConnected)
-                    wsV6.Send("{}");
-            }
-            catch (System.Exception ex) { Tools.Logger.Swallowed("tcp test", ex); }
-        };
+        //心跳（ws / wsV6 共用同一实现）
+        Timer heartbeat = CreateHeartbeat(ws);
+        Timer heartbeatV6 = CreateHeartbeat(wsV6);
 
         //允许所有tls协议版本
         var tlsAll =
@@ -144,205 +122,9 @@ public partial class tcpTest : Page, INotifyPropertyChanged
         ws.SslConfiguration.EnabledSslProtocols = tlsAll;
         wsV6.SslConfiguration.EnabledSslProtocols = tlsAll;
 
-        //ws事件
-        ws.OnOpen += (ss, ee) =>
-        {
-            IsConnected = true;
-            heartbeat.Start();
-            this.Dispatcher.Invoke(() =>
-            {
-                clients.Clear();
-            });
-        };
-        wsV6.OnOpen += (ss, ee) =>
-        {
-            IsConnected = true;
-            heartbeatV6.Start();
-            this.Dispatcher.Invoke(() =>
-            {
-                clients.Clear();
-            });
-        };
-        ws.OnClose += (ss, ee) =>
-        {
-            IsConnected = false;
-            heartbeat.Stop();
-            this.Dispatcher.Invoke(() =>
-            {
-                clients.Clear();
-            });
-        };
-        wsV6.OnClose += (ss, ee) =>
-        {
-            IsConnected = false;
-            heartbeatV6.Stop();
-            this.Dispatcher.Invoke(() =>
-            {
-                clients.Clear();
-            });
-        };
-        ws.OnMessage += (ss, ee) =>
-        {
-            Debug.WriteLine(!ee.IsPing ? ee.Data : "ping");
-            if (ee.IsPing)
-                return;
-            try
-            {
-                JObject o = (JObject)JsonConvert.DeserializeObject(ee.Data);
-                switch ((string)o["action"])
-                {
-                    case "port":
-                        Address = $"{ConnectionType}://115.120.239.161:{o["port"]}";
-                        AddressV6 = "not suppoer ipv6";
-                        ShowData($"📢 Created a {ConnectionType} server.");
-                        break;
-                    case "client":
-                    case "connected":
-                        ShowData($"✔ [{o["client"]}]{o["addr"]} connected.");
-                        this.Dispatcher.Invoke(
-                            new Action(
-                                delegate
-                                {
-                                    clients.Add((string)o["client"]);
-                                    if (ClientList.Text.Length == 0)
-                                        ClientList.Text = (string)o["client"];
-                                }
-                            )
-                        );
-                        //适配一下通用通道
-                        LuaApis.SendChannelsReceived(
-                            "netlab",
-                            new { client = "connected", data = (string)o["client"] }
-                        );
-                        break;
-                    case "closed":
-                        ShowData($"❌ [{o["client"]}] disconnected.");
-                        this.Dispatcher.Invoke(
-                            new Action(
-                                delegate
-                                {
-                                    clients.Remove((string)o["client"]);
-                                    if (ClientList.Text.Length == 0 && clients.Count > 0)
-                                        ClientList.Text = clients[0];
-                                }
-                            )
-                        );
-                        //适配一下通用通道
-                        LuaApis.SendChannelsReceived(
-                            "netlab",
-                            new { client = "disconnected", data = (string)o["client"] }
-                        );
-                        break;
-                    case "data":
-                        string data = (string)o["data"];
-                        byte[] buff = (bool)o["hex"]
-                            ? Global.Hex2Byte(data)
-                            : Global.GetEncoding().GetBytes(data);
-                        ShowData($" → receive from [{o["client"]}]", buff);
-                        //适配一下通用通道
-                        LuaApis.SendChannelsReceived(
-                            "netlab",
-                            new { client = (string)o["client"], data = buff }
-                        );
-                        break;
-                    case "error":
-                        ShowData($"❔ error:{o["msg"]}");
-                        break;
-                    default:
-                        break;
-                }
-            }
-            catch
-            {
-                //先不管错误
-            }
-        };
-        wsV6.OnMessage += (ss, ee) =>
-        {
-            Debug.WriteLine(!ee.IsPing ? ee.Data : "ping");
-            if (ee.IsPing)
-                return;
-            try
-            {
-                JObject o = (JObject)JsonConvert.DeserializeObject(ee.Data);
-                switch ((string)o["action"])
-                {
-                    case "port":
-                        Address = $"{ConnectionType}://152.70.80.204:{o["port"]}";
-                        AddressV6 =
-                            $"{ConnectionType}://[2603:c023:1:5fcc:c028:8ed:49a7:6e08]:{o["port"]}";
-                        ShowData($"📢 Created a {ConnectionType} server.");
-                        break;
-                    case "client":
-                    case "connected":
-                        ShowData($"✔ [{o["client"]}]{o["addr"]} connected.");
-                        this.Dispatcher.Invoke(
-                            new Action(
-                                delegate
-                                {
-                                    clients.Add((string)o["client"]);
-                                    if (ClientList.Text.Length == 0)
-                                        ClientList.Text = (string)o["client"];
-                                }
-                            )
-                        );
-                        //适配一下通用通道
-                        LuaApis.SendChannelsReceived(
-                            "netlab",
-                            new { client = "connected", data = (string)o["client"] }
-                        );
-                        break;
-                    case "closed":
-                        ShowData($"❌ [{o["client"]}] disconnected.");
-                        this.Dispatcher.Invoke(
-                            new Action(
-                                delegate
-                                {
-                                    clients.Remove((string)o["client"]);
-                                    if (ClientList.Text.Length == 0 && clients.Count > 0)
-                                        ClientList.Text = clients[0];
-                                }
-                            )
-                        );
-                        //适配一下通用通道
-                        LuaApis.SendChannelsReceived(
-                            "netlab",
-                            new { client = "disconnected", data = (string)o["client"] }
-                        );
-                        break;
-                    case "data":
-                        string data = (string)o["data"];
-                        byte[] buff = (bool)o["hex"]
-                            ? Global.Hex2Byte(data)
-                            : Global.GetEncoding().GetBytes(data);
-                        ShowData($" → receive from [{o["client"]}]", buff);
-                        //适配一下通用通道
-                        LuaApis.SendChannelsReceived(
-                            "netlab",
-                            new { client = (string)o["client"], data = buff }
-                        );
-                        break;
-                    case "error":
-                        ShowData($"❔ error:{o["msg"]}");
-                        break;
-                    default:
-                        break;
-                }
-            }
-            catch
-            {
-                //先不管错误
-            }
-        };
-
-        ws.OnError += (ss, ee) =>
-        {
-            ShowData($"📢 Create failed :{ee.Message}");
-        };
-        wsV6.OnError += (ss, ee) =>
-        {
-            ShowData($"📢 Create failed :{ee.Message}");
-        };
+        //ws / wsV6 事件（共用同一套处理器，差异用 isV6 区分）
+        SetupWebSocket(ws, heartbeat, false);
+        SetupWebSocket(wsV6, heartbeatV6, true);
 
         //适配一下通用通道
         LuaApis.SendChannelsRegister(
@@ -365,6 +147,135 @@ public partial class tcpTest : Page, INotifyPropertyChanged
 
     private void ShowData(string title, byte[] data = null, bool send = false) =>
         Tools.NetworkLog.Show("🚀 public socket server: ", title, data, send);
+
+    /// <summary>创建一个 30s 心跳定时器（netlab 连接保活）。</summary>
+    private Timer CreateHeartbeat(WebSocket socket)
+    {
+        var timer = new Timer { Interval = 30000, AutoReset = true };
+        timer.Elapsed += (ss, ee) =>
+        {
+            try
+            {
+                if (IsConnected)
+                    socket.Send("{}");
+            }
+            catch (System.Exception ex)
+            {
+                Tools.Logger.Swallowed("tcp test heartbeat", ex);
+            }
+        };
+        return timer;
+    }
+
+    /// <summary>为某个 WebSocket 挂接生命周期与消息处理器。</summary>
+    private void SetupWebSocket(WebSocket socket, Timer heartbeat, bool isV6)
+    {
+        socket.OnOpen += (ss, ee) =>
+        {
+            IsConnected = true;
+            heartbeat.Start();
+            this.Dispatcher.Invoke(() => clients.Clear());
+        };
+        socket.OnClose += (ss, ee) =>
+        {
+            IsConnected = false;
+            heartbeat.Stop();
+            this.Dispatcher.Invoke(() => clients.Clear());
+        };
+        socket.OnMessage += (ss, ee) => HandleNetlabMessage(ee, isV6);
+        socket.OnError += (ss, ee) => ShowData($"📢 Create failed :{ee.Message}");
+    }
+
+    /// <summary>
+    /// 处理 netlab 服务端消息（原先 ws 与 wsV6 各有一份几乎逐行重复的实现，
+    /// 现合为一处，仅 "port" 分支的地址格式按 isV6 区分）。
+    /// </summary>
+    private void HandleNetlabMessage(MessageEventArgs ee, bool isV6)
+    {
+        Debug.WriteLine(!ee.IsPing ? ee.Data : "ping");
+        if (ee.IsPing)
+            return;
+        try
+        {
+            JObject o = (JObject)JsonConvert.DeserializeObject(ee.Data);
+            switch ((string)o["action"])
+            {
+                case "port":
+                    if (isV6)
+                    {
+                        Address = $"{ConnectionType}://152.70.80.204:{o["port"]}";
+                        AddressV6 =
+                            $"{ConnectionType}://[2603:c023:1:5fcc:c028:8ed:49a7:6e08]:{o["port"]}";
+                    }
+                    else
+                    {
+                        Address = $"{ConnectionType}://115.120.239.161:{o["port"]}";
+                        AddressV6 = "not suppoer ipv6";
+                    }
+                    ShowData($"📢 Created a {ConnectionType} server.");
+                    break;
+                case "client":
+                case "connected":
+                    ShowData($"✔ [{o["client"]}]{o["addr"]} connected.");
+                    this.Dispatcher.Invoke(
+                        new Action(
+                            delegate
+                            {
+                                clients.Add((string)o["client"]);
+                                if (ClientList.Text.Length == 0)
+                                    ClientList.Text = (string)o["client"];
+                            }
+                        )
+                    );
+                    //适配一下通用通道
+                    LuaApis.SendChannelsReceived(
+                        "netlab",
+                        new { client = "connected", data = (string)o["client"] }
+                    );
+                    break;
+                case "closed":
+                    ShowData($"❌ [{o["client"]}] disconnected.");
+                    this.Dispatcher.Invoke(
+                        new Action(
+                            delegate
+                            {
+                                clients.Remove((string)o["client"]);
+                                if (ClientList.Text.Length == 0 && clients.Count > 0)
+                                    ClientList.Text = clients[0];
+                            }
+                        )
+                    );
+                    //适配一下通用通道
+                    LuaApis.SendChannelsReceived(
+                        "netlab",
+                        new { client = "disconnected", data = (string)o["client"] }
+                    );
+                    break;
+                case "data":
+                    string data = (string)o["data"];
+                    byte[] buff = (bool)o["hex"]
+                        ? Global.Hex2Byte(data)
+                        : Global.GetEncoding().GetBytes(data);
+                    ShowData($" → receive from [{o["client"]}]", buff);
+                    //适配一下通用通道
+                    LuaApis.SendChannelsReceived(
+                        "netlab",
+                        new { client = (string)o["client"], data = buff }
+                    );
+                    break;
+                case "error":
+                    ShowData($"❔ error:{o["msg"]}");
+                    break;
+                default:
+                    break;
+            }
+        }
+        catch (System.Exception ex)
+        {
+            //非 JSON / 未知消息：忽略即可，仅记录
+            Tools.Logger.Swallowed("netlab message", ex);
+        }
+    }
 
     private bool _connecting = false;
     public bool Connecting
@@ -400,7 +311,7 @@ public partial class tcpTest : Page, INotifyPropertyChanged
             }
             catch (Exception e)
             {
-                //ShowData($"📢 Create failed, {e.Message}");
+                Tools.Logger.Swallowed("netlab connect", e);
             }
         });
         Connecting = false;
