@@ -87,11 +87,12 @@
   重复的 `ShowData` 方法体改为一行转发（`ce4b4c8`）
 - [x] **值转换器集中**：`App.xaml` 统一声明 8 个转换器，删除 9 处页面/窗口重复声明（`5a5f710`）
 - [x] **`RefreshIp` 去重**：抽到 `Tools/NetworkHelper.cs`（`64e388d`）
+- [x] **`tcpTest` 内部 `ws`/`wsV6` 去重**：合并为 `CreateHeartbeat` / `SetupWebSocket` /
+  `HandleNetlabMessage`，该文件 495 → 370 行（`60dfbab`）
 
 尚未做（中高风险，建议后续逐步、每步独立提交）：
 
 - [ ] 共享网络 VM 基类（消除 5 份 `SetProperty` / `IsConnected` 等样板；注意 WPF Page 不能自定义基类，需组合）
 - [ ] 本地监听面板 / 发送面板 UserControl（`TcpLocal`/`UdpLocal`/`SocketClient`/`tcpTest`）
 - [ ] `LuaChannelBridge`（统一通道注册/注销；需先给 `LuaApis` 补注销 API）
-- [ ] `tcpTest` 内部 `ws`/`wsV6` 双份去重（单文件，自包含）
 - [ ] Mqtt 内联 `ShowDataRaw`（6 处）统一走 helper（其标题/颜色各异，需逐个核对）
