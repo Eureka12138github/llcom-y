@@ -102,7 +102,7 @@
           <TextBlock Text="{DynamicResource OpenPort_port}" />
         </WrapPanel>
       </Button>
-      <!--  帮助（扁平纯图标，与 ☰/🌐 一致）  -->
+      <!--  帮助：扁平纯图标（常态无框；悬停中性浅灰）  -->
       <Button
         Name="HelpButton"
         Grid.Column="5"
