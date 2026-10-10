@@ -20,7 +20,7 @@
 | 文件 | 行数 | 说明 |
 |---|---|---|
 | `View/MainWindow.xaml.cs` | ~730 | 导航 + Lua 运行等 UI 密集逻辑；日志打印/升级热更已下沉服务 |
-| `LuaEnv/LuaEnv.cs` | 550 | 内嵌 Luat 协程框架的 Lua 源码字符串 |
+| `LuaEnv/LuaEnv.cs` | ~256 | Lua 宿主/加载器；Luat 框架源码已抽为 `LuaEnv/sys.lua` 嵌入资源 |
 | `ViewModels/MainViewModel.cs` | ~526 | 主窗口串口控制区 |
 | `Pages/SocketClientPage.xaml.cs` | ~481 | TCP 客户端工具页 |
 | `Pages/tcpTest.xaml.cs` | ~476 | TCP 测试工具页 |

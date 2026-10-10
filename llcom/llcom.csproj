@@ -80,6 +80,7 @@
     <Resource Include="llcom.ico" />
     <Resource Include="FodyWeavers.xml" />
     <EmbeddedResource Include="Lua.xshd" />
+    <EmbeddedResource Include="LuaEnv\sys.lua" />
     <EmbeddedResource Include="costura32\*.dll" />
     <EmbeddedResource Include="costura64\*.dll" />
   </ItemGroup>
