@@ -27,17 +27,17 @@
         <ScrollViewer>
           <StackPanel Margin="10,0,0,0">
             <CheckBox
-              Margin="5"
+              Margin="8"
               Content="{DynamicResource SettingAutoReconnect}"
               IsChecked="{Binding autoReconnect}"
             />
             <Button
               Name="OpenLogButton"
-              Margin="5"
+              Margin="8"
               Click="OpenLogButton_Click"
               Content="{DynamicResource SettingOpenLogFolder}"
             />
-            <WrapPanel Margin="5">
+            <WrapPanel Margin="8">
               <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingShowFormat}" />
               <ComboBox Name="showHexComboBox" Width="170" SelectedIndex="{Binding showHexFormat}">
                 <ComboBoxItem Content="{DynamicResource SettingShowBoth}" />
@@ -46,21 +46,21 @@
               </ComboBox>
             </WrapPanel>
             <CheckBox
-              Margin="5"
+              Margin="8"
               Content="{DynamicResource SettingShowSend}"
               IsChecked="{Binding showSend}"
             />
             <CheckBox
-              Margin="5"
+              Margin="8"
               Content="{DynamicResource SettingShowSendRaw}"
               IsChecked="{Binding showSendRaw}"
             />
             <CheckBox
-              Margin="5"
+              Margin="8"
               Content="{DynamicResource SettingKeepTop}"
               IsChecked="{Binding topmost}"
             />
-            <StackPanel Margin="5" Orientation="Horizontal">
+            <StackPanel Margin="8" Orientation="Horizontal">
               <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingUartTimeout}" />
               <TextBox
                 MinWidth="50"
@@ -73,16 +73,16 @@
               />
             </StackPanel>
             <CheckBox
-              Margin="5"
+              Margin="8"
               Content="{DynamicResource SettingSplitByEmpty}"
               IsChecked="{Binding bitDelay}"
             />
             <CheckBox
-              Margin="5"
+              Margin="8"
               Content="{DynamicResource SettingTerminal}"
               IsChecked="{Binding terminal}"
             />
-            <WrapPanel Margin="5">
+            <WrapPanel Margin="8">
               <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingDataBits}" />
               <ComboBox
                 Name="dataBitsComboBox"
@@ -95,7 +95,7 @@
                 <ComboBoxItem Content="8" Tag="8" />
               </ComboBox>
             </WrapPanel>
-            <WrapPanel Margin="5">
+            <WrapPanel Margin="8">
               <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingStopBit}" />
               <ComboBox
                 Name="stopBitComboBox"
@@ -107,7 +107,7 @@
                 <ComboBoxItem Content="1.5" />
               </ComboBox>
             </WrapPanel>
-            <WrapPanel Margin="5">
+            <WrapPanel Margin="8">
               <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingParity}" />
               <ComboBox
                 Name="dataCheckComboBox"
@@ -121,7 +121,7 @@
                 <ComboBoxItem Content="{DynamicResource SettingParitySpace}" />
               </ComboBox>
             </WrapPanel>
-            <WrapPanel Margin="5">
+            <WrapPanel Margin="8">
               <TextBlock VerticalAlignment="Center" Text="{DynamicResource Encoding}" />
               <ComboBox
                 Name="encodingComboBox"
@@ -149,7 +149,8 @@
             />
             <Button
               Name="newScriptButton"
-              Margin="3,0,0,0"
+              Style="{StaticResource IconButton}"
+              Margin="4,0,0,0"
               Click="NewScriptButton_Click"
               ToolTip="{DynamicResource LuaNewScript}"
             >
@@ -160,7 +161,8 @@
             </Button>
             <Button
               Name="testScriptButton"
-              Margin="3,0,0,0"
+              Style="{StaticResource IconButton}"
+              Margin="4,0,0,0"
               Click="TestScriptButton_Click"
               ToolTip="{DynamicResource SettingLuaTestScript}"
             >
@@ -168,7 +170,8 @@
             </Button>
             <Button
               Name="openScriptFolderButton"
-              Margin="3,0,0,0"
+              Style="{StaticResource IconButton}"
+              Margin="4,0,0,0"
               Click="OpenScriptFolderButton_Click"
               ToolTip="{DynamicResource LuaOpenFolder}"
             >
@@ -179,7 +182,8 @@
             </Button>
             <Button
               Name="apiDocumentButton"
-              Margin="3,0,0,0"
+              Style="{StaticResource IconButton}"
+              Margin="4,0,0,0"
               Click="ApiDocumentButton_Click"
               ToolTip="{DynamicResource LuaApiReference}"
             >
@@ -191,7 +195,8 @@
             <TextBox Name="newLuaFileNameTextBox" Width="90" Text="new script" />
             <Button
               Name="newLuaFilebutton"
-              Margin="3,0,0,0"
+              Style="{StaticResource IconButton}"
+              Margin="4,0,0,0"
               HorizontalAlignment="Center"
               VerticalAlignment="Center"
               Click="NewLuaFilebutton_Click"
@@ -201,7 +206,8 @@
             </Button>
             <Button
               Name="newLuaFileCancelbutton"
-              Margin="3,0,0,0"
+              Style="{StaticResource IconButton}"
+              Margin="4,0,0,0"
               HorizontalAlignment="Center"
               VerticalAlignment="Center"
               Click="NewLuaFileCancelbutton_Click"
@@ -212,16 +218,17 @@
           </WrapPanel>
           <WrapPanel Name="luaTestWrapPanel" Grid.Row="1" Margin="3" Visibility="Collapsed">
             <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingLuaTestInput}" />
-            <TextBox Name="luaTestTextBox" Margin="3,0,0,0" Width="155" Text="uart data" />
+            <TextBox Name="luaTestTextBox" Margin="4,0,0,0" Width="155" Text="uart data" />
             <CheckBox
               Name="luaTestHexCheck"
-              Margin="3,0,0,0"
+              Margin="4,0,0,0"
               Content="HEX"
               IsChecked="{Binding luaTestHex}"
             />
             <Button
               Name="luaTestbutton"
-              Margin="3,0,0,0"
+              Style="{StaticResource IconButton}"
+              Margin="4,0,0,0"
               HorizontalAlignment="Center"
               VerticalAlignment="Center"
               Click="LuaTestbutton_Click"
@@ -234,7 +241,8 @@
             </Button>
             <Button
               Name="luaTestCancelbutton"
-              Margin="3,0,0,0"
+              Style="{StaticResource IconButton}"
+              Margin="4,0,0,0"
               HorizontalAlignment="Center"
               VerticalAlignment="Center"
               Click="LuaTestCancelbutton_Click"
@@ -252,7 +260,7 @@
             LostFocus="TextEditor_LostFocus"
             ShowLineNumbers="True"
           />
-          <WrapPanel Grid.Row="3" Margin="5">
+          <WrapPanel Grid.Row="3" Margin="8">
             <TextBlock Text="{DynamicResource SettingLuaText1}" TextWrapping="Wrap" />
             <TextBlock Text="{DynamicResource SettingLuaText2}" TextWrapping="Wrap" />
             <TextBlock Text="{DynamicResource SettingLuaText3}" TextWrapping="Wrap" />
@@ -277,7 +285,8 @@
             />
             <Button
               Name="newScriptButtonRev"
-              Margin="3,0,0,0"
+              Style="{StaticResource IconButton}"
+              Margin="4,0,0,0"
               Click="newScriptButtonRev_Click"
               ToolTip="{DynamicResource LuaNewScript}"
             >
@@ -288,7 +297,8 @@
             </Button>
             <Button
               Name="testScriptButtonRev"
-              Margin="3,0,0,0"
+              Style="{StaticResource IconButton}"
+              Margin="4,0,0,0"
               Click="testScriptButtonRev_Click"
               ToolTip="{DynamicResource SettingLuaTestScript}"
             >
@@ -296,7 +306,8 @@
             </Button>
             <Button
               Name="openScriptFolderButtonRev"
-              Margin="3,0,0,0"
+              Style="{StaticResource IconButton}"
+              Margin="4,0,0,0"
               Click="openScriptFolderButtonRev_Click"
               ToolTip="{DynamicResource LuaOpenFolder}"
             >
@@ -307,7 +318,8 @@
             </Button>
             <Button
               Name="apiDocumentButtonRev"
-              Margin="3,0,0,0"
+              Style="{StaticResource IconButton}"
+              Margin="4,0,0,0"
               Click="ApiDocumentButton_Click"
               ToolTip="{DynamicResource LuaApiReference}"
             >
@@ -319,7 +331,8 @@
             <TextBox Name="newLuaFileNameTextBoxRev" Width="90" Text="new script" />
             <Button
               Name="newLuaFilebuttonRev"
-              Margin="3,0,0,0"
+              Style="{StaticResource IconButton}"
+              Margin="4,0,0,0"
               HorizontalAlignment="Center"
               VerticalAlignment="Center"
               Click="newLuaFilebuttonRev_Click"
@@ -329,7 +342,8 @@
             </Button>
             <Button
               Name="newLuaFileCancelbuttonRev"
-              Margin="3,0,0,0"
+              Style="{StaticResource IconButton}"
+              Margin="4,0,0,0"
               HorizontalAlignment="Center"
               VerticalAlignment="Center"
               Click="newLuaFileCancelbuttonRev_Click"
@@ -348,16 +362,17 @@
             </Grid.RowDefinitions>
             <WrapPanel Name="luaTestWrapPanelRev" Grid.Row="0" Margin="3" Visibility="Collapsed">
               <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingLuaTestInput}" />
-              <TextBox Name="luaTestTextBoxRev" Margin="3,0,0,0" Width="155" Text="uart data" />
+              <TextBox Name="luaTestTextBoxRev" Margin="4,0,0,0" Width="155" Text="uart data" />
               <CheckBox
                 Name="luaTestHexCheckRev"
-                Margin="3,0,0,0"
+                Margin="4,0,0,0"
                 Content="HEX"
                 IsChecked="{Binding luaTestHexRev}"
               />
               <Button
                 Name="luaTestbuttonRev"
-                Margin="3,0,0,0"
+                Style="{StaticResource IconButton}"
+                Margin="4,0,0,0"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Click="luaTestbuttonRev_Click"
@@ -370,7 +385,8 @@
               </Button>
               <Button
                 Name="luaTestCancelbuttonRev"
-                Margin="3,0,0,0"
+                Style="{StaticResource IconButton}"
+                Margin="4,0,0,0"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Click="luaTestCancelbuttonRev_Click"
@@ -389,7 +405,7 @@
             LostFocus="textEditorRev_LostFocus"
             ShowLineNumbers="True"
           />
-          <WrapPanel Grid.Row="3" Margin="5">
+          <WrapPanel Grid.Row="3" Margin="8">
             <TextBlock Text="{DynamicResource SettingLuaText1Recv}" TextWrapping="Wrap" />
             <TextBlock Text="{DynamicResource SettingLuaText2Recv}" TextWrapping="Wrap" />
             <TextBlock Text="{DynamicResource SettingLuaText3}" TextWrapping="Wrap" />

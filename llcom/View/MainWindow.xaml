@@ -52,7 +52,7 @@
     />
 
     <!--  发送数据区  -->
-    <Grid Grid.Row="1" Margin="2">
+    <Grid Grid.Row="1" Margin="4">
       <Grid.RowDefinitions>
         <RowDefinition Height="*" />
         <RowDefinition Height="*" />
@@ -70,7 +70,7 @@
         Name="openClosePortButton"
         Grid.RowSpan="2"
         Grid.Column="3"
-        Margin="2"
+        Margin="4"
         Command="{Binding OpenClosePortCommand}"
       >
         <WrapPanel>
@@ -81,7 +81,7 @@
       <Button
         Name="clearLogButton"
         Grid.Column="4"
-        Margin="2"
+        Margin="4"
         Click="ClearLogButton_Click"
         Content="{DynamicResource ClearLog}"
       />
@@ -89,7 +89,7 @@
         Name="MoreSettingButton"
         Grid.Row="1"
         Grid.Column="4"
-        Margin="2"
+        Margin="4"
         Click="MoreSettingButton_Click"
         Content="{DynamicResource MoreSettings}"
         ToolTip="{DynamicResource MoreSettingsTip}"
@@ -99,7 +99,7 @@
         Grid.RowSpan="2"
         Grid.Column="5"
         Height="50"
-        Margin="2"
+        Margin="4"
         VerticalContentAlignment="Top"
         AcceptsReturn="True"
         FontFamily="Consolas"
@@ -111,7 +111,7 @@
         Name="sendDataButton"
         Grid.RowSpan="2"
         Grid.Column="6"
-        Margin="2"
+        Margin="4"
         Command="{Binding SendCommand}"
         Content="{DynamicResource SendDataButton}"
         ToolTip="{DynamicResource SendDataButtonTip}"
@@ -297,7 +297,7 @@
                       />
                       <TextBlock
                         Grid.Column="0"
-                        Margin="2"
+                        Margin="4"
                         HorizontalAlignment="Center"
                         Cursor="Cross"
                         MouseRightButtonDown="TextBlock_MouseRightButtonDown"
@@ -323,7 +323,7 @@
                       />
                       <CheckBox
                         Grid.Column="3"
-                        Margin="2"
+                        Margin="4"
                         HorizontalAlignment="Center"
                         IsChecked="{Binding hex}"
                       />
@@ -610,6 +610,7 @@
               />
               <Button
                 Name="newScriptButton"
+                Style="{StaticResource IconButton}"
                 Margin="3,0,0,0"
                 Click="NewScriptButton_Click"
                 ToolTip="{DynamicResource LuaNewScript}"
@@ -621,6 +622,7 @@
               </Button>
               <Button
                 Name="runScriptButton"
+                Style="{StaticResource IconButton}"
                 Margin="2,0,0,0"
                 Click="RunScriptButton_Click"
                 ToolTip="{DynamicResource LuaRunScript}"
@@ -629,6 +631,7 @@
               </Button>
               <Button
                 Name="openScriptFolderButton"
+                Style="{StaticResource IconButton}"
                 Margin="2,0,0,0"
                 Click="OpenScriptFolderButton_Click"
                 ToolTip="{DynamicResource LuaOpenFolder}"
@@ -640,6 +643,7 @@
               </Button>
               <Button
                 Name="refreshScriptListButton"
+                Style="{StaticResource IconButton}"
                 Margin="2,0,0,0"
                 Click="RefreshScriptListButton_Click"
                 ToolTip="{DynamicResource LuaRefreshList}"
@@ -648,6 +652,7 @@
               </Button>
               <Button
                 Name="apiDocumentButton"
+                Style="{StaticResource IconButton}"
                 Margin="2,0,0,0"
                 Click="ApiDocumentButton_Click"
                 ToolTip="{DynamicResource LuaApiReference}"
@@ -656,6 +661,7 @@
               </Button>
               <Button
                 Name="scriptShareButton"
+                Style="{StaticResource IconButton}"
                 Margin="2,0,0,0"
                 Click="ScriptShareButton_Click"
                 ToolTip="{DynamicResource LuaGetShare}"
@@ -668,6 +674,7 @@
               <TextBox Name="newLuaFileNameTextBox" Width="90" Text="new script" />
               <Button
                 Name="newLuaFilebutton"
+                Style="{StaticResource IconButton}"
                 Margin="3,0,0,0"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
@@ -678,6 +685,7 @@
               </Button>
               <Button
                 Name="newLuaFileCancelbutton"
+                Style="{StaticResource IconButton}"
                 Margin="3,0,0,0"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
@@ -723,6 +731,7 @@
               </Grid.ColumnDefinitions>
               <Button
                 Name="stopLuaButton"
+                Style="{StaticResource IconButton}"
                 Margin="0,3,3,3"
                 Click="StopLuaButton_Click"
                 Foreground="{DynamicResource Brush.State.Danger}"
@@ -732,6 +741,7 @@
               </Button>
               <Button
                 Name="pauseLuaPrintButton"
+                Style="{StaticResource IconButton}"
                 Grid.Column="1"
                 Margin="0,3,3,3"
                 Click="PauseLuaPrintButton_Click"
@@ -749,6 +759,7 @@
               />
               <Button
                 Name="sendLuaScriptButton"
+                Style="{StaticResource IconButton}"
                 Grid.Column="3"
                 Margin="3,3,0,3"
                 Click="SendLuaScriptButton_Click"
