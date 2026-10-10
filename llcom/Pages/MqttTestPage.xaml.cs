@@ -14,7 +14,6 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -106,14 +105,7 @@ public partial class MqttTestPage : Page, INotifyPropertyChanged
                     }
                 )
             );
-            Tools.Logger.ShowDataRaw(
-                new Tools.DataShowRaw
-                {
-                    title = $"MQTT event: ✔ connected",
-                    data = new byte[0],
-                    color = Brushes.DarkGreen,
-                }
-            );
+            ShowMqtt($"MQTT event: ✔ connected");
         });
         mqttClient.UseDisconnectedHandler(e =>
         {
@@ -127,14 +119,7 @@ public partial class MqttTestPage : Page, INotifyPropertyChanged
                     }
                 )
             );
-            Tools.Logger.ShowDataRaw(
-                new Tools.DataShowRaw
-                {
-                    title = $"MQTT event: ❌ disconnected",
-                    data = new byte[0],
-                    color = Brushes.DarkGreen,
-                }
-            );
+            ShowMqtt($"MQTT event: ❌ disconnected");
         });
         mqttClient.UseApplicationMessageReceivedHandler(e =>
         {
@@ -149,14 +134,9 @@ public partial class MqttTestPage : Page, INotifyPropertyChanged
                 }
             );
             //显示数据
-            Tools.Logger.ShowDataRaw(
-                new Tools.DataShowRaw
-                {
-                    title =
-                        $"MQTT → {e.ApplicationMessage.Topic}({(int)e.ApplicationMessage.QualityOfServiceLevel})",
-                    data = e.ApplicationMessage.Payload,
-                    color = Brushes.DarkGreen,
-                }
+            ShowMqtt(
+                $"MQTT → {e.ApplicationMessage.Topic}({(int)e.ApplicationMessage.QualityOfServiceLevel})",
+                e.ApplicationMessage.Payload
             );
         });
 
@@ -185,6 +165,10 @@ public partial class MqttTestPage : Page, INotifyPropertyChanged
             }
         );
     }
+
+    /// <summary>统一 MQTT 数据日志（原为 6 处内联 ShowDataRaw）。</summary>
+    private void ShowMqtt(string title, byte[] data = null, bool send = false) =>
+        Tools.NetworkLog.Show("", title, data, send);
 
     private void ConnectButton_Click(object sender, RoutedEventArgs e)
     {
@@ -254,14 +238,8 @@ public partial class MqttTestPage : Page, INotifyPropertyChanged
                                         != System.Net.Security.SslPolicyErrors.None
                                     )
                                     {
-                                        Tools.Logger.ShowDataRaw(
-                                            new Tools.DataShowRaw
-                                            {
-                                                title =
-                                                    $"MQTT event: ‼ ssl error {eventArgs.SslPolicyErrors}",
-                                                data = new byte[0],
-                                                color = Brushes.DarkGreen,
-                                            }
+                                        ShowMqtt(
+                                            $"MQTT event: ‼ ssl error {eventArgs.SslPolicyErrors}"
                                         );
                                     }
                                     return true;
@@ -272,14 +250,7 @@ public partial class MqttTestPage : Page, INotifyPropertyChanged
                     }
                     catch
                     {
-                        Tools.Logger.ShowDataRaw(
-                            new Tools.DataShowRaw
-                            {
-                                title = $"MQTT error: ‼ ssl certificate pfx file error",
-                                data = new byte[0],
-                                color = Brushes.DarkGreen,
-                            }
-                        );
+                        ShowMqtt($"MQTT error: ‼ ssl certificate pfx file error");
                         return;
                     }
                 }
@@ -380,13 +351,10 @@ public partial class MqttTestPage : Page, INotifyPropertyChanged
                 .WithQualityOfServiceLevel(qos)
                 .Build();
             mqttClient.PublishAsync(message, CancellationToken.None).Wait();
-            Tools.Logger.ShowDataRaw(
-                new Tools.DataShowRaw
-                {
-                    title = $"MQTT ← {message.Topic}({(int)message.QualityOfServiceLevel})",
-                    data = message.Payload ?? new byte[0],
-                    color = Brushes.DarkRed,
-                }
+            ShowMqtt(
+                $"MQTT ← {message.Topic}({(int)message.QualityOfServiceLevel})",
+                message.Payload,
+                send: true
             );
             return true;
         }

@@ -95,4 +95,5 @@
 - [ ] 共享网络 VM 基类（消除 5 份 `SetProperty` / `IsConnected` 等样板；注意 WPF Page 不能自定义基类，需组合）
 - [ ] 本地监听面板 / 发送面板 UserControl（`TcpLocal`/`UdpLocal`/`SocketClient`/`tcpTest`）
 - [ ] `LuaChannelBridge`（统一通道注册/注销；需先给 `LuaApis` 补注销 API）
-- [ ] Mqtt 内联 `ShowDataRaw`（6 处）统一走 helper（其标题/颜色各异，需逐个核对）
+- [x] **Mqtt 内联 `ShowDataRaw`（6 处）统一走 helper**：抽出 `ShowMqtt(title, data, send)` → `NetworkLog.Show`，
+  收发颜色语义等价（发送红 / 接收绿）；`MqttTestPage` 不再直接引用 `Brushes`
