@@ -154,7 +154,7 @@
               ToolTip="{DynamicResource LuaNewScript}"
             >
               <Grid>
-                <fa:FontAwesome Foreground="LightSkyBlue" Icon="File" />
+                <fa:FontAwesome Foreground="{DynamicResource Brush.Icon.New}" Icon="File" />
                 <fa:FontAwesome Icon="FileCodeOutline" />
               </Grid>
             </Button>
@@ -164,7 +164,7 @@
               Click="TestScriptButton_Click"
               ToolTip="{DynamicResource SettingLuaTestScript}"
             >
-              <fa:FontAwesome Foreground="DarkGreen" Icon="Play" />
+              <fa:FontAwesome Foreground="{DynamicResource Brush.Icon.Run}" Icon="Play" />
             </Button>
             <Button
               Name="openScriptFolderButton"
@@ -173,7 +173,7 @@
               ToolTip="{DynamicResource LuaOpenFolder}"
             >
               <Grid>
-                <fa:FontAwesome Foreground="Yellow" Icon="FolderOpen" />
+                <fa:FontAwesome Foreground="{DynamicResource Brush.Icon.Folder}" Icon="FolderOpen" />
                 <fa:FontAwesome Icon="FolderOutlinepenOutline" />
               </Grid>
             </Button>
@@ -183,7 +183,7 @@
               Click="ApiDocumentButton_Click"
               ToolTip="{DynamicResource LuaApiReference}"
             >
-              <fa:FontAwesome Foreground="DarkSlateGray" Icon="Book" />
+              <fa:FontAwesome Foreground="{DynamicResource Brush.Icon.Doc}" Icon="Book" />
             </Button>
           </WrapPanel>
           <WrapPanel Name="newLuaFileWrapPanel" Grid.Row="1" Margin="3" Visibility="Collapsed">
@@ -197,7 +197,7 @@
               Click="NewLuaFilebutton_Click"
               ToolTip="{DynamicResource LuaConfirmCreate}"
             >
-              <fa:FontAwesome Foreground="Green" Icon="Check" />
+              <fa:FontAwesome Foreground="{DynamicResource Brush.State.Success}" Icon="Check" />
             </Button>
             <Button
               Name="newLuaFileCancelbutton"
@@ -207,7 +207,7 @@
               Click="NewLuaFileCancelbutton_Click"
               ToolTip="{DynamicResource LuaCancel}"
             >
-              <fa:FontAwesome Foreground="Red" Icon="Ban" />
+              <fa:FontAwesome Foreground="{DynamicResource Brush.State.Error}" Icon="Ban" />
             </Button>
           </WrapPanel>
           <WrapPanel Name="luaTestWrapPanel" Grid.Row="1" Margin="3" Visibility="Collapsed">
@@ -228,8 +228,8 @@
               ToolTip="{DynamicResource SettingLuaTestButton}"
             >
               <Grid>
-                <fa:FontAwesome Foreground="LightBlue" Icon="PaperPlane" />
-                <fa:FontAwesome Foreground="Black" Icon="PaperPlaneOutline" />
+                <fa:FontAwesome Foreground="{DynamicResource Brush.Icon.Send}" Icon="PaperPlane" />
+                <fa:FontAwesome Foreground="{DynamicResource Brush.Foreground}" Icon="PaperPlaneOutline" />
               </Grid>
             </Button>
             <Button
@@ -240,7 +240,7 @@
               Click="LuaTestCancelbutton_Click"
               ToolTip="{DynamicResource LuaCancel}"
             >
-              <fa:FontAwesome Foreground="Red" Icon="Ban" />
+              <fa:FontAwesome Foreground="{DynamicResource Brush.State.Error}" Icon="Ban" />
             </Button>
           </WrapPanel>
           <avalonEdit:TextEditor
@@ -282,7 +282,7 @@
               ToolTip="{DynamicResource LuaNewScript}"
             >
               <Grid>
-                <fa:FontAwesome Foreground="LightSkyBlue" Icon="File" />
+                <fa:FontAwesome Foreground="{DynamicResource Brush.Icon.New}" Icon="File" />
                 <fa:FontAwesome Icon="FileCodeOutline" />
               </Grid>
             </Button>
@@ -292,7 +292,7 @@
               Click="testScriptButtonRev_Click"
               ToolTip="{DynamicResource SettingLuaTestScript}"
             >
-              <fa:FontAwesome Foreground="DarkGreen" Icon="Play" />
+              <fa:FontAwesome Foreground="{DynamicResource Brush.Icon.Run}" Icon="Play" />
             </Button>
             <Button
               Name="openScriptFolderButtonRev"
@@ -301,7 +301,7 @@
               ToolTip="{DynamicResource LuaOpenFolder}"
             >
               <Grid>
-                <fa:FontAwesome Foreground="Yellow" Icon="FolderOpen" />
+                <fa:FontAwesome Foreground="{DynamicResource Brush.Icon.Folder}" Icon="FolderOpen" />
                 <fa:FontAwesome Icon="FolderOutlinepenOutline" />
               </Grid>
             </Button>
@@ -311,7 +311,7 @@
               Click="ApiDocumentButton_Click"
               ToolTip="{DynamicResource LuaApiReference}"
             >
-              <fa:FontAwesome Foreground="DarkSlateGray" Icon="Book" />
+              <fa:FontAwesome Foreground="{DynamicResource Brush.Icon.Doc}" Icon="Book" />
             </Button>
           </WrapPanel>
           <WrapPanel Name="newLuaFileWrapPanelRev" Grid.Row="1" Margin="3" Visibility="Collapsed">
@@ -325,7 +325,7 @@
               Click="newLuaFilebuttonRev_Click"
               ToolTip="{DynamicResource LuaConfirmCreate}"
             >
-              <fa:FontAwesome Foreground="Green" Icon="Check" />
+              <fa:FontAwesome Foreground="{DynamicResource Brush.State.Success}" Icon="Check" />
             </Button>
             <Button
               Name="newLuaFileCancelbuttonRev"
@@ -335,7 +335,7 @@
               Click="newLuaFileCancelbuttonRev_Click"
               ToolTip="{DynamicResource LuaCancel}"
             >
-              <fa:FontAwesome Foreground="Red" Icon="Ban" />
+              <fa:FontAwesome Foreground="{DynamicResource Brush.State.Error}" Icon="Ban" />
             </Button>
           </WrapPanel>
           <Grid
@@ -364,8 +364,8 @@
                 ToolTip="{DynamicResource SettingLuaTestButton}"
               >
                 <Grid>
-                  <fa:FontAwesome Foreground="LightBlue" Icon="PaperPlane" />
-                  <fa:FontAwesome Foreground="Black" Icon="PaperPlaneOutline" />
+                  <fa:FontAwesome Foreground="{DynamicResource Brush.Icon.Send}" Icon="PaperPlane" />
+                  <fa:FontAwesome Foreground="{DynamicResource Brush.Foreground}" Icon="PaperPlaneOutline" />
                 </Grid>
               </Button>
               <Button
@@ -376,7 +376,7 @@
                 Click="luaTestCancelbuttonRev_Click"
                 ToolTip="{DynamicResource LuaCancel}"
               >
-                <fa:FontAwesome Foreground="Red" Icon="Ban" />
+                <fa:FontAwesome Foreground="{DynamicResource Brush.State.Error}" Icon="Ban" />
               </Button>
             </WrapPanel>
           </Grid>

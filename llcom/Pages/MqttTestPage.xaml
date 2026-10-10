@@ -47,7 +47,7 @@
             </ComboBox>
           </Grid>
           <TextBlock Grid.Row="1" Text="{DynamicResource MQTTSubcribeList}" />
-          <ListBox Name="subListBox" Grid.Row="2" Background="LightGray">
+          <ListBox Name="subListBox" Grid.Row="2" Background="{DynamicResource Brush.Surface.Muted}">
             <ListBoxItem Content="{DynamicResource MQTTNotConnect}" />
           </ListBox>
           <TextBox

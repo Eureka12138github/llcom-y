@@ -12,6 +12,7 @@
         <ResourceDictionary Source="pack://application:,,,/languages/zh-cn.xaml" />
         <ResourceDictionary Source="pack://application:,,,/AdonisUI;component/ColorSchemes/Light.xaml" />
         <ResourceDictionary Source="pack://application:,,,/AdonisUI.ClassicTheme;component/Resources.xaml" />
+        <ResourceDictionary Source="Styles/DesignTokens.xaml" />
       </ResourceDictionary.MergedDictionaries>
       <!-- 全局值转换器（原先在多个页面各自重复声明，现集中于此） -->
       <pages:boolVisibe x:Key="boolVisibeConverter" />

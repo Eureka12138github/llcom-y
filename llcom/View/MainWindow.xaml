@@ -250,8 +250,8 @@
               >
                 <MenuItem.Header>
                   <Grid>
-                    <fa:FontAwesome Foreground="LightYellow" Icon="StickyNote" />
-                    <fa:FontAwesome Foreground="Black" Icon="StickyNoteOutline" />
+                    <fa:FontAwesome Foreground="{DynamicResource Brush.Icon.NoteBack}" Icon="StickyNote" />
+                    <fa:FontAwesome Foreground="{DynamicResource Brush.Foreground}" Icon="StickyNoteOutline" />
                   </Grid>
                 </MenuItem.Header>
                 <!-- 页面切换：动态绑定 10 页（QuickSendViewModel.Pages），点击直接切换 -->
@@ -290,7 +290,7 @@
                       </Grid.ColumnDefinitions>
                       <Grid
                         Margin="1"
-                        Background="#F6F6F6"
+                        Background="{DynamicResource Brush.Surface.Subtle}"
                         Cursor="Cross"
                         MouseRightButtonDown="TextBlock_MouseRightButtonDown"
                         Tag="{Binding}"
@@ -337,7 +337,7 @@
                         MouseRightButtonDown="ScriptIcon_RightClick"
                         Tag="{Binding}"
                       >
-                        <fa:FontAwesome Foreground="DimGray" Icon="FileText">
+                        <fa:FontAwesome Foreground="{DynamicResource Brush.Foreground.Muted}" Icon="FileText">
                           <fa:FontAwesome.Style>
                             <Style TargetType="fa:FontAwesome">
                               <Setter Property="FontSize" Value="16" />
@@ -373,7 +373,7 @@
                         Tag="{Binding}"
                         ToolTip="{DynamicResource QuickSendRecvScriptParaSet}"
                       >
-                        <fa:FontAwesome Foreground="DimGray" Icon="Cog">
+                        <fa:FontAwesome Foreground="{DynamicResource Brush.Foreground.Muted}" Icon="Cog">
                           <fa:FontAwesome.Style>
                             <Style TargetType="fa:FontAwesome">
                               <Setter Property="FontSize" Value="18" />
@@ -412,7 +412,7 @@
               Name="QuickListNameStackPanel"
               Grid.Column="1"
               HorizontalAlignment="Left"
-              Background="#F6F6F6"
+              Background="{DynamicResource Brush.Surface.Subtle}"
               Cursor="Cross"
               MouseRightButtonDown="QuickListNameStackPanel_MouseRightButtonDown"
               Orientation="Horizontal"
@@ -463,8 +463,8 @@
             />
           </Popup>
           <Popup Name="recvScriptParaPopup" Placement="Bottom" VerticalOffset="5" StaysOpen="False">
-            <Grid Background="White">
-              <Border BorderBrush="DarkGray" BorderThickness="1">
+            <Grid Background="{DynamicResource Brush.Surface}">
+              <Border BorderBrush="{DynamicResource Brush.Border}" BorderThickness="1">
                 <avalonEdit:TextEditor
                   xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
                   Name="recvScriptParaBox"
@@ -493,7 +493,7 @@
                   Tag="{Binding ElementName=recvScriptParaBox}"
                   MouseLeftButtonUp="ScriptParaConfirm_Click"
                 >
-                  <fa:FontAwesome Icon="Check" Foreground="Green" FontSize="18" />
+                  <fa:FontAwesome Icon="Check" Foreground="{DynamicResource Brush.State.Success}" FontSize="18" />
                   <TextBlock.Style>
                     <Style TargetType="{x:Type TextBlock}">
                       <Setter Property="Opacity" Value="0.25" />
@@ -510,7 +510,7 @@
                   Grid.Column="1"
                   MouseLeftButtonUp="ScriptParaCancel_Click"
                 >
-                  <fa:FontAwesome Icon="Times" Foreground="Red" FontSize="18" />
+                  <fa:FontAwesome Icon="Times" Foreground="{DynamicResource Brush.State.Error}" FontSize="18" />
                   <TextBlock.Style>
                     <Style TargetType="{x:Type TextBlock}">
                       <Setter Property="Opacity" Value="0.25" />
@@ -615,7 +615,7 @@
                 ToolTip="{DynamicResource LuaNewScript}"
               >
                 <Grid>
-                  <fa:FontAwesome Foreground="LightSkyBlue" Icon="File" />
+                  <fa:FontAwesome Foreground="{DynamicResource Brush.Icon.New}" Icon="File" />
                   <fa:FontAwesome Icon="FileCodeOutline" />
                 </Grid>
               </Button>
@@ -625,7 +625,7 @@
                 Click="RunScriptButton_Click"
                 ToolTip="{DynamicResource LuaRunScript}"
               >
-                <fa:FontAwesome Foreground="DarkGreen" Icon="Play" />
+                <fa:FontAwesome Foreground="{DynamicResource Brush.Icon.Run}" Icon="Play" />
               </Button>
               <Button
                 Name="openScriptFolderButton"
@@ -634,7 +634,7 @@
                 ToolTip="{DynamicResource LuaOpenFolder}"
               >
                 <Grid>
-                  <fa:FontAwesome Foreground="Yellow" Icon="FolderOpen" />
+                  <fa:FontAwesome Foreground="{DynamicResource Brush.Icon.Folder}" Icon="FolderOpen" />
                   <fa:FontAwesome Icon="FolderOutlinepenOutline" />
                 </Grid>
               </Button>
@@ -644,7 +644,7 @@
                 Click="RefreshScriptListButton_Click"
                 ToolTip="{DynamicResource LuaRefreshList}"
               >
-                <fa:FontAwesome Foreground="Green" Icon="Refresh" />
+                <fa:FontAwesome Foreground="{DynamicResource Brush.State.Success}" Icon="Refresh" />
               </Button>
               <Button
                 Name="apiDocumentButton"
@@ -652,7 +652,7 @@
                 Click="ApiDocumentButton_Click"
                 ToolTip="{DynamicResource LuaApiReference}"
               >
-                <fa:FontAwesome Foreground="DarkSlateGray" Icon="Book" />
+                <fa:FontAwesome Foreground="{DynamicResource Brush.Icon.Doc}" Icon="Book" />
               </Button>
               <Button
                 Name="scriptShareButton"
@@ -660,7 +660,7 @@
                 Click="ScriptShareButton_Click"
                 ToolTip="{DynamicResource LuaGetShare}"
               >
-                <fa:FontAwesome Foreground="DarkCyan" Icon="ShareAlt" />
+                <fa:FontAwesome Foreground="{DynamicResource Brush.Accent.Teal}" Icon="ShareAlt" />
               </Button>
             </WrapPanel>
             <WrapPanel Name="newLuaFileWrapPanel" Grid.Row="1" Margin="3" Visibility="Collapsed">
@@ -674,7 +674,7 @@
                 Click="NewLuaFilebutton_Click"
                 ToolTip="{DynamicResource LuaConfirmCreate}"
               >
-                <fa:FontAwesome Foreground="Green" Icon="Check" />
+                <fa:FontAwesome Foreground="{DynamicResource Brush.State.Success}" Icon="Check" />
               </Button>
               <Button
                 Name="newLuaFileCancelbutton"
@@ -684,7 +684,7 @@
                 Click="NewLuaFileCancelbutton_Click"
                 ToolTip="{DynamicResource LuaCancel}"
               >
-                <fa:FontAwesome Foreground="Red" Icon="Ban" />
+                <fa:FontAwesome Foreground="{DynamicResource Brush.State.Error}" Icon="Ban" />
               </Button>
             </WrapPanel>
             <avalonEdit:TextEditor
@@ -725,7 +725,7 @@
                 Name="stopLuaButton"
                 Margin="0,3,3,3"
                 Click="StopLuaButton_Click"
-                Foreground="DarkRed"
+                Foreground="{DynamicResource Brush.State.Danger}"
                 ToolTip="{DynamicResource LuaStop}"
               >
                 <fa:FontAwesome Name="stopLuaOrExitIcon" Icon="Stop" />
@@ -735,7 +735,7 @@
                 Grid.Column="1"
                 Margin="0,3,3,3"
                 Click="PauseLuaPrintButton_Click"
-                Foreground="ForestGreen"
+                Foreground="{DynamicResource Brush.Icon.Pause}"
                 MouseRightButtonUp="pauseLuaPrintButton_MouseRightButtonUp"
                 ToolTip="{DynamicResource LuaPause}"
               >
@@ -752,7 +752,7 @@
                 Grid.Column="3"
                 Margin="3,3,0,3"
                 Click="SendLuaScriptButton_Click"
-                Foreground="DeepSkyBlue"
+                Foreground="{DynamicResource Brush.State.Info}"
                 ToolTip="{DynamicResource LuaSendScript}"
               >
                 <fa:FontAwesome Icon="ArrowUp" />
@@ -764,7 +764,7 @@
       </TabItem>
       <TabItem>
         <TabItem.Header>
-          <fa:FontAwesome Foreground="Brown" Icon="cubes" />
+          <fa:FontAwesome Foreground="{DynamicResource Brush.Accent.Brown}" Icon="cubes" />
         </TabItem.Header>
         <Frame Name="OnlineScriptsFrame" NavigationUIVisibility="Hidden" />
       </TabItem>
@@ -810,7 +810,7 @@
     <Menu Grid.RowSpan="2" Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Top">
       <MenuItem ToolTip="{DynamicResource ChangeLanguage}">
         <MenuItem.Header>
-          <fa:FontAwesome Foreground="Blue" Icon="Globe" />
+          <fa:FontAwesome Foreground="{DynamicResource Brush.Accent.Blue}" Icon="Globe" />
         </MenuItem.Header>
         <MenuItem Click="MenuItem_Click" Header="简体中文" Tag="zh-CN" />
         <MenuItem Click="MenuItem_Click" Header="English" Tag="en-US" />

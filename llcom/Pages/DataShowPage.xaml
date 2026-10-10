@@ -30,14 +30,14 @@
             >
               <FlowDocument>
                 <Paragraph Margin="0">
-                  <Run Foreground="DarkSlateGray" Text="{Binding TimeText}" />
-                  <Run Foreground="DarkSlateGray" Text="{Binding ArrowText}" />
+                  <Run Foreground="{DynamicResource Brush.Log.Time}" Text="{Binding TimeText}" />
+                  <Run Foreground="{DynamicResource Brush.Log.Time}" Text="{Binding ArrowText}" />
                   <Run
                     FontSize="15"
                     Foreground="{Binding DataTextColor}"
                     Text="{Binding DataText}"
                   />
-                  <Run FontWeight="Bold" Foreground="Black" Text="{Binding RawTitle}" />
+                  <Run FontWeight="Bold" Foreground="{DynamicResource Brush.Foreground}" Text="{Binding RawTitle}" />
                   <Run FontSize="15" Foreground="{Binding RawTextColor}" Text="{Binding RawText}" />
                   <Run Foreground="{Binding HexTextColor}" Text="{Binding HexText}" />
                 </Paragraph>
@@ -68,7 +68,7 @@
       BorderThickness="0"
       FontFamily="Consolas,Microsoft YaHei,微软雅黑"
       FontSize="15"
-      Foreground="DarkGreen"
+      Foreground="{DynamicResource Brush.Data.Received}"
       IsReadOnly="True"
       ScrollViewer.VerticalScrollBarVisibility="Auto"
       TextWrapping="Wrap"
@@ -100,14 +100,14 @@
             >
               <FlowDocument>
                 <Paragraph Margin="0">
-                  <Run Foreground="DarkSlateGray" Text="{Binding TimeText}" />
-                  <Run Foreground="DarkSlateGray" Text="{Binding ArrowText}" />
+                  <Run Foreground="{DynamicResource Brush.Log.Time}" Text="{Binding TimeText}" />
+                  <Run Foreground="{DynamicResource Brush.Log.Time}" Text="{Binding ArrowText}" />
                   <Run
                     FontSize="15"
                     Foreground="{Binding DataTextColor}"
                     Text="{Binding DataText}"
                   />
-                  <Run FontWeight="Bold" Foreground="Black" Text="{Binding RawTitle}" />
+                  <Run FontWeight="Bold" Foreground="{DynamicResource Brush.Foreground}" Text="{Binding RawTitle}" />
                   <Run FontSize="15" Foreground="{Binding RawTextColor}" Text="{Binding RawText}" />
                   <Run Foreground="{Binding HexTextColor}" Text="{Binding HexText}" />
                 </Paragraph>
@@ -190,7 +190,7 @@
         />
         <fa:FontAwesome
           Name="UnLockIcon"
-          Foreground="Green"
+          Foreground="{DynamicResource Brush.State.Success}"
           Icon="Unlock"
           FontSize="16"
           Height="12"
@@ -211,7 +211,7 @@
       Click="SaveLogButton_Click"
       ToolTip="{DynamicResource SaveLogButton}"
       Visibility="{Binding Path=IsMouseOver, ElementName=mainGrid, Converter={StaticResource boolVisibeConverter}}"
-      BorderBrush="Black"
+      BorderBrush="{DynamicResource Brush.Foreground}"
     >
       <fa:FontAwesome Icon="Save" HorizontalAlignment="Center" FontSize="12" />
     </Button>

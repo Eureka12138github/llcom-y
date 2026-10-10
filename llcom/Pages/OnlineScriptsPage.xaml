@@ -36,7 +36,7 @@
           Click="RefreshButton_Click"
         >
           <Button.Content>
-            <fa:FontAwesome Width="20" Height="20" FontSize="20" Foreground="Black" Icon="undo" />
+            <fa:FontAwesome Width="20" Height="20" FontSize="20" Foreground="{DynamicResource Brush.Foreground}" Icon="undo" />
           </Button.Content>
         </Button>
         <Button
@@ -47,7 +47,7 @@
           Click="InfoButton_Click"
         >
           <Button.Content>
-            <fa:FontAwesome Width="20" Height="20" FontSize="20" Foreground="Black" Icon="Info" />
+            <fa:FontAwesome Width="20" Height="20" FontSize="20" Foreground="{DynamicResource Brush.Foreground}" Icon="Info" />
           </Button.Content>
         </Button>
 
@@ -60,7 +60,7 @@
                   Margin="0,2"
                   HorizontalContentAlignment="Stretch"
                   VerticalContentAlignment="Stretch"
-                  Background="White"
+                  Background="{DynamicResource Brush.Surface}"
                   Click="Button_Click"
                   Tag="{Binding}"
                 >
@@ -89,7 +89,7 @@
                         Text="{Binding Name}"
                       />
                     </Grid>
-                    <Canvas Grid.Row="1" Height="1" Margin="8" Background="Black" />
+                    <Canvas Grid.Row="1" Height="1" Margin="8" Background="{DynamicResource Brush.Foreground}" />
                     <Grid Grid.Row="2" Margin="10,0,0,0">
                       <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -100,7 +100,7 @@
                         Grid.Column="1"
                         HorizontalAlignment="Center"
                         FontSize="18"
-                        Foreground="#FF8C8C8C"
+                        Foreground="{DynamicResource Brush.Foreground.Subtle}"
                         Text="{Binding Description}"
                       />
                     </Grid>
@@ -131,7 +131,7 @@
               Width="20"
               Height="20"
               FontSize="20"
-              Foreground="Black"
+              Foreground="{DynamicResource Brush.Foreground}"
               Icon="ArrowLeft"
             />
           </Button.Content>
@@ -148,7 +148,7 @@
               Width="20"
               Height="20"
               FontSize="20"
-              Foreground="Black"
+              Foreground="{DynamicResource Brush.Foreground}"
               Icon="Question"
             />
           </Button.Content>
