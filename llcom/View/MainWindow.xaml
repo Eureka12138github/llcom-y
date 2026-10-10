@@ -307,6 +307,7 @@
         <Grid>
           <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
           </Grid.RowDefinitions>
@@ -435,7 +436,21 @@
               </Setter>
             </Style>
           </Grid.Resources>
-          <Grid>
+          <!--  当前页名（单独一行，避免窄宽度时与列标题“内容”重叠）  -->
+          <StackPanel
+            Name="QuickListNameStackPanel"
+            HorizontalAlignment="Left"
+            Background="{DynamicResource Brush.Surface.Subtle}"
+            Cursor="Cross"
+            MouseRightButtonDown="QuickListNameStackPanel_MouseRightButtonDown"
+            Orientation="Horizontal"
+            ToolTip="{DynamicResource QuickSendListNameTip}"
+          >
+            <TextBlock Text="(" />
+            <TextBlock Name="QuickListPageTextBlock" Text="{Binding QuickSend.CurrentPageName}" />
+            <TextBlock Text=")" />
+          </StackPanel>
+          <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
               <ColumnDefinition Width="30" />
               <ColumnDefinition Width="*" />
@@ -443,20 +458,6 @@
               <ColumnDefinition Width="25" />
               <ColumnDefinition Width="25" />
             </Grid.ColumnDefinitions>
-            <StackPanel
-              Name="QuickListNameStackPanel"
-              Grid.Column="1"
-              HorizontalAlignment="Left"
-              Background="{DynamicResource Brush.Surface.Subtle}"
-              Cursor="Cross"
-              MouseRightButtonDown="QuickListNameStackPanel_MouseRightButtonDown"
-              Orientation="Horizontal"
-              ToolTip="{DynamicResource QuickSendListNameTip}"
-            >
-              <TextBlock Text="(" />
-              <TextBlock Name="QuickListPageTextBlock" Text="{Binding QuickSend.CurrentPageName}" />
-              <TextBlock Text=")" />
-            </StackPanel>
             <TextBlock
               Grid.Column="0"
               HorizontalAlignment="Center"
@@ -480,7 +481,7 @@
           </Grid>
           <ListBox
             Name="toSendList"
-            Grid.Row="1"
+            Grid.Row="2"
             ItemsSource="{Binding QuickSend.Items}"
             ItemContainerStyle="{StaticResource toSendListStyle}"
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -560,7 +561,7 @@
               </Grid>
             </Grid>
           </Popup>
-          <StackPanel Grid.Row="2">
+          <StackPanel Grid.Row="3">
             <Grid Margin="0,10,0,0">
               <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
