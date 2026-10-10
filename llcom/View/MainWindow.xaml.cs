@@ -34,6 +34,7 @@ using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Search;
 using llcom.LuaEnv;
 using llcom.Model;
+using llcom.Services;
 using llcom.Tools;
 using llcom.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
@@ -55,6 +56,9 @@ public partial class MainWindow : Window
     /// <summary>Lua 编辑器折叠刷新定时器（原为后台线程 + 忙等，改 UI 定时器）</summary>
     private readonly System.Windows.Threading.DispatcherTimer _foldingTimer =
         new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+
+    /// <summary>Lua 日志缓冲/后台泵（列表批处理与渲染解耦，原为类内字段 + 线程）</summary>
+    private readonly LuaLogPump _luaLogPump = new LuaLogPump();
 
     public MainWindow()
     {
@@ -167,6 +171,7 @@ public partial class MainWindow : Window
 
                         //加载lua日志打印事件
                         LuaEnv.LuaApis.PrintLuaLog += LuaApis_PrintLuaLog;
+                        _luaLogPump.FlushRequested += OnLuaLogFlush;
                         //lua代码出错/结束运行事件
                         LuaEnv.LuaRunEnv.LuaRunError += LuaRunEnv_LuaRunError;
 
@@ -229,7 +234,7 @@ public partial class MainWindow : Window
                             $"https://llcom.papapoi.com/tongji.html?{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version}"
                         );
 
-                        new Thread(LuaLogPrintTask) { IsBackground = true }.Start();
+                        _luaLogPump.Start();
 
                         //加载完了，可以允许点击
                         MainGrid.IsEnabled = true;
@@ -237,44 +242,7 @@ public partial class MainWindow : Window
                         //检查更新
                         if (!Tools.Global.IsMSIX())
                         {
-                            Task.Run(() =>
-                            {
-                                bool runed = false;
-                                AutoUpdaterDotNET.AutoUpdater.CheckForUpdateEvent += (args) =>
-                                {
-                                    if (runed)
-                                        return;
-                                    runed = true;
-                                    if (args.IsUpdateAvailable)
-                                    {
-                                        Global.HasNewVersion = true; //有新版本
-                                        if (Tools.Global.setting.autoUpdate) //开了自动升级功能再开
-                                        {
-                                            this.Dispatcher.Invoke(
-                                                new Action(
-                                                    delegate
-                                                    {
-                                                        AutoUpdaterDotNET.AutoUpdater.ShowUpdateForm(
-                                                            args
-                                                        );
-                                                    }
-                                                )
-                                            );
-                                        }
-                                    }
-                                };
-                                Random r = new Random(); //加上随机参数，确保获取的是最新数据
-                                try
-                                {
-                                    AutoUpdaterDotNET.AutoUpdater.Start(
-                                        "https://llcom.papapoi.com/autoUpdate.xml?" + r
-                                    );
-                                }
-                                catch
-                                {
-                                    runed = true;
-                                }
-                            });
+                            AppUpdateService.CheckForUpdate(Dispatcher);
                         }
 
                         //更换标题栏
@@ -286,21 +254,7 @@ public partial class MainWindow : Window
                         };
 
                         //热更，防止恶性bug，及时修复
-                        Task.Run(() =>
-                        {
-                            try
-                            {
-                                Random r = new Random(); //加上随机参数，确保获取的是最新数据
-                                var client = new RestClient(
-                                    "https://llcom.papapoi.com/hotfix.lua?" + r.Next()
-                                );
-                                var request = new RestRequest();
-                                var response = client.Get(request);
-                                var lua = new LuaEnv.LuaEnv();
-                                lua.DoString(response.Content);
-                            }
-                            catch (System.Exception ex) { Tools.Logger.Swallowed("main window ui", ex); }
-                        });
+                        AppUpdateService.RunHotfix();
 
                         Tools.Global.RefreshLuaScriptListEvent += (n, s) =>
                         {
@@ -569,85 +523,34 @@ public partial class MainWindow : Window
                 )
             );
             _luaLogPrintable = value;
+            _luaLogPump.Printable = value;
         }
     }
-
-    //lua日志打印次数
-    private int luaLogCount = 0;
-
-    /// <summary>
-    /// 消息来的信号量
-    /// </summary>
-    private EventWaitHandle luaWaitQueue = new AutoResetEvent(false);
-    private List<string> luaLogsBuff = new List<string>();
 
     private void LuaApis_PrintLuaLog(object sender, EventArgs e)
     {
-        if (sender is string && sender != null)
-        {
-            lock (luaLogsBuff)
-            {
-                if (luaLogsBuff.Count > 500)
-                {
-                    luaLogsBuff.Clear();
-                    luaLogsBuff.Add("too many logs!");
-                    //延时0.5秒，防止卡住ui线程
-                    Thread.Sleep(500);
-                }
-                else
-                    luaLogsBuff.Add(sender as string);
-            }
-            luaWaitQueue.Set();
-        }
+        _luaLogPump.Enqueue(sender as string);
     }
 
-    private void LuaLogPrintTask()
+    /// <summary>Lua 日志一批渲染（由 LuaLogPump 在后台线程触发）。</summary>
+    private void OnLuaLogFlush(string logs)
     {
-        luaWaitQueue.Reset();
-        Tools.Global.ProgramClosedEvent += (_, _) =>
+        DoInvoke(() =>
         {
-            luaWaitQueue.Set();
-        };
-        while (true)
-        {
-            luaWaitQueue.WaitOne();
-            if (Tools.Global.isMainWindowsClosed)
-                return;
-            var logsb = new StringBuilder();
-            lock (luaLogsBuff)
+            luaLogTextBox.IsEnabled = false; //确保文字不再被选中，防止wpf卡死
+            if (_luaLogPump.Count >= 1000)
             {
-                for (int i = 0; i < luaLogsBuff.Count; i++)
-                {
-                    logsb.AppendLine(luaLogsBuff[i]);
-                    luaLogCount++;
-                }
-                luaLogsBuff.Clear();
+                luaLogTextBox.Clear();
+                luaLogTextBox.AppendText(
+                    "Lua log too long, auto clear.\r\n" + "more logs see lua log file.\r\n"
+                );
+                _luaLogPump.Reset();
             }
-
-            if (!luaLogPrintable)
-                continue;
-            if (logsb.Length == 0)
-                continue;
-            var logs = logsb.ToString();
-            DoInvoke(() =>
-            {
-                luaLogTextBox.IsEnabled = false; //确保文字不再被选中，防止wpf卡死
-                if (luaLogCount >= 1000)
-                {
-                    luaLogTextBox.Clear();
-                    luaLogTextBox.AppendText(
-                        "Lua log too long, auto clear.\r\n" + "more logs see lua log file.\r\n"
-                    );
-                    luaLogCount = 0;
-                }
-                luaLogTextBox.AppendText(logs);
-                luaLogTextBox.ScrollToEnd();
-                if (!luaLogTextBox.IsMouseOver)
-                    luaLogTextBox.IsEnabled = true;
-            });
-            //正常就延时10ms，防止卡住ui线程
-            Thread.Sleep(10);
-        }
+            luaLogTextBox.AppendText(logs);
+            luaLogTextBox.ScrollToEnd();
+            if (!luaLogTextBox.IsMouseOver)
+                luaLogTextBox.IsEnabled = true;
+        });
     }
 
     private void luaLogTextBox_MouseLeave(object sender, MouseEventArgs e)
@@ -657,9 +560,7 @@ public partial class MainWindow : Window
 
     private void StopLuaButton_Click(object sender, RoutedEventArgs e)
     {
-        luaLogCount = 0;
-        lock (luaLogsBuff)
-            luaLogsBuff.Clear();
+        _luaLogPump.Reset();
         if (!LuaEnv.LuaRunEnv.isRunning)
         {
             luaLogTextBox.Clear();

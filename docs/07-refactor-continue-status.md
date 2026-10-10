@@ -57,7 +57,9 @@
   `MainViewModel` 接收注入的 `QuickSendViewModel`（移除了直接读 `Tools.Global` 的无参构造），
   `DataShowPage` 从容器解析 VM。
   - 剩余：`LuaEditorViewModel`（构造为“目录 + 回调”，暂不注册）、其余工具页与 `Tools.Global.setting` 调用点继续迁移。
-- [ ] **收敛 code-behind**：`MainWindow` 的导航/Lua 运行/日志打印；工具页弹窗（依赖 Popup，收益低，可保留）。
+- [~] **收敛 code-behind**：`MainWindow` 的 **日志打印**（`Services/LuaLogPump`）与 **升级/热更**
+  （`Services/AppUpdateService`）已下沉为服务（~830 → ~730 行）；导航 / Lua 运行仍为 UI 绑定逻辑保留在 code-behind；
+  工具页弹窗（依赖 Popup，收益低，可保留）。
 - [~] **更多健壮性**：
   - [x] `LuaLoader.Run` 两处无界忙等改有界重试（提交 `51aff1e`）。
   - [ ] 其他 `catch {}` 吞异常处按需加日志。

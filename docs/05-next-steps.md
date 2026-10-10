@@ -52,5 +52,6 @@
 ## 六、当前已知限制
 
 - `Tools/Global.cs` 仍是静态外观层（`setting`/`uart` 全局单例），功能够用；若要彻底 DI 化可继续推进（见 07、08）。
-- `MainWindow.xaml.cs` 约 830 行（导航 / Lua 运行 / 日志打印等 UI 密集逻辑保留在 code-behind）。
+- `MainWindow.xaml.cs` 约 730 行：Lua 日志（`Services/LuaLogPump`）与升级/热更（`Services/AppUpdateService`）
+  已下沉为服务，导航 / Lua 运行等 UI 绑定逻辑保留在 code-behind。
 - 工具页弹窗（接收脚本 / 参数选择）保留 code-behind（依赖 Popup 控件，VM 化收益低）。

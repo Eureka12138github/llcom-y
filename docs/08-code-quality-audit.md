@@ -19,7 +19,7 @@
 
 | 文件 | 行数 | 说明 |
 |---|---|---|
-| `View/MainWindow.xaml.cs` | ~830 | 导航 + Lua 运行 + 日志打印等 UI 密集逻辑（上游认为属合理边界） |
+| `View/MainWindow.xaml.cs` | ~730 | 导航 + Lua 运行等 UI 密集逻辑；日志打印/升级热更已下沉服务 |
 | `LuaEnv/LuaEnv.cs` | 550 | 内嵌 Luat 协程框架的 Lua 源码字符串 |
 | `ViewModels/MainViewModel.cs` | ~526 | 主窗口串口控制区 |
 | `Pages/SocketClientPage.xaml.cs` | ~481 | TCP 客户端工具页 |
@@ -65,7 +65,8 @@
 1. **继续 DI**：把 `Tools.Global.*` 调用逐步迁移为构造函数注入（先从 `Services` 与被 DI 创建的 VM 开始）。
    进度：`AppHost` 已注册 `QuickSend`/`DataShow`/`MainViewModel`，`DataShowViewModel` 已改为注入 `ISerialPortService`。
 2. **抽取网络工具页公共基类/组件**：连接参数板、收发日志、分包显示、通道注册可复用，消除 5 个页面的重复。
-3. **拆分超大 code-behind**：`MainWindow` 的导航/Lua 运行/日志打印可进一步下沉到 VM/服务。
+3. **拆分超大 code-behind**：`MainWindow` 的**日志打印**（`Services/LuaLogPump`）与**升级/热更**
+   （`Services/AppUpdateService`）已下沉为服务（~830 → ~730 行）；导航 / Lua 运行仍可进一步下沉。
 4. 其它：`catch{}` 已清零后，保持该约定（可在 review/CI 层面提醒）。
 
 ---
