@@ -7,9 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 namespace llcom.Tools;
 
 /// <summary>
-/// 组合根（DI 第一步）：集中注册服务与 ViewModel，避免在 View 里到处 new。
+/// 组合根：集中注册服务与 ViewModel，避免在 View 里到处 new。
 /// 现阶段 <c>Global.setting</c> / <c>Global.uart</c> 仍是既有单例，这里注册为同一实例；
-/// 后续可逐步把调用点从 <c>Tools.Global.*</c> 迁移为构造函数注入。
+/// 依赖经构造函数注入，调用点逐步不再直接读 <c>Tools.Global.*</c>（DI 渐进迁移）。
 /// </summary>
 internal static class AppHost
 {
@@ -25,11 +25,23 @@ internal static class AppHost
         services.AddSingleton<Settings>(_ => Global.setting);
         services.AddSingleton<ISerialPortService>(_ => Global.uart);
 
-        // ViewModel（用工厂以便调用 internal 构造函数）
+        // ViewModel：依赖从构造函数注入
+        services.AddSingleton<QuickSendViewModel>(sp =>
+            new QuickSendViewModel(sp.GetRequiredService<Settings>())
+        );
+
+        services.AddSingleton<DataShowViewModel>(sp =>
+            new DataShowViewModel(
+                sp.GetRequiredService<Settings>(),
+                sp.GetRequiredService<ISerialPortService>()
+            )
+        );
+
         services.AddSingleton<MainViewModel>(sp =>
             new MainViewModel(
                 sp.GetRequiredService<ISerialPortService>(),
-                sp.GetRequiredService<Settings>()
+                sp.GetRequiredService<Settings>(),
+                sp.GetRequiredService<QuickSendViewModel>()
             )
         );
 

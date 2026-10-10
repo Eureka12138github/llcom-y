@@ -130,13 +130,14 @@ public partial class MainViewModel : ObservableObject
     public IRelayCommand OpenClosePortCommand { get; }
     public IRelayCommand SendCommand { get; }
 
-    public MainViewModel()
-        : this(Tools.Global.uart, Tools.Global.setting) { }
-
-    internal MainViewModel(ISerialPortService uart, Model.Settings setting)
+    internal MainViewModel(
+        ISerialPortService uart,
+        Model.Settings setting,
+        QuickSendViewModel quickSend
+    )
     {
         _uart = uart;
-        QuickSend = new QuickSendViewModel(setting);
+        QuickSend = quickSend;
         LuaEditor = new LuaEditorViewModel(
             "user_script_run/",
             () => setting.runScript,

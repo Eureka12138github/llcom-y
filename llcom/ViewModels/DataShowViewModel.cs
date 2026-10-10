@@ -20,6 +20,9 @@ public partial class DataShowViewModel : ObservableObject
     /// <summary>全局设置（供 XAML 绑定各显示开关）</summary>
     public Model.Settings Setting { get; }
 
+    /// <summary>串口服务（RTS/DTR 信号线转发；原直接读 <c>Tools.Global.uart</c>）</summary>
+    private readonly Services.ISerialPortService _uart;
+
     /// <summary>分包模式显示条目（绑定 MainList）</summary>
     public ObservableCollection<Model.DataShowItem> Items { get; } =
         new ObservableCollection<Model.DataShowItem>();
@@ -31,15 +34,15 @@ public partial class DataShowViewModel : ObservableObject
     /// <summary>RTS 信号线（绑定复选框，转发到串口服务）</summary>
     public bool Rts
     {
-        get => Tools.Global.uart.Rts;
-        set => Tools.Global.uart.Rts = value;
+        get => _uart.Rts;
+        set => _uart.Rts = value;
     }
 
     /// <summary>DTR 信号线（绑定复选框，转发到串口服务）</summary>
     public bool Dtr
     {
-        get => Tools.Global.uart.Dtr;
-        set => Tools.Global.uart.Dtr = value;
+        get => _uart.Dtr;
+        set => _uart.Dtr = value;
     }
 
     //流式模式文本桥（AvalonEdit/TextBox 增量追加保持性能）
@@ -56,9 +59,10 @@ public partial class DataShowViewModel : ObservableObject
     /// <summary>分包模式新增条目后触发（View 据此滚动到底部）</summary>
     public event Action ScrollRequested;
 
-    public DataShowViewModel(Model.Settings setting)
+    internal DataShowViewModel(Model.Settings setting, Services.ISerialPortService uart)
     {
         Setting = setting;
+        _uart = uart;
         Tools.Logger.DataShowTask += Logger_DataShowTask;
         Tools.Logger.DataClearEvent += (_, _) => Clear();
         Rts = false;

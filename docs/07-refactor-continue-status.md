@@ -51,9 +51,12 @@
     （.NET Framework exe 工程按 `PlatformTarget` 推断 RID：`win-x64`/`win-x86`）。
 
 ### Phase 2 剩余
-- [~] **保守 DI**：*第一步（组合根 `AppHost`）已完成*（提交 `4ddf297`）。
-  - 剩余：把调用点从 `Tools.Global.setting`/`Tools.Global.uart` 逐步迁移为构造函数注入，
-    并陆续把 `QuickSendViewModel`/`LuaEditorViewModel`/工具页也纳入容器。
+- [~] **保守 DI**：*第一步（组合根 `AppHost`）已完成*（提交 `4ddf297`）；
+  *第二步（ViewModel 入容器 + 构造注入）已完成*——`QuickSendViewModel` / `DataShowViewModel` / `MainViewModel`
+  均由容器解析：`DataShowViewModel` 的 `Rts`/`Dtr` 改为注入 `ISerialPortService`（不再读 `Tools.Global.uart`），
+  `MainViewModel` 接收注入的 `QuickSendViewModel`（移除了直接读 `Tools.Global` 的无参构造），
+  `DataShowPage` 从容器解析 VM。
+  - 剩余：`LuaEditorViewModel`（构造为“目录 + 回调”，暂不注册）、其余工具页与 `Tools.Global.setting` 调用点继续迁移。
 - [ ] **收敛 code-behind**：`MainWindow` 的导航/Lua 运行/日志打印；工具页弹窗（依赖 Popup，收益低，可保留）。
 - [~] **更多健壮性**：
   - [x] `LuaLoader.Run` 两处无界忙等改有界重试（提交 `51aff1e`）。

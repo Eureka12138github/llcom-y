@@ -63,6 +63,7 @@
 ## 四、后续建议（按性价比排序）
 
 1. **继续 DI**：把 `Tools.Global.*` 调用逐步迁移为构造函数注入（先从 `Services` 与被 DI 创建的 VM 开始）。
+   进度：`AppHost` 已注册 `QuickSend`/`DataShow`/`MainViewModel`，`DataShowViewModel` 已改为注入 `ISerialPortService`。
 2. **抽取网络工具页公共基类/组件**：连接参数板、收发日志、分包显示、通道注册可复用，消除 5 个页面的重复。
 3. **拆分超大 code-behind**：`MainWindow` 的导航/Lua 运行/日志打印可进一步下沉到 VM/服务。
 4. 其它：`catch{}` 已清零后，保持该约定（可在 review/CI 层面提醒）。

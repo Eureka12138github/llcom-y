@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using llcom.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace llcom.Pages;
 
@@ -28,7 +29,7 @@ public partial class DataShowPage : Page
         loaded = true;
 
         //显示逻辑全部在 VM（订阅 Logger.DataShowTask 等）
-        _vm = new DataShowViewModel(Tools.Global.setting);
+        _vm = Tools.AppHost.Services.GetRequiredService<DataShowViewModel>();
         DataContext = _vm;
 
         //流式文本框桥接：增量追加保持性能，未锁定时滚动到底部
@@ -56,7 +57,7 @@ public partial class DataShowPage : Page
         };
 
         //初始显示模式（timeout≥0 分包，否则流式）
-        var needPack = Tools.Global.setting.timeout >= 0;
+        var needPack = _vm.Setting.timeout >= 0;
         MainListScrollViewer.Visibility = needPack ? Visibility.Visible : Visibility.Collapsed;
         MainTextBox.Visibility = needPack ? Visibility.Collapsed : Visibility.Visible;
     }
