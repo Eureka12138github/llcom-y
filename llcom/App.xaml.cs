@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using CrashReporterDotNET;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace llcom
 {
@@ -18,6 +19,14 @@ namespace llcom
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+            //组合根负责创建主窗口：先完成配置加载与文件结构初始化（必须早于 MainViewModel 构造，
+            //否则其内部的 LuaEditorViewModel 会扫描尚未创建的 user_script_run 目录而抛异常），
+            //再从容器解析 MainWindow（MainViewModel 经构造注入）。
+            Tools.Global.LoadSetting();
+            Tools.Global.Initial();
+            var window = Tools.AppHost.Services.GetRequiredService<MainWindow>();
+            MainWindow = window;
+            window.Show();
 #if DEBUG
 #else
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;

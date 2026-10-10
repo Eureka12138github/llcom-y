@@ -45,6 +45,11 @@ internal static class AppHost
             )
         );
 
+        // View：主窗口同样从容器创建（由 App.OnStartup 解析并 Show）
+        services.AddSingleton<MainWindow>(sp =>
+            new MainWindow(sp.GetRequiredService<MainViewModel>())
+        );
+
         return services.BuildServiceProvider();
     }
 }

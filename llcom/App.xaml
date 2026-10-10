@@ -5,7 +5,6 @@
   xmlns:adonisUi="clr-namespace:AdonisUI;assembly=AdonisUI"
   xmlns:local="clr-namespace:llcom"
   xmlns:pages="clr-namespace:llcom.Pages"
-  StartupUri="View/MainWindow.xaml"
 >
   <Application.Resources>
     <ResourceDictionary>

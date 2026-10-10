@@ -60,14 +60,10 @@ public partial class MainWindow : Window
     /// <summary>Lua 日志缓冲/后台泵（列表批处理与渲染解耦，原为类内字段 + 线程）</summary>
     private readonly LuaLogPump _luaLogPump = new LuaLogPump();
 
-    public MainWindow()
+    public MainWindow(MainViewModel vm)
     {
         InitializeComponent();
-        Tools.Global.LoadSetting();
-        //必须在构造 MainViewModel 之前生成文件结构：
-        //LuaEditorViewModel 构造时会扫描 user_script_run 目录，目录不存在会抛 DirectoryNotFoundException
-        Tools.Global.Initial();
-        _vm = AppHost.Services.GetRequiredService<MainViewModel>();
+        _vm = vm;
         DataContext = _vm;
         if (
             Tools.Global.setting.windowHeight != 0

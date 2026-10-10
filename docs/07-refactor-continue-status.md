@@ -56,7 +56,9 @@
   均由容器解析：`DataShowViewModel` 的 `Rts`/`Dtr` 改为注入 `ISerialPortService`（不再读 `Tools.Global.uart`），
   `MainViewModel` 接收注入的 `QuickSendViewModel`（移除了直接读 `Tools.Global` 的无参构造），
   `DataShowPage` 从容器解析 VM。
-  - 剩余：`LuaEditorViewModel`（构造为“目录 + 回调”，暂不注册）、其余工具页与 `Tools.Global.setting` 调用点继续迁移。
+  - *第三步（View 入容器）*：移除 `App.xaml` 的 `StartupUri`，改由 `App.OnStartup` 先
+    `LoadSetting()`/`Initial()` 再从容器解析 `MainWindow` 并 `Show()`；`AppHost` 注册 `MainWindow`。
+  - 剩余：`LuaEditorViewModel`（构造为“目录 + 回调”，暂不注册）、各工具页仍用服务定位器、`Tools.Global.setting` 调用点继续迁移。
 - [~] **收敛 code-behind**：`MainWindow` 的 **日志打印**（`Services/LuaLogPump`）与 **升级/热更**
   （`Services/AppUpdateService`）已下沉为服务（~830 → ~730 行）；导航 / Lua 运行仍为 UI 绑定逻辑保留在 code-behind；
   工具页弹窗（依赖 Popup，收益低，可保留）。
