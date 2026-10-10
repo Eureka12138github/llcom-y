@@ -14,6 +14,7 @@
     <system:String x:Key="ClearLog">Clear Log</system:String>
     <system:String x:Key="MoreSettings">Settings</system:String>
     <system:String x:Key="MoreSettingsTip">Set stopbit, parity, Lua script for data to send and so on.</system:String>
+    <system:String x:Key="MoreActions">More actions</system:String>
     <system:String x:Key="SendDataButton">Send</system:String>
     <system:String x:Key="SendDataButtonTip">same as Ctrl+Enter</system:String>
     <system:String x:Key="RefreshPortButton">Refresh List</system:String>

@@ -40,16 +40,14 @@
       <ColumnDefinition Width="8*" MinWidth="240" />
     </Grid.ColumnDefinitions>
 
-    <!--  顶部工具栏：串口组（刷新/端口/波特率/开关） | 操作组（清空/设置/语言）  -->
+    <!--  顶部工具栏：串口组（刷新/端口/波特率/开关） | 右侧：更多操作(☰) / 语言  -->
     <Grid Grid.Row="0" Grid.ColumnSpan="3" Margin="8,6,8,2">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition Width="Auto" />
-        <ColumnDefinition Width="Auto" />
         <ColumnDefinition Width="*" />
-        <ColumnDefinition Width="Auto" />
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition Width="Auto" />
       </Grid.ColumnDefinitions>
@@ -103,28 +101,17 @@
           <TextBlock Text="{DynamicResource OpenPort_port}" />
         </WrapPanel>
       </Button>
-      <Border
-        Grid.Column="4"
-        Width="1"
-        Margin="10,4"
-        Background="{DynamicResource Brush.Border.Subtle}"
-      />
-      <Button
-        Name="clearLogButton"
-        Grid.Column="6"
-        Margin="8,0,0,0"
-        Click="ClearLogButton_Click"
-        Content="{DynamicResource ClearLog}"
-      />
-      <Button
-        Name="MoreSettingButton"
-        Grid.Column="7"
-        Margin="8,0,0,0"
-        Click="MoreSettingButton_Click"
-        Content="{DynamicResource MoreSettings}"
-        ToolTip="{DynamicResource MoreSettingsTip}"
-      />
-      <Menu Grid.Column="8" Margin="8,0,0,0" VerticalAlignment="Center">
+      <!--  低频辅助操作收进“汉堡菜单”，避免与左侧高频按钮造成视觉失衡  -->
+      <Menu Grid.Column="5" Margin="8,0,0,0" VerticalAlignment="Center">
+        <MenuItem ToolTip="{DynamicResource MoreActions}">
+          <MenuItem.Header>
+            <fa:FontAwesome Foreground="{DynamicResource Brush.Foreground}" Icon="Bars" />
+          </MenuItem.Header>
+          <MenuItem Click="ClearLogButton_Click" Header="{DynamicResource ClearLog}" />
+          <MenuItem Click="MoreSettingButton_Click" Header="{DynamicResource MoreSettings}" />
+        </MenuItem>
+      </Menu>
+      <Menu Grid.Column="6" Margin="8,0,0,0" VerticalAlignment="Center">
         <MenuItem ToolTip="{DynamicResource ChangeLanguage}">
           <MenuItem.Header>
             <fa:FontAwesome Foreground="{DynamicResource Brush.Accent.Blue}" Icon="Globe" />
@@ -282,7 +269,11 @@
     </GridSplitter>
 
     <!--  右侧脚本、快捷发送  -->
-    <TabControl Grid.Row="1" Grid.Column="2">
+    <TabControl
+      Grid.Row="1"
+      Grid.Column="2"
+      Background="{DynamicResource Brush.Surface}"
+    >
       <TabItem>
         <TabItem.Header>
           <StackPanel Orientation="Horizontal">
