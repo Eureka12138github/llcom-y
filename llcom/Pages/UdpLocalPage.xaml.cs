@@ -1,8 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
-using System.Net.Sockets;
 using System.Net;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -14,94 +17,89 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using static llcom.Pages.SocketClientPage;
-using System.Net.NetworkInformation;
+using llcom.Model;
 
-namespace llcom.Pages
+namespace llcom.Pages;
+
+/// <summary>
+/// UdpLocalPage.xaml 的交互逻辑
+/// </summary>
+public partial class UdpLocalPage : Page, INotifyPropertyChanged
 {
+    public event PropertyChangedEventHandler PropertyChanged;
+
     /// <summary>
-    /// UdpLocalPage.xaml 的交互逻辑
+    /// 设置属性值，值变化时触发 PropertyChanged（XAML 生成的 g.cs 基类固定为 Page，
+    /// 无法继承 ObservableObject/ObservablePage，故类内自带此帮助方法）
     /// </summary>
-    [PropertyChanged.AddINotifyPropertyChangedInterface]
-    public partial class UdpLocalPage : Page
+    protected bool SetProperty<T>(
+        ref T field,
+        T value,
+        [CallerMemberName] string propertyName = null
+    )
     {
-        public UdpLocalPage()
-        {
-            InitializeComponent();
-        }
+        if (EqualityComparer<T>.Default.Equals(field, value))
+            return false;
+        field = value;
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        return true;
+    }
 
+    public UdpLocalPage()
+    {
+        InitializeComponent();
+    }
 
-        public bool IsConnected { get; set; } = false;
+    private bool _isConnected = false;
+    public bool IsConnected
+    {
+        get => _isConnected;
+        set => SetProperty(ref _isConnected, value);
+    }
 
-        private static bool loaded = false;
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (loaded)
-                return;
-            loaded = true;
-            RefreshIp();
-            //绑定
-            MainGrid.DataContext = this;
-            IpPortTextBox.DataContext = Tools.Global.setting;
-        }
+    private static bool loaded = false;
 
-        /// <summary>
-        /// 刷新本机ip列表
-        /// </summary>
-        private void RefreshIp()
-        {
-            IpListComboBox.Items.Clear();
-            IpListComboBox.Items.Add("0.0.0.0");
-            IpListComboBox.Items.Add("::");
-            var temp = new List<string>();
-            try
-            {
-                string name = Dns.GetHostName();
-                IPAddress[] ipadrlist = Dns.GetHostAddresses(name);
-                foreach (IPAddress ipa in ipadrlist)
-                {
-                    if (ipa.AddressFamily == AddressFamily.InterNetwork ||
-                        ipa.AddressFamily == AddressFamily.InterNetworkV6)
-                        temp.Add(ipa.ToString());
-                }
-            }
-            catch { }
-            //去重
-            temp.Distinct().ToList().ForEach(ip => IpListComboBox.Items.Add(ip));
-            IpListComboBox.SelectedIndex = 0;
-        }
-        private void ShowData(string title, byte[] data = null, bool send = false)
-        {
-            Tools.Logger.ShowDataRaw(new Tools.DataShowRaw
-            {
-                title = $"🗑 local udp server: {title}",
-                data = data ?? new byte[0],
-                color = send ? Brushes.DarkRed : Brushes.DarkGreen,
-            });
-        }
+    private void Page_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (loaded)
+            return;
+        loaded = true;
+        RefreshIp();
+        //绑定
+        MainGrid.DataContext = this;
+        IpPortTextBox.DataContext = Tools.Global.setting;
+    }
 
+    /// <summary>
+    /// 刷新本机ip列表
+    /// </summary>
+    private void RefreshIp() =>
+        Tools.NetworkHelper.FillLocalIpComboBox(IpListComboBox, "udp server");
 
-        private UdpClient Server = null;
+    private void ShowData(string title, byte[] data = null, bool send = false) =>
+        Tools.NetworkLog.Show("🗑 local udp server: ", title, data, send);
 
-        /// <summary>
-        /// 开始监听服务器
-        /// </summary>
-        /// <param name="ip"></param>
-        /// <param name="port"></param>
-        /// <returns></returns>
-        private bool StartServer(string ip, int port)
-        {
-            if (Server != null)
-                return false;
-            IPAddress localAddr = IPAddress.Parse(ip);
-            IPEndPoint IpEndPoint = new IPEndPoint(localAddr, port);
-            Server = new UdpClient(IpEndPoint);
+    private UdpClient Server = null;
 
-            var isV6 = ip.Contains(":");
-            ShowData($"🗑 {(isV6 ? "[" : "")}{ip}{(isV6 ? "]" : "")}:{port}");
+    /// <summary>
+    /// 开始监听服务器
+    /// </summary>
+    /// <param name="ip"></param>
+    /// <param name="port"></param>
+    /// <returns></returns>
+    private bool StartServer(string ip, int port)
+    {
+        if (Server != null)
+            return false;
+        IPAddress localAddr = IPAddress.Parse(ip);
+        IPEndPoint IpEndPoint = new IPEndPoint(localAddr, port);
+        Server = new UdpClient(IpEndPoint);
 
-            AsyncCallback newConnectionCb = null;
-            newConnectionCb = new AsyncCallback((ar) =>
+        ShowData($"🗑 {Tools.NetworkHelper.FormatHostPort(ip, port)}");
+
+        AsyncCallback newConnectionCb = null;
+        newConnectionCb = new AsyncCallback(
+            (ar) =>
             {
                 try
                 {
@@ -109,74 +107,70 @@ namespace llcom.Pages
                     IPEndPoint e = ((UdpState)(ar.AsyncState)).e;
 
                     byte[] receiveBytes = u.EndReceive(ar, ref e);
-                    var isV6 = e.Address.ToString().Contains(":");
-                    ShowData($"{(isV6 ? "[" : "")}{e.Address}{(isV6 ? "]" : "")}:{e.Port}", receiveBytes);
+                    ShowData(
+                        Tools.NetworkHelper.FormatHostPort(e.Address.ToString(), e.Port),
+                        receiveBytes
+                    );
                     Server.BeginReceive(newConnectionCb, ar.AsyncState);
                 }
-                catch { }
-            }); 
-            UdpState s = new UdpState();
-            s.e = IpEndPoint;
-            s.u = Server;
-            try
-            {
-                Server.BeginReceive(newConnectionCb, s);
+                catch (System.Exception ex) { Tools.Logger.Swallowed("udp server", ex); }
             }
-            catch (Exception ex)
-            {
-                ShowData($"❗ Server create error {ex.Message}");
-                return false;
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// 关闭服务器，断开所有连接
-        /// </summary>
-        private void StopServer()
+        );
+        UdpState s = new UdpState();
+        s.e = IpEndPoint;
+        s.u = Server;
+        try
         {
-            Server?.Close();
-            Server?.Dispose();
-            Server = null;
+            Server.BeginReceive(newConnectionCb, s);
         }
-
-        private void RefreshIpButton_Click(object sender, RoutedEventArgs e)
+        catch (Exception ex)
         {
-            RefreshIp();
+            ShowData($"❗ Server create error {ex.Message}");
+            return false;
         }
 
-        private void ListenButton_Click(object sender, RoutedEventArgs e)
-        {
-            int port;
-            if (int.TryParse(IpPortTextBox.Text, out port))
-            {
-                try
-                {
-                    IsConnected = StartServer(IpListComboBox.Text, port);
-                }
-                catch (Exception err)
-                {
-                    Tools.MessageBox.Show(err.Message);
-                }
-            }
-        }
+        return true;
+    }
 
-        private void StopListenButton_Click(object sender, RoutedEventArgs e)
+    /// <summary>
+    /// 关闭服务器，断开所有连接
+    /// </summary>
+    private void StopServer()
+    {
+        Server?.Close();
+        Server?.Dispose();
+        Server = null;
+    }
+
+    private void RefreshIpButton_Click(object sender, RoutedEventArgs e)
+    {
+        RefreshIp();
+    }
+
+    private void ListenButton_Click(object sender, RoutedEventArgs e)
+    {
+        int port;
+        if (int.TryParse(IpPortTextBox.Text, out port))
         {
             try
             {
-                StopServer();
-                IsConnected = false;
-                ShowData($"🚫 server closed");
+                IsConnected = StartServer(IpListComboBox.Text, port);
             }
-            catch { }
+            catch (Exception err)
+            {
+                Tools.MessageBox.Show(err.Message);
+            }
         }
     }
 
-    public struct UdpState
+    private void StopListenButton_Click(object sender, RoutedEventArgs e)
     {
-        public UdpClient u;
-        public IPEndPoint e;
+        try
+        {
+            StopServer();
+            IsConnected = false;
+            ShowData($"🚫 server closed");
+        }
+        catch (System.Exception ex) { Tools.Logger.Swallowed("udp server", ex); }
     }
 }

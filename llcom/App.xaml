@@ -1,17 +1,28 @@
 <Application
-    x:Class="llcom.App"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:adonisUi="clr-namespace:AdonisUI;assembly=AdonisUI"
-    xmlns:local="clr-namespace:llcom"
-    StartupUri="View/MainWindow.xaml">
-    <Application.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/languages/zh-cn.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/AdonisUI;component/ColorSchemes/Light.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/AdonisUI.ClassicTheme;component/Resources.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Application.Resources>
+  x:Class="llcom.App"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:adonisUi="clr-namespace:AdonisUI;assembly=AdonisUI"
+  xmlns:local="clr-namespace:llcom"
+  xmlns:pages="clr-namespace:llcom.Pages"
+  StartupUri="View/MainWindow.xaml"
+>
+  <Application.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/languages/zh-cn.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/AdonisUI;component/ColorSchemes/Light.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/AdonisUI.ClassicTheme;component/Resources.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+      <!-- 全局值转换器（原先在多个页面各自重复声明，现集中于此） -->
+      <pages:boolVisibe x:Key="boolVisibeConverter" />
+      <pages:boolNotVisibe x:Key="boolNotVisibeConverter" />
+      <pages:boolNot x:Key="boolNotConverter" />
+      <pages:boolConnected x:Key="boolConnectedConverter" />
+      <pages:showHexFormat x:Key="showHexFormatConverter" />
+      <pages:rsTooltip x:Key="rsToolTipConverter" />
+      <pages:rsOpacity x:Key="rsOpacityConverter" />
+      <pages:boolOpacity x:Key="boolOpacityConverter" />
+    </ResourceDictionary>
+  </Application.Resources>
 </Application>

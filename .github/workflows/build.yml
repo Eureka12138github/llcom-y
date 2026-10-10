@@ -22,14 +22,11 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
 
-      - name: Setup NuGet
-        uses: NuGet/setup-nuget@v2
-
-      - name: Restore NuGet packages
-        run: nuget restore llcom.sln
-
       - name: Build
-        run: msbuild llcom/llcom.csproj /p:Configuration=Release /p:Platform=x64 /v:normal
+        run: dotnet build llcom/llcom.csproj -c Release -p:Platform=x64
+
+      - name: Run unit tests
+        run: dotnet test tests/llcom.Tests/llcom.Tests.csproj -c Release -p:Platform=x64
 
       - name: Clean build output
         shell: cmd

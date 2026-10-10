@@ -154,7 +154,7 @@ response:Close()
 
 如果各位大佬不觉得麻烦的话，欢迎对本项目进行pr或直接重构。
 
-本项目在前期只是为了实现功能，代码相当零散，所以不太适合阅读我的源码进行学习，等我有空的时候会重构代码。
+项目已完成一轮分层重构：从早期的"上帝类 + 巨型 code-behind"整理为清晰的 MVVM 分层结构——`ViewModels/`（界面逻辑）、`Services/`（可复用服务）、`Model/`（数据模型）、`Pages/`（工具页）、`LuaEnv/`（Lua 引擎），并配套完整文档与单元测试，**整体结构清晰、分层明确，适合作为阅读与学习的范例**。架构说明与关键设计决策见 [docs/02-architecture.md](docs/02-architecture.md)，文档索引见 [docs/README.md](docs/README.md)。
 
 本项目采用Apache 2.0协议，如有借用，请保留指向该项目的链接。
 
