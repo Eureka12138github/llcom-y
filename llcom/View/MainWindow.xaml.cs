@@ -353,6 +353,20 @@ public partial class MainWindow : Window
         settingPage.Show();
     }
 
+    Window? helpWindow;
+
+    /// <summary>顶栏 “?”：打开使用说明窗口（单实例；关闭后可再次打开）。</summary>
+    private void HelpButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (helpWindow == null)
+        {
+            helpWindow = new HelpWindow();
+            helpWindow.Closed += (_, _) => helpWindow = null;
+        }
+        helpWindow.Show();
+        helpWindow.Activate();
+    }
+
     /// <summary>工具选择器：切换到对应工具页（各页在 Window_Loaded 已 Navigate 一次，这里只切可见性）。</summary>
     private void ToolSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {

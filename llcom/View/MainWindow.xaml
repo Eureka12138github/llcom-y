@@ -50,6 +50,7 @@
         <ColumnDefinition Width="*" />
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
       </Grid.ColumnDefinitions>
       <Button
         Name="refreshPortButton"
@@ -101,8 +102,20 @@
           <TextBlock Text="{DynamicResource OpenPort_port}" />
         </WrapPanel>
       </Button>
+      <!--  帮助（扁平纯图标，与 ☰/🌐 一致）  -->
+      <Button
+        Name="HelpButton"
+        Grid.Column="5"
+        Margin="4,0,0,0"
+        Style="{StaticResource FlatIconButton}"
+        AutomationProperties.Name="{DynamicResource Help}"
+        Click="HelpButton_Click"
+        ToolTip="{DynamicResource Help}"
+      >
+        <fa:FontAwesome Foreground="{DynamicResource Brush.Accent.Teal}" Icon="Question" />
+      </Button>
       <!--  低频辅助操作收进“汉堡菜单”，避免与左侧高频按钮造成视觉失衡  -->
-      <Menu Grid.Column="5" Margin="8,0,0,0" VerticalAlignment="Center">
+      <Menu Grid.Column="6" Margin="4,0,0,0" VerticalAlignment="Center">
         <MenuItem ToolTip="{DynamicResource MoreActions}">
           <MenuItem.Header>
             <fa:FontAwesome Foreground="{DynamicResource Brush.Foreground}" Icon="Bars" />
@@ -111,7 +124,7 @@
           <MenuItem Click="MoreSettingButton_Click" Header="{DynamicResource MoreSettings}" />
         </MenuItem>
       </Menu>
-      <Menu Grid.Column="6" Margin="8,0,0,0" VerticalAlignment="Center">
+      <Menu Grid.Column="7" Margin="4,0,0,0" VerticalAlignment="Center">
         <MenuItem ToolTip="{DynamicResource ChangeLanguage}">
           <MenuItem.Header>
             <fa:FontAwesome Foreground="{DynamicResource Brush.Accent.Blue}" Icon="Globe" />

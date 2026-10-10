@@ -1,0 +1,122 @@
+<Window
+  x:Class="llcom.HelpWindow"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:adonisExtensions="clr-namespace:AdonisUI.Extensions;assembly=AdonisUI"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  Title="{DynamicResource Help}"
+  Width="820"
+  Height="660"
+  adonisExtensions:RippleExtension.FadeInDuration="0"
+  adonisExtensions:RippleExtension.FadeOutDuration="0"
+  WindowStartupLocation="CenterScreen"
+  mc:Ignorable="d"
+>
+  <Window.Style>
+    <Style BasedOn="{StaticResource {x:Type Window}}" TargetType="Window" />
+  </Window.Style>
+  <Window.Resources>
+    <Style x:Key="HelpTitle" TargetType="TextBlock">
+      <Setter Property="FontSize" Value="22" />
+      <Setter Property="FontWeight" Value="Bold" />
+      <Setter Property="Margin" Value="0,0,0,10" />
+    </Style>
+    <Style x:Key="HelpH" TargetType="TextBlock">
+      <Setter Property="FontSize" Value="16" />
+      <Setter Property="FontWeight" Value="Bold" />
+      <Setter Property="Margin" Value="0,16,0,6" />
+      <Setter Property="Foreground" Value="{DynamicResource Brush.Foreground}" />
+    </Style>
+    <Style x:Key="HelpP" TargetType="TextBlock">
+      <Setter Property="FontSize" Value="13" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+      <Setter Property="Margin" Value="0,3,0,0" />
+      <Setter Property="LineHeight" Value="20" />
+    </Style>
+    <Style x:Key="HelpLi" TargetType="TextBlock" BasedOn="{StaticResource HelpP}">
+      <Setter Property="Margin" Value="14,2,0,0" />
+    </Style>
+  </Window.Resources>
+
+  <ScrollViewer Padding="20,16,20,20" VerticalScrollBarVisibility="Auto">
+    <StackPanel>
+      <TextBlock Style="{StaticResource HelpTitle}" Text="LLCOM 使用说明" />
+
+      <TextBlock Style="{StaticResource HelpH}" Text="一、快速上手" />
+      <TextBlock Style="{StaticResource HelpP}" Text="1. 顶部选择「串口」→ 选择「波特率」→ 点「打开串口」。" />
+      <TextBlock Style="{StaticResource HelpP}" Text="2. 左侧为收发日志；底部输入要发送的内容，点「发送」或按 Ctrl+Enter。" />
+      <TextBlock Style="{StaticResource HelpP}" Text="3. 右侧标签页：快捷发送 / 运行脚本 / 在线脚本 / 工具 / 关于。" />
+
+      <TextBlock Style="{StaticResource HelpH}" Text="二、顶部工具栏" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 刷新串口：重新扫描可用串口列表。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 串口：选择要打开的串口（显示设备描述）。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 波特率：常用波特率；末项「自定义」可手动输入任意值。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 打开串口 / 关闭串口：打开成功后按钮变绿，状态栏显示 COM 与波特率。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· ☰ 更多操作：清空日志、更多设置。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 🌐：切换 简体中文 / English。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· ?：打开本使用说明。" />
+
+      <TextBlock Style="{StaticResource HelpH}" Text="三、收发数据显示区（左侧）" />
+      <TextBlock Style="{StaticResource HelpP}" Text="每行显示：时间 + 方向（→ 发送 / ← 接收）+ 数据（文本 / 十六进制）。" />
+      <TextBlock Style="{StaticResource HelpP}" Text="底部开关（从左到右）：" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· RTS / DTR：串口硬件信号线电平控制。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· Hex显示：三态切换——只显示文本 / 只显示 HEX / 同时显示。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 发Hex：发送时把输入内容按十六进制解析。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 末尾加回车换行：发送时自动追加回车换行（追加前同样会经过发送脚本）。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 替换不可见字符：把不可见字符显示为可见占位（仅 UTF8 模式下有效）。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 停止打印：暂停 / 恢复日志刷新。" />
+      <TextBlock Style="{StaticResource HelpP}" Text="鼠标移到日志区右上角：出现「锁定滚动」与「保存日志」按钮。" />
+      <TextBlock Style="{StaticResource HelpP}" Text="终端模式（在「更多设置」中开启）：日志区可直接键盘输入并即时发送按键。" />
+
+      <TextBlock Style="{StaticResource HelpH}" Text="四、发送区（底部）" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 输入内容后点「发送」，或按 Ctrl+Enter。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 是否按 HEX 发送由「发Hex」开关决定。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 发送前可配置「发送脚本」（更多设置）对数据做变换。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 发送区高度可用上方分隔条上下拖拽调整。" />
+
+      <TextBlock Style="{StaticResource HelpH}" Text="五、快捷发送（右侧第一个标签）" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 共 10 页：点标签里的 ☰ 图标切换页；右键页名可改名。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 每行：编号、内容、发送按钮、Hex 勾选、脚本图标。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="    - 点行内「发送」按钮发送该条内容（会按行配置调用脚本）。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="    - Hex 勾选：该条按十六进制发送。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="    - 文件图标：为该条设置「接收脚本」（点选设置 / 右键清除）；齿轮图标设接收脚本参数。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="    - 右键「编号」可把该行移动到指定位置（留空则删除该行）。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 底部按钮：添加新项目 / 删除最后一项 / 导入数据到该页 / 导出该页数据 / 一键清空该页数据 / 一键导入 SSCOM 数据。" />
+
+      <TextBlock Style="{StaticResource HelpH}" Text="六、运行脚本（Lua）" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 文件下拉选择脚本（user_script_run 目录），或点新建图标创建。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 工具栏图标：新建 / 运行 / 打开脚本文件夹 / 刷新列表 / Lua API 文档 / 分享脚本。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 点「运行」后进入日志视图：显示 print 输出；可「停止/退出」「暂停/继续打印」，底部输入框可执行单行 Lua。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 脚本目录：程序目录下 user_script_run/。" />
+
+      <TextBlock Style="{StaticResource HelpH}" Text="七、在线脚本" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 浏览社区脚本（作者 / 名称 / 版本 / 简介），点开查看，点「下载」保存到本地脚本目录。" />
+
+      <TextBlock Style="{StaticResource HelpH}" Text="八、工具（右侧「工具」标签，顶部下拉选择）" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· TCP测试：借助 netlab.luatos.com 创建公网 TCP/UDP/SSL 服务端供设备连接（地址会显示出来）；可给在线客户端发送、踢除。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· TCP本地监听：在本机 IP/端口上开 TCP 服务器，广播给所有已连接客户端。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· UDP本地监听：在本机 IP/端口上开 UDP 服务器接收数据。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· TCP客户端：以 TCP/UDP/SSL 连接远端；可选自动重连与重连间隔。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 编码转换工具：左侧「原始数据」，选转换任务并添加，右侧显示「转换结果」。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· MQTT：订阅 / 发布（含 QOS、Hex）；设置页配置 Broker、端口、客户端ID、用户名密码、保活、清理会话、TLS（含 CA 与客户端证书）、WebSocket。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 乱码修复：粘贴乱码文本，列表给出多种「原始→目标」编码的还原结果，可复制。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 串口监听：选择某个进程(PID)与其占用的串口，旁路监听该进程的收发（注意：仅 32 位 x86 版本可用）。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 绘图：接收 Lua 通过接口上报的数据点并绘制曲线；可查看全图 / 清空图表 / 切换主题。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· WinUSB：选择 USB 设备、读/写端点，连接后收发（可 Hex）。" />
+
+      <TextBlock Style="{StaticResource HelpH}" Text="九、更多设置（☰）" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 自动重连、打开日志文件夹、显示格式、显示发送/原始发送、窗口置顶、串口超时（分包）、按空行分包、终端模式、数据位/停止位/校验位/编码。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 发送脚本 / 接收脚本：编辑发送前、接收后触发的 Lua 脚本。" />
+
+      <TextBlock Style="{StaticResource HelpH}" Text="十、Lua 接口" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 接口文档见程序目录 LuaApi.md，或「运行脚本」工具栏的「Lua API 文档」按钮。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 串口与各网络工具都作为「通用通道」，Lua 用 apiSend / apiSetCb 收发。" />
+
+      <TextBlock Style="{StaticResource HelpH}" Text="十一、其他" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 语言：右上 🌐 切换中/英。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 日志文件：程序目录 logs/（串口日志）与 user_script_run/logs/（Lua 日志）。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 配置与脚本均保存在程序目录。" />
+    </StackPanel>
+  </ScrollViewer>
+</Window>
