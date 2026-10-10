@@ -31,17 +31,19 @@
       <RowDefinition Height="Auto" />
       <RowDefinition Height="*" />
       <RowDefinition Height="Auto" />
+      <RowDefinition Height="72" />
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="12*" />
+      <ColumnDefinition Width="12*" MinWidth="240" />
       <ColumnDefinition Width="auto" />
-      <ColumnDefinition Width="8*" />
+      <ColumnDefinition Width="8*" MinWidth="240" />
     </Grid.ColumnDefinitions>
 
-    <!--  顶部工具栏：端口 / 波特率 / 打开关闭 / 清空 / 设置 / 语言  -->
+    <!--  顶部工具栏：串口组（刷新/端口/波特率/开关） | 操作组（清空/设置/语言）  -->
     <Grid Grid.Row="0" Grid.ColumnSpan="3" Margin="8,6,8,2">
       <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto" />
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition Width="Auto" />
@@ -53,10 +55,13 @@
       </Grid.ColumnDefinitions>
       <Button
         Name="refreshPortButton"
+        Style="{StaticResource IconButton}"
         Command="{Binding RefreshPortsCommand}"
-        Content="{DynamicResource RefreshPortButton}"
         IsEnabled="{Binding ElementName=serialPortsListComboBox, Path=IsEnabled}"
-      />
+        ToolTip="{DynamicResource RefreshPortButton}"
+      >
+        <fa:FontAwesome Foreground="{DynamicResource Brush.State.Success}" Icon="Refresh" />
+      </Button>
       <ComboBox
         Name="serialPortsListComboBox"
         Grid.Column="1"
@@ -83,27 +88,43 @@
         Margin="8,0,0,0"
         Command="{Binding OpenClosePortCommand}"
       >
+        <Button.Style>
+          <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="Button">
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding IsPortComboEnabled}" Value="False">
+                <Setter Property="Background" Value="{DynamicResource Brush.State.Success}" />
+                <Setter Property="Foreground" Value="White" />
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </Button.Style>
         <WrapPanel>
           <TextBlock Text="{Binding OpenCloseButtonText}" />
           <TextBlock Text="{DynamicResource OpenPort_port}" />
         </WrapPanel>
       </Button>
+      <Border
+        Grid.Column="4"
+        Width="1"
+        Margin="10,4"
+        Background="{DynamicResource Brush.Border.Subtle}"
+      />
       <Button
         Name="clearLogButton"
-        Grid.Column="5"
+        Grid.Column="6"
         Margin="8,0,0,0"
         Click="ClearLogButton_Click"
         Content="{DynamicResource ClearLog}"
       />
       <Button
         Name="MoreSettingButton"
-        Grid.Column="6"
+        Grid.Column="7"
         Margin="8,0,0,0"
         Click="MoreSettingButton_Click"
         Content="{DynamicResource MoreSettings}"
         ToolTip="{DynamicResource MoreSettingsTip}"
       />
-      <Menu Grid.Column="7" Margin="8,0,0,0" VerticalAlignment="Center">
+      <Menu Grid.Column="8" Margin="8,0,0,0" VerticalAlignment="Center">
         <MenuItem ToolTip="{DynamicResource ChangeLanguage}">
           <MenuItem.Header>
             <fa:FontAwesome Foreground="{DynamicResource Brush.Accent.Blue}" Icon="Globe" />
@@ -128,8 +149,30 @@
       PreviewTextInput="uartDataFlowDocument_PreviewTextInput"
     />
 
-    <!--  发送数据区（跨全宽，位于日志与状态栏之间）  -->
-    <Grid Grid.Row="2" Grid.ColumnSpan="3" Margin="8,2,8,6">
+    <!--  日志/发送区之间的可拖拽分隔条（上下调整发送区高度）  -->
+    <GridSplitter
+      Grid.Row="2"
+      Grid.ColumnSpan="3"
+      Height="5"
+      HorizontalAlignment="Stretch"
+      Cursor="SizeNS"
+      ResizeBehavior="PreviousAndNext"
+      ResizeDirection="Rows"
+    >
+      <GridSplitter.Style>
+        <Style TargetType="GridSplitter">
+          <Setter Property="Background" Value="Transparent" />
+          <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter Property="Background" Value="{DynamicResource Brush.Surface.Muted}" />
+            </Trigger>
+          </Style.Triggers>
+        </Style>
+      </GridSplitter.Style>
+    </GridSplitter>
+
+    <!--  发送数据区（跨全宽；高度可拖拽）  -->
+    <Grid Grid.Row="3" Grid.ColumnSpan="3" Margin="8,2,8,6">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*" />
         <ColumnDefinition Width="Auto" />
@@ -137,7 +180,6 @@
       <TextBox
         Name="toSendDataTextBox"
         Margin="0,0,8,0"
-        Height="44"
         VerticalContentAlignment="Top"
         AcceptsReturn="True"
         FontFamily="Consolas"
@@ -155,8 +197,8 @@
       />
     </Grid>
 
-    <!--  底部状态栏（精简：状态 + 收发计数）  -->
-    <DockPanel Grid.Row="3" Grid.ColumnSpan="3">
+    <!--  底部状态栏：连接状态 · 端口 · 波特率  |  收发计数  -->
+    <DockPanel Grid.Row="4" Grid.ColumnSpan="3">
       <StatusBar DockPanel.Dock="Bottom">
         <StatusBar.ItemsPanel>
           <ItemsPanelTemplate>
@@ -166,54 +208,78 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
               </Grid.ColumnDefinitions>
             </Grid>
           </ItemsPanelTemplate>
         </StatusBar.ItemsPanel>
         <StatusBarItem Grid.Column="0">
-          <TextBlock Name="statusTextBlock" Text="{Binding StatusText}" />
+          <StackPanel Orientation="Horizontal">
+            <Ellipse Width="8" Height="8" Margin="0,0,6,0" VerticalAlignment="Center">
+              <Ellipse.Style>
+                <Style TargetType="Ellipse">
+                  <Setter Property="Fill" Value="{DynamicResource Brush.Foreground.Muted}" />
+                  <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsPortComboEnabled}" Value="False">
+                      <Setter Property="Fill" Value="{DynamicResource Brush.State.Success}" />
+                    </DataTrigger>
+                  </Style.Triggers>
+                </Style>
+              </Ellipse.Style>
+            </Ellipse>
+            <TextBlock Style="{StaticResource Status.Text}" Text="{Binding StatusText}" />
+            <TextBlock Style="{StaticResource Status.Text}" Text="  ·  " />
+            <TextBlock Style="{StaticResource Status.Text}" Text="{Binding SelectedPort.PortName}" />
+            <TextBlock Style="{StaticResource Status.Text}" Text="  ·  " />
+            <TextBlock Style="{StaticResource Status.Text}" Text="{Binding SelectedBaudRate.Display}" />
+          </StackPanel>
         </StatusBarItem>
         <StatusBarItem Grid.Column="2">
-          <TextBlock
-            Cursor="Cross"
-            MouseRightButtonDown="sentCountTextBlock_MouseRightButtonDown"
-            Text="{DynamicResource SentCount}"
-            ToolTip="{DynamicResource ClearCountTip}"
-          />
+          <StackPanel Orientation="Horizontal" ToolTip="{DynamicResource ClearCountTip}">
+            <TextBlock Style="{StaticResource Status.Text}" Margin="0,0,4,0" Text="↑" />
+            <TextBlock
+              Name="sentCountTextBlock"
+              Style="{StaticResource Status.Text}"
+              Cursor="Cross"
+              MouseRightButtonDown="sentCountTextBlock_MouseRightButtonDown"
+              Text="{Binding SentCount}"
+            />
+          </StackPanel>
         </StatusBarItem>
         <StatusBarItem Grid.Column="3">
-          <TextBlock
-            Name="sentCountTextBlock"
-            Cursor="Cross"
-            MouseRightButtonDown="sentCountTextBlock_MouseRightButtonDown"
-            Text="{Binding SentCount}"
-            ToolTip="{DynamicResource ClearCountTip}"
-          />
-        </StatusBarItem>
-        <StatusBarItem Grid.Column="4">
-          <TextBlock
-            Cursor="Cross"
-            MouseRightButtonDown="receivedCountTextBlock_MouseRightButtonDown"
-            Text="{DynamicResource ReceivedCount}"
-            ToolTip="{DynamicResource ClearCountTip}"
-          />
-        </StatusBarItem>
-        <StatusBarItem Grid.Column="5">
-          <TextBlock
-            Name="receivedCountTextBlock"
-            Cursor="Cross"
-            MouseRightButtonDown="receivedCountTextBlock_MouseRightButtonDown"
-            Text="{Binding ReceivedCount}"
-            ToolTip="{DynamicResource ClearCountTip}"
-          />
+          <StackPanel Orientation="Horizontal" ToolTip="{DynamicResource ClearCountTip}">
+            <TextBlock Style="{StaticResource Status.Text}" Margin="0,0,4,0" Text="↓" />
+            <TextBlock
+              Name="receivedCountTextBlock"
+              Style="{StaticResource Status.Text}"
+              Cursor="Cross"
+              MouseRightButtonDown="receivedCountTextBlock_MouseRightButtonDown"
+              Text="{Binding ReceivedCount}"
+            />
+          </StackPanel>
         </StatusBarItem>
       </StatusBar>
     </DockPanel>
 
-    <!--  中间改变分割大小的东西  -->
-    <GridSplitter Grid.Row="1" Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
+    <!--  左右面板之间的可拖拽分隔条  -->
+    <GridSplitter
+      Grid.Row="1"
+      Grid.Column="1"
+      Width="6"
+      HorizontalAlignment="Stretch"
+      Cursor="SizeWE"
+      ResizeBehavior="PreviousAndNext"
+    >
+      <GridSplitter.Style>
+        <Style TargetType="GridSplitter">
+          <Setter Property="Background" Value="Transparent" />
+          <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter Property="Background" Value="{DynamicResource Brush.Surface.Muted}" />
+            </Trigger>
+          </Style.Triggers>
+        </Style>
+      </GridSplitter.Style>
+    </GridSplitter>
 
     <!--  右侧脚本、快捷发送  -->
     <TabControl Grid.Row="1" Grid.Column="2">
