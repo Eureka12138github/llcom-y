@@ -14,6 +14,7 @@
 | **空 `catch { }`（静默吞异常）** | **48 → 0（本次修复）** | ✅ 已解决 |
 | `Tools.Global.*` 静态引用 | 278 处 / 34 文件 | ⚠️ 全局耦合仍偏重 |
 | `TODO/FIXME/HACK` | 1 | ✅ 基本没有 |
+| **可空引用类型（NRT）** | **已开启**（`<Nullable>enable</Nullable>`） | ⚠️ 遗留代码尚有**数百条**空值警告（CS8618/8625/8600/8602…），待按层增量消除 |
 
 **最大文件**（行数）：
 
@@ -68,6 +69,8 @@
 3. **拆分超大 code-behind**：`MainWindow` 的**日志打印**（`Services/LuaLogPump`）与**升级/热更**
    （`Services/AppUpdateService`）已下沉为服务（~830 → ~730 行）；导航 / Lua 运行仍可进一步下沉。
 4. 其它：`catch{}` 已清零后，保持该约定（可在 review/CI 层面提醒）。
+5. **NRT 清欠**：`<Nullable>enable</Nullable>` 已开启，按层（Model/Services/ViewModels → View/Pages/LuaEnv）
+   增量消除空值警告（优先 CS8600/8602/8604 等真实解引用风险，CS8618 可补 `= null!` 或改可空）。
 
 ---
 

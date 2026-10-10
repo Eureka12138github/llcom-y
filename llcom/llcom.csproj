@@ -9,6 +9,8 @@
     <AssemblyName>llcom</AssemblyName>
     <ApplicationIcon>llcom.ico</ApplicationIcon>
     <LangVersion>latest</LangVersion>
+    <!-- 可空引用类型（渐进：先全局开启，警告逐步消除） -->
+    <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Deterministic>true</Deterministic>
     <!-- 使用自有 AssemblyInfo.cs，禁用 SDK 自动生成 -->
