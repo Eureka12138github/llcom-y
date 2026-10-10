@@ -222,6 +222,8 @@ public partial class MainWindow : Window
 
                         //WinUSB
                         WinUSBFrame.Navigate(new Uri("Pages/WinUSBPage.xaml", UriKind.Relative));
+                        //工具选择器默认选中第一个（触发一次可见性切换）
+                        ToolSelector.SelectedIndex = 0;
 
                         this.Title +=
                             $" - {System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString()}";
@@ -349,6 +351,29 @@ public partial class MainWindow : Window
     private void MoreSettingButton_Click(object sender, RoutedEventArgs e)
     {
         settingPage.Show();
+    }
+
+    /// <summary>工具选择器：切换到对应工具页（各页在 Window_Loaded 已 Navigate 一次，这里只切可见性）。</summary>
+    private void ToolSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (tcpTestFrame == null)
+            return; // 初始化早期可能尚未就绪
+        var frames = new[]
+        {
+            tcpTestFrame,
+            tcpLocalTestFrame,
+            udpLocalTestFrame,
+            tcpClientFrame,
+            EncodingToolsFrame,
+            MqttTestFrame,
+            EncodingFixFrame,
+            SerialMonitorFrame,
+            PlotFrame,
+            WinUSBFrame,
+        };
+        int index = ToolSelector.SelectedIndex;
+        for (int i = 0; i < frames.Length; i++)
+            frames[i].Visibility = i == index ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private void ApiDocumentButton_Click(object sender, RoutedEventArgs e)

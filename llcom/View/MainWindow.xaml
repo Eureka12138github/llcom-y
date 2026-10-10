@@ -758,38 +758,56 @@
         <Frame Name="OnlineScriptsFrame" NavigationUIVisibility="Hidden" />
       </TabItem>
       <TabItem Header="{DynamicResource ToolsTab}">
-        <TabControl>
-          <TabItem Header="{DynamicResource TcpTabTitle}">
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+          </Grid.RowDefinitions>
+          <ComboBox
+            Name="ToolSelector"
+            Margin="0,0,0,8"
+            SelectionChanged="ToolSelector_SelectionChanged"
+          >
+            <ComboBoxItem Content="{DynamicResource TcpTabTitle}" />
+            <ComboBoxItem Content="{DynamicResource TcpLocalTabTitle}" />
+            <ComboBoxItem Content="{DynamicResource UdpLocalTabTitle}" />
+            <ComboBoxItem Content="{DynamicResource TcpClientTitle}" />
+            <ComboBoxItem Content="{DynamicResource EncodingToolsTab}" />
+            <ComboBoxItem Content="MQTT" />
+            <ComboBoxItem Content="{DynamicResource EncodingFixHeader}" />
+            <ComboBoxItem Content="{DynamicResource SerialMonitorHeader}" />
+            <ComboBoxItem Content="{DynamicResource PlotHeader}" />
+            <ComboBoxItem Content="WinUSB" />
+          </ComboBox>
+          <Grid Grid.Row="1">
             <Frame Name="tcpTestFrame" NavigationUIVisibility="Hidden" />
-          </TabItem>
-          <TabItem Header="{DynamicResource TcpLocalTabTitle}">
-            <Frame Name="tcpLocalTestFrame" NavigationUIVisibility="Hidden" />
-          </TabItem>
-          <TabItem Header="{DynamicResource UdpLocalTabTitle}">
-            <Frame Name="udpLocalTestFrame" NavigationUIVisibility="Hidden" />
-          </TabItem>
-          <TabItem Header="{DynamicResource TcpClientTitle}">
-            <Frame Name="tcpClientFrame" NavigationUIVisibility="Hidden" />
-          </TabItem>
-          <TabItem Header="{DynamicResource EncodingToolsTab}">
-            <Frame Name="EncodingToolsFrame" NavigationUIVisibility="Hidden" />
-          </TabItem>
-          <TabItem Header="MQTT">
-            <Frame Name="MqttTestFrame" NavigationUIVisibility="Hidden" />
-          </TabItem>
-          <TabItem Header="{DynamicResource EncodingFixHeader}">
-            <Frame Name="EncodingFixFrame" NavigationUIVisibility="Hidden" />
-          </TabItem>
-          <TabItem Header="{DynamicResource SerialMonitorHeader}">
-            <Frame Name="SerialMonitorFrame" NavigationUIVisibility="Hidden" />
-          </TabItem>
-          <TabItem Header="{DynamicResource PlotHeader}">
-            <Frame Name="PlotFrame" NavigationUIVisibility="Hidden" />
-          </TabItem>
-          <TabItem Header="WinUSB">
-            <Frame Name="WinUSBFrame" NavigationUIVisibility="Hidden" />
-          </TabItem>
-        </TabControl>
+            <Frame
+              Name="tcpLocalTestFrame"
+              NavigationUIVisibility="Hidden"
+              Visibility="Collapsed"
+            />
+            <Frame
+              Name="udpLocalTestFrame"
+              NavigationUIVisibility="Hidden"
+              Visibility="Collapsed"
+            />
+            <Frame Name="tcpClientFrame" NavigationUIVisibility="Hidden" Visibility="Collapsed" />
+            <Frame
+              Name="EncodingToolsFrame"
+              NavigationUIVisibility="Hidden"
+              Visibility="Collapsed"
+            />
+            <Frame Name="MqttTestFrame" NavigationUIVisibility="Hidden" Visibility="Collapsed" />
+            <Frame Name="EncodingFixFrame" NavigationUIVisibility="Hidden" Visibility="Collapsed" />
+            <Frame
+              Name="SerialMonitorFrame"
+              NavigationUIVisibility="Hidden"
+              Visibility="Collapsed"
+            />
+            <Frame Name="PlotFrame" NavigationUIVisibility="Hidden" Visibility="Collapsed" />
+            <Frame Name="WinUSBFrame" NavigationUIVisibility="Hidden" Visibility="Collapsed" />
+          </Grid>
+        </Grid>
       </TabItem>
       <TabItem Header="{DynamicResource AboutCard}">
         <Frame Name="aboutFrame" NavigationUIVisibility="Hidden" />
