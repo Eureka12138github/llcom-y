@@ -95,8 +95,7 @@ public partial class UdpLocalPage : Page, INotifyPropertyChanged
         IPEndPoint IpEndPoint = new IPEndPoint(localAddr, port);
         Server = new UdpClient(IpEndPoint);
 
-        var isV6 = ip.Contains(":");
-        ShowData($"🗑 {(isV6 ? "[" : "")}{ip}{(isV6 ? "]" : "")}:{port}");
+        ShowData($"🗑 {Tools.NetworkHelper.FormatHostPort(ip, port)}");
 
         AsyncCallback newConnectionCb = null;
         newConnectionCb = new AsyncCallback(
@@ -108,9 +107,8 @@ public partial class UdpLocalPage : Page, INotifyPropertyChanged
                     IPEndPoint e = ((UdpState)(ar.AsyncState)).e;
 
                     byte[] receiveBytes = u.EndReceive(ar, ref e);
-                    var isV6 = e.Address.ToString().Contains(":");
                     ShowData(
-                        $"{(isV6 ? "[" : "")}{e.Address}{(isV6 ? "]" : "")}:{e.Port}",
+                        Tools.NetworkHelper.FormatHostPort(e.Address.ToString(), e.Port),
                         receiveBytes
                     );
                     Server.BeginReceive(newConnectionCb, ar.AsyncState);

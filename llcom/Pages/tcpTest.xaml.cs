@@ -126,22 +126,16 @@ public partial class tcpTest : Page, INotifyPropertyChanged
         SetupWebSocket(ws, heartbeat, false);
         SetupWebSocket(wsV6, heartbeatV6, true);
 
-        //适配一下通用通道
-        LuaApis.SendChannelsRegister(
+        //适配一下通用通道（Lua → 本通道）
+        Tools.LuaChannelBridge.RegisterSend(
             "netlab",
+            () => IsConnected,
             (_, t) =>
-            {
-                if (IsConnected && t != null)
-                {
-                    return Send(
-                        Tools.Global.Byte2Hex(t.Get<byte[]>("data")),
-                        true,
-                        t.Get<string>("client")
-                    );
-                }
-                else
-                    return false;
-            }
+                Send(
+                    Tools.Global.Byte2Hex(t.Get<byte[]>("data")),
+                    true,
+                    t.Get<string>("client")
+                )
         );
     }
 
@@ -253,9 +247,7 @@ public partial class tcpTest : Page, INotifyPropertyChanged
                     break;
                 case "data":
                     string data = (string)o["data"];
-                    byte[] buff = (bool)o["hex"]
-                        ? Global.Hex2Byte(data)
-                        : Global.GetEncoding().GetBytes(data);
+                    byte[] buff = NetworkHelper.BuildSendBytes(data, (bool)o["hex"]);
                     ShowData($" → receive from [{o["client"]}]", buff);
                     //适配一下通用通道
                     LuaApis.SendChannelsReceived(
@@ -371,7 +363,7 @@ public partial class tcpTest : Page, INotifyPropertyChanged
             );
             ShowData(
                 $" ← send to [{client}]",
-                isHex ? Global.Hex2Byte(data) : Global.GetEncoding().GetBytes(data),
+                NetworkHelper.BuildSendBytes(data, isHex),
                 true
             );
             return true;

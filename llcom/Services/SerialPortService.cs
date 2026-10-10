@@ -52,18 +52,14 @@ class SerialPortService : ISerialPortService
         //常驻后台接收线程（原为 new Thread，改为 Task.Run 更符合现代写法）
         Task.Run(() => ReadData());
 
-        //适配一下通用通道
-        LuaApis.SendChannelsRegister(
+        //适配一下通用通道（Lua → 本通道）
+        Tools.LuaChannelBridge.RegisterSend(
             "uart",
-            (data, _) =>
+            IsOpen,
+            data =>
             {
-                if (IsOpen() && data != null)
-                {
-                    SendData(data);
-                    return true;
-                }
-                else
-                    return false;
+                SendData(data);
+                return true;
             }
         );
     }

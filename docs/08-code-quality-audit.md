@@ -90,10 +90,18 @@
 - [x] **`tcpTest` 内部 `ws`/`wsV6` 去重**：合并为 `CreateHeartbeat` / `SetupWebSocket` /
   `HandleNetlabMessage`，该文件 495 → 370 行（`60dfbab`）
 
-尚未做（中高风险，建议后续逐步、每步独立提交）：
+本轮新增（同一批去重收尾）：
 
-- [ ] 共享网络 VM 基类（消除 5 份 `SetProperty` / `IsConnected` 等样板；注意 WPF Page 不能自定义基类，需组合）
-- [ ] 本地监听面板 / 发送面板 UserControl（`TcpLocal`/`UdpLocal`/`SocketClient`/`tcpTest`）
-- [ ] `LuaChannelBridge`（统一通道注册/注销；需先给 `LuaApis` 补注销 API）
+- [x] **`LuaChannelBridge`**：新增 `Tools/LuaChannelBridge.cs` 统一“Lua → 通道”的发送回调样板
+  （判空 + 判连接 + 调用发送）；`LuaApis` 补 `SendChannelsUnregister`。已迁移
+  `tcp-server` / `socket-client` / `mqtt` / `netlab` / `uart` 五处注册点（页面常驻，暂不反注册）
+- [x] **公共格式化 / 发送助手**（`Tools/NetworkHelper.cs`）：新增 `GetSocketName`（原 `TcpLocal.GetClientName`）、
+  `FormatHostPort`（IPv6 方括号，原散落 Tcp/Udp 页）、`BuildSendBytes`（HEX/编码三元式，原散落
+  `TcpLocal`/`SocketClient`/`tcpTest`/`Mqtt`）
 - [x] **Mqtt 内联 `ShowDataRaw`（6 处）统一走 helper**：抽出 `ShowMqtt(title, data, send)` → `NetworkLog.Show`，
   收发颜色语义等价（发送红 / 接收绿）；`MqttTestPage` 不再直接引用 `Brushes`
+
+尚未做（中高风险，需在有 UI 运行环境下逐步验证后再做）：
+
+- [ ] 共享网络 VM 基类（消除各页重复的 `SetProperty` / `IsConnected` 等样板；WPF Page 不能自定义基类，需组合）
+- [ ] 本地监听面板 / 发送面板 UserControl（`TcpLocal`/`UdpLocal`/`SocketClient`/`tcpTest`）

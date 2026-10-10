@@ -111,19 +111,8 @@ public partial class SocketClientPage : Page, INotifyPropertyChanged
             ShowData($" → receive", buff);
         };
 
-        //适配一下通用通道
-        LuaApis.SendChannelsRegister(
-            "socket-client",
-            (data, _) =>
-            {
-                if (socketNow != null && data != null)
-                {
-                    return Send(data);
-                }
-                else
-                    return false;
-            }
-        );
+        //适配一下通用通道（Lua → 本通道）
+        Tools.LuaChannelBridge.RegisterSend("socket-client", () => socketNow != null, Send);
         //通用通道收到消息
         DataRecived += (_, data) =>
         {
@@ -438,9 +427,7 @@ public partial class SocketClientPage : Page, INotifyPropertyChanged
     {
         if (socketNow != null)
         {
-            byte[] buff = HexMode
-                ? Tools.Global.Hex2Byte(ToSendTextBox.Text)
-                : Tools.Global.GetEncoding().GetBytes(ToSendTextBox.Text);
+            byte[] buff = Tools.NetworkHelper.BuildSendBytes(ToSendTextBox.Text, HexMode);
             Send(buff);
         }
     }

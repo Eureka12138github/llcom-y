@@ -44,4 +44,25 @@ internal static class NetworkHelper
         temp.Distinct().ToList().ForEach(ip => comboBox.Items.Add(ip));
         comboBox.SelectedIndex = 0;
     }
+
+    /// <summary>
+    /// 把 Socket 的远端/本地地址格式化为 <c>"远端 → 本地"</c>（IPv6 自动加方括号）。
+    /// 原 <c>TcpLocalPage.GetClientName</c> 内联实现。
+    /// </summary>
+    public static string GetSocketName(Socket s)
+    {
+        var remote = (IPEndPoint)s.RemoteEndPoint;
+        var local = (IPEndPoint)s.LocalEndPoint;
+        return FormatHostPort(remote.Address.ToString(), remote.Port)
+            + " → "
+            + FormatHostPort(local.Address.ToString(), local.Port);
+    }
+
+    /// <summary>格式化 <c>"host:port"</c>，IPv6 地址自动加方括号。原散落在 Tcp/Udp 页内联实现。</summary>
+    public static string FormatHostPort(string host, int port) =>
+        $"{(host.Contains(":") ? "[" : "")}{host}{(host.Contains(":") ? "]" : "")}:{port}";
+
+    /// <summary>按 HEX 模式或当前编码，把文本框内容转成待发送字节。原各页内联的三元表达式。</summary>
+    public static byte[] BuildSendBytes(string text, bool hex) =>
+        hex ? Global.Hex2Byte(text) : Global.GetEncoding().GetBytes(text);
 }

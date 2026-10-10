@@ -140,28 +140,24 @@ public partial class MqttTestPage : Page, INotifyPropertyChanged
             );
         });
 
-        //适配一下通用通道
-        LuaApis.SendChannelsRegister(
+        //适配一下通用通道（Lua → 本通道）
+        Tools.LuaChannelBridge.RegisterSend(
             "mqtt",
+            () => mqttClient.IsConnected,
             (_, t) =>
             {
-                if (mqttClient.IsConnected && t != null)
+                try
                 {
-                    try
-                    {
-                        return Publish(
-                            t.Get<string>("topic"),
-                            t.Get<byte[]>("payload"),
-                            t.Get<int>("qos")
-                        );
-                    }
-                    catch
-                    {
-                        return false;
-                    }
+                    return Publish(
+                        t.Get<string>("topic"),
+                        t.Get<byte[]>("payload"),
+                        t.Get<int>("qos")
+                    );
                 }
-                else
+                catch
+                {
                     return false;
+                }
             }
         );
     }
@@ -329,10 +325,10 @@ public partial class MqttTestPage : Page, INotifyPropertyChanged
         if (mqttClient.IsConnected)
         {
             var topic = publishTopicTextBox.Text;
-            var payload =
+            var payload = Tools.NetworkHelper.BuildSendBytes(
+                PublishTextBox.Text,
                 HexCheckBox.IsChecked ?? false
-                    ? Tools.Global.Hex2Byte(PublishTextBox.Text)
-                    : Tools.Global.GetEncoding().GetBytes(PublishTextBox.Text);
+            );
             var qos = int.Parse(publishQOSComboBox.Text);
             Task.Run(() =>
             {

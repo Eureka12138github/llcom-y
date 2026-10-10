@@ -110,6 +110,11 @@ namespace llcom.LuaEnv
         ) => SendChannels[channel] = cb;
 
         /// <summary>
+        /// 反注册通道回调（页面可销毁时使用）。
+        /// </summary>
+        public static void SendChannelsUnregister(string channel) => SendChannels.Remove(channel);
+
+        /// <summary>
         /// 发送数据到通用通道
         /// </summary>
         /// <param name="channel">通道名称</param>

@@ -82,19 +82,8 @@ public partial class TcpLocalPage : Page, INotifyPropertyChanged
             ShowData($" → receive ({(string)name})", data);
         };
 
-        //适配一下通用通道
-        LuaApis.SendChannelsRegister(
-            "tcp-server",
-            (data, _) =>
-            {
-                if (Server != null && data != null)
-                {
-                    return Broadcast(data);
-                }
-                else
-                    return false;
-            }
-        );
+        //适配一下通用通道（Lua → 本通道）
+        Tools.LuaChannelBridge.RegisterSend("tcp-server", () => Server != null, Broadcast);
         //通用通道收到消息
         DataRecived += (name, data) =>
         {
@@ -116,15 +105,7 @@ public partial class TcpLocalPage : Page, INotifyPropertyChanged
     /// </summary>
     /// <param name="s"></param>
     /// <returns></returns>
-    private string GetClientName(Socket s)
-    {
-        var remote = (IPEndPoint)s.RemoteEndPoint;
-        var remoteIsV6 = remote.Address.ToString().Contains(":");
-        var local = (IPEndPoint)s.LocalEndPoint;
-        var localIsV6 = local.Address.ToString().Contains(":");
-        return $"{(remoteIsV6 ? "[" : "")}{remote.Address}{(remoteIsV6 ? "]" : "")}:{remote.Port} → "
-            + $"{(localIsV6 ? "[" : "")}{local.Address}{(localIsV6 ? "]" : "")}:{local.Port}";
-    }
+    private string GetClientName(Socket s) => Tools.NetworkHelper.GetSocketName(s);
 
     private TcpListener Server = null;
     private List<Socket> Clients = new List<Socket>();
@@ -199,8 +180,7 @@ public partial class TcpLocalPage : Page, INotifyPropertyChanged
             throw ex;
         }
 
-        var isV6 = ip.Contains(":");
-        ShowData($"🛰 {(isV6 ? "[" : "")}{ip}{(isV6 ? "]" : "")}:{port}");
+        ShowData($"🛰 {Tools.NetworkHelper.FormatHostPort(ip, port)}");
         AsyncCallback newConnectionCb = null;
         newConnectionCb = new AsyncCallback(
             (ar) =>
@@ -317,9 +297,7 @@ public partial class TcpLocalPage : Page, INotifyPropertyChanged
     {
         if (Server != null)
         {
-            byte[] buff = HexMode
-                ? Tools.Global.Hex2Byte(toSendDataTextBox.Text)
-                : Tools.Global.GetEncoding().GetBytes(toSendDataTextBox.Text);
+            byte[] buff = Tools.NetworkHelper.BuildSendBytes(toSendDataTextBox.Text, HexMode);
             Broadcast(buff);
         }
     }
