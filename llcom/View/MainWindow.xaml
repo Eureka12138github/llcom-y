@@ -28,19 +28,96 @@
   </Window.InputBindings>
   <Grid Name="MainGrid" IsEnabled="False">
     <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
       <RowDefinition Height="*" />
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="11*" />
+      <ColumnDefinition Width="12*" />
       <ColumnDefinition Width="auto" />
-      <ColumnDefinition Width="7*" />
+      <ColumnDefinition Width="8*" />
     </Grid.ColumnDefinitions>
+
+    <!--  顶部工具栏：端口 / 波特率 / 打开关闭 / 清空 / 设置 / 语言  -->
+    <Grid Grid.Row="0" Grid.ColumnSpan="3" Margin="8,6,8,2">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
+      </Grid.ColumnDefinitions>
+      <Button
+        Name="refreshPortButton"
+        Command="{Binding RefreshPortsCommand}"
+        Content="{DynamicResource RefreshPortButton}"
+        IsEnabled="{Binding ElementName=serialPortsListComboBox, Path=IsEnabled}"
+      />
+      <ComboBox
+        Name="serialPortsListComboBox"
+        Grid.Column="1"
+        MinWidth="150"
+        MaxWidth="300"
+        Margin="8,0,0,0"
+        DisplayMemberPath="DisplayName"
+        IsEnabled="{Binding IsPortComboEnabled}"
+        ItemsSource="{Binding Ports}"
+        SelectedItem="{Binding SelectedPort}"
+      />
+      <ComboBox
+        Name="baudRateComboBox"
+        Grid.Column="2"
+        Width="80"
+        Margin="8,0,0,0"
+        DisplayMemberPath="Display"
+        ItemsSource="{Binding BaudRates}"
+        SelectedItem="{Binding SelectedBaudRate}"
+      />
+      <Button
+        Name="openClosePortButton"
+        Grid.Column="3"
+        Margin="8,0,0,0"
+        Command="{Binding OpenClosePortCommand}"
+      >
+        <WrapPanel>
+          <TextBlock Text="{Binding OpenCloseButtonText}" />
+          <TextBlock Text="{DynamicResource OpenPort_port}" />
+        </WrapPanel>
+      </Button>
+      <Button
+        Name="clearLogButton"
+        Grid.Column="5"
+        Margin="8,0,0,0"
+        Click="ClearLogButton_Click"
+        Content="{DynamicResource ClearLog}"
+      />
+      <Button
+        Name="MoreSettingButton"
+        Grid.Column="6"
+        Margin="8,0,0,0"
+        Click="MoreSettingButton_Click"
+        Content="{DynamicResource MoreSettings}"
+        ToolTip="{DynamicResource MoreSettingsTip}"
+      />
+      <Menu Grid.Column="7" Margin="8,0,0,0" VerticalAlignment="Center">
+        <MenuItem ToolTip="{DynamicResource ChangeLanguage}">
+          <MenuItem.Header>
+            <fa:FontAwesome Foreground="{DynamicResource Brush.Accent.Blue}" Icon="Globe" />
+          </MenuItem.Header>
+          <MenuItem Click="MenuItem_Click" Header="简体中文" Tag="zh-CN" />
+          <MenuItem Click="MenuItem_Click" Header="English" Tag="en-US" />
+        </MenuItem>
+      </Menu>
+    </Grid>
 
     <!--  收发数据显示  -->
     <Frame
       Name="dataShowFrame"
+      Grid.Row="1"
       Background="Transparent"
       BorderBrush="#00000000"
       BorderThickness="0.5"
@@ -51,55 +128,16 @@
       PreviewTextInput="uartDataFlowDocument_PreviewTextInput"
     />
 
-    <!--  发送数据区  -->
-    <Grid Grid.Row="1" Margin="4">
-      <Grid.RowDefinitions>
-        <RowDefinition Height="*" />
-        <RowDefinition Height="*" />
-      </Grid.RowDefinitions>
+    <!--  发送数据区（跨全宽，位于日志与状态栏之间）  -->
+    <Grid Grid.Row="2" Grid.ColumnSpan="3" Margin="8,2,8,6">
       <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="0" />
-        <ColumnDefinition Width="0" />
-        <ColumnDefinition Width="0" />
-        <ColumnDefinition Width="55" />
-        <ColumnDefinition Width="75" />
-        <ColumnDefinition Width="4*" />
-        <ColumnDefinition Width="50" />
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto" />
       </Grid.ColumnDefinitions>
-      <Button
-        Name="openClosePortButton"
-        Grid.RowSpan="2"
-        Grid.Column="3"
-        Margin="4"
-        Command="{Binding OpenClosePortCommand}"
-      >
-        <WrapPanel>
-          <TextBlock Text="{Binding OpenCloseButtonText}" />
-          <TextBlock Text="{DynamicResource OpenPort_port}" />
-        </WrapPanel>
-      </Button>
-      <Button
-        Name="clearLogButton"
-        Grid.Column="4"
-        Margin="4"
-        Click="ClearLogButton_Click"
-        Content="{DynamicResource ClearLog}"
-      />
-      <Button
-        Name="MoreSettingButton"
-        Grid.Row="1"
-        Grid.Column="4"
-        Margin="4"
-        Click="MoreSettingButton_Click"
-        Content="{DynamicResource MoreSettings}"
-        ToolTip="{DynamicResource MoreSettingsTip}"
-      />
       <TextBox
         Name="toSendDataTextBox"
-        Grid.RowSpan="2"
-        Grid.Column="5"
-        Height="50"
-        Margin="4"
+        Margin="0,0,8,0"
+        Height="44"
         VerticalContentAlignment="Top"
         AcceptsReturn="True"
         FontFamily="Consolas"
@@ -109,92 +147,35 @@
       />
       <Button
         Name="sendDataButton"
-        Grid.RowSpan="2"
-        Grid.Column="6"
-        Margin="4"
+        Grid.Column="1"
+        Width="80"
         Command="{Binding SendCommand}"
         Content="{DynamicResource SendDataButton}"
         ToolTip="{DynamicResource SendDataButtonTip}"
       />
     </Grid>
 
-    <!--  底部状态栏  -->
-    <DockPanel Grid.Row="2" Grid.ColumnSpan="3">
+    <!--  底部状态栏（精简：状态 + 收发计数）  -->
+    <DockPanel Grid.Row="3" Grid.ColumnSpan="3">
       <StatusBar DockPanel.Dock="Bottom">
         <StatusBar.ItemsPanel>
           <ItemsPanelTemplate>
             <Grid>
               <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto" />
-                <ColumnDefinition Width="auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="auto" />
               </Grid.ColumnDefinitions>
             </Grid>
           </ItemsPanelTemplate>
         </StatusBar.ItemsPanel>
-        <Button
-          Name="refreshPortButton"
-          Grid.Column="0"
-          Command="{Binding RefreshPortsCommand}"
-          Content="{DynamicResource RefreshPortButton}"
-          IsEnabled="{Binding ElementName=serialPortsListComboBox, Path=IsEnabled}"
-        />
-        <StatusBarItem Grid.Column="1">
-          <TextBlock Text="{DynamicResource ShowPorts}" />
-        </StatusBarItem>
-        <Separator Grid.Column="2" />
-        <StatusBarItem Grid.Column="3">
-          <ComboBox
-            Name="serialPortsListComboBox"
-            MinWidth="150"
-            MaxWidth="300"
-            DisplayMemberPath="DisplayName"
-            IsEnabled="{Binding IsPortComboEnabled}"
-            ItemsSource="{Binding Ports}"
-            SelectedItem="{Binding SelectedPort}"
-          />
-        </StatusBarItem>
-        <Separator Grid.Column="4" />
-        <StatusBarItem Grid.Column="5">
-          <TextBlock Text="{DynamicResource ShowBaudRate}" />
-        </StatusBarItem>
-        <Separator Grid.Column="6" />
-        <StatusBarItem Grid.Column="7">
-          <ComboBox
-            Name="baudRateComboBox"
-            Width="80"
-            DisplayMemberPath="Display"
-            ItemsSource="{Binding BaudRates}"
-            SelectedItem="{Binding SelectedBaudRate}"
-          />
-        </StatusBarItem>
-        <Separator Grid.Column="8" />
-        <StatusBarItem Grid.Column="9">
-          <TextBlock Text="{DynamicResource ShowStatus}" />
-        </StatusBarItem>
-        <Separator Grid.Column="10" />
-        <StatusBarItem Grid.Column="11">
+        <StatusBarItem Grid.Column="0">
           <TextBlock Name="statusTextBlock" Text="{Binding StatusText}" />
         </StatusBarItem>
-        <Separator Grid.Column="12" />
-        <StatusBarItem Grid.Column="13">
+        <StatusBarItem Grid.Column="2">
           <TextBlock
             Cursor="Cross"
             MouseRightButtonDown="sentCountTextBlock_MouseRightButtonDown"
@@ -202,8 +183,7 @@
             ToolTip="{DynamicResource ClearCountTip}"
           />
         </StatusBarItem>
-        <Separator Grid.Column="14" />
-        <StatusBarItem Grid.Column="15">
+        <StatusBarItem Grid.Column="3">
           <TextBlock
             Name="sentCountTextBlock"
             Cursor="Cross"
@@ -212,8 +192,7 @@
             ToolTip="{DynamicResource ClearCountTip}"
           />
         </StatusBarItem>
-        <Separator Grid.Column="16" />
-        <StatusBarItem Grid.Column="17">
+        <StatusBarItem Grid.Column="4">
           <TextBlock
             Cursor="Cross"
             MouseRightButtonDown="receivedCountTextBlock_MouseRightButtonDown"
@@ -221,8 +200,7 @@
             ToolTip="{DynamicResource ClearCountTip}"
           />
         </StatusBarItem>
-        <Separator Grid.Column="18" />
-        <StatusBarItem Grid.Column="19">
+        <StatusBarItem Grid.Column="5">
           <TextBlock
             Name="receivedCountTextBlock"
             Cursor="Cross"
@@ -235,10 +213,10 @@
     </DockPanel>
 
     <!--  中间改变分割大小的东西  -->
-    <GridSplitter Grid.RowSpan="2" Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
+    <GridSplitter Grid.Row="1" Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
 
     <!--  右侧脚本、快捷发送  -->
-    <TabControl Grid.RowSpan="2" Grid.Column="3">
+    <TabControl Grid.Row="1" Grid.Column="2">
       <TabItem>
         <TabItem.Header>
           <StackPanel Orientation="Horizontal">
@@ -817,16 +795,6 @@
         <Frame Name="aboutFrame" NavigationUIVisibility="Hidden" />
       </TabItem>
     </TabControl>
-
-    <Menu Grid.RowSpan="2" Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Top">
-      <MenuItem ToolTip="{DynamicResource ChangeLanguage}">
-        <MenuItem.Header>
-          <fa:FontAwesome Foreground="{DynamicResource Brush.Accent.Blue}" Icon="Globe" />
-        </MenuItem.Header>
-        <MenuItem Click="MenuItem_Click" Header="简体中文" Tag="zh-CN" />
-        <MenuItem Click="MenuItem_Click" Header="English" Tag="en-US" />
-      </MenuItem>
-    </Menu>
 
     <!--  统计  -->
     <WebBrowser Name="TongjiWebBrowser" Visibility="Collapsed" />
