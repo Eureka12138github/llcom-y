@@ -13,7 +13,7 @@
 >
   
 
-  <Grid>
+  <Grid Style="{StaticResource Tool.Content}">
     <TabControl>
       <TabItem Header="{DynamicResource MQTTHeardr1}">
         <Grid>
@@ -54,11 +54,7 @@
             Name="PublishTextBox"
             Grid.Row="3"
             Margin="2"
-            VerticalContentAlignment="Top"
-            AcceptsReturn="True"
-            FontFamily="Consolas"
-            TextWrapping="Wrap"
-            VerticalScrollBarVisibility="Auto"
+            Style="{StaticResource Tool.SendBox}"
           />
           <Grid Grid.Row="5">
             <Grid.ColumnDefinitions>

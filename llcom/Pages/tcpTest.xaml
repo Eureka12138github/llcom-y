@@ -15,7 +15,7 @@
   Loaded="Page_Loaded"
 >
   
-  <Grid Name="MainGrid">
+  <Grid Name="MainGrid" Style="{StaticResource Tool.Content}">
     <Grid.RowDefinitions>
       <RowDefinition Height="60" />
       <RowDefinition Height="30" />
@@ -123,12 +123,8 @@
     <TextBox
       Name="toSendDataTextBox"
       Grid.Row="2"
-      VerticalContentAlignment="Top"
-      TextWrapping="Wrap"
-      AcceptsReturn="True"
-      VerticalScrollBarVisibility="Auto"
       Margin="2"
-      FontFamily="Consolas"
+      Style="{StaticResource Tool.SendBox}"
     />
     <ComboBox
       Name="ClientList"

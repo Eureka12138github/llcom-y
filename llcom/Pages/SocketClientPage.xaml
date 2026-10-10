@@ -15,7 +15,7 @@
   mc:Ignorable="d"
 >
   
-  <Grid>
+  <Grid Style="{StaticResource Tool.Content}">
     <Grid.RowDefinitions>
       <RowDefinition Height="auto" />
       <RowDefinition Height="auto" />
@@ -120,11 +120,7 @@
       Name="ToSendTextBox"
       Grid.Row="3"
       Margin="0,3,0,0"
-      VerticalContentAlignment="Top"
-      AcceptsReturn="True"
-      FontFamily="Consolas"
-      TextWrapping="Wrap"
-      VerticalScrollBarVisibility="Auto"
+      Style="{StaticResource Tool.SendBox}"
     />
     <Button
       Name="SendButton"

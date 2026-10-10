@@ -72,4 +72,23 @@
     <Setter Property="HorizontalContentAlignment" Value="Center" />
     <Setter Property="VerticalContentAlignment" Value="Center" />
   </Style>
+
+  <!-- ============ 工具页统一模板 ============ -->
+  <!-- 工具页根容器：统一内边距 -->
+  <Style x:Key="Tool.Content" TargetType="{x:Type Grid}">
+    <Setter Property="Margin" Value="8" />
+  </Style>
+  <!-- 发送输入框：等宽、多行、可换行、自动滚动条 -->
+  <Style x:Key="Tool.SendBox" TargetType="{x:Type TextBox}">
+    <Setter Property="FontFamily" Value="Consolas" />
+    <Setter Property="AcceptsReturn" Value="True" />
+    <Setter Property="TextWrapping" Value="Wrap" />
+    <Setter Property="VerticalContentAlignment" Value="Top" />
+    <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+    <Setter Property="MinHeight" Value="60" />
+  </Style>
+  <!-- 段落小标题 -->
+  <Style x:Key="Tool.SectionLabel" TargetType="{x:Type TextBlock}">
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
 </ResourceDictionary>
