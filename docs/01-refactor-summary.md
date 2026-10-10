@@ -1,6 +1,6 @@
 # LLCOM 重构总结
 
-> 时间：2026-08 · 分支：`refactor/main`（22 个提交，基于 master）
+> 时间：2026-08 · 分支：`refactor`（即 `origin/refactor`，22 个提交，基于 master）
 > 原则：**不升级 .NET Framework 与依赖版本、不增删功能、每步独立可测可回退**
 
 ## 一、为什么重构
@@ -16,7 +16,7 @@
 
 | 步骤 | 内容 | 成果 |
 |---|---|---|
-| Step 0 | 基线构建、冒烟测试清单、refactor/main 分支 | 可回退起点 |
+| Step 0 | 基线构建、冒烟测试清单、refactor 分支 | 可回退起点 |
 | Step 1 | 引入 CommunityToolkit.Mvvm 8.2.2 + ViewModels/Services 骨架 | MVVM 基础 |
 | Step 2 | `Global.cs` 拆分为 6 个内聚服务（AppPaths/ProfileInitializer/EncodingHelper/LocalizationService/OnlineScriptService/FileUtils），Global 保留为外观层 | 上帝类消除 |
 | Step 3 | `Settings` 继承 ObservableObject、拆 6 个分部文件、**600ms 防抖保存** + 退出 Flush | 上帝类消除 + IO 优化 |

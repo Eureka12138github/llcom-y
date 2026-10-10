@@ -1,7 +1,7 @@
 # LLCOM 架构文档
 
 > 本文档在重构过程中逐步建立，用于说明重构后的项目结构与关键设计决策，方便后续维护。
-> 重构分支：`refactor/main`（基于 master，逐步骤提交，每步可回退）。
+> 重构分支：`origin/refactor`（基于 master，逐步骤提交，每步可回退）；当前开发分支见 `docs/README.md` 的分支说明。
 
 ## 一、项目概览
 
@@ -111,13 +111,18 @@ public partial class XxxPage : Page, INotifyPropertyChanged
 
 ## 五、构建与测试
 
-```bat
-"C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\amd64\MSBuild.exe" llcom\llcom.csproj -p:Configuration=Debug -p:Platform=x64
+```powershell
+# 构建（x64 Debug；x86 用 -p:Platform=x86，会自动按平台还原）
+dotnet build llcom\llcom.csproj -c Debug -p:Platform=x64
+
+# 单元测试（xUnit/net48）
+dotnet test tests\llcom.Tests\llcom.Tests.csproj -p:Platform=x64
 ```
 
-- 代码格式化：`dotnet tool run csharpier`（CSharpier，跳过生成文件与配置文件）
-- 冒烟测试清单：`docs/refactor-test-checklist.md`
-- CI：GitHub Actions（windows-latest + msbuild + nuget restore）
+- 工程为 **SDK-style**（`dotnet build` 与 VS MSBuild 均可）；详见 `AGENTS.md` 与 `docs/04-maintenance.md`
+- 代码格式化：CSharpier（仅对 `.cs` 与 UI `.xaml`）
+- 冒烟测试清单：`docs/03-test-checklist.md`
+- CI：GitHub Actions（windows-latest + `dotnet build` / `dotnet test`）
 
 ## 六、依赖清单（重构后）
 

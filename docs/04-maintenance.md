@@ -7,19 +7,30 @@
 ### 本机构建工具
 | 工具 | 路径/版本 | 用途 |
 |---|---|---|
-| Visual Studio 2026（VS 18 Community） | `C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\amd64\MSBuild.exe` | **唯一可用构建工具**（支持旧式 csproj + 最新 C# 语法） |
-| dotnet SDK 10 | `C:\Program Files\dotnet` | CSharpier 等 dotnet 工具 |
+| dotnet SDK 10 | `C:\Program Files\dotnet` | **主构建工具**（`dotnet build` / `dotnet test`，SDK-style csproj） |
+| Visual Studio 2026（VS 18 Community） | `...\MSBuild\Current\Bin\amd64\MSBuild.exe` | 可视化调试 / 可选构建 |
 | CSharpier 1.3.0 | `~\.dotnet\tools\csharpier` | 代码格式化 |
 
-> ⚠️ **不要**用 VS2019 msbuild（Roslyn 3.11，无法编译 C# 10 语法）；**不要**用 `dotnet msbuild`（.NET Core msbuild 不支持旧式 WPF 工程的 XAML 临时工程流程，实测会报大量 XAML 相关错误）。
+> 工程已迁移为 **SDK-style**（`Microsoft.NET.Sdk` + `UseWPF`/`UseWindowsForms`）：`dotnet build` 与 VS MSBuild 均可。
+> net462 参考程序集由 NuGet 包 `Microsoft.NETFramework.ReferenceAssemblies.net462` 提供，**无需安装 .NET Framework Dev Pack**。
 
 ### 构建命令（x64 Debug）
-```bat
+```powershell
+# 推荐：dotnet CLI（x86 换 -p:Platform=x86，会自动触发该平台还原）
+dotnet build llcom\llcom.csproj -c Debug -p:Platform=x64
+
+# 或 VS MSBuild
 "C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\amd64\MSBuild.exe" llcom\llcom.csproj -p:Configuration=Debug -p:Platform=x64
 ```
-- 平台：x64 / x86 均支持（`-p:Platform=x86`）
+- 平台：x64 / x86（.NET Framework exe 工程按 `PlatformTarget` 推断 RID，**x86/x64 需各自还原**）
 - 配置：Debug / Release
 - 输出：`llcom\bin\x64\Debug\llcom.exe`（单文件，托管依赖被 Costura 嵌入）
+
+### 单元测试
+```powershell
+dotnet test tests\llcom.Tests\llcom.Tests.csproj -p:Platform=x64
+```
+测试工程通过 `[assembly: InternalsVisibleTo("llcom.Tests")]` 访问 `internal` 成员；涉及静态全局状态，已禁用并行。
 
 ### 代码格式化
 ```bat
@@ -29,7 +40,7 @@ csharpier format <文件或目录>
 ⚠️ 只对 `.cs` 和 UI `.xaml` 执行；**不要**对 `llcom.csproj` / `packages.config` / 语言文件 / FodyWeavers.xml 执行（会被重排）。
 
 ### CI（GitHub Actions）
-`.github/workflows/build.yml`：windows-latest + `nuget restore` + `msbuild`。改动构建系统前需同步检查 CI。
+`.github/workflows/build.yml`：windows-latest + `dotnet build` / `dotnet test`。改动构建系统前需同步检查 CI。
 
 ## 二、目录速览（改代码前必读）
 
@@ -59,7 +70,7 @@ llcom/
 - `XLua.Mini`（本地 `Lib\XLua.Mini.dll`，非 NuGet）
 - 其余全部 NuGet 依赖
 
-> packages.config 模式（非 PackageReference），装包需手动下载 nupkg 到 `packages/` 并更新 packages.config + csproj。
+> 依赖通过 **PackageReference** 管理（SDK-style 工程直接读取 csproj）；新增依赖用 `dotnet add package` 或编辑 csproj。
 
 ## 四、踩坑记录（维护时务必注意）
 
@@ -106,7 +117,7 @@ public partial class XxxPage : Page, INotifyPropertyChanged
 1. **数据/服务** → 放 `Services/` 或 `Model/`（纯逻辑，带中文注释）
 2. **页面逻辑** → 新建 `ViewModels/XxxViewModel.cs`（继承 ObservableObject 或手写 INPC）
 3. **视图** → XAML 绑定 VM；控件不可绑定的（AvalonEdit）用 SetTextBridge 桥接
-4. **注册** → 新 .cs 文件必须手动加入 `llcom.csproj` 的 `<Compile Include>`（旧式工程无自动 globbing）
+4. **注册** → SDK-style 工程隐式 globbing，新增 `.cs`/`.xaml` 会自动纳入，**无需**手动登记到 csproj
 5. **格式化** → `csharpier format <新文件>`
 6. **测试** → 按 [03-test-checklist.md](03-test-checklist.md) 冒烟
 
@@ -114,7 +125,7 @@ public partial class XxxPage : Page, INotifyPropertyChanged
 
 | 操作 | 方法 |
 |---|---|
-| 加 NuGet 包 | 下载 nupkg → 解压到 `packages/` → 更新 packages.config + csproj（Reference/Analyzer/Import） |
+| 加 NuGet 包 | `dotnet add llcom\llcom.csproj package <名字>`，或编辑 csproj 的 `<PackageReference>` |
 | 加 Lua API | `LuaEnv/LuaApis.cs` 静态方法 → `LuaEnv/LuaLoader.cs` 里 `lua.DoString("apiXxx = CS...")` 注册 → 更新 `LuaApi.md` |
 | 改语言文案 | `llcom/languages/zh-CN.xaml` + `en-US.xaml`（键一致） |
 | 看运行时日志 | `llcom/bin/x64/Debug/logs/log.txt`（串口）、`user_script_run/logs/log.txt`（Lua） |

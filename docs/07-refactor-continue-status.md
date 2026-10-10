@@ -89,7 +89,7 @@ dotnet test tests\llcom.Tests\llcom.Tests.csproj -p:Platform=x64
 - **SDK-style 注意**：.NET Framework 的 exe 工程按 `PlatformTarget` 推断 RID（`win-x64`/`win-x86`），
   x86/x64 需各自还原（`dotnet build -p:Platform=x86` 会自动处理）。
 - **exe 运行约束**：必须叫 `llcom.exe`，且不能在压缩包/临时目录直接运行（源码 `ProfileInitializer.Initial()` 校验）。
-- **已知坑**沿用 `docs/architecture.md` 第四节与 `AGENTS.md`：WPF Page 需手写 INPC、AvalonEdit Text 不可绑定、
+- **已知坑**沿用 `docs/02-architecture.md` 第四节与 `AGENTS.md`：WPF Page 需手写 INPC、AvalonEdit Text 不可绑定、
   `Settings.quickSend` 必须 `[JsonIgnore]`、串口 SafeHandle 释放勿改同步等。
 - **测试约定**：涉及静态全局状态（`Global.setting`/`AppPaths.ProfilePath`），已禁用并行；
   访问 `internal` 成员靠 `InternalsVisibleTo("llcom.Tests")`。
