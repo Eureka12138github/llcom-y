@@ -72,7 +72,7 @@ SerialPortService（后台接收线程，信号量分包）
 
 ## 四、关键设计决策（维护者必读）
 
-### 1. 为什么 7 个工具 Page 手写 INotifyPropertyChanged
+### 1. 为什么工具 Page 需要手写 INotifyPropertyChanged
 MVVM Toolkit 8.2.2 的 `[ObservableProperty]` 生成器要求类继承 `ObservableObject` 或使用
 `[ObservableObject]/[INotifyPropertyChanged]` 特性，而这两个特性与"手动实现接口"冲突
 （MVVMTK0001/0002）。且 **XAML 生成的 .g.cs 硬编码基类 `: Page`**，partial 基类必须一致，
@@ -85,6 +85,9 @@ public partial class XxxPage : Page, INotifyPropertyChanged
 }
 ```
 ⚠️ 添加新属性时务必用 `SetProperty` 并保持属性名 PascalCase 与 XAML 绑定一致。
+
+> **现状（正在收敛）**：更推荐的做法是把状态与逻辑搬进 VM（`DataContext` 指向 `ObservableObject`），
+> 让 Page 不需要任何通知属性。样板见 `UdpLocalPage` → `ViewModels/UdpLocalViewModel`：该页已不再手写 INPC。
 
 ### 2. AvalonEdit TextEditor 不可绑定
 `TextEditor.Text` 不是 DependencyProperty，不能 XAML 绑定。VM 通过 `SetTextBridge(get, set)`

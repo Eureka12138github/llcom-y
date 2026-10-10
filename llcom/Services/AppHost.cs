@@ -37,6 +37,11 @@ internal static class AppHost
             )
         );
 
+        // 工具页 VM：VM 化样板（Page 经服务定位器解析，见 UdpLocalPage）
+        services.AddSingleton<UdpLocalViewModel>(sp =>
+            new UdpLocalViewModel(sp.GetRequiredService<Settings>())
+        );
+
         services.AddSingleton<MainViewModel>(sp =>
             new MainViewModel(
                 sp.GetRequiredService<ISerialPortService>(),

@@ -100,6 +100,8 @@
 - [x] **公共格式化 / 发送助手**（`Tools/NetworkHelper.cs`）：新增 `GetSocketName`（原 `TcpLocal.GetClientName`）、
   `FormatHostPort`（IPv6 方括号，原散落 Tcp/Udp 页）、`BuildSendBytes`（HEX/编码三元式，原散落
   `TcpLocal`/`SocketClient`/`tcpTest`/`Mqtt`）
+- [x] **VM 化样板（`UdpLocalPage`）**：状态与监听逻辑移入 `ViewModels/UdpLocalViewModel`
+  （`ObservableObject`），Page 只留 UI 桥接，**不再手写 INotifyPropertyChanged**；为其余工具页提供模板
 - [x] **Mqtt 内联 `ShowDataRaw`（6 处）统一走 helper**：抽出 `ShowMqtt(title, data, send)` → `NetworkLog.Show`，
   收发颜色语义等价（发送红 / 接收绿）；`MqttTestPage` 不再直接引用 `Brushes`
 
