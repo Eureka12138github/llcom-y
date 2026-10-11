@@ -10,7 +10,7 @@
 ```
 
 - [ ] 构建零 error（允许原有 warning）
-- [ ] 生成 `llcom\bin\x64\Debug\llcom.exe`
+- [ ] 生成 `artifacts\Debug\x64\llcom.exe`
 
 ## 一、主窗口基础
 

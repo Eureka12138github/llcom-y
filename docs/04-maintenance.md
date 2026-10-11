@@ -24,7 +24,7 @@ dotnet build llcom\llcom.csproj -c Debug -p:Platform=x64
 ```
 - 平台：x64 / x86（.NET Framework exe 工程按 `PlatformTarget` 推断 RID，**x86/x64 需各自还原**）
 - 配置：Debug / Release
-- 输出：`llcom\bin\x64\Debug\llcom.exe`（单文件，托管依赖被 Costura 嵌入）
+- 输出：`artifacts\Debug\x64\llcom.exe`（单文件，托管依赖被 Costura 嵌入；**Release 与 Debug 各占一个顶层文件夹**）
 
 ### 单元测试
 ```powershell
@@ -128,4 +128,4 @@ public partial class XxxPage : Page, INotifyPropertyChanged
 | 加 NuGet 包 | `dotnet add llcom\llcom.csproj package <名字>`，或编辑 csproj 的 `<PackageReference>` |
 | 加 Lua API | `LuaEnv/LuaApis.cs` 静态方法 → `LuaEnv/LuaLoader.cs` 里 `lua.DoString("apiXxx = CS...")` 注册 → 更新 `LuaApi.md` |
 | 改语言文案 | `llcom/languages/zh-CN.xaml` + `en-US.xaml`（键一致） |
-| 看运行时日志 | `llcom/bin/x64/Debug/logs/log.txt`（串口）、`user_script_run/logs/log.txt`（Lua） |
+| 看运行时日志 | `artifacts/Debug/x64/logs/log.txt`（串口）、`user_script_run/logs/log.txt`（Lua） |

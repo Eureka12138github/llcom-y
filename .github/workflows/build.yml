@@ -31,7 +31,7 @@ jobs:
       - name: Clean build output
         shell: cmd
         run: |
-          cd llcom\bin\x64\Release
+          cd artifacts\Release\x64
           del /q *.xml 2>nul
           del /q *.pdb 2>nul
           del /q *.config 2>nul
@@ -40,7 +40,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: llcom_x64
-          path: llcom/bin/x64/Release/
+          path: artifacts/Release/x64/
 
       # -------- 以下步骤仅在打 tag 时执行 --------
 
@@ -48,14 +48,14 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         shell: cmd
         run: |
-          xcopy /e /r /y "llcom\DefaultFiles\core_script" "llcom\bin\x64\Release\core_script\"
+          xcopy /e /r /y "llcom\DefaultFiles\core_script" "artifacts\Release\x64\core_script\"
 
       - name: Package zip for release
         if: startsWith(github.ref, 'refs/tags/')
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path temp
-          Compress-Archive -Path llcom\bin\x64\Release\* -Force -DestinationPath temp\llcom.zip
+          Compress-Archive -Path artifacts\Release\x64\* -Force -DestinationPath temp\llcom.zip
           Copy-Item llcom\changlog\index.html     temp\changelog.html
           Copy-Item llcom\changlog\autoUpdate.xml temp\autoUpdate.xml
 

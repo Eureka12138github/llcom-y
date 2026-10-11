@@ -15,12 +15,12 @@
     <Deterministic>true</Deterministic>
     <!-- 使用自有 AssemblyInfo.cs，禁用 SDK 自动生成 -->
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <!-- 输出路径与旧工程保持一致：bin\x64\Debug\ 等 -->
+    <!-- 输出集中到仓库根 artifacts\（见根目录 Directory.Build.props 与 AGENTS.md） -->
     <Platforms>x86;x64</Platforms>
     <Platform Condition="'$(Platform)' == '' or '$(Platform)' == 'AnyCPU'">x64</Platform>
     <PlatformTarget Condition="'$(Platform)' == 'x64'">x64</PlatformTarget>
     <PlatformTarget Condition="'$(Platform)' == 'x86'">x86</PlatformTarget>
-    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
+    <OutputPath>$(RepoRoot)artifacts\$(Configuration)\$(Platform)\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>

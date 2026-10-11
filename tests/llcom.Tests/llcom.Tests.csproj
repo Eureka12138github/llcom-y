@@ -10,6 +10,9 @@
     <Platforms>x64</Platforms>
     <Platform Condition="'$(Platform)' == '' or '$(Platform)' == 'AnyCPU'">x64</Platform>
     <PlatformTarget>x64</PlatformTarget>
+    <!-- 测试产物集中到 artifacts\Tests\（见根目录 Directory.Build.props / AGENTS.md） -->
+    <OutputPath>$(RepoRoot)artifacts\Tests\$(Configuration)\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 
   <ItemGroup>

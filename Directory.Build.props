@@ -1,0 +1,14 @@
+<Project>
+
+  <!--
+    统一构建产物目录（详见 AGENTS.md「构建产物位置」）：
+    所有工程把“最终输出”集中到仓库根的 artifacts\ 下，便于查找与管理。
+    这里只定义 RepoRoot 供各工程引用；不改全局 OutputPath，避免影响 MSIX 打包工程 WapProj。
+    - 主程序：  artifacts\{Debug|Release}\{x64|x86}\llcom.exe
+    - 单元测试：artifacts\Tests\{Debug|Release}\
+  -->
+  <PropertyGroup>
+    <RepoRoot>$(MSBuildThisFileDirectory)</RepoRoot>
+  </PropertyGroup>
+
+</Project>
