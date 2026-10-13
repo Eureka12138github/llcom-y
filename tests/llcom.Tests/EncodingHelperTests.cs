@@ -84,5 +84,43 @@ namespace llcom.Tests
 
             Assert.Equal("\r\n", s);
         }
+
+        // ---- null 安全（回归：发送脚本返回 nil 时，上层不再空引用崩溃） ----
+
+        [Fact]
+        public void Byte2Hex_Null_ReturnsEmpty()
+        {
+            Assert.Equal("", EncodingHelper.Byte2Hex(null));
+        }
+
+        [Fact]
+        public void Byte2Readable_Null_ReturnsEmpty()
+        {
+            Assert.Equal("", EncodingHelper.Byte2Readable(null));
+        }
+
+        [Fact]
+        public void Byte2String_Null_ReturnsEmpty()
+        {
+            Assert.Equal("", EncodingHelper.Byte2String(null));
+        }
+
+        [Fact]
+        public void Hex2Byte_Null_ReturnsEmpty()
+        {
+            Assert.Empty(EncodingHelper.Hex2Byte(null));
+        }
+
+        [Fact]
+        public void Hex2String_Null_ReturnsEmpty()
+        {
+            Assert.Equal("", EncodingHelper.Hex2String(null));
+        }
+
+        [Fact]
+        public void String2Hex_Null_ReturnsEmpty()
+        {
+            Assert.Equal("", EncodingHelper.String2Hex(null, " "));
+        }
     }
 }

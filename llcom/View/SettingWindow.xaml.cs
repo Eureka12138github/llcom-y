@@ -202,7 +202,7 @@ public partial class SettingWindow : Window
                     new System.Collections.ArrayList
                     {
                         "uartData",
-                        (bool)luaTestHexCheck.IsChecked
+                        (luaTestHexCheck.IsChecked ?? false)
                             ? Tools.Global.Hex2Byte(luaTestTextBox.Text)
                             : Tools.Global.GetEncoding().GetBytes(luaTestTextBox.Text),
                     }
@@ -302,7 +302,7 @@ public partial class SettingWindow : Window
                     new System.Collections.ArrayList
                     {
                         "uartData",
-                        (bool)(luaTestHexCheckRev.IsChecked)
+                        (luaTestHexCheckRev.IsChecked ?? false)
                             ? Tools.Global.Hex2Byte(luaTestTextBoxRev.Text)
                             : Tools.Global.GetEncoding().GetBytes(luaTestTextBoxRev.Text),
                     },

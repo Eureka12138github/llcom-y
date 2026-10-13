@@ -158,7 +158,7 @@ class SerialPortService : ISerialPortService
     /// <param name="dataRaw">原始数据（Lua 处理前），用于区分回显</param>
     public void SendData(byte[] data, byte[] dataRaw = null)
     {
-        if (data.Length == 0)
+        if (data == null || data.Length == 0)
             return;
         serial.Write(data, 0, data.Length);
         Tools.Global.setting.SentCount += data.Length;

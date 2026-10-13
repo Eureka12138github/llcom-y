@@ -24,7 +24,7 @@ internal static class EncodingHelper
     /// <returns>结果</returns>
     public static string String2Hex(string str, string space)
     {
-        return BitConverter.ToString(GetEncoding().GetBytes(str)).Replace("-", space);
+        return BitConverter.ToString(GetEncoding().GetBytes(str ?? "")).Replace("-", space);
     }
 
     /// <summary>
@@ -34,6 +34,8 @@ internal static class EncodingHelper
     /// <returns>原始字符串</returns>
     public static string Hex2String(string mHex)
     {
+        if (mHex == null)
+            return "";
         mHex = Regex.Replace(mHex, "[^0-9A-Fa-f]", "");
         if (mHex.Length % 2 != 0)
             mHex = mHex.Remove(mHex.Length - 1, 1);
@@ -60,6 +62,8 @@ internal static class EncodingHelper
     /// <returns></returns>
     public static string Byte2String(byte[] vBytes, int len = -1)
     {
+        if (vBytes == null)
+            return "";
         var br = from e in vBytes where e != 0 select e;
         if (len == -1 || len > br.Count())
             len = br.Count();
@@ -112,10 +116,10 @@ internal static class EncodingHelper
     /// <returns></returns>
     public static string Byte2Readable(byte[] vBytes, int len = -1)
     {
+        if (vBytes == null)
+            return "";
         if (len == -1)
             len = vBytes.Length;
-        if (vBytes == null) //fix
-            return "";
         //没开这个功能/非utf8就别搞了
         if (!Tools.Global.setting.EnableSymbol || Tools.Global.setting.encoding != 65001)
             return Byte2String(vBytes, len);
@@ -166,6 +170,8 @@ internal static class EncodingHelper
     /// <returns>原始字符串</returns>
     public static byte[] Hex2Byte(string mHex)
     {
+        if (mHex == null)
+            return new byte[0];
         mHex = Regex.Replace(mHex, "[^0-9A-Fa-f]", "");
         if (mHex.Length % 2 != 0)
             mHex = mHex.Remove(mHex.Length - 1, 1);
@@ -194,6 +200,8 @@ internal static class EncodingHelper
     /// <returns></returns>
     public static string Byte2Hex(byte[] d, string s = "", int len = -1)
     {
+        if (d == null)
+            return "";
         if (len == -1)
             len = d.Length;
         return BitConverter.ToString(d, 0, len).Replace("-", s);

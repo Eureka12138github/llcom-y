@@ -140,8 +140,9 @@ end
                     if (f == null)
                         throw new Exception("Lua 运行环境未就绪：未找到 !once! 函数");
                     var lr = f.Call(null, new Type[] { typeof(byte[]) });
-                    var r = lr[0] as byte[];
-                    return r;
+                    //脚本可能没有 return / 返回 nil：此时结果为空字节数组，避免上层拿到 null 后空引用
+                    var r = (lr != null && lr.Length > 0) ? lr[0] as byte[] : null;
+                    return r ?? new byte[] { };
                 }
                 catch (Exception e)
                 {

@@ -491,6 +491,8 @@ public partial class MainViewModel : ObservableObject
     /// <param name="is_hex">强制 hex 模式标志</param>
     internal void SendUartData(byte[] data, bool? is_hex = null)
     {
+        if (data == null)
+            return;
         if (!_uart.IsOpen())
         {
             OpenPort();
@@ -522,6 +524,8 @@ public partial class MainViewModel : ObservableObject
                 Tools.MessageBox.Show($"{Localize("ErrorScript")}\r\n" + ex.ToString());
                 return;
             }
+            if (dataConvert == null) //脚本可能没有 return / 返回 nil
+                dataConvert = new byte[0];
             try
             {
                 if (Tools.Global.setting.extraEnter)
