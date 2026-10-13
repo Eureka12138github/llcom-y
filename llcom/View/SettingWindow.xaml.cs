@@ -52,10 +52,6 @@ public partial class SettingWindow : Window
         stopBitComboBox.SelectedIndex = Tools.Global.setting.stopBit - 1;
         dataCheckComboBox.SelectedIndex = Tools.Global.setting.parity;
 
-        showHexComboBox.DataContext = Tools.Global.setting;
-        //luaTestHexCheck.DataContext = Tools.Global.setting;
-        //luaTestHexCheckRev.DataContext = Tools.Global.setting;
-
         //快速搜索
         SearchPanel.Install(textEditor.TextArea);
         SearchPanel.Install(textEditorRev.TextArea);

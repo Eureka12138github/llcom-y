@@ -37,24 +37,18 @@
               Click="OpenLogButton_Click"
               Content="{DynamicResource SettingOpenLogFolder}"
             />
-            <WrapPanel Margin="8">
-              <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingShowFormat}" />
-              <ComboBox Name="showHexComboBox" Width="170" SelectedIndex="{Binding showHexFormat}">
-                <ComboBoxItem Content="{DynamicResource SettingShowBoth}" />
-                <ComboBoxItem Content="{DynamicResource SettingShoText}" />
-                <ComboBoxItem Content="{DynamicResource SettingShowHexOnly}" />
-              </ComboBox>
-            </WrapPanel>
             <CheckBox
               Margin="8"
               Content="{DynamicResource SettingShowSend}"
               IsChecked="{Binding showSend}"
             />
-            <CheckBox
-              Margin="8"
-              Content="{DynamicResource SettingShowSendRaw}"
-              IsChecked="{Binding showSendRaw}"
-            />
+            <StackPanel Margin="8" Orientation="Horizontal">
+              <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingLogFontSize}" />
+              <TextBox
+                Width="50"
+                Text="{Binding logFontSize, UpdateSourceTrigger=PropertyChanged}"
+              />
+            </StackPanel>
             <CheckBox
               Margin="8"
               Content="{DynamicResource SettingKeepTop}"

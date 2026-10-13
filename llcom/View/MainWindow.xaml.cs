@@ -95,7 +95,6 @@ public partial class MainWindow : Window
                         //接收到、发送数据成功回调
                         Tools.Global.uart.UartDataRecived += Uart_UartDataRecived;
                         Tools.Global.uart.UartDataSent += Uart_UartDataSent;
-                        Tools.Global.uart.UartDataRawSent += Uart_UartDataRawSent;
 
                         //初始化已在 MainWindow 构造函数中完成（需早于 ViewModel 构造）
 
@@ -278,15 +277,6 @@ public partial class MainWindow : Window
     private void Uart_UartDataSent(object sender, EventArgs e)
     {
         Tools.Logger.ShowData(sender as byte[], true);
-    }
-
-    private string RawSentTitle = null;
-
-    private void Uart_UartDataRawSent(object sender, EventArgs e)
-    {
-        if (RawSentTitle is null)
-            RawSentTitle = TryFindResource("RawDataSentTitle") as string ?? "?!";
-        Tools.Logger.ShowRawData(RawSentTitle, sender as byte[], true);
     }
 
     private void Uart_UartDataRecived(object sender, EventArgs e)

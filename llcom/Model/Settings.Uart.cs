@@ -63,24 +63,7 @@ partial class Settings
         }
     }
 
-    /// <summary>
-    /// 串口数据显示格式
-    /// 0 都显示
-    /// 1 只显示字符串
-    /// 2 只显示Hex
-    /// </summary>
-    private int _showHexFormat = 0;
-    public int showHexFormat
-    {
-        get => _showHexFormat;
-        set
-        {
-            if (SetProperty(ref _showHexFormat, value))
-                Save();
-        }
-    }
-
-    private bool _hexSend = false;
+private bool _hexSend = false;
 
     /// <summary>
     /// 主数据发送框是否发hex
@@ -106,18 +89,7 @@ partial class Settings
         }
     }
 
-    private bool _showSendRaw = true;
-    public bool showSendRaw
-    {
-        get => _showSendRaw;
-        set
-        {
-            if (SetProperty(ref _showSendRaw, value))
-                Save();
-        }
-    }
-
-    private int _parity = 0;
+private int _parity = 0;
     public int parity
     {
         get => _parity;

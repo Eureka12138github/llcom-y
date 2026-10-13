@@ -137,17 +137,13 @@ public partial class DataShowViewModel : ObservableObject
             }
 
             //如果不开回显，就别打印
-            if (!Setting.showSend && !Setting.showSendRaw && e is DataShowPara para && para.send)
+            if (!Setting.showSend && e is DataShowPara para && para.send)
                 return;
 
             //显示到列表
             if (!needPack && e is not DataShowRaw) //不分包模式
             {
-                var dataText = Setting.showHexFormat switch
-                {
-                    2 => Tools.Global.Byte2Hex(e.data, " ", e.data.Length) + " ",
-                    _ => Tools.Global.Byte2Readable(e.data, e.data.Length),
-                };
+                var dataText = Tools.Global.Byte2Hex(e.data, " ", e.data.Length) + " ";
                 _streamBuffer.Append(dataText);
                 _appendStreamBridge(dataText);
             }

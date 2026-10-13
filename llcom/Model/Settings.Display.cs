@@ -7,6 +7,21 @@ namespace llcom.Model;
 /// </summary>
 partial class Settings
 {
+    private int _logFontSize = 15;
+
+    /// <summary>
+    /// 收发数据区（日志）显示字号，可在“更多设置”里调整。
+    /// </summary>
+    public int logFontSize
+    {
+        get => _logFontSize;
+        set
+        {
+            if (SetProperty(ref _logFontSize, value))
+                Save();
+        }
+    }
+
     private bool _bitDelay = true;
     public bool bitDelay
     {

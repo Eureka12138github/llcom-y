@@ -181,7 +181,7 @@ class SerialPortService : ISerialPortService
                     dataRaw = null;
             }
         }
-        if (dataRaw != null && Tools.Global.setting.showSendRaw)
+        if (dataRaw != null)
             UartDataRawSent?.Invoke(dataRaw, EventArgs.Empty);
         if (Tools.Global.setting.showSend)
             UartDataSent?.Invoke(data, EventArgs.Empty); //回调

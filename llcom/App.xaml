@@ -19,7 +19,6 @@
       <pages:boolNotVisibe x:Key="boolNotVisibeConverter" />
       <pages:boolNot x:Key="boolNotConverter" />
       <pages:boolConnected x:Key="boolConnectedConverter" />
-      <pages:showHexFormat x:Key="showHexFormatConverter" />
       <pages:rsTooltip x:Key="rsToolTipConverter" />
       <pages:rsOpacity x:Key="rsOpacityConverter" />
       <pages:boolOpacity x:Key="boolOpacityConverter" />
