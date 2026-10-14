@@ -70,17 +70,18 @@
                       <RowDefinition Height="Auto" />
                       <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <!--  作者（左） / 脚本名（右，加粗）  -->
+                    <!--  作者（自适应宽度） / 脚本名（占剩余宽度，加粗）  -->
                     <Grid>
                       <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="Auto" MaxWidth="120" />
+                        <ColumnDefinition Width="*" />
                       </Grid.ColumnDefinitions>
                       <TextBlock
                         VerticalAlignment="Center"
                         FontSize="16"
                         Text="{Binding Author}"
                         TextTrimming="CharacterEllipsis"
+                        ToolTip="{Binding Author}"
                       />
                       <TextBlock
                         Grid.Column="1"
@@ -90,6 +91,7 @@
                         FontWeight="Bold"
                         Text="{Binding Name}"
                         TextTrimming="CharacterEllipsis"
+                        ToolTip="{Binding Name}"
                       />
                     </Grid>
                     <Border
@@ -118,6 +120,7 @@
                         Foreground="{DynamicResource Brush.Foreground.Subtle}"
                         Text="{Binding Description}"
                         TextTrimming="CharacterEllipsis"
+                        ToolTip="{Binding Description}"
                       />
                     </Grid>
                   </Grid>
