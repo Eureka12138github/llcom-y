@@ -355,12 +355,6 @@ public partial class MainWindow : Window
         settingPage.Show();
     }
 
-    // TODO: 临时测试入口——用于验证崩溃弹窗与“关闭程序”流程，验证后删除。
-    private void TestCrashButton_Click(object sender, RoutedEventArgs e)
-    {
-        throw new Exception("测试崩溃：这是用于验证崩溃处理流程的临时入口。");
-    }
-
     Window? helpWindow;
 
     /// <summary>顶栏 “?”：打开使用说明窗口（单实例；关闭后可再次打开）。</summary>

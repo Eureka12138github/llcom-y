@@ -62,8 +62,6 @@
             </MenuItem.Header>
             <MenuItem Click="ClearLogButton_Click" Header="{DynamicResource ClearLog}" />
             <MenuItem Click="MoreSettingButton_Click" Header="{DynamicResource MoreSettings}" />
-            <!-- TODO: 临时测试入口，验证崩溃处理流程后删除 -->
-            <MenuItem Click="TestCrashButton_Click" Header="触发测试崩溃（临时）" />
           </MenuItem>
         </Menu>
         <Menu Margin="4,0,0,0" VerticalAlignment="Center">
