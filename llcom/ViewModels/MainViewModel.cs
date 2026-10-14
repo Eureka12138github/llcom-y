@@ -128,6 +128,20 @@ public partial class MainViewModel : ObservableObject
     /// <summary>全局设置（供“串口设置”页/发送框字号等 XAML 绑定）</summary>
     public Model.Settings Setting => Tools.Global.setting;
 
+    /// <summary>RTS 信号线（串口硬件控制线，绑定「串口设置」页复选框）</summary>
+    public bool Rts
+    {
+        get => _uart.Rts;
+        set => _uart.Rts = value;
+    }
+
+    /// <summary>DTR 信号线（串口硬件控制线，绑定「串口设置」页复选框）</summary>
+    public bool Dtr
+    {
+        get => _uart.Dtr;
+        set => _uart.Dtr = value;
+    }
+
     public IRelayCommand RefreshPortsCommand { get; }
     public IRelayCommand OpenClosePortCommand { get; }
     public IRelayCommand SendCommand { get; }

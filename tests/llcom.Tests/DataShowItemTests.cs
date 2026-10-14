@@ -1,11 +1,12 @@
 using System;
 using llcom.Model;
+using llcom.Tools;
 using Xunit;
 
 namespace llcom.Tests
 {
     /// <summary>
-    /// DataShowItem 显示策略：数据统一为十六进制单行（不再有“原始数据 / Hex:”额外行）。
+    /// DataShowItem 显示策略：数据单行显示；发送端看 hexSend（发送Hex），接收端看 recvShowHex。
     /// </summary>
     public class DataShowItemTests
     {
@@ -15,18 +16,47 @@ namespace llcom.Tests
         }
 
         [Fact]
-        public void Sent_UsesHexSingleLine()
+        public void Sent_WithHexSend_UsesHexSingleLine()
         {
-            var item = new DataShowItem(
-                new byte[] { 0x00, 0x03, 0xE8, 0x00, 0x06 },
-                DateTime.Now,
-                true
-            );
+            var old = Global.setting.hexSend;
+            try
+            {
+                Global.setting.hexSend = true;
 
-            Assert.Equal("00 03 E8 00 06", item.DataText);
-            Assert.Equal(" → ", item.ArrowText);
-            Assert.True(string.IsNullOrEmpty(item.RawTitle));
-            Assert.True(string.IsNullOrEmpty(item.RawText));
+                var item = new DataShowItem(
+                    new byte[] { 0x00, 0x03, 0xE8, 0x00, 0x06 },
+                    DateTime.Now,
+                    true
+                );
+
+                Assert.Equal("00 03 E8 00 06", item.DataText);
+                Assert.Equal(" → ", item.ArrowText);
+                Assert.True(string.IsNullOrEmpty(item.RawTitle));
+                Assert.True(string.IsNullOrEmpty(item.RawText));
+            }
+            finally
+            {
+                Global.setting.hexSend = old;
+            }
+        }
+
+        [Fact]
+        public void Sent_WithoutHexSend_UsesTextSingleLine()
+        {
+            var old = Global.setting.hexSend;
+            try
+            {
+                Global.setting.hexSend = false;
+
+                var item = new DataShowItem(new byte[] { 0x41, 0x42 }, DateTime.Now, true);
+
+                Assert.Contains("AB", item.DataText);
+                Assert.Equal(" → ", item.ArrowText);
+            }
+            finally
+            {
+                Global.setting.hexSend = old;
+            }
         }
 
         [Fact]

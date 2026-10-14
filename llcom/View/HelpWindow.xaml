@@ -44,25 +44,26 @@
       <TextBlock Style="{StaticResource HelpTitle}" Text="LLCOM 使用说明" />
 
       <TextBlock Style="{StaticResource HelpH}" Text="一、快速上手" />
-      <TextBlock Style="{StaticResource HelpP}" Text="1. 顶部选择「串口」→ 选择「波特率」→ 点「打开串口」。" />
+      <TextBlock Style="{StaticResource HelpP}" Text="1. 在右侧「串口设置」标签里：选择「串口」→ 选择「波特率」→ 点「打开串口」。" />
       <TextBlock Style="{StaticResource HelpP}" Text="2. 左侧为收发日志；底部输入要发送的内容，点「发送」或按 Ctrl+Enter。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="3. 右侧标签页：快捷发送 / 运行脚本 / 在线脚本 / 工具 / 关于。" />
+      <TextBlock Style="{StaticResource HelpP}" Text="3. 右侧标签页：串口设置 / 快捷发送 / 运行脚本 / 在线脚本 / 工具 / 关于。" />
+      <TextBlock Style="{StaticResource HelpP}" Text="提示：未打开串口时点「发送」不会自动开串口，会提示先打开串口。" />
 
-      <TextBlock Style="{StaticResource HelpH}" Text="二、顶部工具栏" />
+      <TextBlock Style="{StaticResource HelpH}" Text="二、串口设置（右侧第一个标签）" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 刷新串口：重新扫描可用串口列表。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 串口：选择要打开的串口（显示设备描述）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 波特率：常用波特率；末项「自定义」可手动输入任意值。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 数据位 / 校验位 / 停止位 / 字符编码：串口通信参数与文本编码。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 自动重连：串口被拔出后自动恢复连接（只重连上次手动打开过的端口）。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· RTS / DTR：串口两根硬件控制信号线的电平（详见文末「RTS / DTR 详解」）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 打开串口 / 关闭串口：打开成功后按钮变绿，状态栏显示 COM 与波特率。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· ☰ 更多操作：清空日志、更多设置。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 🌐：切换 简体中文 / English。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· ?：打开本使用说明。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 顶部工具栏：☰ 更多操作（清空日志、更多设置）、🌐 切换语言、? 使用说明。" />
 
       <TextBlock Style="{StaticResource HelpH}" Text="三、收发数据显示区（左侧）" />
-      <TextBlock Style="{StaticResource HelpP}" Text="每行显示：时间 + 方向（→ 发送 / ← 接收）+ 数据（文本 / 十六进制）。" />
+      <TextBlock Style="{StaticResource HelpP}" Text="每行显示：时间 + 方向（→ 发送 / ← 接收）+ 数据（十六进制或文本，单行）。" />
       <TextBlock Style="{StaticResource HelpP}" Text="底部开关（从左到右）：" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· RTS / DTR：串口硬件信号线电平控制。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· Hex显示：三态切换——只显示文本 / 只显示 HEX / 同时显示。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 发Hex：发送时把输入内容按十六进制解析。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 发送Hex：勾选后发送时输入按十六进制解析，且发送的数据以十六进制显示；取消则按字符串收发/显示。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 接收显示Hex：接收的数据以十六进制显示；取消则以字符串显示。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 末尾加回车换行：发送时自动追加回车换行（追加前同样会经过发送脚本）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 替换不可见字符：把不可见字符显示为可见占位（仅 UTF8 模式下有效）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 停止打印：暂停 / 恢复日志刷新。" />
@@ -71,7 +72,7 @@
 
       <TextBlock Style="{StaticResource HelpH}" Text="四、发送区（底部）" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 输入内容后点「发送」，或按 Ctrl+Enter。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 是否按 HEX 发送由「发Hex」开关决定。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 是否按 HEX 发送由「发送Hex」开关决定。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 发送前可配置「发送脚本」（更多设置）对数据做变换。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 发送区高度可用上方分隔条上下拖拽调整。" />
 
@@ -106,8 +107,9 @@
       <TextBlock Style="{StaticResource HelpLi}" Text="· WinUSB：选择 USB 设备、读/写端点，连接后收发（可 Hex）。" />
 
       <TextBlock Style="{StaticResource HelpH}" Text="九、更多设置（☰）" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 自动重连、打开日志文件夹、显示格式、显示发送/原始发送、窗口置顶、串口超时（分包）、按空行分包、终端模式、数据位/停止位/校验位/编码。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 打开日志文件夹、显示发送、接收显示Hex、数据字号、窗口置顶、串口超时（分包）、按空行分包、终端模式。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 发送脚本 / 接收脚本：编辑发送前、接收后触发的 Lua 脚本。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 串口的数据位/校验位/停止位/字符编码/自动重连等参数已移到「串口设置」标签。" />
 
       <TextBlock Style="{StaticResource HelpH}" Text="十、Lua 接口" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 接口文档见程序目录 LuaApi.md，或「运行脚本」工具栏的「Lua API 文档」按钮。" />
@@ -115,8 +117,15 @@
 
       <TextBlock Style="{StaticResource HelpH}" Text="十一、其他" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 语言：右上 🌐 切换中/英。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 日志文件：程序目录 logs/（串口日志）与 user_script_run/logs/（Lua 日志）。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 日志文件：程序目录 logs/（串口日志与崩溃日志 fatal.log）与 user_script_run/logs/（Lua 日志）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 配置与脚本均保存在程序目录。" />
+
+      <TextBlock Style="{StaticResource HelpH}" Text="十二、RTS / DTR 详解" />
+      <TextBlock Style="{StaticResource HelpP}" Text="RTS 与 DTR 是串口上两根「控制信号线」（输出电平），不是数据线；它们的电平由本软件输出给对端设备。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· RTS（Request To Send，请求发送）：勾选=拉高，取消=拉低。原本用于硬件流控（告诉对端「我准备好接收了」），也常被当作一根通用输出脚，控制继电器、指示灯、外部复位脚等。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· DTR（Data Terminal Ready，数据终端就绪）：勾选=拉高，取消=拉低。原本表示「本机已就绪」；最常见的用法是让开发板（Arduino、ESP 等）复位或进入下载/Bootloader 模式——很多下载电路正是靠 DTR/RTS 的电平组合去拉复位脚与 BOOT 脚。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 生效时机：只有在串口已打开时才会真正作用到硬件；打开串口时会按当前勾选状态设置一次。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 注意：不同设备对这两根线的定义不同，随意改动电平可能误触发设备复位或进入下载模式；不确定时保持默认（RTS 不勾选、DTR 勾选）即可。" />
     </StackPanel>
   </ScrollViewer>
 </Window>

@@ -79,28 +79,11 @@
       Orientation="Horizontal"
     >
       <CheckBox
-        Name="RTSCheckBox"
-        Margin="8,0,0,0"
-        Content="RTS"
-        IsChecked="{Binding Rts, Mode=TwoWay}"
-      />
-      <CheckBox
-        Name="DTRCheckBox"
-        Margin="8,0,0,0"
-        Content="DTR"
-        IsChecked="{Binding Dtr, Mode=TwoWay}"
-      />
-      <CheckBox
         Name="HexSendCheckBox"
         Margin="8,0,0,0"
         Content="{DynamicResource HexSendMode}"
         IsChecked="{Binding Setting.hexSend}"
-      />
-      <CheckBox
-        Name="SendHexViewCheckBox"
-        Margin="8,0,0,0"
-        Content="{DynamicResource SendHexView}"
-        IsChecked="{Binding Setting.sendShowHex}"
+        ToolTip="{DynamicResource HexSendModeTip}"
       />
       <CheckBox
         Name="RecvHexViewCheckBox"

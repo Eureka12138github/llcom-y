@@ -69,7 +69,7 @@ public partial class DataShowViewModel : ObservableObject
         setting.PropertyChanged += (_, e) =>
         {
             if (
-                e.PropertyName == nameof(setting.sendShowHex)
+                e.PropertyName == nameof(setting.hexSend)
                 || e.PropertyName == nameof(setting.recvShowHex)
             )
             {
@@ -156,7 +156,7 @@ public partial class DataShowViewModel : ObservableObject
             if (!needPack && e is not DataShowRaw) //不分包模式
             {
                 var isSend = e is DataShowPara para2 && para2.send;
-                var showHex = isSend ? Setting.sendShowHex : Setting.recvShowHex;
+                var showHex = isSend ? Setting.hexSend : Setting.recvShowHex;
                 var dataText = showHex
                     ? Tools.Global.Byte2Hex(e.data, " ", e.data.Length) + " "
                     : Tools.Global.Byte2Readable(e.data, e.data.Length);

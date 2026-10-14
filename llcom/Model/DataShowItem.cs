@@ -10,7 +10,7 @@ namespace llcom.Model;
 /// 收发数据显示条目（分包模式下列表的一项）。
 /// 由 DataShowViewModel 生成，DataShowPage 的 ItemsControl 绑定显示。
 /// 显示策略：数据以**单行**呈现，具体是 HEX 还是字符串由设置决定
-/// （发送看 <see cref="Settings.sendShowHex"/>，接收看 <see cref="Settings.recvShowHex"/>），
+/// （发送看 <see cref="Settings.hexSend"/>，接收看 <see cref="Settings.recvShowHex"/>），
 /// 切换设置时通过 <see cref="Refresh"/> 即时重算显示。
 /// </summary>
 public class DataShowItem : INotifyPropertyChanged
@@ -133,7 +133,7 @@ public class DataShowItem : INotifyPropertyChanged
         //通用通道条目跟随“接收显示”设置
         var showHex = _generic
             ? Tools.Global.setting.recvShowHex
-            : (_sent ? Tools.Global.setting.sendShowHex : Tools.Global.setting.recvShowHex);
+            : (_sent ? Tools.Global.setting.hexSend : Tools.Global.setting.recvShowHex);
         return showHex
             ? Tools.Global.Byte2Hex(data, " ", data.Length)
             : Tools.Global.Byte2Readable(data, data.Length);

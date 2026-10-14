@@ -26,11 +26,6 @@
       <TabItem Header="{DynamicResource SettingBasic}">
         <ScrollViewer>
           <StackPanel Margin="10,0,0,0">
-            <CheckBox
-              Margin="8"
-              Content="{DynamicResource SettingAutoReconnect}"
-              IsChecked="{Binding autoReconnect}"
-            />
             <Button
               Name="OpenLogButton"
               Margin="8"
@@ -41,11 +36,6 @@
               Margin="8"
               Content="{DynamicResource SettingShowSend}"
               IsChecked="{Binding showSend}"
-            />
-            <CheckBox
-              Margin="8"
-              Content="{DynamicResource SendHexView}"
-              IsChecked="{Binding sendShowHex}"
             />
             <CheckBox
               Margin="8"
@@ -97,53 +87,6 @@
               Content="{DynamicResource SettingTerminal}"
               IsChecked="{Binding terminal}"
             />
-            <WrapPanel Margin="8">
-              <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingDataBits}" />
-              <ComboBox
-                Name="dataBitsComboBox"
-                Width="50"
-                SelectionChanged="DataBitsComboBox_SelectionChanged"
-              >
-                <ComboBoxItem Content="5" Tag="5" />
-                <ComboBoxItem Content="6" Tag="6" />
-                <ComboBoxItem Content="7" Tag="7" />
-                <ComboBoxItem Content="8" Tag="8" />
-              </ComboBox>
-            </WrapPanel>
-            <WrapPanel Margin="8">
-              <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingStopBit}" />
-              <ComboBox
-                Name="stopBitComboBox"
-                Width="50"
-                SelectionChanged="StopBitComboBox_SelectionChanged"
-              >
-                <ComboBoxItem Content="1" />
-                <ComboBoxItem Content="2" />
-                <ComboBoxItem Content="1.5" />
-              </ComboBox>
-            </WrapPanel>
-            <WrapPanel Margin="8">
-              <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingParity}" />
-              <ComboBox
-                Name="dataCheckComboBox"
-                Width="70"
-                SelectionChanged="DataCheckComboBox_SelectionChanged"
-              >
-                <ComboBoxItem Content="{DynamicResource SettingParityNone}" />
-                <ComboBoxItem Content="{DynamicResource SettingParityOdd}" />
-                <ComboBoxItem Content="{DynamicResource SettingParityEven}" />
-                <ComboBoxItem Content="{DynamicResource SettingParityMark}" />
-                <ComboBoxItem Content="{DynamicResource SettingParitySpace}" />
-              </ComboBox>
-            </WrapPanel>
-            <WrapPanel Margin="8">
-              <TextBlock VerticalAlignment="Center" Text="{DynamicResource Encoding}" />
-              <ComboBox
-                Name="encodingComboBox"
-                Width="auto"
-                SelectionChanged="encodingComboBox_SelectionChanged"
-              />
-            </WrapPanel>
           </StackPanel>
         </ScrollViewer>
       </TabItem>

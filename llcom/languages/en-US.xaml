@@ -20,9 +20,10 @@
     <system:String x:Key="MoreSettingsTip">Set stopbit, parity, Lua script for data to send and so on.</system:String>
     <system:String x:Key="MoreActions">More actions</system:String>
     <system:String x:Key="SettingLogFontSize">Log font size:</system:String>
-    <system:String x:Key="SendHexView">Show sent as Hex</system:String>
     <system:String x:Key="RecvHexView">Show received as Hex</system:String>
     <system:String x:Key="SerialSettingsCard">Serial Port</system:String>
+    <system:String x:Key="RTSTip">RTS (Request To Send): checked = high, unchecked = low. Used for hardware flow control or as a general output pin.</system:String>
+    <system:String x:Key="DTRTip">DTR (Data Terminal Ready): checked = high, unchecked = low. Often used by dev boards to reset or enter bootloader mode.</system:String>
     <system:String x:Key="Help">Help</system:String>
     <system:String x:Key="SendDataButton">Send</system:String>
     <system:String x:Key="SendDataButtonTip">same as Ctrl+Enter</system:String>
@@ -178,6 +179,7 @@
     <system:String x:Key="ShowHexFormat">Hex format</system:String>
     <system:String x:Key="ShowHexFormatTip">modes: Only Hex/Only Text/Both Hex and Text</system:String>
     <system:String x:Key="HexSendMode">Send Hex</system:String>
+    <system:String x:Key="HexSendModeTip">When checked: input is parsed as Hex and sent data is shown as Hex; otherwise as text.</system:String>
     <system:String x:Key="ToolsTab">Tools</system:String>
     <system:String x:Key="EncodingToolsTab">Encoding Converter</system:String>
     <system:String x:Key="EncodingToolsJobs">Jobs</system:String>

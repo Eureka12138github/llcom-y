@@ -34,21 +34,6 @@ partial class Settings
         }
     }
 
-    private bool _sendShowHex = true;
-
-    /// <summary>
-    /// 发送的数据是否以 HEX 显示（不勾选则以字符串显示）。
-    /// </summary>
-    public bool sendShowHex
-    {
-        get => _sendShowHex;
-        set
-        {
-            if (SetProperty(ref _sendShowHex, value))
-                Save();
-        }
-    }
-
     private bool _recvShowHex = true;
 
     /// <summary>

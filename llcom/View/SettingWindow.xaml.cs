@@ -47,11 +47,6 @@ public partial class SettingWindow : Window
         //置顶显示以免被挡住
         this.Topmost = true;
 
-        //初始化下拉框参数
-        dataBitsComboBox.SelectedIndex = Tools.Global.setting.dataBits - 5;
-        stopBitComboBox.SelectedIndex = Tools.Global.setting.stopBit - 1;
-        dataCheckComboBox.SelectedIndex = Tools.Global.setting.parity;
-
         //快速搜索
         SearchPanel.Install(textEditor.TextArea);
         SearchPanel.Install(textEditorRev.TextArea);
@@ -92,20 +87,6 @@ public partial class SettingWindow : Window
         //编辑器文本桥接（AvalonEdit Text 不可绑定，经回调访问）
         _sendEditor.SetTextBridge(() => textEditor.Text, t => textEditor.Text = t);
         _recvEditor.SetTextBridge(() => textEditorRev.Text, t => textEditorRev.Text = t);
-        //加载编码
-        var el = Encoding.GetEncodings();
-        List<EncodingInfo> encodingList = new List<EncodingInfo>(el);
-        //先排个序，美观点
-        encodingList.Sort((x, y) => x.CodePage - y.CodePage);
-        foreach (var en in encodingList)
-        {
-            ComboBoxItem c = new ComboBoxItem();
-            c.Content = $"[{en.CodePage}] {en.Name}";
-            c.Tag = en.CodePage;
-            int index = encodingComboBox.Items.Add(c);
-            if (Tools.Global.setting.encoding == en.CodePage) //现在用的编码
-                encodingComboBox.SelectedIndex = index;
-        }
     }
 
     private void SettingWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -136,31 +117,6 @@ public partial class SettingWindow : Window
             "explorer.exe",
             Tools.Global.GetTrueProfilePath() + "user_script_send_convert"
         );
-    }
-
-    private void DataBitsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (dataBitsComboBox.SelectedItem != null)
-        {
-            Tools.Global.setting.dataBits = dataBitsComboBox.SelectedIndex + 5;
-        }
-    }
-
-    private void StopBitComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (stopBitComboBox.SelectedItem != null)
-        {
-            Tools.Global.setting.stopBit = stopBitComboBox.SelectedIndex + 1;
-        }
-    }
-
-    private void DataCheckComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (dataCheckComboBox.SelectedItem != null)
-        {
-            Tools.Global.setting.parity = dataCheckComboBox.SelectedIndex;
-            //Tools.MessageBox.Show((dataCheckComboBox.SelectedItem as ComboBoxItem).Content.ToString());
-        }
     }
 
     private void NewScriptButton_Click(object sender, RoutedEventArgs e)
@@ -245,14 +201,6 @@ public partial class SettingWindow : Window
                 $"尝试打开文件夹失败，请自行打开该路径：{Tools.Global.GetTrueProfilePath()}logs"
             );
         }
-    }
-
-    private void encodingComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        ComboBox c = sender as ComboBox;
-        if ((int)((ComboBoxItem)c.SelectedItem).Tag == Tools.Global.setting.encoding)
-            return;
-        Tools.Global.setting.encoding = (int)((ComboBoxItem)c.SelectedItem).Tag;
     }
 
     private void newScriptButtonRev_Click(object sender, RoutedEventArgs e)
