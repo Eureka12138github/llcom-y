@@ -447,6 +447,98 @@ public partial class MainWindow : Window
         Tools.Logger.ClearData();
     }
 
+    /// <summary>清空发送框内容</summary>
+    private void ClearSendBoxButton_Click(object sender, RoutedEventArgs e)
+    {
+        _vm.SendText = "";
+    }
+
+    /// <summary>展开“发送记录”下拉：动态生成历史项 + 记录上限调节行。</summary>
+    private void SendHistoryMenuItem_SubmenuOpened(object sender, RoutedEventArgs e)
+    {
+        if (sender is not MenuItem menu)
+            return;
+        menu.Items.Clear();
+
+        if (_vm.SendHistory.Count == 0)
+        {
+            menu.Items.Add(
+                new MenuItem
+                {
+                    Header = TryFindResource("SendHistoryEmpty") as string ?? "(no history)",
+                    IsEnabled = false,
+                }
+            );
+        }
+        else
+        {
+            foreach (var history in _vm.SendHistory)
+            {
+                var text = history;
+                var item = new MenuItem { Header = SummarizeHistory(text), ToolTip = text };
+                item.Click += (_, _) => _vm.SendText = text;
+                menu.Items.Add(item);
+            }
+        }
+
+        menu.Items.Add(new Separator());
+
+        //记录上限（条）：－ N ＋
+        var label = new TextBlock
+        {
+            VerticalAlignment = VerticalAlignment.Center,
+            Margin = new Thickness(8, 0, 8, 0),
+        };
+        void UpdateLimitLabel() =>
+            label.Text =
+                (TryFindResource("SendHistoryLimit") as string ?? "History limit: ")
+                + _vm.SendHistoryLimit;
+
+        UpdateLimitLabel();
+
+        var minus = new Button
+        {
+            Content = "－",
+            Width = 24,
+            Padding = new Thickness(0),
+            Background = System.Windows.Media.Brushes.Transparent,
+            BorderThickness = new Thickness(0),
+            Cursor = Cursors.Hand,
+        };
+        var plus = new Button
+        {
+            Content = "＋",
+            Width = 24,
+            Padding = new Thickness(0),
+            Background = System.Windows.Media.Brushes.Transparent,
+            BorderThickness = new Thickness(0),
+            Cursor = Cursors.Hand,
+        };
+        minus.Click += (_, _) =>
+        {
+            _vm.SendHistoryLimit--;
+            UpdateLimitLabel();
+        };
+        plus.Click += (_, _) =>
+        {
+            _vm.SendHistoryLimit++;
+            UpdateLimitLabel();
+        };
+
+        var limitPanel = new StackPanel { Orientation = Orientation.Horizontal };
+        limitPanel.Children.Add(minus);
+        limitPanel.Children.Add(label);
+        limitPanel.Children.Add(plus);
+        menu.Items.Add(new MenuItem { Header = limitPanel, StaysOpenOnClick = true });
+    }
+
+    /// <summary>发送记录下拉里的一行显示（单行、过长截断）。</summary>
+    private static string SummarizeHistory(string text)
+    {
+        var oneLine = text.Replace("\r", " ").Replace("\n", " ");
+        return oneLine.Length > 40 ? oneLine.Substring(0, 40) + "…" : oneLine;
+    }
+
     private void knowSendDataButton_click(object sender, RoutedEventArgs e)
     {
         //未打开串口则不发送（也不切换接收脚本），仅提示

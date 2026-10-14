@@ -117,6 +117,9 @@
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*" />
         <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
       </Grid.ColumnDefinitions>
       <TextBox
         Name="toSendDataTextBox"
@@ -129,10 +132,56 @@
         TextWrapping="Wrap"
         VerticalScrollBarVisibility="Auto"
       />
+      <!--  清除发送框内容  -->
+      <Button
+        Name="clearSendBoxButton"
+        Grid.Column="1"
+        Style="{StaticResource IconButton}"
+        Click="ClearSendBoxButton_Click"
+        ToolTip="{DynamicResource ClearSendBox}"
+      >
+        <fa:FontAwesome Foreground="{DynamicResource Brush.Foreground.Muted}" Icon="Eraser" />
+      </Button>
+      <!--  发送记录：点历史项填回发送框；底部可调记录上限  -->
+      <Menu Grid.Column="2" Margin="2,0,0,0" VerticalAlignment="Center">
+        <MenuItem
+          Name="sendHistoryMenuItem"
+          SubmenuOpened="SendHistoryMenuItem_SubmenuOpened"
+          ToolTip="{DynamicResource SendHistory}"
+        >
+          <MenuItem.Header>
+            <StackPanel Orientation="Horizontal">
+              <fa:FontAwesome Foreground="{DynamicResource Brush.Foreground}" Icon="History" />
+              <fa:FontAwesome
+                Margin="2,0,0,0"
+                FontSize="9"
+                Foreground="{DynamicResource Brush.Foreground.Muted}"
+                Icon="CaretDown"
+              />
+            </StackPanel>
+          </MenuItem.Header>
+        </MenuItem>
+      </Menu>
+      <!--  追加换行  -->
+      <ComboBox
+        Name="appendNewlineComboBox"
+        Grid.Column="3"
+        Width="86"
+        Margin="8,0,0,0"
+        SelectedIndex="{Binding Setting.appendNewline}"
+        ToolTip="{DynamicResource AppendNewlineTip}"
+      >
+        <ComboBoxItem Content="{DynamicResource AppendNone}" />
+        <ComboBoxItem Content="\n" />
+        <ComboBoxItem Content="\r" />
+        <ComboBoxItem Content="\n\r" />
+        <ComboBoxItem Content="\r\n" />
+      </ComboBox>
       <Button
         Name="sendDataButton"
-        Grid.Column="1"
+        Grid.Column="4"
         Width="80"
+        Margin="8,0,0,0"
         Command="{Binding SendCommand}"
         Content="{DynamicResource SendDataButton}"
         ToolTip="{DynamicResource SendDataButtonTip}"

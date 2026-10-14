@@ -54,7 +54,7 @@ public class BaudRateItem
 /// <summary>
 /// 主窗口串口控制区 ViewModel（Step 5）。
 /// 职责：端口列表刷新（WMI + 注册表权威过滤）、打开/关闭串口（含缓存发送与自动重连）、
-/// 波特率选择（含自定义）、数据发送管线（Lua 发送脚本 → extraEnter → SendData）、
+/// 波特率选择（含自定义）、数据发送管线（Lua 发送脚本 → appendNewline → SendData）、
 /// 收发计数、USB 热插拔刷新。
 /// 逻辑从 MainWindow code-behind 逐字迁移，行为保持一致。
 /// </summary>
@@ -142,6 +142,50 @@ public partial class MainViewModel : ObservableObject
         set => _uart.Dtr = value;
     }
 
+    /// <summary>发送记录（最近发送过的内容，最新在前；绑定发送记录下拉）</summary>
+    public ObservableCollection<string> SendHistory { get; } = new ObservableCollection<string>();
+
+    /// <summary>发送记录条数上限（写入设置并裁剪现有记录）</summary>
+    public int SendHistoryLimit
+    {
+        get => Tools.Global.setting.sendHistoryLimit;
+        set
+        {
+            Tools.Global.setting.sendHistoryLimit = value;
+            TrimSendHistory();
+        }
+    }
+
+    /// <summary>记录一次发送内容（去重后置顶，并按上限裁剪）</summary>
+    public void RecordSendHistory(string text)
+    {
+        if (string.IsNullOrEmpty(text))
+            return;
+        SendHistory.Remove(text);
+        SendHistory.Insert(0, text);
+        TrimSendHistory();
+        Tools.Global.setting.sendHistory = SendHistory.ToList();
+    }
+
+    /// <summary>按上限裁剪发送记录</summary>
+    private void TrimSendHistory()
+    {
+        var limit = Tools.Global.setting.sendHistoryLimit;
+        while (SendHistory.Count > limit)
+            SendHistory.RemoveAt(SendHistory.Count - 1);
+    }
+
+    /// <summary>按设置生成末尾追加的换行字节：0=无，1=\n，2=\r，3=\n\r，4=\r\n</summary>
+    internal static byte[] AppendNewlineBytes(int mode) =>
+        mode switch
+        {
+            1 => new byte[] { 0x0a },
+            2 => new byte[] { 0x0d },
+            3 => new byte[] { 0x0a, 0x0d },
+            4 => new byte[] { 0x0d, 0x0a },
+            _ => new byte[0],
+        };
+
     public IRelayCommand RefreshPortsCommand { get; }
     public IRelayCommand OpenClosePortCommand { get; }
     public IRelayCommand SendCommand { get; }
@@ -223,6 +267,14 @@ public partial class MainViewModel : ObservableObject
         //初始状态文本
         StatusText = Localize("OpenPort_close");
         OpenCloseButtonText = Localize("OpenPort_open");
+
+        //载入发送记录
+        if (Tools.Global.setting.sendHistory != null)
+        {
+            foreach (var h in Tools.Global.setting.sendHistory)
+                SendHistory.Add(h);
+        }
+        TrimSendHistory();
     }
 
     private static readonly BaudRateItem CustomRateEntry = new BaudRateItem(null, null);
@@ -493,8 +545,10 @@ public partial class MainViewModel : ObservableObject
         if (!EnsurePortOpenForSend())
             return;
         Tools.Global.setting.recvScript = Tools.Global.recvScriptBackup;
-        var data = Tools.Global.GetEncoding().GetBytes(SendText);
+        var text = SendText;
+        var data = Tools.Global.GetEncoding().GetBytes(text);
         SendUartData(data);
+        RecordSendHistory(text);
     }
 
     /// <summary>
@@ -510,7 +564,7 @@ public partial class MainViewModel : ObservableObject
     }
 
     /// <summary>
-    /// 发送串口数据（完整管线：Lua 发送脚本 → extraEnter → SendData → 回显）。
+    /// 发送串口数据（完整管线：Lua 发送脚本 → appendNewline → SendData → 回显）。
     /// 未打开串口时：不自动打开、不自动选端口、不缓存，仅提示用户先打开串口。
     /// </summary>
     /// <param name="data">原始数据</param>
@@ -551,11 +605,11 @@ public partial class MainViewModel : ObservableObject
                 dataConvert = new byte[0];
             try
             {
-                if (Tools.Global.setting.extraEnter)
+                var suffix = AppendNewlineBytes(Tools.Global.setting.appendNewline);
+                if (suffix.Length > 0)
                 {
                     var temp = dataConvert.ToList();
-                    temp.Add(0x0d);
-                    temp.Add(0x0a);
+                    temp.AddRange(suffix);
                     dataConvert = temp.ToArray();
                 }
                 _uart.SendData(dataConvert, data);

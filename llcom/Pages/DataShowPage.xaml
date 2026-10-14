@@ -92,13 +92,6 @@
         IsChecked="{Binding Setting.recvShowHex}"
       />
       <CheckBox
-        Name="ExtraEnterCheckBox"
-        Margin="8,0,0,0"
-        Content="{DynamicResource AddExtraEnter}"
-        IsChecked="{Binding Setting.extraEnter}"
-        ToolTip="{DynamicResource AddExtraEnterTip}"
-      />
-      <CheckBox
         Name="EnableSymbolCheckBox"
         Margin="8,0,0,0"
         Content="{DynamicResource ShowSymbol}"

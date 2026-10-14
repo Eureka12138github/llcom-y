@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO.Ports;
 using System.Text;
 
@@ -238,13 +239,45 @@ private int _parity = 0;
         }
     }
 
-    private bool _extraEnter = false;
-    public bool extraEnter
+    private int _appendNewline = 0;
+
+    /// <summary>
+    /// 发送数据末尾追加的换行类型：0=无追加，1=\n，2=\r，3=\n\r，4=\r\n
+    /// </summary>
+    public int appendNewline
     {
-        get => _extraEnter;
+        get => _appendNewline;
         set
         {
-            if (SetProperty(ref _extraEnter, value))
+            var v = value < 0 ? 0 : (value > 4 ? 4 : value);
+            if (SetProperty(ref _appendNewline, v))
+                Save();
+        }
+    }
+
+    private List<string> _sendHistory = new List<string>();
+
+    /// <summary>发送记录（最近发送过的内容，最新在前）</summary>
+    public List<string> sendHistory
+    {
+        get => _sendHistory;
+        set
+        {
+            if (SetProperty(ref _sendHistory, value))
+                Save();
+        }
+    }
+
+    private int _sendHistoryLimit = 30;
+
+    /// <summary>发送记录条数上限（1~200）</summary>
+    public int sendHistoryLimit
+    {
+        get => _sendHistoryLimit;
+        set
+        {
+            var v = value < 1 ? 1 : (value > 200 ? 200 : value);
+            if (SetProperty(ref _sendHistoryLimit, v))
                 Save();
         }
     }

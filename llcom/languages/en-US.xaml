@@ -171,8 +171,12 @@
     <system:String x:Key="ToSendDataTextBlock">To send data:</system:String>
     <system:String x:Key="NetSendDataButton">Send</system:String>
     <system:String x:Key="KickClientButton">Kick Client</system:String>
-    <system:String x:Key="AddExtraEnter">send data add an extra enter</system:String>
-    <system:String x:Key="AddExtraEnterTip">before do this, alse will use Lua script for data to send</system:String>
+    <system:String x:Key="ClearSendBox">Clear input</system:String>
+    <system:String x:Key="SendHistory">Send history</system:String>
+    <system:String x:Key="SendHistoryEmpty">(no history)</system:String>
+    <system:String x:Key="SendHistoryLimit">History limit: </system:String>
+    <system:String x:Key="AppendNone">None</system:String>
+    <system:String x:Key="AppendNewlineTip">Append the selected newline to sent data (send script still runs first)</system:String>
     <system:String x:Key="LockLogButton">Lock logs and disable auto scroll</system:String>
     <system:String x:Key="LockLogText">Locked</system:String>
     <system:String x:Key="SaveLogButton">Click to save received logs</system:String>
