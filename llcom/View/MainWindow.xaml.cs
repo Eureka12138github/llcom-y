@@ -549,54 +549,107 @@ public partial class MainWindow : Window
         return oneLine.Length > 40 ? oneLine.Substring(0, 40) + "…" : oneLine;
     }
 
+    // ===== 发送选项（连续发送 / 发送后延时 / 重复次数 / Enter 行为） =====
+
+    private void SendOptionButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Button button || button.ContextMenu == null)
+            return;
+        var menu = button.ContextMenu;
+        menu.PlacementTarget = button;
+        menu.Placement = PlacementMode.Bottom;
+        Dispatcher.BeginInvoke(
+            new Action(() => menu.IsOpen = true),
+            System.Windows.Threading.DispatcherPriority.Background
+        );
+    }
+
+    private void SendOptionMenu_Opened(object sender, RoutedEventArgs e)
+    {
+        var s = Tools.Global.setting;
+        continuousSendMenuItem.IsChecked = s.continuousSend;
+        sendByEnterMenuItem.IsChecked = s.sendByEnter;
+        sendByCtrlEnterMenuItem.IsChecked = !s.sendByEnter;
+        UpdateContinuousMenuTexts();
+    }
+
+    private void UpdateContinuousMenuTexts()
+    {
+        var s = Tools.Global.setting;
+        continuousDelayText.Text =
+            (TryFindResource("ContinuousDelayText") as string ?? "Delay(ms): ") + s.continuousDelayMs;
+        continuousRepeatText.Text =
+            (TryFindResource("ContinuousRepeatText") as string ?? "Repeat: ") + s.continuousRepeat;
+    }
+
+    private void ContinuousSendMenuItem_Click(object sender, RoutedEventArgs e)
+    {
+        var s = Tools.Global.setting;
+        s.continuousSend = !s.continuousSend;
+        continuousSendMenuItem.IsChecked = s.continuousSend;
+        if (!s.continuousSend)
+            _vm.StopContinuousSending();
+    }
+
+    private void ContinuousDelayMinus_Click(object sender, RoutedEventArgs e)
+    {
+        Tools.Global.setting.continuousDelayMs -= 100;
+        UpdateContinuousMenuTexts();
+    }
+
+    private void ContinuousDelayPlus_Click(object sender, RoutedEventArgs e)
+    {
+        Tools.Global.setting.continuousDelayMs += 100;
+        UpdateContinuousMenuTexts();
+    }
+
+    private void ContinuousRepeatMinus_Click(object sender, RoutedEventArgs e)
+    {
+        Tools.Global.setting.continuousRepeat -= 1;
+        UpdateContinuousMenuTexts();
+    }
+
+    private void ContinuousRepeatPlus_Click(object sender, RoutedEventArgs e)
+    {
+        Tools.Global.setting.continuousRepeat += 1;
+        UpdateContinuousMenuTexts();
+    }
+
+    private void SendByEnterMenuItem_Click(object sender, RoutedEventArgs e)
+    {
+        Tools.Global.setting.sendByEnter = true;
+        sendByEnterMenuItem.IsChecked = true;
+        sendByCtrlEnterMenuItem.IsChecked = false;
+    }
+
+    private void SendByCtrlEnterMenuItem_Click(object sender, RoutedEventArgs e)
+    {
+        Tools.Global.setting.sendByEnter = false;
+        sendByEnterMenuItem.IsChecked = false;
+        sendByCtrlEnterMenuItem.IsChecked = true;
+    }
+
+    /// <summary>“按 Enter 发送”模式下 Enter 直接发送（Shift+Enter 仍为换行）</summary>
+    private void ToSendDataTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key != Key.Enter)
+            return;
+        if (Tools.Global.setting.sendByEnter && !Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+        {
+            e.Handled = true;
+            _vm.SendCommand.Execute(null);
+        }
+    }
+
     private void knowSendDataButton_click(object sender, RoutedEventArgs e)
     {
         //未打开串口则不发送（也不切换接收脚本），仅提示
         if (!_vm.EnsurePortOpenForSend())
             return;
 
-        ToSendData data = ((Button)sender).Tag as ToSendData;
-
-        // 如果有指定接收脚本，则切换
-        if (!string.IsNullOrEmpty(data.recvScriptPath))
-        {
-            //检查文件是否存在
-            if (
-                !File.Exists(
-                    Tools.Global.ProfilePath + $"user_script_recv_convert/{data.recvScriptPath}.lua"
-                )
-            )
-            {
-                Tools.Global.setting.recvScript = "default";
-                data.recvScriptPath = "";
-                if (
-                    !File.Exists(
-                        Tools.Global.ProfilePath
-                            + $"user_script_recv_convert/{Tools.Global.setting.recvScript}.lua"
-                    )
-                )
-                {
-                    File.Create(
-                            Tools.Global.ProfilePath
-                                + $"user_script_recv_convert/{Tools.Global.setting.recvScript}.lua"
-                        )
-                        .Close();
-                }
-            }
-            else
-            {
-                Tools.Global.setting.recvScript = data.recvScriptPath;
-            }
-        }
-        else
-        {
-            Tools.Global.setting.recvScript = Tools.Global.recvScriptBackup;
-        }
-
-        var sendData = data.hex
-            ? Global.Hex2Byte(data.text)
-            : Global.GetEncoding().GetBytes(data.text);
-        _vm.SendUartData(sendData, true);
+        //发送逻辑已下沉到 MainViewModel.SendQuickItem（定时发送复用同一逻辑）
+        if (((Button)sender).Tag is ToSendData data)
+            _vm.SendQuickItem(data);
     }
 
     private void Button_MouseDoubleClick(object sender, MouseButtonEventArgs e)

@@ -79,7 +79,62 @@ private bool _hexSend = false;
         }
     }
 
+    private bool _continuousSend = false;
+
+    /// <summary>主发送框是否启用“连续发送”（点击发送按钮开始 / 再次点击停止）</summary>
+    public bool continuousSend
+    {
+        get => _continuousSend;
+        set
+        {
+            if (SetProperty(ref _continuousSend, value))
+                Save();
+        }
+    }
+
+    private int _continuousDelayMs = 1000;
+
+    /// <summary>连续发送间隔（毫秒，10~3600000）</summary>
+    public int continuousDelayMs
+    {
+        get => _continuousDelayMs;
+        set
+        {
+            var v = value < 10 ? 10 : (value > 3600000 ? 3600000 : value);
+            if (SetProperty(ref _continuousDelayMs, v))
+                Save();
+        }
+    }
+
+    private int _continuousRepeat = -1;
+
+    /// <summary>连续发送的重复次数（-1=一直重复直到再次点发送停止；0=只发一次）</summary>
+    public int continuousRepeat
+    {
+        get => _continuousRepeat;
+        set
+        {
+            var v = value < -1 ? -1 : (value > 100000 ? 100000 : value);
+            if (SetProperty(ref _continuousRepeat, v))
+                Save();
+        }
+    }
+
+    private bool _sendByEnter = false;
+
+    /// <summary>true=按 Enter 发送；false=按 Ctrl+Enter 发送</summary>
+    public bool sendByEnter
+    {
+        get => _sendByEnter;
+        set
+        {
+            if (SetProperty(ref _sendByEnter, value))
+                Save();
+        }
+    }
+
     private bool _showSend = true;
+
     public bool showSend
     {
         get => _showSend;

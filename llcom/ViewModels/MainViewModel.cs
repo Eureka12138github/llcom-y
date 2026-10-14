@@ -62,6 +62,22 @@ public partial class MainViewModel : ObservableObject
 {
     private readonly ISerialPortService _uart;
 
+    // ===== 定时发送（快捷发送逐条定时 + 主发送框连续发送） =====
+    /// <summary>定时发送基准定时器（10ms tick，扫描到期项）</summary>
+    private readonly System.Windows.Threading.DispatcherTimer _timedSendTimer =
+        new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromMilliseconds(10) };
+
+    /// <summary>快捷发送每条的下次到期时间</summary>
+    private readonly Dictionary<Model.ToSendData, DateTime> _quickNextDue = new();
+
+    /// <summary>主发送框“连续发送”是否正在运行</summary>
+    private bool _continuousRunning;
+
+    /// <summary>连续发送剩余次数（-1 表示无限）</summary>
+    private int _continuousRemaining;
+
+    private DateTime _continuousNextDue;
+
     //串口控制状态
     private bool _isOpeningPort; //打开串口进行中
 
@@ -285,6 +301,10 @@ public partial class MainViewModel : ObservableObject
                 SendHistory.Add(h);
         }
         TrimSendHistory();
+
+        //定时发送：定时器 tick；任何快捷发送条目/设置变化时，确保定时器在需要时启动
+        _timedSendTimer.Tick += (_, _) => OnTimedSendTick();
+        Model.ToSendData.DataChanged += (_, _) => EnsureTimedSendRunning();
     }
 
     private static readonly BaudRateItem CustomRateEntry = new BaudRateItem(null, null);
@@ -554,6 +574,34 @@ public partial class MainViewModel : ObservableObject
         //未打开串口则不发送（也不跑脚本/不自动选端口），仅提示
         if (!EnsurePortOpenForSend())
             return;
+
+        //连续发送模式：第一次点击开始，再次点击停止
+        if (Tools.Global.setting.continuousSend)
+        {
+            if (_continuousRunning)
+            {
+                StopContinuousSending();
+                return;
+            }
+            SendMainBoxOnce();
+            if (Tools.Global.setting.continuousRepeat == 0)
+                return;
+            _continuousRunning = true;
+            _continuousRemaining =
+                Tools.Global.setting.continuousRepeat < 0 ? -1 : Tools.Global.setting.continuousRepeat;
+            _continuousNextDue = DateTime.UtcNow.AddMilliseconds(
+                NormalizeInterval(Tools.Global.setting.continuousDelayMs)
+            );
+            _timedSendTimer.Start();
+            return;
+        }
+
+        SendMainBoxOnce();
+    }
+
+    /// <summary>发送主发送框内容一次（切换默认接收脚本 + 记录发送历史）</summary>
+    private void SendMainBoxOnce()
+    {
         Tools.Global.setting.recvScript = Tools.Global.recvScriptBackup;
         var text = SendText;
         var data = Tools.Global.GetEncoding().GetBytes(text);
@@ -571,6 +619,143 @@ public partial class MainViewModel : ObservableObject
             return true;
         Tools.MessageBox.Show(Localize("ErrorPortNotOpen"));
         return false;
+    }
+
+    // ===== 定时发送 =====
+
+    /// <summary>把所有间隔限制到 10ms ~ 1h</summary>
+    internal static int NormalizeInterval(int ms) => ms < 10 ? 10 : (ms > 3600000 ? 3600000 : ms);
+
+    /// <summary>有定时任务时确保定时器在运行</summary>
+    private void EnsureTimedSendRunning()
+    {
+        if (_timedSendTimer.IsEnabled)
+            return;
+        if (_continuousRunning || QuickSend.Items.Any(i => i.timerEnabled))
+            _timedSendTimer.Start();
+    }
+
+    /// <summary>停止主发送框的“连续发送”</summary>
+    internal void StopContinuousSending()
+    {
+        _continuousRunning = false;
+        _continuousRemaining = 0;
+        if (!QuickSend.Items.Any(i => i.timerEnabled))
+            _timedSendTimer.Stop();
+    }
+
+    /// <summary>停止所有定时发送（快捷发送逐条定时 + 连续发送）</summary>
+    internal void StopAllTimedSending()
+    {
+        _continuousRunning = false;
+        _continuousRemaining = 0;
+        _quickNextDue.Clear();
+        foreach (var item in QuickSend.Items)
+            item.timerEnabled = false;
+        _timedSendTimer.Stop();
+    }
+
+    /// <summary>
+    /// 定时器 tick：按各自间隔发送到期的快捷发送条目，并处理主发送框的连续发送。
+    /// 若有到期任务而串口未打开，则提示并停止全部定时。
+    /// </summary>
+    private void OnTimedSendTick()
+    {
+        var now = DateTime.UtcNow;
+
+        var due = new List<Model.ToSendData>();
+        var anyQuick = false;
+        foreach (var item in QuickSend.Items)
+        {
+            if (!item.timerEnabled)
+            {
+                _quickNextDue.Remove(item);
+                continue;
+            }
+            anyQuick = true;
+            var interval = NormalizeInterval(item.timerIntervalMs);
+            if (!_quickNextDue.TryGetValue(item, out var next))
+            {
+                //首次启用：延迟一个间隔后再发
+                _quickNextDue[item] = now.AddMilliseconds(interval);
+                continue;
+            }
+            if (now >= next)
+            {
+                _quickNextDue[item] = now.AddMilliseconds(interval);
+                due.Add(item);
+            }
+        }
+
+        var continuousDue = _continuousRunning && now >= _continuousNextDue;
+
+        if ((due.Count > 0 || continuousDue) && !_uart.IsOpen())
+        {
+            StopAllTimedSending();
+            Tools.MessageBox.Show(Localize("ErrorPortNotOpen"));
+            return;
+        }
+
+        foreach (var item in due)
+            SendQuickItem(item);
+
+        if (continuousDue)
+        {
+            SendMainBoxOnce();
+            _continuousNextDue = now.AddMilliseconds(
+                NormalizeInterval(Tools.Global.setting.continuousDelayMs)
+            );
+            if (_continuousRemaining > 0 && --_continuousRemaining <= 0)
+                _continuousRunning = false;
+        }
+
+        if (!anyQuick && !_continuousRunning)
+            _timedSendTimer.Stop();
+    }
+
+    /// <summary>发送一条“快捷发送”条目（含该条的接收脚本切换与 Hex/字符串解析）</summary>
+    internal void SendQuickItem(Model.ToSendData data)
+    {
+        //如果该条指定了接收脚本，则切换；否则用默认接收脚本
+        if (!string.IsNullOrEmpty(data.recvScriptPath))
+        {
+            if (
+                !System.IO.File.Exists(
+                    Tools.Global.ProfilePath
+                        + $"user_script_recv_convert/{data.recvScriptPath}.lua"
+                )
+            )
+            {
+                Tools.Global.setting.recvScript = "default";
+                data.recvScriptPath = "";
+                if (
+                    !System.IO.File.Exists(
+                        Tools.Global.ProfilePath
+                            + $"user_script_recv_convert/{Tools.Global.setting.recvScript}.lua"
+                    )
+                )
+                {
+                    System.IO.File.Create(
+                            Tools.Global.ProfilePath
+                                + $"user_script_recv_convert/{Tools.Global.setting.recvScript}.lua"
+                        )
+                        .Close();
+                }
+            }
+            else
+            {
+                Tools.Global.setting.recvScript = data.recvScriptPath;
+            }
+        }
+        else
+        {
+            Tools.Global.setting.recvScript = Tools.Global.recvScriptBackup;
+        }
+
+        var sendData = data.hex
+            ? Tools.Global.Hex2Byte(data.text)
+            : Tools.Global.GetEncoding().GetBytes(data.text);
+        SendUartData(sendData, true);
     }
 
     /// <summary>

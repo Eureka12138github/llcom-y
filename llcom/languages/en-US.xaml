@@ -27,6 +27,13 @@
     <system:String x:Key="Help">Help</system:String>
     <system:String x:Key="SendDataButton">Send</system:String>
     <system:String x:Key="SendDataButtonTip">same as Ctrl+Enter</system:String>
+    <system:String x:Key="SendOption">Send options</system:String>
+    <system:String x:Key="SendOptionTip">Send options: continuous send / delay / repeat count / Enter behavior</system:String>
+    <system:String x:Key="ContinuousSend">Continuous send</system:String>
+    <system:String x:Key="ContinuousDelayText">Delay after send (ms): </system:String>
+    <system:String x:Key="ContinuousRepeatText">Repeat count: </system:String>
+    <system:String x:Key="SendByEnter">Send by Enter</system:String>
+    <system:String x:Key="SendByCtrlEnter">Send by Ctrl+Enter</system:String>
     <system:String x:Key="RefreshPortButton">Refresh List</system:String>
     <system:String x:Key="ShowPorts">Serial Ports:</system:String>
     <system:String x:Key="ShowBaudRate">Baud Rate:</system:String>
@@ -41,6 +48,10 @@
     <system:String x:Key="QuickSendId">ID</system:String>
     <system:String x:Key="QuickSendContent">Content</system:String>
     <system:String x:Key="QuickSendHex">Hex</system:String>
+    <system:String x:Key="QuickSendTimer">Timer</system:String>
+    <system:String x:Key="QuickSendInterval">ms</system:String>
+    <system:String x:Key="QuickSendTimerTip">Check to send this row periodically with the interval on the right</system:String>
+    <system:String x:Key="QuickSendIntervalTip">Interval in milliseconds (10~3600000)</system:String>
     <system:String x:Key="QuickSendRecvScript">Rcvs</system:String>
     <system:String x:Key="QuickSendRecvScriptPara">Para</system:String>
     <system:String x:Key="QuickSendButtonTip">Right click to change Button Content.</system:String>

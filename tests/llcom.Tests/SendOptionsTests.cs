@@ -66,6 +66,39 @@ namespace llcom.Tests
         }
 
         [Fact]
+        public void ContinuousSettings_AreClamped()
+        {
+            var s = new Settings();
+            s.continuousDelayMs = 0;
+            Assert.Equal(10, s.continuousDelayMs);
+            s.continuousDelayMs = 99999999;
+            Assert.Equal(3600000, s.continuousDelayMs);
+            s.continuousRepeat = -5;
+            Assert.Equal(-1, s.continuousRepeat);
+        }
+
+        [Theory]
+        [InlineData(5, 10)]
+        [InlineData(10, 10)]
+        [InlineData(1000, 1000)]
+        [InlineData(99999999, 3600000)]
+        public void NormalizeInterval_Clamps(int input, int expected)
+        {
+            Assert.Equal(expected, MainViewModel.NormalizeInterval(input));
+        }
+
+        [Fact]
+        public void ToSendData_TimerFields_JsonRoundTrip()
+        {
+            var d = new ToSendData { text = "x", timerEnabled = true, timerIntervalMs = 250 };
+
+            var back = JsonConvert.DeserializeObject<ToSendData>(JsonConvert.SerializeObject(d));
+
+            Assert.True(back.timerEnabled);
+            Assert.Equal(250, back.timerIntervalMs);
+        }
+
+        [Fact]
         public void SendHistory_JsonRoundTrip_Preserved()
         {
             var s = new Settings();

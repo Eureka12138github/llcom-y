@@ -82,4 +82,32 @@ public class ToSendData : INotifyPropertyChanged
     {
         this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
+
+    private bool _timerEnabled;
+    private int _timerIntervalMs = 1000;
+
+    /// <summary>是否启用“定时发送”（快捷发送每条独立定时）</summary>
+    public bool timerEnabled
+    {
+        get { return _timerEnabled; }
+        set
+        {
+            if (_timerEnabled == value)
+                return;
+            _timerEnabled = value;
+            DataChanged?.Invoke(0, EventArgs.Empty);
+            OnPropertyChanged(nameof(timerEnabled));
+        }
+    }
+
+    /// <summary>定时发送间隔（毫秒，实际使用时会限制到 10~3600000）</summary>
+    public int timerIntervalMs
+    {
+        get { return _timerIntervalMs; }
+        set
+        {
+            _timerIntervalMs = value;
+            DataChanged?.Invoke(0, EventArgs.Empty);
+        }
+    }
 }
