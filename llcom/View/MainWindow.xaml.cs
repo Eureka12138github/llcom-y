@@ -453,10 +453,20 @@ public partial class MainWindow : Window
         _vm.SendText = "";
     }
 
-    /// <summary>展开“发送记录”下拉：动态生成历史项 + 记录上限调节行。</summary>
-    private void SendHistoryMenuItem_SubmenuOpened(object sender, RoutedEventArgs e)
+    /// <summary>打开“发送记录”下拉（ContextMenu）。</summary>
+    private void SendHistoryButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is not MenuItem menu)
+        if (sender is not Button button || button.ContextMenu == null)
+            return;
+        button.ContextMenu.PlacementTarget = button;
+        button.ContextMenu.Placement = PlacementMode.Bottom;
+        button.ContextMenu.IsOpen = true;
+    }
+
+    /// <summary>构建“发送记录”下拉内容：历史项 + 记录上限调节行。</summary>
+    private void SendHistoryContextMenu_Opened(object sender, RoutedEventArgs e)
+    {
+        if (sender is not ContextMenu menu)
             return;
         menu.Items.Clear();
 

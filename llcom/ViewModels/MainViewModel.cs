@@ -262,6 +262,8 @@ public partial class MainViewModel : ObservableObject
                 OnPropertyChanged(nameof(SentCount));
             else if (e.PropertyName == nameof(setting.ReceivedCount))
                 OnPropertyChanged(nameof(ReceivedCount));
+            else if (e.PropertyName == nameof(setting.dataToSend))
+                OnPropertyChanged(nameof(SendText)); //发送框文本可能在代码里被清空/填回
         };
 
         //初始状态文本

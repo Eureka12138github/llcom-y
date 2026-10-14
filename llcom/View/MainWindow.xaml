@@ -137,31 +137,36 @@
         Name="clearSendBoxButton"
         Grid.Column="1"
         Style="{StaticResource IconButton}"
+        AutomationProperties.Name="{DynamicResource ClearSendBox}"
         Click="ClearSendBoxButton_Click"
         ToolTip="{DynamicResource ClearSendBox}"
       >
         <fa:FontAwesome Foreground="{DynamicResource Brush.Foreground.Muted}" Icon="Eraser" />
       </Button>
       <!--  发送记录：点历史项填回发送框；底部可调记录上限  -->
-      <Menu Grid.Column="2" Margin="2,0,0,0" VerticalAlignment="Center">
-        <MenuItem
-          Name="sendHistoryMenuItem"
-          SubmenuOpened="SendHistoryMenuItem_SubmenuOpened"
-          ToolTip="{DynamicResource SendHistory}"
-        >
-          <MenuItem.Header>
-            <StackPanel Orientation="Horizontal">
-              <fa:FontAwesome Foreground="{DynamicResource Brush.Foreground}" Icon="History" />
-              <fa:FontAwesome
-                Margin="2,0,0,0"
-                FontSize="9"
-                Foreground="{DynamicResource Brush.Foreground.Muted}"
-                Icon="CaretDown"
-              />
-            </StackPanel>
-          </MenuItem.Header>
-        </MenuItem>
-      </Menu>
+      <Button
+        Name="sendHistoryButton"
+        Grid.Column="2"
+        Margin="2,0,0,0"
+        Style="{StaticResource FlatIconButton}"
+        AutomationProperties.Name="{DynamicResource SendHistory}"
+        Click="SendHistoryButton_Click"
+        ToolTip="{DynamicResource SendHistory}"
+      >
+        <StackPanel Orientation="Horizontal">
+          <fa:FontAwesome Foreground="{DynamicResource Brush.Foreground}" Icon="History" />
+          <fa:FontAwesome
+            Margin="2,0,0,0"
+            VerticalAlignment="Bottom"
+            FontSize="9"
+            Foreground="{DynamicResource Brush.Foreground.Muted}"
+            Icon="CaretDown"
+          />
+        </StackPanel>
+        <Button.ContextMenu>
+          <ContextMenu Name="sendHistoryContextMenu" Opened="SendHistoryContextMenu_Opened" />
+        </Button.ContextMenu>
+      </Button>
       <!--  追加换行  -->
       <ComboBox
         Name="appendNewlineComboBox"
