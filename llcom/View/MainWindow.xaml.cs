@@ -442,11 +442,6 @@ public partial class MainWindow : Window
         _vm.LuaEditor.CheckExternalChange();
     }
 
-    private void ClearLogButton_Click(object sender, RoutedEventArgs e)
-    {
-        Tools.Logger.ClearData();
-    }
-
     /// <summary>清空发送框内容</summary>
     private void ClearSendBoxButton_Click(object sender, RoutedEventArgs e)
     {

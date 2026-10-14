@@ -67,6 +67,12 @@ public partial class DataShowPage : Page
         _vm.LockLog = !_vm.LockLog;
     }
 
+    /// <summary>清空日志显示（与主窗口 ☰ 里原来的“清空日志”同一动作）</summary>
+    private void ClearLogButton_Click(object sender, RoutedEventArgs e)
+    {
+        Tools.Logger.ClearData();
+    }
+
     private void SaveLogButton_Click(object sender, RoutedEventArgs e)
     {
         SaveFileDialog saveFileDialog = new SaveFileDialog();

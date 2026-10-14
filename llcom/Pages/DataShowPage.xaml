@@ -145,18 +145,26 @@
           />
         </Grid>
       </Button>
+      <!--  清空日志  -->
+      <Button
+        Name="ClearLogButton"
+        Style="{StaticResource LogBarButton}"
+        AutomationProperties.Name="{DynamicResource ClearLog}"
+        Click="ClearLogButton_Click"
+        ToolTip="{DynamicResource ClearLog}"
+      >
+        <fa:FontAwesome FontSize="14" Icon="Trash" />
+      </Button>
+      <!--  保存日志  -->
+      <Button
+        Name="SaveLogButton"
+        Style="{StaticResource LogBarButton}"
+        AutomationProperties.Name="{DynamicResource SaveLogButton}"
+        Click="SaveLogButton_Click"
+        ToolTip="{DynamicResource SaveLogButton}"
+      >
+        <fa:FontAwesome FontSize="14" Icon="Save" />
+      </Button>
     </WrapPanel>
-    <Button
-      Name="SaveLogButton"
-      Margin="0,0,18,3"
-      HorizontalAlignment="Right"
-      VerticalAlignment="Bottom"
-      Click="SaveLogButton_Click"
-      ToolTip="{DynamicResource SaveLogButton}"
-      Visibility="{Binding Path=IsMouseOver, ElementName=mainGrid, Converter={StaticResource boolVisibeConverter}}"
-      BorderBrush="{DynamicResource Brush.Foreground}"
-    >
-      <fa:FontAwesome Icon="Save" HorizontalAlignment="Center" FontSize="12" />
-    </Button>
   </Grid>
 </Page>

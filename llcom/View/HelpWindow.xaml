@@ -57,7 +57,7 @@
       <TextBlock Style="{StaticResource HelpLi}" Text="· 自动重连：串口被拔出后自动恢复连接（只重连上次手动打开过的端口）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· RTS / DTR：串口两根硬件控制信号线的电平（详见文末「RTS / DTR 详解」）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 打开串口 / 关闭串口：打开成功后按钮变绿，状态栏显示 COM 与波特率。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 顶部工具栏：☰ 更多操作（清空日志、更多设置）、🌐 切换语言、? 使用说明。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 顶部工具栏：☰ 更多设置、🌐 切换语言、? 使用说明。" />
 
       <TextBlock Style="{StaticResource HelpH}" Text="三、收发数据显示区（左侧）" />
       <TextBlock Style="{StaticResource HelpP}" Text="每行显示：时间 + 方向（→ 发送 / ← 接收）+ 数据（十六进制或文本，单行）。" />
@@ -67,7 +67,8 @@
       <TextBlock Style="{StaticResource HelpLi}" Text="· 眼睛图标：替换不可见字符（把不可见字符显示为可见占位，仅 UTF-8 有效）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 暂停/继续图标：停止打印 / 继续打印日志。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 锁图标：锁定视图禁止自动滚动（点一下切换，锁定时为绿色开锁图标）。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="鼠标移到日志区右侧：出现「保存日志」按钮。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 垃圾桶图标：清空日志显示。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 保存图标：把当前日志保存为文件。" />
       <TextBlock Style="{StaticResource HelpP}" Text="终端模式（在「更多设置」中开启）：日志区可直接键盘输入并即时发送按键。" />
 
       <TextBlock Style="{StaticResource HelpH}" Text="四、发送区（底部）" />

@@ -60,7 +60,6 @@
             <MenuItem.Header>
               <fa:FontAwesome Foreground="{DynamicResource Brush.Foreground}" Icon="Bars" />
             </MenuItem.Header>
-            <MenuItem Click="ClearLogButton_Click" Header="{DynamicResource ClearLog}" />
             <MenuItem Click="MoreSettingButton_Click" Header="{DynamicResource MoreSettings}" />
           </MenuItem>
         </Menu>
