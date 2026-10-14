@@ -187,37 +187,12 @@ public partial class MainViewModel : ObservableObject
         };
 
     /// <summary>
-    /// “发送Hex”模式下的实际字节：
-    /// 整串是合法十六进制 → 按十六进制解析；否则（如 "test"、"03kkkkk"）→ 把整串按字符串发送。
-    /// 这样在 Hex 模式下总能发出东西，且不会像 Hex2Byte 那样把 "03kkkkk" 啃成只剩 "03"（丢字符）。
+    /// “发送Hex”模式下的实际字节：直接把输入文本按十六进制解析，**不做任何“像不像十六进制”的判断**。
+    /// 发字符串还是发 Hex 完全由「Abc/Hex」按钮决定：
+    /// 字符串模式原样发送；Hex 模式则按十六进制解析（非十六进制字符会被 Hex2Byte 过滤掉）。
     /// </summary>
-    internal static byte[] HexModeBytes(byte[] data)
-    {
-        var text = Tools.Global.Byte2String(data);
-        return IsValidHexText(text) ? Tools.Global.Hex2Byte(text) : data;
-    }
-
-    /// <summary>
-    /// 判断整串是否为合法十六进制：去掉空白/常见分隔符与 0x 前缀后，必须**全部是十六进制字符**且长度为偶数。
-    /// 例："0303"、"0A 0B"、"0x0A0B"、"12-34" 为 true；"test"、"03kkkkk"、"hello world"、"abc"（奇数位）为 false。
-    /// </summary>
-    internal static bool IsValidHexText(string text)
-    {
-        if (string.IsNullOrWhiteSpace(text))
-            return false;
-        var s = text.Replace("0x", "").Replace("0X", "");
-        s = System.Text.RegularExpressions.Regex.Replace(s, @"[\s,;:_\-]", "");
-        if (s.Length == 0 || s.Length % 2 != 0)
-            return false;
-        foreach (var c in s)
-        {
-            var isHex =
-                (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
-            if (!isHex)
-                return false;
-        }
-        return true;
-    }
+    internal static byte[] HexModeBytes(byte[] data) =>
+        Tools.Global.Hex2Byte(Tools.Global.Byte2String(data));
 
     public IRelayCommand RefreshPortsCommand { get; }
     public IRelayCommand OpenClosePortCommand { get; }

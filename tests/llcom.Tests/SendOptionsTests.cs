@@ -45,7 +45,7 @@ namespace llcom.Tests
         }
 
         [Fact]
-        public void HexModeBytes_ParsesHexOrFallsBackToWholeString()
+        public void HexModeBytes_ParsesStrictlyAsHex()
         {
             // 合法十六进制 → 正常解析
             Assert.Equal(
@@ -57,28 +57,12 @@ namespace llcom.Tests
                 MainViewModel.HexModeBytes(System.Text.Encoding.UTF8.GetBytes("0A 0B"))
             );
 
-            // 非法十六进制 → 整串按字符串发送（不丢字符）
-            var test = System.Text.Encoding.UTF8.GetBytes("test");
-            Assert.Equal(test, MainViewModel.HexModeBytes(test));
-
-            // 回归：03kkkkk 不能被啃成 03
-            var messy = System.Text.Encoding.UTF8.GetBytes("03kkkkk");
-            Assert.Equal(messy, MainViewModel.HexModeBytes(messy));
-        }
-
-        [Theory]
-        [InlineData("0303", true)]
-        [InlineData("0A 0B", true)]
-        [InlineData("0x0A0B", true)]
-        [InlineData("12-34", true)]
-        [InlineData("test", false)]
-        [InlineData("03kkkkk", false)]
-        [InlineData("hello world", false)]
-        [InlineData("abc", false)] //奇数个十六进制字符
-        [InlineData("", false)]
-        public void IsValidHexText_ChecksWholeString(string text, bool expected)
-        {
-            Assert.Equal(expected, MainViewModel.IsValidHexText(text));
+            // Hex 模式下不做内容判断：非十六进制字符会被过滤
+            Assert.Empty(MainViewModel.HexModeBytes(System.Text.Encoding.UTF8.GetBytes("test")));
+            Assert.Equal(
+                new byte[] { 0x03 },
+                MainViewModel.HexModeBytes(System.Text.Encoding.UTF8.GetBytes("03kkkkk"))
+            );
         }
 
         [Fact]
