@@ -49,9 +49,10 @@
     <system:String x:Key="QuickSendContent">Content</system:String>
     <system:String x:Key="QuickSendHex">Hex</system:String>
     <system:String x:Key="QuickSendTimer">Timer</system:String>
-    <system:String x:Key="QuickSendInterval">ms</system:String>
-    <system:String x:Key="QuickSendTimerTip">Check to send this row periodically with the interval on the right</system:String>
+    <system:String x:Key="QuickSendInterval">Interval (ms): </system:String>
+    <system:String x:Key="QuickSendTimerTip">Periodic send: click to set the timer switch and interval</system:String>
     <system:String x:Key="QuickSendIntervalTip">Interval in milliseconds (10~3600000)</system:String>
+    <system:String x:Key="ContinuousRepeatTip">Repeats AFTER the first send: -1 = forever; 0 = send once only</system:String>
     <system:String x:Key="QuickSendRecvScript">Rcvs</system:String>
     <system:String x:Key="QuickSendRecvScriptPara">Para</system:String>
     <system:String x:Key="QuickSendButtonTip">Right click to change Button Content.</system:String>

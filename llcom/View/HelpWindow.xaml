@@ -77,15 +77,16 @@
       <TextBlock Style="{StaticResource HelpLi}" Text="    - 橡皮图标：清空发送框内容。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="    - 记录图标：发送记录。点其中一条会把该内容填回发送框；底部「记录上限（条）」可调最多保存多少条（最新在前）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="    - 换行下拉：发送时在末尾追加的换行，可选 无追加 / \n / \r / \n\r / \r\n。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 发送按钮右侧的下拉（▾）是**发送选项**：连续发送（按「发送后延时」和「重复次数」周期性发送，重复次数 -1 表示一直发到再次点发送停止）、按 Enter 发送 / 按 Ctrl+Enter 发送。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 发送按钮右侧的下拉（▾）是「发送选项」：连续发送（按「发送后延时」和「重复次数」周期性发送）、按 Enter 发送 / 按 Ctrl+Enter 发送。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="    - 关于「重复次数」：它表示在首次发送之后再重复几次。填 3 = 总共发 4 次；填 0 = 只发一次；填 -1 = 一直重复，直到再次点「发送」停止。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 是否按 HEX 发送由「发送Hex」开关决定。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 发送前可配置「发送脚本」（更多设置）对数据做变换。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 发送区高度可用上方分隔条上下拖拽调整。" />
 
       <TextBlock Style="{StaticResource HelpH}" Text="五、快捷发送（右侧第一个标签）" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 共 10 页：点标签里的 ☰ 图标切换页；右键页名可改名。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 每行：编号、内容、发送按钮、Hex 勾选、脚本图标、定时勾选、间隔(ms)。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="    - 定时：勾选后按右侧「间隔ms」周期性发送这一条；可同时勾选多条。串口未打开时会提示并停止所有定时。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 每行：编号、内容、发送按钮、Hex 勾选、脚本图标、定时图标（点开设置定时）。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="    - 定时图标：点开可勾选「定时」并调整「间隔(ms)」，按该间隔周期性发送这一条；可多条同时定时（图标变绿表示已启用）。串口未打开时会提示并停止所有定时。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="    - 点行内「发送」按钮发送该条内容（会按行配置调用脚本）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="    - Hex 勾选：该条按十六进制发送。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="    - 文件图标：为该条设置「接收脚本」（点选设置 / 右键清除）；齿轮图标设接收脚本参数。" />

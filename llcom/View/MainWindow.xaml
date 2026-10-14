@@ -252,7 +252,7 @@
                   </StackPanel>
                 </MenuItem.Header>
               </MenuItem>
-              <MenuItem StaysOpenOnClick="True">
+              <MenuItem StaysOpenOnClick="True" ToolTip="{DynamicResource ContinuousRepeatTip}">
                 <MenuItem.Header>
                   <StackPanel Orientation="Horizontal">
                     <Button
@@ -621,8 +621,7 @@
                         <ColumnDefinition Width="auto" />
                         <ColumnDefinition Width="20" />
                         <ColumnDefinition Width="25" />
-                        <ColumnDefinition Width="22" />
-                        <ColumnDefinition Width="52" />
+                        <ColumnDefinition Width="26" />
                       </Grid.ColumnDefinitions>
                       <Grid
                         Margin="1"
@@ -664,23 +663,72 @@
                         AutomationProperties.Name="{DynamicResource QuickSendHex}"
                         IsChecked="{Binding hex}"
                       />
-                      <!--  定时发送：勾选后按右侧间隔周期性发送这一条  -->
-                      <CheckBox
+                      <!--  定时发送：折叠在下拉里（和主发送框一样）  -->
+                      <Button
                         Grid.Column="5"
-                        Margin="2"
-                        HorizontalAlignment="Center"
+                        Width="24"
                         VerticalAlignment="Center"
                         AutomationProperties.Name="{DynamicResource QuickSendTimer}"
-                        IsChecked="{Binding timerEnabled}"
+                        Click="QuickTimerButton_Click"
                         ToolTip="{DynamicResource QuickSendTimerTip}"
-                      />
-                      <TextBox
-                        Grid.Column="6"
-                        Margin="0,0,2,0"
-                        VerticalAlignment="Center"
-                        Text="{Binding timerIntervalMs, UpdateSourceTrigger=PropertyChanged}"
-                        ToolTip="{DynamicResource QuickSendIntervalTip}"
-                      />
+                      >
+                        <fa:FontAwesome Icon="ClockOutline" FontSize="12">
+                          <fa:FontAwesome.Style>
+                            <Style TargetType="fa:FontAwesome">
+                              <Setter Property="Foreground" Value="{DynamicResource Brush.Foreground.Muted}" />
+                              <Style.Triggers>
+                                <DataTrigger Binding="{Binding timerEnabled}" Value="True">
+                                  <Setter Property="Foreground" Value="{DynamicResource Brush.State.Success}" />
+                                </DataTrigger>
+                              </Style.Triggers>
+                            </Style>
+                          </fa:FontAwesome.Style>
+                        </fa:FontAwesome>
+                        <Button.ContextMenu>
+                          <ContextMenu>
+                            <MenuItem
+                              Header="{DynamicResource QuickSendTimer}"
+                              IsCheckable="True"
+                              IsChecked="{Binding timerEnabled}"
+                              StaysOpenOnClick="True"
+                            />
+                            <MenuItem StaysOpenOnClick="True">
+                              <MenuItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                  <Button
+                                    Width="24"
+                                    Padding="0"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Click="QuickTimerIntervalMinus_Click"
+                                    Content="－"
+                                    Cursor="Hand"
+                                  />
+                                  <TextBlock
+                                    Margin="8,0"
+                                    VerticalAlignment="Center"
+                                    Text="{DynamicResource QuickSendInterval}"
+                                  />
+                                  <TextBlock
+                                    Margin="0,0,8,0"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding timerIntervalMs, Mode=OneWay}"
+                                  />
+                                  <Button
+                                    Width="24"
+                                    Padding="0"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Click="QuickTimerIntervalPlus_Click"
+                                    Content="＋"
+                                    Cursor="Hand"
+                                  />
+                                </StackPanel>
+                              </MenuItem.Header>
+                            </MenuItem>
+                          </ContextMenu>
+                        </Button.ContextMenu>
+                      </Button>
                       <TextBlock
                         Name="recvScriptSet"
                         Grid.Column="4"
@@ -718,7 +766,7 @@
                       <TextBlock
                         Visibility="Collapsed"
                         Name="recvScriptPara"
-                        Grid.Column="7"
+                        Grid.Column="5"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Opacity="{Binding recvScriptPara, Converter={StaticResource rsOpacityConverter}}"
@@ -775,8 +823,7 @@
               <ColumnDefinition Width="40" />
               <ColumnDefinition Width="25" />
               <ColumnDefinition Width="25" />
-              <ColumnDefinition Width="22" />
-              <ColumnDefinition Width="52" />
+              <ColumnDefinition Width="26" />
             </Grid.ColumnDefinitions>
             <TextBlock
               Grid.Column="0"
@@ -803,12 +850,6 @@
               HorizontalAlignment="Center"
               Text="{DynamicResource QuickSendTimer}"
               ToolTip="{DynamicResource QuickSendTimerTip}"
-            />
-            <TextBlock
-              Grid.Column="6"
-              HorizontalAlignment="Center"
-              Text="{DynamicResource QuickSendInterval}"
-              ToolTip="{DynamicResource QuickSendIntervalTip}"
             />
           </Grid>
           <ListBox

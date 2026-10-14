@@ -49,9 +49,10 @@
     <system:String x:Key="QuickSendContent">内容</system:String>
     <system:String x:Key="QuickSendHex">HEX</system:String>
     <system:String x:Key="QuickSendTimer">定时</system:String>
-    <system:String x:Key="QuickSendInterval">间隔ms</system:String>
-    <system:String x:Key="QuickSendTimerTip">勾选后按右侧间隔定时发送这一条（可多条同时定时）</system:String>
+    <system:String x:Key="QuickSendInterval">间隔(ms)：</system:String>
+    <system:String x:Key="QuickSendTimerTip">定时发送：点开设置「定时」开关与间隔（可多条同时定时）</system:String>
     <system:String x:Key="QuickSendIntervalTip">定时发送间隔，单位毫秒（10~3600000）</system:String>
+    <system:String x:Key="ContinuousRepeatTip">在首次发送之后重复的次数：-1=一直重复；0=只发一次</system:String>
     <system:String x:Key="QuickSendRecvScript">脚本</system:String>
     <system:String x:Key="QuickSendRecvScriptPara">参数</system:String>
     <system:String x:Key="QuickSendButtonTip">右击此按键，设置显示内容。</system:String>

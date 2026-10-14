@@ -641,6 +641,38 @@ public partial class MainWindow : Window
         }
     }
 
+    // ===== 快捷发送每条的“定时”下拉（折叠，和主发送框一样） =====
+
+    /// <summary>当前打开“定时”下拉的那一条（± 需要操作它）</summary>
+    private ToSendData _quickTimerItem;
+
+    private void QuickTimerButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Button button || button.ContextMenu == null)
+            return;
+        _quickTimerItem = button.DataContext as ToSendData;
+        var menu = button.ContextMenu;
+        menu.DataContext = _quickTimerItem; //菜单内绑定（定时开关/间隔显示）需要该行数据
+        menu.PlacementTarget = button;
+        menu.Placement = PlacementMode.Bottom;
+        Dispatcher.BeginInvoke(
+            new Action(() => menu.IsOpen = true),
+            System.Windows.Threading.DispatcherPriority.Background
+        );
+    }
+
+    private void QuickTimerIntervalMinus_Click(object sender, RoutedEventArgs e)
+    {
+        if (_quickTimerItem != null)
+            _quickTimerItem.timerIntervalMs -= 100;
+    }
+
+    private void QuickTimerIntervalPlus_Click(object sender, RoutedEventArgs e)
+    {
+        if (_quickTimerItem != null)
+            _quickTimerItem.timerIntervalMs += 100;
+    }
+
     private void knowSendDataButton_click(object sender, RoutedEventArgs e)
     {
         //未打开串口则不发送（也不切换接收脚本），仅提示
