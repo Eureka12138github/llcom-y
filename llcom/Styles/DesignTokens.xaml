@@ -62,8 +62,8 @@
   <SolidColorBrush x:Key="Brush.Icon.Doc" Color="#FF2F4F4F" />
 
   <!-- ============ 控件样式 ============ -->
-  <!-- 纯图标按钮：统一 32×32、内容居中 -->
-  <Style x:Key="IconButton" TargetType="{x:Type Button}">
+  <!-- 纯图标按钮：继承主题按钮外观（颜色与其它按钮一致），仅统一尺寸 32×32、内容居中 -->
+  <Style x:Key="IconButton" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
     <Setter Property="MinWidth" Value="32" />
     <Setter Property="MinHeight" Value="32" />
     <Setter Property="Width" Value="32" />
