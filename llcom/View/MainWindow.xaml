@@ -294,7 +294,12 @@
       <TabItem Header="{DynamicResource SerialSettingsCard}">
         <ScrollViewer>
           <StackPanel Margin="8">
-            <WrapPanel Margin="0,0,0,6" Orientation="Horizontal">
+            <!--  端口：刷新 + 选择  -->
+            <Grid Margin="0,0,0,10">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+              </Grid.ColumnDefinitions>
               <Button
                 Name="refreshPortButton"
                 Style="{StaticResource IconButton}"
@@ -306,32 +311,63 @@
               </Button>
               <ComboBox
                 Name="serialPortsListComboBox"
-                MinWidth="150"
-                MaxWidth="300"
+                Grid.Column="1"
                 Margin="8,0,0,0"
+                VerticalAlignment="Center"
                 DisplayMemberPath="DisplayName"
                 IsEnabled="{Binding IsPortComboEnabled}"
                 ItemsSource="{Binding Ports}"
                 SelectedItem="{Binding SelectedPort}"
               />
-            </WrapPanel>
-            <WrapPanel Margin="0,0,0,6" Orientation="Horizontal">
-              <TextBlock VerticalAlignment="Center" Text="{DynamicResource ShowBaudRate}" />
+            </Grid>
+
+            <!--  串口参数：左侧标签列统一宽度，右侧控件左对齐  -->
+            <Grid Margin="0,0,0,8">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" MinWidth="84" />
+                <ColumnDefinition Width="*" />
+              </Grid.ColumnDefinitions>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+              </Grid.RowDefinitions>
+
+              <TextBlock
+                Grid.Row="0"
+                Grid.Column="0"
+                Margin="0,0,8,8"
+                VerticalAlignment="Center"
+                Text="{DynamicResource ShowBaudRate}"
+              />
               <ComboBox
                 Name="baudRateComboBox"
-                Width="100"
-                Margin="4,0,0,0"
+                Grid.Row="0"
+                Grid.Column="1"
+                Height="28"
+                Margin="0,0,0,8"
+                VerticalAlignment="Center"
                 DisplayMemberPath="Display"
                 ItemsSource="{Binding BaudRates}"
                 SelectedItem="{Binding SelectedBaudRate}"
               />
-            </WrapPanel>
-            <WrapPanel Margin="0,0,0,6" Orientation="Horizontal">
-              <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingDataBits}" />
+
+              <TextBlock
+                Grid.Row="1"
+                Grid.Column="0"
+                Margin="0,0,8,8"
+                VerticalAlignment="Center"
+                Text="{DynamicResource SettingDataBits}"
+              />
               <ComboBox
                 Name="mainDataBitsComboBox"
-                Width="60"
-                Margin="4,0,0,0"
+                Grid.Row="1"
+                Grid.Column="1"
+                Height="28"
+                Margin="0,0,0,8"
+                VerticalAlignment="Center"
                 SelectionChanged="MainDataBitsComboBox_SelectionChanged"
               >
                 <ComboBoxItem Content="5" />
@@ -339,13 +375,21 @@
                 <ComboBoxItem Content="7" />
                 <ComboBoxItem Content="8" />
               </ComboBox>
-            </WrapPanel>
-            <WrapPanel Margin="0,0,0,6" Orientation="Horizontal">
-              <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingParity}" />
+
+              <TextBlock
+                Grid.Row="2"
+                Grid.Column="0"
+                Margin="0,0,8,8"
+                VerticalAlignment="Center"
+                Text="{DynamicResource SettingParity}"
+              />
               <ComboBox
                 Name="mainDataCheckComboBox"
-                Width="90"
-                Margin="4,0,0,0"
+                Grid.Row="2"
+                Grid.Column="1"
+                Height="28"
+                Margin="0,0,0,8"
+                VerticalAlignment="Center"
                 SelectionChanged="MainDataCheckComboBox_SelectionChanged"
               >
                 <ComboBoxItem Content="{DynamicResource SettingParityNone}" />
@@ -354,35 +398,51 @@
                 <ComboBoxItem Content="{DynamicResource SettingParityMark}" />
                 <ComboBoxItem Content="{DynamicResource SettingParitySpace}" />
               </ComboBox>
-            </WrapPanel>
-            <WrapPanel Margin="0,0,0,6" Orientation="Horizontal">
-              <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingStopBit}" />
+
+              <TextBlock
+                Grid.Row="3"
+                Grid.Column="0"
+                Margin="0,0,8,8"
+                VerticalAlignment="Center"
+                Text="{DynamicResource SettingStopBit}"
+              />
               <ComboBox
                 Name="mainStopBitComboBox"
-                Width="60"
-                Margin="4,0,0,0"
+                Grid.Row="3"
+                Grid.Column="1"
+                Height="28"
+                Margin="0,0,0,8"
+                VerticalAlignment="Center"
                 SelectionChanged="MainStopBitComboBox_SelectionChanged"
               >
                 <ComboBoxItem Content="1" />
                 <ComboBoxItem Content="2" />
                 <ComboBoxItem Content="1.5" />
               </ComboBox>
-            </WrapPanel>
-            <WrapPanel Margin="0,0,0,6" Orientation="Horizontal">
-              <TextBlock VerticalAlignment="Center" Text="{DynamicResource Encoding}" />
+
+              <TextBlock
+                Grid.Row="4"
+                Grid.Column="0"
+                Margin="0,0,8,0"
+                VerticalAlignment="Center"
+                Text="{DynamicResource Encoding}"
+              />
               <ComboBox
                 Name="mainEncodingComboBox"
-                Width="200"
-                Margin="4,0,0,0"
+                Grid.Row="4"
+                Grid.Column="1"
+                Height="28"
+                VerticalAlignment="Center"
                 SelectionChanged="MainEncodingComboBox_SelectionChanged"
               />
-            </WrapPanel>
+            </Grid>
+
             <CheckBox
-              Margin="0,4,0,8"
+              Margin="0,0,0,8"
               Content="{DynamicResource SettingAutoReconnect}"
               IsChecked="{Binding Setting.autoReconnect}"
             />
-            <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+            <StackPanel Margin="0,0,0,12" Orientation="Horizontal">
               <CheckBox
                 Content="RTS"
                 IsChecked="{Binding Rts, Mode=TwoWay}"
@@ -397,6 +457,7 @@
             </StackPanel>
             <Button
               Name="openClosePortButton"
+              Height="34"
               HorizontalAlignment="Stretch"
               Command="{Binding OpenClosePortCommand}"
               Style="{StaticResource PortToggleButton}"
