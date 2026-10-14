@@ -61,12 +61,13 @@
 
       <TextBlock Style="{StaticResource HelpH}" Text="三、收发数据显示区（左侧）" />
       <TextBlock Style="{StaticResource HelpP}" Text="每行显示：时间 + 方向（→ 发送 / ← 接收）+ 数据（十六进制或文本，单行）。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="底部开关（从左到右）：" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 发送Hex：勾选后发送时输入按十六进制解析，且发送的数据以十六进制显示；取消则按字符串收发/显示。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 接收显示Hex：接收的数据以十六进制显示；取消则以字符串显示。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 替换不可见字符：把不可见字符显示为可见占位（仅 UTF8 模式下有效）。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 停止打印：暂停 / 恢复日志刷新。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="鼠标移到日志区右上角：出现「锁定滚动」与「保存日志」按钮。" />
+      <TextBlock Style="{StaticResource HelpP}" Text="底部图标按钮（从左到右，鼠标悬停均有提示）：" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· Abc/Hex（发送）：发送时的解析与显示方式，点击在 字符串 / 十六进制 之间切换。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· Abc/Hex（接收）：接收数据的显示方式，点击在 字符串 / 十六进制 之间切换。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 眼睛图标：替换不可见字符（把不可见字符显示为可见占位，仅 UTF-8 有效）。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 暂停/继续图标：停止打印 / 继续打印日志。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 锁图标：锁定视图禁止自动滚动（点一下切换，锁定时为绿色开锁图标）。" />
+      <TextBlock Style="{StaticResource HelpP}" Text="鼠标移到日志区右侧：出现「保存日志」按钮。" />
       <TextBlock Style="{StaticResource HelpP}" Text="终端模式（在「更多设置」中开启）：日志区可直接键盘输入并即时发送按键。" />
 
       <TextBlock Style="{StaticResource HelpH}" Text="四、发送区（底部）" />

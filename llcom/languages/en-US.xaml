@@ -184,6 +184,10 @@
     <system:String x:Key="ShowHexFormatTip">modes: Only Hex/Only Text/Both Hex and Text</system:String>
     <system:String x:Key="HexSendMode">Send Hex</system:String>
     <system:String x:Key="HexSendModeTip">When checked: input is parsed as Hex and sent data is shown as Hex; otherwise as text.</system:String>
+    <system:String x:Key="SendHexToggleTip">Send: parse as Hex and show as Hex (click to switch to text)</system:String>
+    <system:String x:Key="RecvHexToggleTip">Received display: Hex (click to switch to text)</system:String>
+    <system:String x:Key="ShowSymbolIconTip">Replace invisible characters (UTF-8 only)</system:String>
+    <system:String x:Key="DisableLogIconTip">Stop / resume log printing</system:String>
     <system:String x:Key="ToolsTab">Tools</system:String>
     <system:String x:Key="EncodingToolsTab">Encoding Converter</system:String>
     <system:String x:Key="EncodingToolsJobs">Jobs</system:String>

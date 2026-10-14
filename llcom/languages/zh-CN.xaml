@@ -184,6 +184,10 @@
     <system:String x:Key="ShowHexFormatTip">切换为：只显示Hex/只显示文本数据/同时显示Hex与文本数据</system:String>
     <system:String x:Key="HexSendMode">发送Hex</system:String>
     <system:String x:Key="HexSendModeTip">勾选后：输入内容按十六进制解析，且发送的数据以十六进制显示；取消则按字符串收发/显示。</system:String>
+    <system:String x:Key="SendHexToggleTip">发送：按 Hex 解析并以十六进制显示（点击切换为字符串）</system:String>
+    <system:String x:Key="RecvHexToggleTip">接收显示：十六进制（点击切换为字符串）</system:String>
+    <system:String x:Key="ShowSymbolIconTip">替换不可见字符（仅支持 UTF-8 编码）</system:String>
+    <system:String x:Key="DisableLogIconTip">停止打印 / 继续打印日志</system:String>
     <system:String x:Key="ToolsTab">小工具</system:String>
     <system:String x:Key="EncodingToolsTab">编码转换工具</system:String>
     <system:String x:Key="EncodingToolsJobs">转换任务</system:String>

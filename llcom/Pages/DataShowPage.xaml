@@ -78,65 +78,76 @@
       VerticalAlignment="Bottom"
       Orientation="Horizontal"
     >
-      <CheckBox
-        Name="HexSendCheckBox"
-        Margin="8,0,0,0"
-        Content="{DynamicResource HexSendMode}"
+      <!--  发送显示方式：Abc（字符串）/ Hex  -->
+      <ToggleButton
+        Name="SendHexToggle"
+        AutomationProperties.Name="{DynamicResource HexSendMode}"
         IsChecked="{Binding Setting.hexSend}"
-        ToolTip="{DynamicResource HexSendModeTip}"
+        Style="{StaticResource LogBarToggle}"
+        ToolTip="{DynamicResource SendHexToggleTip}"
       />
-      <CheckBox
-        Name="RecvHexViewCheckBox"
-        Margin="8,0,0,0"
-        Content="{DynamicResource RecvHexView}"
+      <!--  接收显示方式：Abc（字符串）/ Hex  -->
+      <ToggleButton
+        Name="RecvHexToggle"
+        AutomationProperties.Name="{DynamicResource RecvHexView}"
         IsChecked="{Binding Setting.recvShowHex}"
+        Style="{StaticResource LogBarToggle}"
+        ToolTip="{DynamicResource RecvHexToggleTip}"
       />
-      <CheckBox
-        Name="EnableSymbolCheckBox"
-        Margin="8,0,0,0"
-        Content="{DynamicResource ShowSymbol}"
+      <!--  替换不可见字符  -->
+      <ToggleButton
+        Name="ShowSymbolToggle"
+        AutomationProperties.Name="{DynamicResource ShowSymbol}"
         IsChecked="{Binding Setting.EnableSymbol}"
-        ToolTip="{DynamicResource ShowSymbolTooltip}"
-      />
-      <CheckBox
-        Name="DisableLogCheckBox"
-        Margin="8,0,0,0"
-        Content="{DynamicResource DisableLog}"
+        Style="{StaticResource LogBarIconToggle}"
+        ToolTip="{DynamicResource ShowSymbolIconTip}"
+      >
+        <fa:FontAwesome FontSize="14" Icon="Eye" />
+      </ToggleButton>
+      <!--  停止打印 / 继续打印  -->
+      <ToggleButton
+        Name="DisableLogToggle"
+        AutomationProperties.Name="{DynamicResource DisableLog}"
         IsChecked="{Binding Setting.DisableLog}"
-      />
+        Style="{StaticResource LogBarIconToggle}"
+        ToolTip="{DynamicResource DisableLogIconTip}"
+      >
+        <Grid>
+          <fa:FontAwesome
+            FontSize="14"
+            Icon="Pause"
+            Visibility="{Binding Setting.DisableLog, Converter={StaticResource boolNotVisibeConverter}}"
+          />
+          <fa:FontAwesome
+            FontSize="14"
+            Icon="Play"
+            Visibility="{Binding Setting.DisableLog, Converter={StaticResource boolVisibeConverter}}"
+          />
+        </Grid>
+      </ToggleButton>
+      <!--  锁定视图禁止滚动  -->
+      <Button
+        Name="LockLogButton"
+        Style="{StaticResource LogBarButton}"
+        AutomationProperties.Name="{DynamicResource LockLogButton}"
+        Click="LockLogButton_Click"
+        ToolTip="{DynamicResource LockLogButton}"
+      >
+        <Grid>
+          <fa:FontAwesome
+            FontSize="14"
+            Icon="Lock"
+            Visibility="{Binding LockLog, Converter={StaticResource boolNotVisibeConverter}}"
+          />
+          <fa:FontAwesome
+            FontSize="14"
+            Foreground="{DynamicResource Brush.State.Success}"
+            Icon="Unlock"
+            Visibility="{Binding LockLog, Converter={StaticResource boolVisibeConverter}}"
+          />
+        </Grid>
+      </Button>
     </WrapPanel>
-    <Button
-      Name="LockLogButton"
-      Margin="0,0,18,25"
-      HorizontalAlignment="Right"
-      VerticalAlignment="Bottom"
-      Click="LockLogButton_Click"
-      ToolTip="{DynamicResource LockLogButton}"
-      Visibility="{Binding Path=IsMouseOver, ElementName=mainGrid, Converter={StaticResource boolVisibeConverter}}"
-    >
-      <StackPanel>
-        <fa:FontAwesome
-          Name="LockIcon"
-          Icon="Lock"
-          FontSize="16"
-          Height="12"
-          Visibility="{Binding LockLog, Converter={StaticResource boolNotVisibeConverter}}"
-        />
-        <fa:FontAwesome
-          Name="UnLockIcon"
-          Foreground="{DynamicResource Brush.State.Success}"
-          Icon="Unlock"
-          FontSize="16"
-          Height="12"
-          Visibility="{Binding LockLog, Converter={StaticResource boolVisibeConverter}}"
-        />
-        <TextBlock
-          Name="UnLockText"
-          Text="{DynamicResource LockLogText}"
-          Visibility="{Binding LockLog, Converter={StaticResource boolVisibeConverter}}"
-        />
-      </StackPanel>
-    </Button>
     <Button
       Name="SaveLogButton"
       Margin="0,0,18,3"
