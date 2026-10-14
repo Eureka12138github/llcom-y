@@ -11,6 +11,9 @@
     <system:String x:Key="ErrorClosePort">串口关闭失败！</system:String>
     <system:String x:Key="ErrorSendFail">串口数据发送失败！请检查连接！</system:String>
     <system:String x:Key="ErrorPortNotOpen">请先打开串口！</system:String>
+    <system:String x:Key="CrashTitle">程序错误</system:String>
+    <system:String x:Key="CrashMessage">程序遇到一个错误，需要关闭。详情已记录到下面的日志文件：</system:String>
+    <system:String x:Key="CrashCloseButton">关闭程序</system:String>
     <system:String x:Key="ErrorScript">处理发送数据的脚本运行错误，请检查发送脚本后再试，错误信息：</system:String>
     <system:String x:Key="ClearLog">清空日志</system:String>
     <system:String x:Key="MoreSettings">更多设置</system:String>

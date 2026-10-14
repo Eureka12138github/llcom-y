@@ -59,7 +59,7 @@ namespace llcom
             _isHandlingFatal = true;
             try
             {
-                HandleFatal(dispatcherUnhandledExceptionEventArgs.Exception, canContinue: true);
+                HandleFatal(dispatcherUnhandledExceptionEventArgs.Exception);
             }
             finally
             {
@@ -82,7 +82,7 @@ namespace llcom
             _isHandlingFatal = true;
             try
             {
-                HandleFatal(exception, canContinue: false);
+                HandleFatal(exception);
             }
             finally
             {
@@ -91,61 +91,27 @@ namespace llcom
         }
 
         /// <summary>
-        /// 统一的致命错误处理：记录日志 → 让用户选择（关闭 / 继续）→ 尽力上报 → 需要时保证退出。
+        /// 统一的致命错误处理：记录日志 → 弹出“只能关闭程序”的窗口 → 尽力上报 → 保证退出。
         /// </summary>
-        private static void HandleFatal(Exception exception, bool canContinue)
+        private static void HandleFatal(Exception exception)
         {
-            LogFatal(exception);
+            var logPath = LogFatal(exception);
 
-            var exMessage = exception?.Message ?? "未知错误 / unknown error";
-            var isZh = true;
             try
             {
-                isZh = Tools.Global.setting?.language != "en-US";
-            }
-            catch { }
-            var message = isZh
-                ? "程序遇到一个错误：\r\n\r\n"
-                    + exMessage
-                    + (canContinue
-                        ? "\r\n\r\n点“是”关闭程序，点“否”尝试继续运行。"
-                        : "\r\n\r\n程序即将关闭，点“确定”退出。")
-                : "The program hit an error:\r\n\r\n"
-                    + exMessage
-                    + (canContinue
-                        ? "\r\n\r\nYes = close the program, No = try to continue."
-                        : "\r\n\r\nThe program will be closed, click OK to exit.");
-
-            //默认按“关闭程序”处理，避免意外继续运行在损坏状态下
-            var closeProgram = true;
-            try
-            {
-                if (canContinue)
-                {
-                    closeProgram =
-                        MessageBox.Show(
-                            message,
-                            "LLCOM",
-                            MessageBoxButton.YesNo,
-                            MessageBoxImage.Error
-                        ) == MessageBoxResult.Yes;
-                }
-                else
-                {
-                    MessageBox.Show(message, "LLCOM", MessageBoxButton.OK, MessageBoxImage.Error);
-                    closeProgram = true;
-                }
+                var dialog = new CrashWindow(exception, logPath);
+                var owner = Application.Current?.MainWindow;
+                if (owner != null && !ReferenceEquals(owner, dialog))
+                    dialog.Owner = owner;
+                dialog.ShowDialog();
             }
             catch
             {
-                //连弹窗都失败，直接退出
-                closeProgram = true;
+                //弹窗失败也要能退出
             }
 
             TryUploadReport(exception);
-
-            if (closeProgram)
-                ExitApplication();
+            ExitApplication();
         }
 
         /// <summary>
@@ -172,9 +138,9 @@ namespace llcom
         }
 
         /// <summary>
-        /// 把致命异常写入 logs/fatal.log（上报可能失败，本地留痕更可靠）。
+        /// 把致命异常写入 logs/fatal.log（上报可能失败，本地留痕更可靠），返回日志文件路径。
         /// </summary>
-        private static void LogFatal(Exception exception)
+        private static string LogFatal(Exception exception)
         {
             try
             {
@@ -188,14 +154,17 @@ namespace llcom
                     dir = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "llcom");
                 }
                 System.IO.Directory.CreateDirectory(dir);
+                var path = System.IO.Path.Combine(dir, "fatal.log");
                 System.IO.File.AppendAllText(
-                    System.IO.Path.Combine(dir, "fatal.log"),
+                    path,
                     $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {exception}\r\n\r\n"
                 );
+                return path;
             }
             catch
             {
                 //记录失败也不能影响后续流程
+                return "";
             }
         }
 
