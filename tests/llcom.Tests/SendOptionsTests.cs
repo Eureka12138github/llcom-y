@@ -44,6 +44,22 @@ namespace llcom.Tests
             Assert.Equal(200, s.sendHistoryLimit);
         }
 
+        [Theory]
+        [InlineData("0303", true)]
+        [InlineData("0A 0B", true)]
+        [InlineData("0x0A0B", true)]
+        [InlineData("12-34", true)]
+        [InlineData("Test", false)]
+        [InlineData("test", false)]
+        [InlineData("hello world", false)]
+        [InlineData("abc", false)] //奇数个十六进制字符
+        [InlineData("", false)]
+        [InlineData("   ", false)]
+        public void IsHexLike_Detects(string text, bool expected)
+        {
+            Assert.Equal(expected, MainViewModel.IsHexLike(text));
+        }
+
         [Fact]
         public void SendHistory_JsonRoundTrip_Preserved()
         {

@@ -83,16 +83,14 @@
         Name="SendHexToggle"
         AutomationProperties.Name="{DynamicResource HexSendMode}"
         IsChecked="{Binding Setting.hexSend}"
-        Style="{StaticResource LogBarToggle}"
-        ToolTip="{DynamicResource SendHexToggleTip}"
+        Style="{StaticResource SendHexToggleStyle}"
       />
       <!--  接收显示方式：Abc（字符串）/ Hex  -->
       <ToggleButton
         Name="RecvHexToggle"
         AutomationProperties.Name="{DynamicResource RecvHexView}"
         IsChecked="{Binding Setting.recvShowHex}"
-        Style="{StaticResource LogBarToggle}"
-        ToolTip="{DynamicResource RecvHexToggleTip}"
+        Style="{StaticResource RecvHexToggleStyle}"
       />
       <!--  替换不可见字符  -->
       <ToggleButton

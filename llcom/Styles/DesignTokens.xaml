@@ -339,4 +339,22 @@
       </Setter.Value>
     </Setter>
   </Style>
+  <!-- “发送/接收”显示方式胶囊：tooltip 随 Abc/Hex 状态变化 -->
+  <Style x:Key="SendHexToggleStyle" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource LogBarToggle}">
+    <Setter Property="ToolTip" Value="{DynamicResource SendModeTextTip}" />
+    <Style.Triggers>
+      <Trigger Property="IsChecked" Value="True">
+        <Setter Property="ToolTip" Value="{DynamicResource SendModeHexTip}" />
+      </Trigger>
+    </Style.Triggers>
+  </Style>
+
+  <Style x:Key="RecvHexToggleStyle" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource LogBarToggle}">
+    <Setter Property="ToolTip" Value="{DynamicResource RecvModeTextTip}" />
+    <Style.Triggers>
+      <Trigger Property="IsChecked" Value="True">
+        <Setter Property="ToolTip" Value="{DynamicResource RecvModeHexTip}" />
+      </Trigger>
+    </Style.Triggers>
+  </Style>
 </ResourceDictionary>
