@@ -44,20 +44,16 @@ namespace llcom.Tests
             Assert.Equal(200, s.sendHistoryLimit);
         }
 
-        [Theory]
-        [InlineData("0303", true)]
-        [InlineData("0A 0B", true)]
-        [InlineData("0x0A0B", true)]
-        [InlineData("12-34", true)]
-        [InlineData("Test", false)]
-        [InlineData("test", false)]
-        [InlineData("hello world", false)]
-        [InlineData("abc", false)] //奇数个十六进制字符
-        [InlineData("", false)]
-        [InlineData("   ", false)]
-        public void IsHexLike_Detects(string text, bool expected)
+        [Fact]
+        public void HexModeBytes_ParsesHexAndFallsBackOnlyWhenNothingParsed()
         {
-            Assert.Equal(expected, MainViewModel.IsHexLike(text));
+            // 合法十六进制 → 正常解析
+            var hexInput = System.Text.Encoding.UTF8.GetBytes("0303");
+            Assert.Equal(new byte[] { 0x03, 0x03 }, MainViewModel.HexModeBytes(hexInput));
+
+            // 完全解析不出（不是十六进制）→ 原样按字符串发送，避免什么都不发
+            var textInput = System.Text.Encoding.UTF8.GetBytes("test");
+            Assert.Equal(textInput, MainViewModel.HexModeBytes(textInput));
         }
 
         [Fact]
