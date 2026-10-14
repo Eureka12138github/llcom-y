@@ -59,11 +59,11 @@
             >
               <FlowDocument>
                 <Paragraph Margin="0">
-                  <Run Foreground="{DynamicResource Brush.Log.Time}" Text="{Binding TimeText}" />
-                  <Run Foreground="{DynamicResource Brush.Log.Time}" Text="{Binding ArrowText}" />
-                  <Run Foreground="{Binding DataTextColor}" Text="{Binding DataText}" />
-                  <Run FontWeight="Bold" Foreground="{DynamicResource Brush.Foreground}" Text="{Binding RawTitle}" />
-                  <Run Foreground="{Binding RawTextColor}" Text="{Binding RawText}" />
+                  <Run Foreground="{DynamicResource Brush.Log.Time}" Text="{Binding TimeText, Mode=OneWay}" />
+                  <Run Foreground="{DynamicResource Brush.Log.Time}" Text="{Binding ArrowText, Mode=OneWay}" />
+                  <Run Foreground="{Binding DataTextColor}" Text="{Binding DataText, Mode=OneWay}" />
+                  <Run FontWeight="Bold" Foreground="{DynamicResource Brush.Foreground}" Text="{Binding RawTitle, Mode=OneWay}" />
+                  <Run Foreground="{Binding RawTextColor}" Text="{Binding RawText, Mode=OneWay}" />
                 </Paragraph>
               </FlowDocument>
             </RichTextBox>
