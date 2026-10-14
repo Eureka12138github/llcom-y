@@ -45,7 +45,7 @@
 
       <TextBlock Style="{StaticResource HelpH}" Text="一、快速上手" />
       <TextBlock Style="{StaticResource HelpP}" Text="1. 在右侧「串口设置」标签里：选择「串口」→ 选择「波特率」→ 点「打开串口」。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="2. 左侧为收发日志；底部输入要发送的内容，点「发送」或按 Ctrl+Enter。" />
+      <TextBlock Style="{StaticResource HelpP}" Text="2. 左侧为收发日志；底部输入要发送的内容，点「发送」或按 Ctrl+Enter（可在「发送选项」里改为按 Enter 发送）。" />
       <TextBlock Style="{StaticResource HelpP}" Text="3. 右侧标签页：串口设置 / 快捷发送 / 运行脚本 / 在线脚本 / 工具 / 关于。" />
       <TextBlock Style="{StaticResource HelpP}" Text="提示：未打开串口时点「发送」不会自动开串口，会提示先打开串口。" />
 
@@ -54,6 +54,7 @@
       <TextBlock Style="{StaticResource HelpLi}" Text="· 串口：选择要打开的串口（显示设备描述）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 波特率：常用波特率；末项「自定义」可手动输入任意值。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 数据位 / 校验位 / 停止位 / 字符编码：串口通信参数与文本编码。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="    - 校验位里的「高电平 / 低电平」是 Mark / Space 校验（校验位恒为 1 / 0），用于 9 位多机协议等；普通设备选「无校验」即可。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 自动重连：串口被拔出后自动恢复连接（只重连上次手动打开过的端口）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· RTS / DTR：串口两根硬件控制信号线的电平（详见文末「RTS / DTR 详解」）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 打开串口 / 关闭串口：打开成功后按钮变绿，状态栏显示 COM 与波特率。" />
@@ -75,17 +76,17 @@
       <TextBlock Style="{StaticResource HelpLi}" Text="· 输入内容后点「发送」，或按 Ctrl+Enter。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 发送按钮左侧三个控件（从左到右）：" />
       <TextBlock Style="{StaticResource HelpLi}" Text="    - 橡皮图标：清空发送框内容。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="    - 记录图标：发送记录。点其中一条会把该内容填回发送框；底部「记录上限（条）」可调最多保存多少条（最新在前）。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="    - 记录图标：发送记录。点其中一条会把该内容填回发送框；底部「记录上限（条）」可调最多保存多少条（最新在前，范围 1~200）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="    - 换行下拉：发送时在末尾追加的换行，可选 无追加 / \n / \r / \n\r / \r\n。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 发送按钮右侧的下拉（▾）是「发送选项」：连续发送（按「发送后延时」和「重复次数」周期性发送）、按 Enter 发送 / 按 Ctrl+Enter 发送。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="    - 关于「重复次数」：它表示在首次发送之后再重复几次。填 3 = 总共发 4 次；填 0 = 只发一次；填 -1 = 一直重复，直到再次点「发送」停止。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="    - 取值范围：「发送后延时」10~3600000 毫秒（每点一次 ± 增减 100）；「重复次数」-1~100000（-1 = 无限）。两者都可直接用键盘输入数字，失焦时校验、超范围自动夹取。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 是否按 HEX 发送由「发送Hex」开关决定。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 是否按 HEX 发送由日志区底部的「Abc/Hex（发送）」开关决定。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 发送前可配置「发送脚本」（更多设置）对数据做变换。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 发送区高度可用上方分隔条上下拖拽调整。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 发送区高度可用上方分隔条上下拖拽调整（高度限制 40~240）。" />
 
-      <TextBlock Style="{StaticResource HelpH}" Text="五、快捷发送（右侧第一个标签）" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 共 10 页：点标签里的 ☰ 图标切换页；右键页名可改名。" />
+      <TextBlock Style="{StaticResource HelpH}" Text="五、快捷发送（右侧第二个标签）" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 共 10 页：点标签里的便签图标切换页；右键页名可改名。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 每行：编号、内容、发送按钮、Hex 勾选、脚本图标、定时图标（点开设置定时）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="    - 定时图标：点开可勾选「定时」并调整「间隔(ms)」，按该间隔周期性发送这一条；可多条同时定时（图标变绿表示已启用）。串口未打开时会提示并停止所有定时。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="    - 取值范围：「间隔(ms)」10~3600000（每点一次 ± 增减 100）；可直接键盘输入数字，失焦时校验、超范围自动夹取。" />
@@ -103,6 +104,7 @@
 
       <TextBlock Style="{StaticResource HelpH}" Text="七、在线脚本" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 浏览社区脚本（作者 / 名称 / 版本 / 简介），点开查看，点「下载」保存到本地脚本目录。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 列表里过长的名称 / 简介会被截断，鼠标悬停可看完整内容。" />
 
       <TextBlock Style="{StaticResource HelpH}" Text="八、工具（右侧「工具」标签，顶部下拉选择）" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· TCP测试：借助 netlab.luatos.com 创建公网 TCP/UDP/SSL 服务端供设备连接（地址会显示出来）；可给在线客户端发送、踢除。" />
@@ -116,8 +118,8 @@
       <TextBlock Style="{StaticResource HelpLi}" Text="· 绘图：接收 Lua 通过接口上报的数据点并绘制曲线；可查看全图 / 清空图表 / 切换主题。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· WinUSB：选择 USB 设备、读/写端点，连接后收发（可 Hex）。" />
 
-      <TextBlock Style="{StaticResource HelpH}" Text="九、更多设置（☰）" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 打开日志文件夹、显示发送、数据字号、窗口置顶、串口超时（分包）、按空行分包、终端模式。" />
+      <TextBlock Style="{StaticResource HelpH}" Text="九、更多设置（点顶栏 ☰ 直接打开）" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 分三个页签：「更多串口设置」（打开日志文件夹、显示发送、数据字号、窗口置顶、串口超时（分包）、按空行分包、终端模式）、「发送脚本」、「接收脚本」。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 窗口保持置顶显示：让主窗口始终显示在其他程序窗口的最上层，不被别的窗口挡住（对「更多设置」窗口本身无影响）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 发送脚本 / 接收脚本：编辑发送前、接收后触发的 Lua 脚本。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 接收数据以十六进制还是字符串显示，由左侧日志区底部的「接收显示Hex」控制。" />
@@ -131,6 +133,7 @@
       <TextBlock Style="{StaticResource HelpLi}" Text="· 语言：右上 🌐 切换中/英。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 日志文件：程序目录 logs/（串口日志与崩溃日志 fatal.log）与 user_script_run/logs/（Lua 日志）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 配置与脚本均保存在程序目录。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 程序遇到错误时会弹出一个只有「关闭程序」按钮的窗口，并把错误详情写入 logs/fatal.log。" />
 
       <TextBlock Style="{StaticResource HelpH}" Text="十二、RTS / DTR 详解" />
       <TextBlock Style="{StaticResource HelpP}" Text="RTS 与 DTR 是串口上两根「控制信号线」（输出电平），不是数据线；它们的电平由本软件输出给对端设备。" />
