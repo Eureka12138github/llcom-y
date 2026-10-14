@@ -458,9 +458,14 @@ public partial class MainWindow : Window
     {
         if (sender is not Button button || button.ContextMenu == null)
             return;
-        button.ContextMenu.PlacementTarget = button;
-        button.ContextMenu.Placement = PlacementMode.Bottom;
-        button.ContextMenu.IsOpen = true;
+        var menu = button.ContextMenu;
+        menu.PlacementTarget = button;
+        menu.Placement = PlacementMode.Bottom;
+        //延迟到本次点击事件处理完之后再打开，避免刚弹出就被这次点击关掉
+        Dispatcher.BeginInvoke(
+            new Action(() => menu.IsOpen = true),
+            System.Windows.Threading.DispatcherPriority.Background
+        );
     }
 
     /// <summary>构建“发送记录”下拉内容：历史项 + 记录上限调节行。</summary>

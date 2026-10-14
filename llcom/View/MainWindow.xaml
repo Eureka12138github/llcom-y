@@ -136,33 +136,34 @@
       <Button
         Name="clearSendBoxButton"
         Grid.Column="1"
+        VerticalAlignment="Center"
         Style="{StaticResource IconButton}"
         AutomationProperties.Name="{DynamicResource ClearSendBox}"
         Click="ClearSendBoxButton_Click"
         ToolTip="{DynamicResource ClearSendBox}"
       >
-        <fa:FontAwesome Foreground="{DynamicResource Brush.Foreground.Muted}" Icon="Eraser" />
+        <fa:FontAwesome
+          FontSize="16"
+          Foreground="{DynamicResource Brush.Foreground}"
+          Icon="Eraser"
+        />
       </Button>
       <!--  发送记录：点历史项填回发送框；底部可调记录上限  -->
       <Button
         Name="sendHistoryButton"
         Grid.Column="2"
         Margin="2,0,0,0"
-        Style="{StaticResource FlatIconButton}"
+        VerticalAlignment="Center"
+        Style="{StaticResource IconButton}"
         AutomationProperties.Name="{DynamicResource SendHistory}"
         Click="SendHistoryButton_Click"
         ToolTip="{DynamicResource SendHistory}"
       >
-        <StackPanel Orientation="Horizontal">
-          <fa:FontAwesome Foreground="{DynamicResource Brush.Foreground}" Icon="History" />
-          <fa:FontAwesome
-            Margin="2,0,0,0"
-            VerticalAlignment="Bottom"
-            FontSize="9"
-            Foreground="{DynamicResource Brush.Foreground.Muted}"
-            Icon="CaretDown"
-          />
-        </StackPanel>
+        <fa:FontAwesome
+          FontSize="16"
+          Foreground="{DynamicResource Brush.Foreground}"
+          Icon="History"
+        />
         <Button.ContextMenu>
           <ContextMenu Name="sendHistoryContextMenu" Opened="SendHistoryContextMenu_Opened" />
         </Button.ContextMenu>
@@ -173,6 +174,7 @@
         Grid.Column="3"
         Width="86"
         Margin="8,0,0,0"
+        VerticalAlignment="Center"
         SelectedIndex="{Binding Setting.appendNewline}"
         ToolTip="{DynamicResource AppendNewlineTip}"
       >
@@ -187,6 +189,7 @@
         Grid.Column="4"
         Width="80"
         Margin="8,0,0,0"
+        VerticalAlignment="Center"
         Command="{Binding SendCommand}"
         Content="{DynamicResource SendDataButton}"
         ToolTip="{DynamicResource SendDataButtonTip}"
