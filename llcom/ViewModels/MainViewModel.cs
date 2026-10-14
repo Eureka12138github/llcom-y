@@ -69,7 +69,6 @@ public partial class MainViewModel : ObservableObject
     //若本机恰有 COM1 设备，启动刷新会误判为上次端口而自动打开）；
     //用户手动打开串口（OpenPort）后置 false，才允许后续拔插自动重连
     private bool _forcusClosePort = true;
-    private byte[] _pendingSendData; //未开串口时的缓存发送数据
     private bool _refreshLock; //端口列表刷新锁
     private bool _skipSearch; //WMI 查询连续失败后跳过
     private int _searchCount;
@@ -461,12 +460,6 @@ public partial class MainViewModel : ObservableObject
                     IsPortComboEnabled = false;
                     StatusText = Localize("OpenPort_open");
                 });
-                //串口打开成功后补发缓存数据
-                if (_pendingSendData != null)
-                {
-                    SendUartData(_pendingSendData);
-                    _pendingSendData = null;
-                }
             }
             catch (Exception)
             {
@@ -482,13 +475,29 @@ public partial class MainViewModel : ObservableObject
     /// </summary>
     private void SendData()
     {
+        //未打开串口则不发送（也不跑脚本/不自动选端口），仅提示
+        if (!EnsurePortOpenForSend())
+            return;
         Tools.Global.setting.recvScript = Tools.Global.recvScriptBackup;
         var data = Tools.Global.GetEncoding().GetBytes(SendText);
         SendUartData(data);
     }
 
     /// <summary>
-    /// 发送串口数据（完整管线：Lua 发送脚本 → extraEnter → SendData → 回显）
+    /// 发送前检查串口是否已打开；未打开时给出文字提示并返回 false。
+    /// 供主发送框与快捷发送共用——不再自动打开串口、也不再自动选择端口。
+    /// </summary>
+    internal bool EnsurePortOpenForSend()
+    {
+        if (_uart.IsOpen())
+            return true;
+        Tools.MessageBox.Show(Localize("ErrorPortNotOpen"));
+        return false;
+    }
+
+    /// <summary>
+    /// 发送串口数据（完整管线：Lua 发送脚本 → extraEnter → SendData → 回显）。
+    /// 未打开串口时：不自动打开、不自动选端口、不缓存，仅提示用户先打开串口。
     /// </summary>
     /// <param name="data">原始数据</param>
     /// <param name="is_hex">强制 hex 模式标志</param>
@@ -496,11 +505,8 @@ public partial class MainViewModel : ObservableObject
     {
         if (data == null)
             return;
-        if (!_uart.IsOpen())
-        {
-            OpenPort();
-            _pendingSendData = (byte[])data.Clone(); //缓存起来，连上串口后发出去
-        }
+        if (!EnsurePortOpenForSend())
+            return;
 
         if (_uart.IsOpen())
         {

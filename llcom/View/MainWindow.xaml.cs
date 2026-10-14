@@ -444,6 +444,10 @@ public partial class MainWindow : Window
 
     private void knowSendDataButton_click(object sender, RoutedEventArgs e)
     {
+        //未打开串口则不发送（也不切换接收脚本），仅提示
+        if (!_vm.EnsurePortOpenForSend())
+            return;
+
         ToSendData data = ((Button)sender).Tag as ToSendData;
 
         // 如果有指定接收脚本，则切换

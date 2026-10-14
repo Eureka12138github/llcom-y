@@ -10,6 +10,7 @@
     <system:String x:Key="ErrorOpenPort">串口打开失败！</system:String>
     <system:String x:Key="ErrorClosePort">串口关闭失败！</system:String>
     <system:String x:Key="ErrorSendFail">串口数据发送失败！请检查连接！</system:String>
+    <system:String x:Key="ErrorPortNotOpen">请先打开串口！</system:String>
     <system:String x:Key="ErrorScript">处理发送数据的脚本运行错误，请检查发送脚本后再试，错误信息：</system:String>
     <system:String x:Key="ClearLog">清空日志</system:String>
     <system:String x:Key="MoreSettings">更多设置</system:String>
