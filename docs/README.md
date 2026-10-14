@@ -13,6 +13,7 @@
 | [07-refactor-continue-status.md](07-refactor-continue-status.md) | 「继续重构」进度与已完成记录（含当前分支基线） | 交接 / 追溯 |
 | [08-code-quality-audit.md](08-code-quality-audit.md) | 代码质量审计与网络工具页去重进展 | 质量改进 |
 | [09-github-publish-plan.md](09-github-publish-plan.md) | GitHub 发布与归因计划：Fork 流程、Apache-2.0 合规清单、README/CHANGES 草稿 | 准备对外发布时 |
+| [10-ui-layout-plan.md](10-ui-layout-plan.md) | UI/交互优化完整计划 + 逐轮改动记录（含待办/待确认项） | 继续做界面与交互调整 |
 
 ## 分支说明
 
