@@ -107,9 +107,11 @@
       <TextBlock Style="{StaticResource HelpLi}" Text="· WinUSB：选择 USB 设备、读/写端点，连接后收发（可 Hex）。" />
 
       <TextBlock Style="{StaticResource HelpH}" Text="九、更多设置（☰）" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 打开日志文件夹、显示发送、接收显示Hex、数据字号、窗口置顶、串口超时（分包）、按空行分包、终端模式。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 打开日志文件夹、显示发送、数据字号、窗口置顶、串口超时（分包）、按空行分包、终端模式。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 窗口保持置顶显示：让主窗口始终显示在其他程序窗口的最上层，不被别的窗口挡住（对「更多设置」窗口本身无影响）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 发送脚本 / 接收脚本：编辑发送前、接收后触发的 Lua 脚本。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 串口的数据位/校验位/停止位/字符编码/自动重连等参数已移到「串口设置」标签。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 接收数据以十六进制还是字符串显示，由左侧日志区底部的「接收显示Hex」控制。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 串口的数据位/校验位/停止位/字符编码/自动重连等参数在「串口设置」标签。" />
 
       <TextBlock Style="{StaticResource HelpH}" Text="十、Lua 接口" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 接口文档见程序目录 LuaApi.md，或「运行脚本」工具栏的「Lua API 文档」按钮。" />

@@ -313,16 +313,6 @@ public partial class MainWindow : Window
     }
 
     /// <summary>
-    /// 响应其他代码传来的窗口置顶事件
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void topEvent(object sender, EventArgs e)
-    {
-        this.Topmost = (bool)sender;
-    }
-
-    /// <summary>
     /// 窗口关闭事件
     /// </summary>
     /// <param name="sender"></param>
@@ -352,7 +342,22 @@ public partial class MainWindow : Window
 
     private void MoreSettingButton_Click(object sender, RoutedEventArgs e)
     {
+        //让“更多设置”成为主窗口的子窗口：始终显示在主窗口之上，避免切换置顶时被压到后面
+        settingPage.Owner = this;
         settingPage.Show();
+    }
+
+    /// <summary>
+    /// 响应其他代码传来的窗口置顶事件
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void topEvent(object sender, EventArgs e)
+    {
+        this.Topmost = (bool)sender;
+        //主窗口置顶切换后，重新把“更多设置”窗口带回前台，避免它被压到主窗口后面/失焦
+        if (settingPage.IsVisible)
+            settingPage.Activate();
     }
 
     Window? helpWindow;
