@@ -105,8 +105,8 @@
     <system:String x:Key="InputDialogConfirm">确定</system:String>
     <system:String x:Key="InputDialogCancel">取消</system:String>
     <system:String x:Key="InputDialogTitle">提示</system:String>
-    <system:String x:Key="SettingTitle">更多串口设置</system:String>
-    <system:String x:Key="SettingBasic">串口基本设置</system:String>
+    <system:String x:Key="SettingTitle">更多设置</system:String>
+    <system:String x:Key="SettingBasic">更多串口设置</system:String>
     <system:String x:Key="SettingAutoReconnect">自动恢复被断开的串口连接</system:String>
     <system:String x:Key="SettingOpenLogFolder">打开串口收发日志目录</system:String>
     <system:String x:Key="SettingShowFormat">串口数据显示方式：</system:String>
@@ -139,8 +139,8 @@
     <system:String x:Key="SettingParityMark">高电平</system:String>
     <system:String x:Key="SettingParitySpace">低电平</system:String>
     <system:String x:Key="Encoding">字符编码：</system:String>
-    <system:String x:Key="SettingSendLuaScript">处理发送数据的脚本</system:String>
-    <system:String x:Key="SettingRecvLuaScript">接收的</system:String>
+    <system:String x:Key="SettingSendLuaScript">发送脚本</system:String>
+    <system:String x:Key="SettingRecvLuaScript">接收脚本</system:String>
     <system:String x:Key="SettingLuaTestScript">测试脚本</system:String>
     <system:String x:Key="SettingLuaTestInput">待测试的值：</system:String>
     <system:String x:Key="SettingLuaTestPara">参数：</system:String>

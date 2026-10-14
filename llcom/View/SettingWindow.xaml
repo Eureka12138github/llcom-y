@@ -37,11 +37,6 @@
               Content="{DynamicResource SettingShowSend}"
               IsChecked="{Binding showSend}"
             />
-            <CheckBox
-              Margin="8"
-              Content="{DynamicResource RecvHexView}"
-              IsChecked="{Binding recvShowHex}"
-            />
             <StackPanel Margin="8" Orientation="Horizontal">
               <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingLogFontSize}" />
               <Slider
