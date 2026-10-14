@@ -34,58 +34,196 @@ namespace llcom
 #endif
         }
 
+        /// <summary>
+        /// 正在处理致命异常（防止弹窗期间再次抛错导致“关一个又开一个”的递归弹窗）。
+        /// </summary>
+        private static bool _isHandlingFatal;
+
+        /// <summary>
+        /// UI 线程未处理异常：标记为已处理（不让进程被直接终止），交给统一处理。
+        /// </summary>
         private void DispatcherOnUnhandledException(
             object sender,
             DispatcherUnhandledExceptionEventArgs dispatcherUnhandledExceptionEventArgs
         )
         {
-            SendReport(dispatcherUnhandledExceptionEventArgs.Exception);
+            //关键：标记已处理，否则异常会继续冒泡 / 在嵌套消息循环里被反复触发
+            dispatcherUnhandledExceptionEventArgs.Handled = true;
+
+            if (_isHandlingFatal)
+            {
+                //弹窗期间又抛异常：只记录，不再弹窗
+                LogFatal(dispatcherUnhandledExceptionEventArgs.Exception);
+                return;
+            }
+            _isHandlingFatal = true;
+            try
+            {
+                HandleFatal(dispatcherUnhandledExceptionEventArgs.Exception, canContinue: true);
+            }
+            finally
+            {
+                _isHandlingFatal = false;
+            }
         }
 
+        /// <summary>
+        /// 非 UI 线程未处理异常：进程即将退出，无法继续，只能提示后退出。
+        /// </summary>
         private static void CurrentDomainOnUnhandledException(
             object sender,
             UnhandledExceptionEventArgs unhandledExceptionEventArgs
         )
         {
-            SendReport((Exception)unhandledExceptionEventArgs.ExceptionObject);
+            var exception = unhandledExceptionEventArgs.ExceptionObject as Exception;
+            LogFatal(exception);
+            if (_isHandlingFatal)
+                return;
+            _isHandlingFatal = true;
+            try
+            {
+                HandleFatal(exception, canContinue: false);
+            }
+            finally
+            {
+                _isHandlingFatal = false;
+            }
         }
 
-        public static void SendReport(
-            Exception exception,
-            string developerMessage = "",
-            bool silent = true
-        )
+        /// <summary>
+        /// 统一的致命错误处理：记录日志 → 让用户选择（关闭 / 继续）→ 尽力上报 → 需要时保证退出。
+        /// </summary>
+        private static void HandleFatal(Exception exception, bool canContinue)
         {
-            if (exception.GetType() == typeof(System.ComponentModel.Win32Exception))
+            LogFatal(exception);
+
+            var exMessage = exception?.Message ?? "未知错误 / unknown error";
+            var isZh = true;
+            try
             {
-                Tools.MessageBox.Show(
-                    $"internal error from system!\r\n{exception.Message}\r\nexit!"
+                isZh = Tools.Global.setting?.language != "en-US";
+            }
+            catch { }
+            var message = isZh
+                ? "程序遇到一个错误：\r\n\r\n"
+                    + exMessage
+                    + (canContinue
+                        ? "\r\n\r\n点“是”关闭程序，点“否”尝试继续运行。"
+                        : "\r\n\r\n程序即将关闭，点“确定”退出。")
+                : "The program hit an error:\r\n\r\n"
+                    + exMessage
+                    + (canContinue
+                        ? "\r\n\r\nYes = close the program, No = try to continue."
+                        : "\r\n\r\nThe program will be closed, click OK to exit.");
+
+            //默认按“关闭程序”处理，避免意外继续运行在损坏状态下
+            var closeProgram = true;
+            try
+            {
+                if (canContinue)
+                {
+                    closeProgram =
+                        MessageBox.Show(
+                            message,
+                            "LLCOM",
+                            MessageBoxButton.YesNo,
+                            MessageBoxImage.Error
+                        ) == MessageBoxResult.Yes;
+                }
+                else
+                {
+                    MessageBox.Show(message, "LLCOM", MessageBoxButton.OK, MessageBoxImage.Error);
+                    closeProgram = true;
+                }
+            }
+            catch
+            {
+                //连弹窗都失败，直接退出
+                closeProgram = true;
+            }
+
+            TryUploadReport(exception);
+
+            if (closeProgram)
+                ExitApplication();
+        }
+
+        /// <summary>
+        /// 保证程序一定能退出：先正常 Shutdown，再以 Environment.Exit 兜底，
+        /// 避免出现“关不掉、只能进任务管理器强杀”的情况。
+        /// </summary>
+        private static void ExitApplication()
+        {
+            try
+            {
+                Tools.Global.isMainWindowsClosed = true; //允许各窗口正常关闭
+            }
+            catch { }
+            try
+            {
+                Application.Current?.Shutdown();
+            }
+            catch { }
+            try
+            {
+                Environment.Exit(0); //兜底：确保进程真正结束
+            }
+            catch { }
+        }
+
+        /// <summary>
+        /// 把致命异常写入 logs/fatal.log（上报可能失败，本地留痕更可靠）。
+        /// </summary>
+        private static void LogFatal(Exception exception)
+        {
+            try
+            {
+                string dir;
+                try
+                {
+                    dir = Tools.Global.GetTrueProfilePath() + "logs";
+                }
+                catch
+                {
+                    dir = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "llcom");
+                }
+                System.IO.Directory.CreateDirectory(dir);
+                System.IO.File.AppendAllText(
+                    System.IO.Path.Combine(dir, "fatal.log"),
+                    $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {exception}\r\n\r\n"
                 );
-                return;
             }
-            if (Tools.Global.setting.language == "zh-CN")
-                Tools.MessageBox.Show(
-                    "恭喜你触发了一个BUG！\r\n"
-                        + "如果条件允许，请点击“Send Report”来上报这个BUG\r\n"
-                        + $"报错信息：{exception.Message}"
-                );
-            if (!Tools.Global.ReportBug)
+            catch
             {
-                Tools.MessageBox.Show("检测到不支持的.net版本，禁止上报bug");
-                return;
+                //记录失败也不能影响后续流程
             }
-            if (Tools.Global.HasNewVersion)
+        }
+
+        /// <summary>
+        /// 尽力上报崩溃信息（静默，不再弹出额外窗口，失败也不影响退出）。
+        /// </summary>
+        private static void TryUploadReport(Exception exception)
+        {
+            try
             {
-                Tools.MessageBox.Show("检测到该软件不是最新版，禁止上报bug\r\n请保证软件是最新版");
-                return;
+                if (exception == null || !Tools.Global.ReportBug || Tools.Global.HasNewVersion)
+                    return;
+                var reportCrash = new ReportCrash("lolicon@papapoi.com")
+                {
+                    CaptureScreen = true,
+                    Silent = true,
+                };
+                //后台发送，避免网络慢时卡住界面
+                Task.Run(() =>
+                {
+                    try
+                    {
+                        reportCrash.Send(exception);
+                    }
+                    catch { }
+                });
             }
-            var reportCrash = new ReportCrash("lolicon@papapoi.com")
-            {
-                DeveloperMessage = developerMessage,
-            };
-            //reportCrash.Silent = silent;
-            reportCrash.CaptureScreen = true;
-            reportCrash.Send(exception);
+            catch { }
         }
     }
 }
