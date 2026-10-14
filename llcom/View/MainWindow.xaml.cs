@@ -576,10 +576,8 @@ public partial class MainWindow : Window
     private void UpdateContinuousMenuTexts()
     {
         var s = Tools.Global.setting;
-        continuousDelayText.Text =
-            (TryFindResource("ContinuousDelayText") as string ?? "Delay(ms): ") + s.continuousDelayMs;
-        continuousRepeatText.Text =
-            (TryFindResource("ContinuousRepeatText") as string ?? "Repeat: ") + s.continuousRepeat;
+        continuousDelayBox.Text = s.continuousDelayMs.ToString();
+        continuousRepeatBox.Text = s.continuousRepeat.ToString();
     }
 
     private void ContinuousSendMenuItem_Click(object sender, RoutedEventArgs e)
@@ -593,26 +591,54 @@ public partial class MainWindow : Window
 
     private void ContinuousDelayMinus_Click(object sender, RoutedEventArgs e)
     {
-        Tools.Global.setting.continuousDelayMs -= 100;
+        Tools.Global.setting.continuousDelayMs = MainViewModel.NormalizeInterval(
+            Tools.Global.setting.continuousDelayMs - 100
+        );
         UpdateContinuousMenuTexts();
     }
 
     private void ContinuousDelayPlus_Click(object sender, RoutedEventArgs e)
     {
-        Tools.Global.setting.continuousDelayMs += 100;
+        Tools.Global.setting.continuousDelayMs = MainViewModel.NormalizeInterval(
+            Tools.Global.setting.continuousDelayMs + 100
+        );
         UpdateContinuousMenuTexts();
     }
 
     private void ContinuousRepeatMinus_Click(object sender, RoutedEventArgs e)
     {
-        Tools.Global.setting.continuousRepeat -= 1;
+        Tools.Global.setting.continuousRepeat = Math.Max(
+            -1,
+            Tools.Global.setting.continuousRepeat - 1
+        );
         UpdateContinuousMenuTexts();
     }
 
     private void ContinuousRepeatPlus_Click(object sender, RoutedEventArgs e)
     {
-        Tools.Global.setting.continuousRepeat += 1;
+        Tools.Global.setting.continuousRepeat = Math.Min(
+            100000,
+            Tools.Global.setting.continuousRepeat + 1
+        );
         UpdateContinuousMenuTexts();
+    }
+
+    /// <summary>手动输入延时：失焦时校验并夹取到 10~3600000</summary>
+    private void ContinuousDelayBox_LostFocus(object sender, RoutedEventArgs e)
+    {
+        var s = Tools.Global.setting;
+        if (int.TryParse(continuousDelayBox.Text, out var v))
+            s.continuousDelayMs = MainViewModel.NormalizeInterval(v);
+        continuousDelayBox.Text = s.continuousDelayMs.ToString();
+    }
+
+    /// <summary>手动输入重复次数：失焦时校验并夹取到 -1~100000</summary>
+    private void ContinuousRepeatBox_LostFocus(object sender, RoutedEventArgs e)
+    {
+        var s = Tools.Global.setting;
+        if (int.TryParse(continuousRepeatBox.Text, out var v))
+            s.continuousRepeat = v < -1 ? -1 : (v > 100000 ? 100000 : v);
+        continuousRepeatBox.Text = s.continuousRepeat.ToString();
     }
 
     private void SendByEnterMenuItem_Click(object sender, RoutedEventArgs e)
@@ -664,13 +690,27 @@ public partial class MainWindow : Window
     private void QuickTimerIntervalMinus_Click(object sender, RoutedEventArgs e)
     {
         if (_quickTimerItem != null)
-            _quickTimerItem.timerIntervalMs -= 100;
+            _quickTimerItem.timerIntervalMs = MainViewModel.NormalizeInterval(
+                _quickTimerItem.timerIntervalMs - 100
+            );
     }
 
     private void QuickTimerIntervalPlus_Click(object sender, RoutedEventArgs e)
     {
         if (_quickTimerItem != null)
-            _quickTimerItem.timerIntervalMs += 100;
+            _quickTimerItem.timerIntervalMs = MainViewModel.NormalizeInterval(
+                _quickTimerItem.timerIntervalMs + 100
+            );
+    }
+
+    /// <summary>手动输入间隔：失焦时校验并夹取到 10~3600000</summary>
+    private void QuickTimerIntervalBox_LostFocus(object sender, RoutedEventArgs e)
+    {
+        if (sender is not TextBox box || _quickTimerItem == null)
+            return;
+        if (int.TryParse(box.Text, out var v))
+            _quickTimerItem.timerIntervalMs = MainViewModel.NormalizeInterval(v);
+        box.Text = _quickTimerItem.timerIntervalMs.ToString();
     }
 
     private void knowSendDataButton_click(object sender, RoutedEventArgs e)

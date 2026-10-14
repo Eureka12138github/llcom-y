@@ -100,16 +100,15 @@ public class ToSendData : INotifyPropertyChanged
         }
     }
 
-    /// <summary>定时发送间隔（毫秒，限制到 10~3600000）</summary>
+    /// <summary>定时发送间隔（毫秒，使用时会限制到 10~3600000）</summary>
     public int timerIntervalMs
     {
         get { return _timerIntervalMs; }
         set
         {
-            var v = value < 10 ? 10 : (value > 3600000 ? 3600000 : value);
-            if (_timerIntervalMs == v)
+            if (_timerIntervalMs == value)
                 return;
-            _timerIntervalMs = v;
+            _timerIntervalMs = value;
             DataChanged?.Invoke(0, EventArgs.Empty);
             OnPropertyChanged(nameof(timerIntervalMs));
         }

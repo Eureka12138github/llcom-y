@@ -66,15 +66,20 @@ namespace llcom.Tests
         }
 
         [Fact]
-        public void ContinuousSettings_AreClamped()
+        public void ContinuousSettings_JsonRoundTrip_Preserved()
         {
-            var s = new Settings();
-            s.continuousDelayMs = 0;
-            Assert.Equal(10, s.continuousDelayMs);
-            s.continuousDelayMs = 99999999;
-            Assert.Equal(3600000, s.continuousDelayMs);
-            s.continuousRepeat = -5;
-            Assert.Equal(-1, s.continuousRepeat);
+            var s = new Settings
+            {
+                continuousSend = true,
+                continuousDelayMs = 250,
+                continuousRepeat = 3,
+            };
+
+            var back = JsonConvert.DeserializeObject<Settings>(JsonConvert.SerializeObject(s));
+
+            Assert.True(back.continuousSend);
+            Assert.Equal(250, back.continuousDelayMs);
+            Assert.Equal(3, back.continuousRepeat);
         }
 
         [Theory]

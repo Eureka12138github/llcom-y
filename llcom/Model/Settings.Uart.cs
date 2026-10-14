@@ -94,14 +94,13 @@ private bool _hexSend = false;
 
     private int _continuousDelayMs = 1000;
 
-    /// <summary>连续发送间隔（毫秒，10~3600000）</summary>
+    /// <summary>连续发送间隔（毫秒，使用时限制到 10~3600000）</summary>
     public int continuousDelayMs
     {
         get => _continuousDelayMs;
         set
         {
-            var v = value < 10 ? 10 : (value > 3600000 ? 3600000 : value);
-            if (SetProperty(ref _continuousDelayMs, v))
+            if (SetProperty(ref _continuousDelayMs, value))
                 Save();
         }
     }
@@ -114,8 +113,7 @@ private bool _hexSend = false;
         get => _continuousRepeat;
         set
         {
-            var v = value < -1 ? -1 : (value > 100000 ? 100000 : value);
-            if (SetProperty(ref _continuousRepeat, v))
+            if (SetProperty(ref _continuousRepeat, value))
                 Save();
         }
     }

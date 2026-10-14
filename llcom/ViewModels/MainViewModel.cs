@@ -587,8 +587,8 @@ public partial class MainViewModel : ObservableObject
             if (Tools.Global.setting.continuousRepeat == 0)
                 return;
             _continuousRunning = true;
-            _continuousRemaining =
-                Tools.Global.setting.continuousRepeat < 0 ? -1 : Tools.Global.setting.continuousRepeat;
+            var repeat = Tools.Global.setting.continuousRepeat;
+            _continuousRemaining = repeat < 0 ? -1 : (repeat > 100000 ? 100000 : repeat);
             _continuousNextDue = DateTime.UtcNow.AddMilliseconds(
                 NormalizeInterval(Tools.Global.setting.continuousDelayMs)
             );

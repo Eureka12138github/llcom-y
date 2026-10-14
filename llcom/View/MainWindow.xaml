@@ -236,9 +236,16 @@
                       Cursor="Hand"
                     />
                     <TextBlock
-                      Name="continuousDelayText"
-                      Margin="8,0"
+                      Margin="8,0,0,0"
                       VerticalAlignment="Center"
+                      Text="{DynamicResource ContinuousDelayText}"
+                    />
+                    <TextBox
+                      Name="continuousDelayBox"
+                      Width="70"
+                      VerticalAlignment="Center"
+                      ToolTip="{DynamicResource ContinuousDelayTip}"
+                      LostFocus="ContinuousDelayBox_LostFocus"
                     />
                     <Button
                       Width="24"
@@ -265,9 +272,16 @@
                       Cursor="Hand"
                     />
                     <TextBlock
-                      Name="continuousRepeatText"
-                      Margin="8,0"
+                      Margin="8,0,0,0"
                       VerticalAlignment="Center"
+                      Text="{DynamicResource ContinuousRepeatText}"
+                    />
+                    <TextBox
+                      Name="continuousRepeatBox"
+                      Width="70"
+                      VerticalAlignment="Center"
+                      ToolTip="{DynamicResource ContinuousRepeatTip}"
+                      LostFocus="ContinuousRepeatBox_LostFocus"
                     />
                     <Button
                       Width="24"
@@ -709,10 +723,12 @@
                                     VerticalAlignment="Center"
                                     Text="{DynamicResource QuickSendInterval}"
                                   />
-                                  <TextBlock
-                                    Margin="0,0,8,0"
+                                  <TextBox
+                                    Width="72"
                                     VerticalAlignment="Center"
-                                    Text="{Binding timerIntervalMs, Mode=OneWay}"
+                                    Text="{Binding timerIntervalMs, UpdateSourceTrigger=PropertyChanged}"
+                                    ToolTip="{DynamicResource QuickSendIntervalTip}"
+                                    LostFocus="QuickTimerIntervalBox_LostFocus"
                                   />
                                   <Button
                                     Width="24"

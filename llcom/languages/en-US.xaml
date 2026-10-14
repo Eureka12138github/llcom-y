@@ -53,6 +53,7 @@
     <system:String x:Key="QuickSendTimerTip">Periodic send: click to set the timer switch and interval</system:String>
     <system:String x:Key="QuickSendIntervalTip">Interval in milliseconds (10~3600000)</system:String>
     <system:String x:Key="ContinuousRepeatTip">Repeats AFTER the first send: -1 = forever; 0 = send once only</system:String>
+    <system:String x:Key="ContinuousDelayTip">Delay between sends in milliseconds (10~3600000); you can type a number directly</system:String>
     <system:String x:Key="QuickSendRecvScript">Rcvs</system:String>
     <system:String x:Key="QuickSendRecvScriptPara">Para</system:String>
     <system:String x:Key="QuickSendButtonTip">Right click to change Button Content.</system:String>
