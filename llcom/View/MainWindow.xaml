@@ -29,9 +29,9 @@
   <Grid Name="MainGrid" IsEnabled="False">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
-      <RowDefinition Height="*" />
+      <RowDefinition Height="*" MinHeight="120" />
       <RowDefinition Height="Auto" />
-      <RowDefinition Height="72" />
+      <RowDefinition Height="40" MinHeight="40" MaxHeight="240" />
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
@@ -40,99 +40,40 @@
       <ColumnDefinition Width="8*" MinWidth="240" />
     </Grid.ColumnDefinitions>
 
-    <!--  顶部工具栏：串口组（刷新/端口/波特率/开关） | 右侧：更多操作(☰) / 语言  -->
+    <!--  顶部工具栏：仅保留右侧 帮助 / 更多操作(☰) / 语言（串口控制已移至右侧“串口设置”页）  -->
     <Grid Grid.Row="0" Grid.ColumnSpan="3" Margin="8,6,8,2">
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="Auto" />
-        <ColumnDefinition Width="Auto" />
-        <ColumnDefinition Width="Auto" />
-        <ColumnDefinition Width="Auto" />
-        <ColumnDefinition Width="*" />
-        <ColumnDefinition Width="Auto" />
-        <ColumnDefinition Width="Auto" />
-        <ColumnDefinition Width="Auto" />
-      </Grid.ColumnDefinitions>
-      <Button
-        Name="refreshPortButton"
-        Style="{StaticResource IconButton}"
-        Command="{Binding RefreshPortsCommand}"
-        IsEnabled="{Binding ElementName=serialPortsListComboBox, Path=IsEnabled}"
-        ToolTip="{DynamicResource RefreshPortButton}"
-      >
-        <fa:FontAwesome Foreground="{DynamicResource Brush.State.Success}" Icon="Refresh" />
-      </Button>
-      <ComboBox
-        Name="serialPortsListComboBox"
-        Grid.Column="1"
-        MinWidth="150"
-        MaxWidth="300"
-        Margin="8,0,0,0"
-        DisplayMemberPath="DisplayName"
-        IsEnabled="{Binding IsPortComboEnabled}"
-        ItemsSource="{Binding Ports}"
-        SelectedItem="{Binding SelectedPort}"
-      />
-      <ComboBox
-        Name="baudRateComboBox"
-        Grid.Column="2"
-        Width="80"
-        Margin="8,0,0,0"
-        DisplayMemberPath="Display"
-        ItemsSource="{Binding BaudRates}"
-        SelectedItem="{Binding SelectedBaudRate}"
-      />
-      <Button
-        Name="openClosePortButton"
-        Grid.Column="3"
-        Margin="8,0,0,0"
-        Command="{Binding OpenClosePortCommand}"
-      >
-        <Button.Style>
-          <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="Button">
-            <Style.Triggers>
-              <DataTrigger Binding="{Binding IsPortComboEnabled}" Value="False">
-                <Setter Property="Background" Value="{DynamicResource Brush.State.Success}" />
-                <Setter Property="Foreground" Value="White" />
-              </DataTrigger>
-            </Style.Triggers>
-          </Style>
-        </Button.Style>
-        <WrapPanel>
-          <TextBlock Text="{Binding OpenCloseButtonText}" />
-          <TextBlock Text="{DynamicResource OpenPort_port}" />
-        </WrapPanel>
-      </Button>
-      <!--  帮助：扁平纯图标（常态无框；悬停中性浅灰）  -->
-      <Button
-        Name="HelpButton"
-        Grid.Column="5"
-        Margin="4,0,0,0"
-        Style="{StaticResource FlatIconButton}"
-        AutomationProperties.Name="{DynamicResource Help}"
-        Click="HelpButton_Click"
-        ToolTip="{DynamicResource Help}"
-      >
-        <fa:FontAwesome Foreground="{DynamicResource Brush.Accent.Teal}" Icon="Question" />
-      </Button>
-      <!--  低频辅助操作收进“汉堡菜单”，避免与左侧高频按钮造成视觉失衡  -->
-      <Menu Grid.Column="6" Margin="4,0,0,0" VerticalAlignment="Center">
-        <MenuItem ToolTip="{DynamicResource MoreActions}">
-          <MenuItem.Header>
-            <fa:FontAwesome Foreground="{DynamicResource Brush.Foreground}" Icon="Bars" />
-          </MenuItem.Header>
-          <MenuItem Click="ClearLogButton_Click" Header="{DynamicResource ClearLog}" />
-          <MenuItem Click="MoreSettingButton_Click" Header="{DynamicResource MoreSettings}" />
-        </MenuItem>
-      </Menu>
-      <Menu Grid.Column="7" Margin="4,0,0,0" VerticalAlignment="Center">
-        <MenuItem ToolTip="{DynamicResource ChangeLanguage}">
-          <MenuItem.Header>
-            <fa:FontAwesome Foreground="{DynamicResource Brush.Accent.Blue}" Icon="Globe" />
-          </MenuItem.Header>
-          <MenuItem Click="MenuItem_Click" Header="简体中文" Tag="zh-CN" />
-          <MenuItem Click="MenuItem_Click" Header="English" Tag="en-US" />
-        </MenuItem>
-      </Menu>
+      <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+        <!--  帮助：扁平纯图标（常态无框；悬停中性浅灰）  -->
+        <Button
+          Name="HelpButton"
+          Margin="4,0,0,0"
+          Style="{StaticResource FlatIconButton}"
+          AutomationProperties.Name="{DynamicResource Help}"
+          Click="HelpButton_Click"
+          ToolTip="{DynamicResource Help}"
+        >
+          <fa:FontAwesome Foreground="{DynamicResource Brush.Accent.Teal}" Icon="Question" />
+        </Button>
+        <!--  低频辅助操作收进“汉堡菜单”，避免与左侧高频按钮造成视觉失衡  -->
+        <Menu Margin="4,0,0,0" VerticalAlignment="Center">
+          <MenuItem ToolTip="{DynamicResource MoreActions}">
+            <MenuItem.Header>
+              <fa:FontAwesome Foreground="{DynamicResource Brush.Foreground}" Icon="Bars" />
+            </MenuItem.Header>
+            <MenuItem Click="ClearLogButton_Click" Header="{DynamicResource ClearLog}" />
+            <MenuItem Click="MoreSettingButton_Click" Header="{DynamicResource MoreSettings}" />
+          </MenuItem>
+        </Menu>
+        <Menu Margin="4,0,0,0" VerticalAlignment="Center">
+          <MenuItem ToolTip="{DynamicResource ChangeLanguage}">
+            <MenuItem.Header>
+              <fa:FontAwesome Foreground="{DynamicResource Brush.Accent.Blue}" Icon="Globe" />
+            </MenuItem.Header>
+            <MenuItem Click="MenuItem_Click" Header="简体中文" Tag="zh-CN" />
+            <MenuItem Click="MenuItem_Click" Header="English" Tag="en-US" />
+          </MenuItem>
+        </Menu>
+      </StackPanel>
     </Grid>
 
     <!--  收发数据显示  -->
@@ -183,6 +124,7 @@
         VerticalContentAlignment="Top"
         AcceptsReturn="True"
         FontFamily="Consolas"
+        FontSize="{Binding Setting.logFontSize}"
         Text="{Binding SendText, UpdateSourceTrigger=PropertyChanged}"
         TextWrapping="Wrap"
         VerticalScrollBarVisibility="Auto"
@@ -287,6 +229,112 @@
       Grid.Column="2"
       Background="{DynamicResource Brush.Surface}"
     >
+      <!--  串口设置（原顶栏串口控制移入此页，置于最左）  -->
+      <TabItem Header="{DynamicResource SerialSettingsCard}">
+        <ScrollViewer>
+          <StackPanel Margin="8">
+            <WrapPanel Margin="0,0,0,6" Orientation="Horizontal">
+              <Button
+                Name="refreshPortButton"
+                Style="{StaticResource IconButton}"
+                Command="{Binding RefreshPortsCommand}"
+                IsEnabled="{Binding ElementName=serialPortsListComboBox, Path=IsEnabled}"
+                ToolTip="{DynamicResource RefreshPortButton}"
+              >
+                <fa:FontAwesome Foreground="{DynamicResource Brush.State.Success}" Icon="Refresh" />
+              </Button>
+              <ComboBox
+                Name="serialPortsListComboBox"
+                MinWidth="150"
+                MaxWidth="300"
+                Margin="8,0,0,0"
+                DisplayMemberPath="DisplayName"
+                IsEnabled="{Binding IsPortComboEnabled}"
+                ItemsSource="{Binding Ports}"
+                SelectedItem="{Binding SelectedPort}"
+              />
+            </WrapPanel>
+            <WrapPanel Margin="0,0,0,6" Orientation="Horizontal">
+              <TextBlock VerticalAlignment="Center" Text="{DynamicResource ShowBaudRate}" />
+              <ComboBox
+                Name="baudRateComboBox"
+                Width="100"
+                Margin="4,0,0,0"
+                DisplayMemberPath="Display"
+                ItemsSource="{Binding BaudRates}"
+                SelectedItem="{Binding SelectedBaudRate}"
+              />
+            </WrapPanel>
+            <WrapPanel Margin="0,0,0,6" Orientation="Horizontal">
+              <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingDataBits}" />
+              <ComboBox
+                Name="mainDataBitsComboBox"
+                Width="60"
+                Margin="4,0,0,0"
+                SelectionChanged="MainDataBitsComboBox_SelectionChanged"
+              >
+                <ComboBoxItem Content="5" />
+                <ComboBoxItem Content="6" />
+                <ComboBoxItem Content="7" />
+                <ComboBoxItem Content="8" />
+              </ComboBox>
+            </WrapPanel>
+            <WrapPanel Margin="0,0,0,6" Orientation="Horizontal">
+              <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingParity}" />
+              <ComboBox
+                Name="mainDataCheckComboBox"
+                Width="90"
+                Margin="4,0,0,0"
+                SelectionChanged="MainDataCheckComboBox_SelectionChanged"
+              >
+                <ComboBoxItem Content="{DynamicResource SettingParityNone}" />
+                <ComboBoxItem Content="{DynamicResource SettingParityOdd}" />
+                <ComboBoxItem Content="{DynamicResource SettingParityEven}" />
+                <ComboBoxItem Content="{DynamicResource SettingParityMark}" />
+                <ComboBoxItem Content="{DynamicResource SettingParitySpace}" />
+              </ComboBox>
+            </WrapPanel>
+            <WrapPanel Margin="0,0,0,6" Orientation="Horizontal">
+              <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingStopBit}" />
+              <ComboBox
+                Name="mainStopBitComboBox"
+                Width="60"
+                Margin="4,0,0,0"
+                SelectionChanged="MainStopBitComboBox_SelectionChanged"
+              >
+                <ComboBoxItem Content="1" />
+                <ComboBoxItem Content="2" />
+                <ComboBoxItem Content="1.5" />
+              </ComboBox>
+            </WrapPanel>
+            <WrapPanel Margin="0,0,0,6" Orientation="Horizontal">
+              <TextBlock VerticalAlignment="Center" Text="{DynamicResource Encoding}" />
+              <ComboBox
+                Name="mainEncodingComboBox"
+                Width="200"
+                Margin="4,0,0,0"
+                SelectionChanged="MainEncodingComboBox_SelectionChanged"
+              />
+            </WrapPanel>
+            <CheckBox
+              Margin="0,4,0,8"
+              Content="{DynamicResource SettingAutoReconnect}"
+              IsChecked="{Binding Setting.autoReconnect}"
+            />
+            <Button
+              Name="openClosePortButton"
+              HorizontalAlignment="Stretch"
+              Command="{Binding OpenClosePortCommand}"
+              Style="{StaticResource PortToggleButton}"
+            >
+              <WrapPanel>
+                <TextBlock Text="{Binding OpenCloseButtonText}" />
+                <TextBlock Text="{DynamicResource OpenPort_port}" />
+              </WrapPanel>
+            </Button>
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
       <TabItem>
         <TabItem.Header>
           <StackPanel Orientation="Horizontal">

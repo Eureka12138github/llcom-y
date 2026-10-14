@@ -126,6 +126,9 @@ public partial class MainViewModel : ObservableObject
     /// <summary>已接收字节计数（来自设置，仅 UI 通知）</summary>
     public int ReceivedCount => Tools.Global.setting.ReceivedCount;
 
+    /// <summary>全局设置（供“串口设置”页/发送框字号等 XAML 绑定）</summary>
+    public Model.Settings Setting => Tools.Global.setting;
+
     public IRelayCommand RefreshPortsCommand { get; }
     public IRelayCommand OpenClosePortCommand { get; }
     public IRelayCommand SendCommand { get; }

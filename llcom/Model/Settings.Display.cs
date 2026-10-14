@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 
 namespace llcom.Model;
@@ -7,17 +8,58 @@ namespace llcom.Model;
 /// </summary>
 partial class Settings
 {
+    /// <summary>收发数据区字号下限</summary>
+    public const int LogFontSizeMin = 10;
+
+    /// <summary>收发数据区字号上限</summary>
+    public const int LogFontSizeMax = 40;
+
     private int _logFontSize = 15;
 
     /// <summary>
-    /// 收发数据区（日志）显示字号，可在“更多设置”里调整。
+    /// 收发数据区（日志）显示字号，可在“更多设置”里调整（范围 10~40）。
     /// </summary>
     public int logFontSize
     {
         get => _logFontSize;
         set
         {
-            if (SetProperty(ref _logFontSize, value))
+            //限制到合理范围，避免过大撑爆布局、过小不可读
+            var v =
+                value < LogFontSizeMin ? LogFontSizeMin
+                : value > LogFontSizeMax ? LogFontSizeMax
+                : value;
+            if (SetProperty(ref _logFontSize, v))
+                Save();
+        }
+    }
+
+    private bool _sendShowHex = true;
+
+    /// <summary>
+    /// 发送的数据是否以 HEX 显示（不勾选则以字符串显示）。
+    /// </summary>
+    public bool sendShowHex
+    {
+        get => _sendShowHex;
+        set
+        {
+            if (SetProperty(ref _sendShowHex, value))
+                Save();
+        }
+    }
+
+    private bool _recvShowHex = true;
+
+    /// <summary>
+    /// 接收的数据是否以 HEX 显示（不勾选则以字符串显示）。
+    /// </summary>
+    public bool recvShowHex
+    {
+        get => _recvShowHex;
+        set
+        {
+            if (SetProperty(ref _recvShowHex, value))
                 Save();
         }
     }

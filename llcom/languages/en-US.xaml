@@ -16,6 +16,9 @@
     <system:String x:Key="MoreSettingsTip">Set stopbit, parity, Lua script for data to send and so on.</system:String>
     <system:String x:Key="MoreActions">More actions</system:String>
     <system:String x:Key="SettingLogFontSize">Log font size:</system:String>
+    <system:String x:Key="SendHexView">Show sent as Hex</system:String>
+    <system:String x:Key="RecvHexView">Show received as Hex</system:String>
+    <system:String x:Key="SerialSettingsCard">Serial Port</system:String>
     <system:String x:Key="Help">Help</system:String>
     <system:String x:Key="SendDataButton">Send</system:String>
     <system:String x:Key="SendDataButtonTip">same as Ctrl+Enter</system:String>

@@ -42,11 +42,32 @@
               Content="{DynamicResource SettingShowSend}"
               IsChecked="{Binding showSend}"
             />
+            <CheckBox
+              Margin="8"
+              Content="{DynamicResource SendHexView}"
+              IsChecked="{Binding sendShowHex}"
+            />
+            <CheckBox
+              Margin="8"
+              Content="{DynamicResource RecvHexView}"
+              IsChecked="{Binding recvShowHex}"
+            />
             <StackPanel Margin="8" Orientation="Horizontal">
               <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingLogFontSize}" />
-              <TextBox
-                Width="50"
-                Text="{Binding logFontSize, UpdateSourceTrigger=PropertyChanged}"
+              <Slider
+                Width="150"
+                VerticalAlignment="Center"
+                IsSnapToTickEnabled="True"
+                Maximum="40"
+                Minimum="10"
+                TickFrequency="1"
+                Value="{Binding logFontSize}"
+              />
+              <TextBlock
+                MinWidth="20"
+                Margin="8,0,0,0"
+                VerticalAlignment="Center"
+                Text="{Binding logFontSize}"
               />
             </StackPanel>
             <CheckBox

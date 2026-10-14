@@ -85,6 +85,18 @@ public partial class MainWindow : Window
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
+        //初始化“串口设置”页的下拉参数
+        mainDataBitsComboBox.SelectedIndex = Tools.Global.setting.dataBits - 5;
+        mainStopBitComboBox.SelectedIndex = Tools.Global.setting.stopBit - 1;
+        mainDataCheckComboBox.SelectedIndex = Tools.Global.setting.parity;
+        foreach (var en in new List<EncodingInfo>(Encoding.GetEncodings()).OrderBy(x => x.CodePage))
+        {
+            var item = new ComboBoxItem { Content = $"[{en.CodePage}] {en.Name}", Tag = en.CodePage };
+            var idx = mainEncodingComboBox.Items.Add(item);
+            if (Tools.Global.setting.encoding == en.CodePage)
+                mainEncodingComboBox.SelectedIndex = idx;
+        }
+
         //延迟启动，加快软件第一屏出现速度
         Task.Run(() =>
         {
@@ -855,5 +867,35 @@ public partial class MainWindow : Window
     private void ScriptParaCancel_Click(object sender, MouseButtonEventArgs e)
     {
         recvScriptParaPopup.IsOpen = false;
+    }
+
+    // ===== “串口设置”页参数下拉 =====
+
+    private void MainDataBitsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (mainDataBitsComboBox.SelectedItem != null)
+            Tools.Global.setting.dataBits = mainDataBitsComboBox.SelectedIndex + 5;
+    }
+
+    private void MainStopBitComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (mainStopBitComboBox.SelectedItem != null)
+            Tools.Global.setting.stopBit = mainStopBitComboBox.SelectedIndex + 1;
+    }
+
+    private void MainDataCheckComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (mainDataCheckComboBox.SelectedItem != null)
+            Tools.Global.setting.parity = mainDataCheckComboBox.SelectedIndex;
+    }
+
+    private void MainEncodingComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (
+            mainEncodingComboBox.SelectedItem is ComboBoxItem c
+            && c.Tag is int cp
+            && cp != Tools.Global.setting.encoding
+        )
+            Tools.Global.setting.encoding = cp;
     }
 }

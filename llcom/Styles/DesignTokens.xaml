@@ -137,4 +137,119 @@
     <Setter Property="Foreground" Value="{DynamicResource Brush.Foreground.Muted}" />
     <Setter Property="VerticalAlignment" Value="Center" />
   </Style>
+
+  <!-- ============ 勾选框：勾选态用清晰的 ✓（全局覆盖主题默认外观） ============ -->
+  <Style TargetType="{x:Type CheckBox}">
+    <Setter Property="Foreground" Value="{DynamicResource Brush.Foreground}" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type CheckBox}">
+          <StackPanel Background="Transparent" Orientation="Horizontal">
+            <Border
+              x:Name="Box"
+              Width="15"
+              Height="15"
+              VerticalAlignment="Center"
+              Background="{DynamicResource Brush.Surface}"
+              BorderBrush="{DynamicResource Brush.Border}"
+              BorderThickness="1"
+              CornerRadius="2"
+              SnapsToDevicePixels="True"
+            >
+              <Path
+                x:Name="Check"
+                Data="M 3,8 L 6,11 L 12,4"
+                Stroke="{DynamicResource Brush.State.Success}"
+                StrokeEndLineCap="Round"
+                StrokeLineJoin="Round"
+                StrokeStartLineCap="Round"
+                StrokeThickness="2"
+                Stretch="None"
+                Visibility="Collapsed"
+              />
+            </Border>
+            <ContentPresenter
+              Margin="6,0,0,0"
+              VerticalAlignment="Center"
+              RecognizesAccessKey="True"
+            />
+          </StackPanel>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsChecked" Value="True">
+              <Setter TargetName="Check" Property="Visibility" Value="Visible" />
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="Box" Property="BorderBrush" Value="{DynamicResource Brush.Foreground.Muted}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+              <Setter Property="Opacity" Value="0.5" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!--
+    “打开/关闭串口”按钮：自定义模板，悬停/按下用同色系加深（叠加半透明黑），
+    避免主题默认悬停浅色背景覆盖绿色底、导致白色文字不可见。
+  -->
+  <Style x:Key="PortToggleButton" TargetType="{x:Type Button}">
+    <Setter Property="MinHeight" Value="32" />
+    <Setter Property="Padding" Value="10,0" />
+    <Setter Property="Foreground" Value="{DynamicResource Brush.Foreground}" />
+    <Setter Property="Background" Value="{DynamicResource Brush.Surface.Subtle}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type Button}">
+          <Grid>
+            <Border
+              x:Name="Bd"
+              Background="{TemplateBinding Background}"
+              BorderBrush="{TemplateBinding BorderBrush}"
+              BorderThickness="{TemplateBinding BorderThickness}"
+              CornerRadius="3"
+              SnapsToDevicePixels="True"
+            />
+            <Border
+              x:Name="Overlay"
+              Background="#26000000"
+              CornerRadius="3"
+              IsHitTestVisible="False"
+              Opacity="0"
+            />
+            <ContentPresenter
+              Margin="{TemplateBinding Padding}"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Center"
+              RecognizesAccessKey="True"
+            />
+          </Grid>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="Overlay" Property="Opacity" Value="1" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+              <Setter TargetName="Overlay" Property="Background" Value="#4D000000" />
+              <Setter TargetName="Overlay" Property="Opacity" Value="1" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+              <Setter TargetName="Bd" Property="Opacity" Value="0.5" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+    <Style.Triggers>
+      <!-- 串口已打开（端口下拉被禁用）时切到绿色底 + 白字 -->
+      <DataTrigger Binding="{Binding IsPortComboEnabled}" Value="False">
+        <Setter Property="Background" Value="{DynamicResource Brush.State.Success}" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Brush.State.Success}" />
+      </DataTrigger>
+    </Style.Triggers>
+  </Style>
 </ResourceDictionary>

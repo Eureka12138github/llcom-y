@@ -65,6 +65,18 @@ public partial class DataShowViewModel : ObservableObject
         _uart = uart;
         Tools.Logger.DataShowTask += Logger_DataShowTask;
         Tools.Logger.DataClearEvent += (_, _) => Clear();
+        //显示格式切换（HEX/字符串）时即时重算已有条目
+        setting.PropertyChanged += (_, e) =>
+        {
+            if (
+                e.PropertyName == nameof(setting.sendShowHex)
+                || e.PropertyName == nameof(setting.recvShowHex)
+            )
+            {
+                foreach (var it in Items)
+                    it.Refresh();
+            }
+        };
         Rts = false;
         Dtr = true;
         _lastPackShowMode = setting.timeout >= 0;
@@ -107,7 +119,7 @@ public partial class DataShowViewModel : ObservableObject
                     if (string.IsNullOrEmpty(item.RawTitle))
                         sw.WriteLine(
                             item.TimeText
-                                + (item.ArrowText == " ← " ? " [send] " : " [recv] ")
+                                + (item.ArrowText == " → " ? " [send] " : " [recv] ")
                                 + item.DataText
                         );
                     else
@@ -143,7 +155,11 @@ public partial class DataShowViewModel : ObservableObject
             //显示到列表
             if (!needPack && e is not DataShowRaw) //不分包模式
             {
-                var dataText = Tools.Global.Byte2Hex(e.data, " ", e.data.Length) + " ";
+                var isSend = e is DataShowPara para2 && para2.send;
+                var showHex = isSend ? Setting.sendShowHex : Setting.recvShowHex;
+                var dataText = showHex
+                    ? Tools.Global.Byte2Hex(e.data, " ", e.data.Length) + " "
+                    : Tools.Global.Byte2Readable(e.data, e.data.Length);
                 _streamBuffer.Append(dataText);
                 _appendStreamBridge(dataText);
             }

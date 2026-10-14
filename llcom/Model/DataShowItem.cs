@@ -1,5 +1,7 @@
 using System;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows.Media;
 
 namespace llcom.Model;
@@ -7,20 +9,54 @@ namespace llcom.Model;
 /// <summary>
 /// 收发数据显示条目（分包模式下列表的一项）。
 /// 由 DataShowViewModel 生成，DataShowPage 的 ItemsControl 绑定显示。
-/// 显示策略：数据统一以**十六进制单行**呈现（不再有“原始数据 / Hex:”等额外行）。
-/// 从原 DataShowPage.xaml.cs 内部类 DataShow 迁移（Step 8）。
+/// 显示策略：数据以**单行**呈现，具体是 HEX 还是字符串由设置决定
+/// （发送看 <see cref="Settings.sendShowHex"/>，接收看 <see cref="Settings.recvShowHex"/>），
+/// 切换设置时通过 <see cref="Refresh"/> 即时重算显示。
 /// </summary>
-public class DataShowItem
+public class DataShowItem : INotifyPropertyChanged
 {
+    //原始（处理后）字节，切换显示格式时据此重算
+    private readonly byte[] _data;
+    private readonly bool _sent;
+    private readonly bool _generic; //通用通道条目（带标题，如 MQTT/TCP）
+
     public string TimeText { get; set; }
+
+    /// <summary>方向箭头：发送为“→”，接收为“←”</summary>
     public string ArrowText { get; set; }
-    public string DataText { get; set; }
+
     public SolidColorBrush DataTextColor { get; set; }
     public string RawTitle { get; set; }
+    public SolidColorBrush RawTextColor { get; set; }
+
+    private string _dataText;
+    public string DataText
+    {
+        get => _dataText;
+        private set
+        {
+            _dataText = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private string _rawText;
 
     /// <summary>前面要加换行符（通用通道条目用）</summary>
-    public string RawText { get; set; }
-    public SolidColorBrush RawTextColor { get; set; }
+    public string RawText
+    {
+        get => _rawText;
+        private set
+        {
+            _rawText = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    private void OnPropertyChanged([CallerMemberName] string name = null) =>
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
     /// <summary>
     /// 普通收发数据条目（接收时先经接收转换脚本处理）
@@ -50,13 +86,14 @@ public class DataShowItem
                 return;
         }
 
-        TimeText = time.ToString("[yyyy/MM/dd HH:mm:ss.fff]");
-        ArrowText = sent ? " ← " : " → ";
-        DataTextColor = sent ? Brushes.DarkRed : Brushes.DarkGreen;
+        _data = temp;
+        _sent = sent;
+        _generic = false;
 
-        var len = temp.Length;
-        if (len > 0)
-            DataText = Tools.Global.Byte2Hex(temp, " ", len);
+        TimeText = time.ToString("[yyyy/MM/dd HH:mm:ss.fff]");
+        ArrowText = sent ? " → " : " ← ";
+        DataTextColor = sent ? Brushes.DarkRed : Brushes.DarkGreen;
+        Refresh();
     }
 
     /// <summary>
@@ -66,15 +103,39 @@ public class DataShowItem
     {
         if (data == null)
             return;
-        byte[] temp = data.ToArray();
+        _data = data.ToArray();
+        _generic = true;
 
         TimeText = time.ToString("[yyyy/MM/dd HH:mm:ss.fff]");
-
-        var len = temp.Length;
-        if (len > 0)
-            RawText = "\n" + Tools.Global.Byte2Hex(temp, " ", len);
-
         RawTitle = title;
         RawTextColor = color;
+        Refresh();
+    }
+
+    /// <summary>
+    /// 按当前显示设置重算文本（切换 HEX/字符串时调用）。
+    /// </summary>
+    public void Refresh()
+    {
+        if (_data == null)
+            return;
+        if (_generic)
+            RawText = "\n" + Format(_data);
+        else
+            DataText = Format(_data);
+    }
+
+    /// <summary>
+    /// 按设置格式化为 HEX 或可读字符串。
+    /// </summary>
+    private string Format(byte[] data)
+    {
+        //通用通道条目跟随“接收显示”设置
+        var showHex = _generic
+            ? Tools.Global.setting.recvShowHex
+            : (_sent ? Tools.Global.setting.sendShowHex : Tools.Global.setting.recvShowHex);
+        return showHex
+            ? Tools.Global.Byte2Hex(data, " ", data.Length)
+            : Tools.Global.Byte2Readable(data, data.Length);
     }
 }

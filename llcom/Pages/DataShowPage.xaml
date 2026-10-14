@@ -71,7 +71,7 @@
         </ItemsControl.ItemTemplate>
       </ItemsControl>
     </ScrollViewer>
-    <StackPanel
+    <WrapPanel
       Grid.Row="1"
       Margin="10,0,0,3"
       HorizontalAlignment="Left"
@@ -97,6 +97,18 @@
         IsChecked="{Binding Setting.hexSend}"
       />
       <CheckBox
+        Name="SendHexViewCheckBox"
+        Margin="8,0,0,0"
+        Content="{DynamicResource SendHexView}"
+        IsChecked="{Binding Setting.sendShowHex}"
+      />
+      <CheckBox
+        Name="RecvHexViewCheckBox"
+        Margin="8,0,0,0"
+        Content="{DynamicResource RecvHexView}"
+        IsChecked="{Binding Setting.recvShowHex}"
+      />
+      <CheckBox
         Name="ExtraEnterCheckBox"
         Margin="8,0,0,0"
         Content="{DynamicResource AddExtraEnter}"
@@ -116,7 +128,7 @@
         Content="{DynamicResource DisableLog}"
         IsChecked="{Binding Setting.DisableLog}"
       />
-    </StackPanel>
+    </WrapPanel>
     <Button
       Name="LockLogButton"
       Margin="0,0,18,25"

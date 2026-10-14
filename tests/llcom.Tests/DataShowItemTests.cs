@@ -24,7 +24,7 @@ namespace llcom.Tests
             );
 
             Assert.Equal("00 03 E8 00 06", item.DataText);
-            Assert.Equal(" ← ", item.ArrowText);
+            Assert.Equal(" → ", item.ArrowText);
             Assert.True(string.IsNullOrEmpty(item.RawTitle));
             Assert.True(string.IsNullOrEmpty(item.RawText));
         }
