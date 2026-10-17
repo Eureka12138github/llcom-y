@@ -244,6 +244,12 @@
     <system:String x:Key="SerialMonitorRefresh">刷新进程和串口列表</system:String>
     <system:String x:Key="SerialMonitorStart">开始监听</system:String>
     <system:String x:Key="SerialMonitorStop">停止监听</system:String>
+    <system:String x:Key="SerialMonitorHint">提示：先点「开始监听」，再让目标程序打开串口——监听开始前已打开的串口不会被捕获。目标程序位数需与 LLCOM 一致：64 位版只能监听 64 位程序，32 位版只能监听 32 位程序。</system:String>
+    <system:String x:Key="SerialMonitorSelectHint">请先选择要监听的进程和串口。</system:String>
+    <system:String x:Key="SerialMonitorStartFailed">监听启动失败。&#x0a;&#x0a;常见原因：权限不足（可尝试以管理员身份运行）、被安全软件拦截，或目标进程已退出。</system:String>
+    <system:String x:Key="SerialMonitorInjectFailed">监听启动失败：未能把监听模块注入目标进程。&#x0a;&#x0a;常见原因：目标进程位数不一致、权限不足（可尝试以管理员身份运行），或被安全软件拦截。</system:String>
+    <system:String x:Key="SerialMonitorBitnessMismatch">目标进程是 {0} 位程序，而当前 LLCOM 是 {1} 位版本，无法监听。&#x0a;&#x0a;请改用对应位数的 LLCOM：64 位版监听 64 位程序，32 位版监听 32 位程序。</system:String>
+    <system:String x:Key="SerialMonitorLoadFailed">串口监听插件加载失败：{0}&#x0a;&#x0a;可能是被杀毒软件拦截或系统缺少运行库；可尝试以管理员身份运行。</system:String>
     <system:String x:Key="PlotHeader">曲线</system:String>
     <system:String x:Key="PlotFit">查看全局</system:String>
     <system:String x:Key="PlotClear">清空图像</system:String>

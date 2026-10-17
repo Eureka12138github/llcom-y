@@ -244,6 +244,12 @@
     <system:String x:Key="SerialMonitorRefresh">Refresh process and serial list</system:String>
     <system:String x:Key="SerialMonitorStart">Start monitor</system:String>
     <system:String x:Key="SerialMonitorStop">Stop monitor</system:String>
+    <system:String x:Key="SerialMonitorHint">Tip: start monitoring first, then let the target app open the serial port — ports already open before monitoring starts are not captured. Target bitness must match LLCOM: x64 builds can only monitor 64-bit apps, x86 builds only 32-bit apps.</system:String>
+    <system:String x:Key="SerialMonitorSelectHint">Please select a process and a serial port first.</system:String>
+    <system:String x:Key="SerialMonitorStartFailed">Failed to start monitoring.&#x0a;&#x0a;Common causes: insufficient permission (try running as administrator), blocked by security software, or the target exited.</system:String>
+    <system:String x:Key="SerialMonitorInjectFailed">Failed to start monitoring: could not inject the hook into the target process.&#x0a;&#x0a;Common causes: bitness mismatch, insufficient permission (try running as administrator), or blocked by security software.</system:String>
+    <system:String x:Key="SerialMonitorBitnessMismatch">The target process is {0}-bit while this LLCOM is {1}-bit, so it cannot be monitored.&#x0a;&#x0a;Use the matching build: x64 monitors 64-bit apps, x86 monitors 32-bit apps.</system:String>
+    <system:String x:Key="SerialMonitorLoadFailed">Failed to load the serial monitor plugin: {0}&#x0a;&#x0a;It may be blocked by antivirus or a runtime is missing; try running as administrator.</system:String>
     <system:String x:Key="PlotHeader">Chart</system:String>
     <system:String x:Key="PlotFit">Fit</system:String>
     <system:String x:Key="PlotClear">Clear</system:String>

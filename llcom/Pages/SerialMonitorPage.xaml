@@ -26,5 +26,11 @@
       Margin="0,3"
       Click="MonitorButton_Click"
     />
+    <TextBlock
+      Margin="2,8,2,0"
+      Foreground="{DynamicResource Brush.Foreground.Muted}"
+      Text="{DynamicResource SerialMonitorHint}"
+      TextWrapping="Wrap"
+    />
   </StackPanel>
 </Page>

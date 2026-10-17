@@ -117,7 +117,7 @@
       <TextBlock Style="{StaticResource HelpLi}" Text="· 编码转换工具：左侧「原始数据」，选转换任务并添加，右侧显示「转换结果」。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· MQTT：订阅 / 发布（含 QOS、Hex）；设置页配置 Broker、端口、客户端ID、用户名密码、保活、清理会话、TLS（含 CA 与客户端证书）、WebSocket。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 乱码修复：粘贴乱码文本，列表给出多种「原始→目标」编码的还原结果，可复制。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 串口监听：选择某个进程(PID)与其占用的串口，旁路监听该进程的收发（注意：仅 32 位 x86 版本可用）。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 串口监听：选择目标进程与其使用的串口后开始监听，旁路显示该进程的收发。使用要点：① 先点「开始监听」，再让目标程序打开串口（监听开始前已打开的串口捕获不到）；② 目标程序位数必须与 LLCOM 一致（64 位版只监听 64 位程序，32 位版只监听 32 位程序）；③ 安全软件可能拦截注入，必要时以管理员身份运行。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 绘图：接收 Lua 通过接口上报的数据点并绘制曲线；可查看全图 / 清空图表 / 切换主题。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· WinUSB：选择 USB 设备、读/写端点，连接后收发（可 Hex）。" />
 
