@@ -67,5 +67,32 @@ namespace llcom.Tests
             Assert.Equal("\n0A 0B", item.RawText);
             Assert.Equal("MQTT", item.RawTitle);
         }
+
+        [Fact]
+        public void Cache_FollowsSettings_AndRefreshNotifiesBinding()
+        {
+            var old = Global.setting.hexSend;
+            try
+            {
+                Global.setting.hexSend = true;
+                var item = new DataShowItem(new byte[] { 0x41, 0x42 }, DateTime.Now, true);
+                Assert.Equal("41 42", item.DataText);
+
+                //缓存键包含显示模式：改设置后无需 Refresh 也能按新格式读取
+                Global.setting.hexSend = false;
+                Assert.Contains("AB", item.DataText);
+
+                //Refresh 只负责通知绑定（虚拟化下只重新读取可见条目）
+                var changed = new System.Collections.Generic.List<string>();
+                item.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
+                item.Refresh();
+                Assert.Contains(nameof(DataShowItem.DataText), changed);
+                Assert.Contains(nameof(DataShowItem.RawText), changed);
+            }
+            finally
+            {
+                Global.setting.hexSend = old;
+            }
+        }
     }
 }

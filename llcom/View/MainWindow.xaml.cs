@@ -360,6 +360,27 @@ public partial class MainWindow : Window
             settingPage.Activate();
     }
 
+    /// <summary>日志底栏右端热区：鼠标进入时显示 帮助/设置/语言</summary>
+    private void LogCornerZone_MouseEnter(object sender, MouseEventArgs e) =>
+        ShowLogCornerTools(true);
+
+    /// <summary>日志底栏右端热区：鼠标离开时隐藏</summary>
+    private void LogCornerZone_MouseLeave(object sender, MouseEventArgs e) =>
+        ShowLogCornerTools(false);
+
+    /// <summary>淡入/淡出三按钮；隐藏时同时禁用点击，避免误触。</summary>
+    private void ShowLogCornerTools(bool show)
+    {
+        LogCornerTools.IsHitTestVisible = show;
+        LogCornerTools.BeginAnimation(
+            OpacityProperty,
+            new System.Windows.Media.Animation.DoubleAnimation(
+                show ? 1.0 : 0.0,
+                TimeSpan.FromMilliseconds(show ? 120 : 200)
+            )
+        );
+    }
+
     Window? helpWindow;
 
     /// <summary>顶栏 “?”：打开使用说明窗口（单实例；关闭后可再次打开）。</summary>

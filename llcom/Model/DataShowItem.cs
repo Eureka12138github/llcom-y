@@ -29,29 +29,18 @@ public class DataShowItem : INotifyPropertyChanged
     public string RawTitle { get; set; }
     public SolidColorBrush RawTextColor { get; set; }
 
-    private string _dataText;
-    public string DataText
-    {
-        get => _dataText;
-        private set
-        {
-            _dataText = value;
-            OnPropertyChanged();
-        }
-    }
+    //显示文本按需计算并缓存：切换格式时只失效缓存，不对所有条目做字符串转换
+    private string _cachedText = "";
+    private bool _cacheValid;
+    private bool _cacheShowHex;
+    private bool _cacheSymbol;
+    private int _cacheEncoding;
 
-    private string _rawText;
+    /// <summary>收发数据文本（普通条目；通用通道条目为 null）</summary>
+    public string? DataText => _generic ? null : GetText(false);
 
-    /// <summary>前面要加换行符（通用通道条目用）</summary>
-    public string RawText
-    {
-        get => _rawText;
-        private set
-        {
-            _rawText = value;
-            OnPropertyChanged();
-        }
-    }
+    /// <summary>通用通道条目的文本（前面加换行；普通条目为 null）</summary>
+    public string? RawText => _generic ? GetText(true) : null;
 
     public event PropertyChangedEventHandler PropertyChanged;
 
@@ -93,7 +82,6 @@ public class DataShowItem : INotifyPropertyChanged
         TimeText = time.ToString("[yyyy/MM/dd HH:mm:ss.fff]");
         ArrowText = sent ? " → " : " ← ";
         DataTextColor = sent ? Brushes.DarkRed : Brushes.DarkGreen;
-        Refresh();
     }
 
     /// <summary>
@@ -109,33 +97,55 @@ public class DataShowItem : INotifyPropertyChanged
         TimeText = time.ToString("[yyyy/MM/dd HH:mm:ss.fff]");
         RawTitle = title;
         RawTextColor = color;
-        Refresh();
     }
 
     /// <summary>
-    /// 按当前显示设置重算文本（切换 HEX/字符串时调用）。
+    /// 按当前显示设置取文本（首次访问或设置变化后重算，其余走缓存）。
+    /// </summary>
+    private string GetText(bool leadingNewline)
+    {
+        var setting = Tools.Global.setting;
+        var showHex = ShouldShowHex();
+        if (
+            !_cacheValid
+            || _cacheShowHex != showHex
+            || _cacheSymbol != setting.EnableSymbol
+            || _cacheEncoding != setting.encoding
+        )
+        {
+            _cachedText = Format(_data);
+            _cacheShowHex = showHex;
+            _cacheSymbol = setting.EnableSymbol;
+            _cacheEncoding = setting.encoding;
+            _cacheValid = true;
+        }
+        return leadingNewline ? "\n" + _cachedText : _cachedText;
+    }
+
+    private bool ShouldShowHex()
+    {
+        var setting = Tools.Global.setting;
+        //通用通道条目跟随“接收显示”设置
+        return _generic ? setting.recvShowHex : (_sent ? setting.hexSend : setting.recvShowHex);
+    }
+
+    /// <summary>
+    /// 显示设置变化后调用：**只失效缓存并通知绑定**，字符串转换推迟到真正读取时（虚拟化后只算可见条目）。
     /// </summary>
     public void Refresh()
     {
         if (_data == null)
             return;
-        if (_generic)
-            RawText = "\n" + Format(_data);
-        else
-            DataText = Format(_data);
+        _cacheValid = false;
+        OnPropertyChanged(nameof(DataText));
+        OnPropertyChanged(nameof(RawText));
     }
 
     /// <summary>
     /// 按设置格式化为 HEX 或可读字符串。
     /// </summary>
-    private string Format(byte[] data)
-    {
-        //通用通道条目跟随“接收显示”设置
-        var showHex = _generic
-            ? Tools.Global.setting.recvShowHex
-            : (_sent ? Tools.Global.setting.hexSend : Tools.Global.setting.recvShowHex);
-        return showHex
+    private string Format(byte[] data) =>
+        ShouldShowHex()
             ? Tools.Global.Byte2Hex(data, " ", data.Length)
             : Tools.Global.Byte2Readable(data, data.Length);
-    }
 }

@@ -32,45 +32,59 @@
       ScrollViewer.VerticalScrollBarVisibility="Auto"
       TextWrapping="Wrap"
     />
-    <ScrollViewer Name="MainListScrollViewer" VerticalScrollBarVisibility="Auto">
-      <ItemsControl
-        Name="MainList"
-        Background="Transparent"
-        ItemsSource="{Binding Items}"
-        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-        ScrollViewer.VerticalScrollBarVisibility="Auto"
-        VirtualizingStackPanel.CacheLength="2,2"
-        VirtualizingStackPanel.IsVirtualizing="True"
-        VirtualizingStackPanel.VirtualizationMode="Recycling"
-      >
-        <ItemsControl.ItemsPanel>
-          <ItemsPanelTemplate>
-            <VirtualizingStackPanel />
-          </ItemsPanelTemplate>
-        </ItemsControl.ItemsPanel>
-        <ItemsControl.ItemTemplate>
-          <DataTemplate>
-            <RichTextBox
-              Background="Transparent"
-              BorderThickness="0"
-              FontFamily="Consolas,Microsoft YaHei,微软雅黑"
-              FontSize="{Binding DataContext.Setting.logFontSize, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-              IsReadOnly="True"
-            >
-              <FlowDocument>
-                <Paragraph Margin="0">
-                  <Run Foreground="{DynamicResource Brush.Log.Time}" Text="{Binding TimeText, Mode=OneWay}" />
-                  <Run Foreground="{DynamicResource Brush.Log.Time}" Text="{Binding ArrowText, Mode=OneWay}" />
-                  <Run Foreground="{Binding DataTextColor}" Text="{Binding DataText, Mode=OneWay}" />
-                  <Run FontWeight="Bold" Foreground="{DynamicResource Brush.Foreground}" Text="{Binding RawTitle, Mode=OneWay}" />
-                  <Run Foreground="{Binding RawTextColor}" Text="{Binding RawText, Mode=OneWay}" />
-                </Paragraph>
-              </FlowDocument>
-            </RichTextBox>
-          </DataTemplate>
-        </ItemsControl.ItemTemplate>
-      </ItemsControl>
-    </ScrollViewer>
+    <ListBox
+      Name="MainList"
+      Background="Transparent"
+      BorderThickness="0"
+      ItemsSource="{Binding Items}"
+      ScrollViewer.CanContentScroll="True"
+      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+      ScrollViewer.VerticalScrollBarVisibility="Auto"
+      SelectionMode="Single"
+      VirtualizingStackPanel.CacheLength="1,1"
+      VirtualizingStackPanel.IsVirtualizing="True"
+      VirtualizingStackPanel.VirtualizationMode="Recycling"
+      VirtualizingPanel.ScrollUnit="Pixel"
+    >
+      <ListBox.ItemContainerStyle>
+        <Style TargetType="ListBoxItem">
+          <Setter Property="Padding" Value="0" />
+          <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+          <Setter Property="Focusable" Value="False" />
+          <Setter Property="IsTabStop" Value="False" />
+          <Setter Property="Template">
+            <Setter.Value>
+              <ControlTemplate TargetType="ListBoxItem">
+                <Border Background="Transparent" Padding="{TemplateBinding Padding}">
+                  <ContentPresenter HorizontalAlignment="Stretch" />
+                </Border>
+              </ControlTemplate>
+            </Setter.Value>
+          </Setter>
+        </Style>
+      </ListBox.ItemContainerStyle>
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <RichTextBox
+            Background="Transparent"
+            BorderThickness="0"
+            FontFamily="Consolas,Microsoft YaHei,微软雅黑"
+            FontSize="{Binding DataContext.Setting.logFontSize, RelativeSource={RelativeSource AncestorType=ListBox}}"
+            IsReadOnly="True"
+          >
+            <FlowDocument>
+              <Paragraph Margin="0">
+                <Run Foreground="{DynamicResource Brush.Log.Time}" Text="{Binding TimeText, Mode=OneWay}" />
+                <Run Foreground="{DynamicResource Brush.Log.Time}" Text="{Binding ArrowText, Mode=OneWay}" />
+                <Run Foreground="{Binding DataTextColor}" Text="{Binding DataText, Mode=OneWay}" />
+                <Run FontWeight="Bold" Foreground="{DynamicResource Brush.Foreground}" Text="{Binding RawTitle, Mode=OneWay}" />
+                <Run Foreground="{Binding RawTextColor}" Text="{Binding RawText, Mode=OneWay}" />
+              </Paragraph>
+            </FlowDocument>
+          </RichTextBox>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
     <WrapPanel
       Grid.Row="1"
       Margin="10,0,0,3"

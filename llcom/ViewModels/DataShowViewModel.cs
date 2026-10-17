@@ -53,6 +53,12 @@ public partial class DataShowViewModel : ObservableObject
     //当前显示模式（分包/流式）切换标记
     private bool _lastPackShowMode = true;
 
+    //清空代次：清空后丢弃已排队但尚未执行的旧数据
+    private int _generation;
+
+    //滚动请求是否已排队（合并同一帧内的多次滚动）
+    private bool _scrollQueued;
+
     /// <summary>分包模式变化事件（切换 MainList/MainTextBox 显示）</summary>
     public event Action<bool> PackModeChanged;
 
@@ -65,12 +71,15 @@ public partial class DataShowViewModel : ObservableObject
         _uart = uart;
         Tools.Logger.DataShowTask += Logger_DataShowTask;
         Tools.Logger.DataClearEvent += (_, _) => Clear();
-        //显示格式切换（HEX/字符串）时即时重算已有条目
+        //显示格式切换（HEX/字符串/不可见字符/编码）时刷新已有条目：
+        //只失效缓存并通知绑定，真正的字符串转换推迟到条目可见时
         setting.PropertyChanged += (_, e) =>
         {
             if (
                 e.PropertyName == nameof(setting.hexSend)
                 || e.PropertyName == nameof(setting.recvShowHex)
+                || e.PropertyName == nameof(setting.EnableSymbol)
+                || e.PropertyName == nameof(setting.encoding)
             )
             {
                 foreach (var it in Items)
@@ -94,6 +103,8 @@ public partial class DataShowViewModel : ObservableObject
     /// <summary>清空显示（清空列表 + 流式缓冲 + 流式文本框）</summary>
     public void Clear()
     {
+        //递增代次：丢弃已排队但尚未执行的旧数据，避免清空后又冒出来
+        _generation++;
         Items.Clear();
         _streamBuffer.Clear();
         _clearStreamBridge();
@@ -135,45 +146,70 @@ public partial class DataShowViewModel : ObservableObject
     /// </summary>
     private void Logger_DataShowTask(object sender, DataShow e)
     {
-        //Logger 事件可能来自后台线程（串口接收线程），切到 UI 线程处理
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-            //先判断下要不要清空/切换显示模式
-            var needPack = Setting.timeout >= 0;
-            if (_lastPackShowMode != needPack)
+        //Logger 事件可能来自后台线程（串口接收线程）：
+        //异步投递到 UI 线程（Background 优先级，让拖拽/输入优先），避免阻塞接收线程
+        var generation = _generation;
+        Application.Current.Dispatcher.BeginInvoke(
+            new Action(() =>
             {
-                _lastPackShowMode = needPack;
-                Items.Clear();
-                _streamBuffer.Clear();
-                PackModeChanged?.Invoke(needPack);
-            }
+                //期间已清空：丢弃排队中的旧数据
+                if (generation != _generation)
+                    return;
 
-            //如果不开回显，就别打印
-            if (!Setting.showSend && e is DataShowPara para && para.send)
-                return;
-
-            //显示到列表
-            if (!needPack && e is not DataShowRaw) //不分包模式
-            {
-                var isSend = e is DataShowPara para2 && para2.send;
-                var showHex = isSend ? Setting.hexSend : Setting.recvShowHex;
-                var dataText = showHex
-                    ? Tools.Global.Byte2Hex(e.data, " ", e.data.Length) + " "
-                    : Tools.Global.Byte2Readable(e.data, e.data.Length);
-                _streamBuffer.Append(dataText);
-                _appendStreamBridge(dataText);
-            }
-            else //分包模式
-            {
-                var item = e is DataShowRaw raw
-                    ? new Model.DataShowItem(raw.title, e.data, e.time, raw.color)
-                    : new Model.DataShowItem(e.data, e.time, (e as DataShowPara).send);
-                if (item != null)
+                //先判断下要不要清空/切换显示模式
+                var needPack = Setting.timeout >= 0;
+                if (_lastPackShowMode != needPack)
                 {
-                    Items.Add(item);
-                    ScrollRequested?.Invoke();
+                    _lastPackShowMode = needPack;
+                    Items.Clear();
+                    _streamBuffer.Clear();
+                    PackModeChanged?.Invoke(needPack);
                 }
-            }
-        });
+
+                //如果不开回显，就别打印
+                if (!Setting.showSend && e is DataShowPara para && para.send)
+                    return;
+
+                //显示到列表
+                if (!needPack && e is not DataShowRaw) //不分包模式
+                {
+                    var isSend = e is DataShowPara para2 && para2.send;
+                    var showHex = isSend ? Setting.hexSend : Setting.recvShowHex;
+                    var dataText = showHex
+                        ? Tools.Global.Byte2Hex(e.data, " ", e.data.Length) + " "
+                        : Tools.Global.Byte2Readable(e.data, e.data.Length);
+                    _streamBuffer.Append(dataText);
+                    _appendStreamBridge(dataText);
+                }
+                else //分包模式
+                {
+                    var item = e is DataShowRaw raw
+                        ? new Model.DataShowItem(raw.title, e.data, e.time, raw.color)
+                        : new Model.DataShowItem(e.data, e.time, (e as DataShowPara).send);
+                    if (item != null)
+                    {
+                        Items.Add(item);
+                        RequestScroll();
+                    }
+                }
+            }),
+            System.Windows.Threading.DispatcherPriority.Background
+        );
+    }
+
+    /// <summary>合并滚动请求：同一帧内多条数据只触发一次滚动</summary>
+    private void RequestScroll()
+    {
+        if (_scrollQueued)
+            return;
+        _scrollQueued = true;
+        Application.Current.Dispatcher.BeginInvoke(
+            new Action(() =>
+            {
+                _scrollQueued = false;
+                ScrollRequested?.Invoke();
+            }),
+            System.Windows.Threading.DispatcherPriority.Background
+        );
     }
 }

@@ -63,46 +63,17 @@
       HorizontalAlignment="Right"
       VerticalAlignment="Bottom"
       Background="Transparent"
+      MouseEnter="LogCornerZone_MouseEnter"
+      MouseLeave="LogCornerZone_MouseLeave"
     >
       <StackPanel
         Name="LogCornerTools"
         HorizontalAlignment="Right"
         VerticalAlignment="Center"
+        Opacity="0"
+        IsHitTestVisible="False"
         Orientation="Horizontal"
       >
-        <StackPanel.Style>
-          <Style TargetType="StackPanel">
-            <Setter Property="Opacity" Value="0" />
-            <Setter Property="IsHitTestVisible" Value="False" />
-            <Style.Triggers>
-              <DataTrigger Binding="{Binding IsMouseOver, ElementName=LogCornerZone}" Value="True">
-                <Setter Property="IsHitTestVisible" Value="True" />
-                <DataTrigger.EnterActions>
-                  <BeginStoryboard>
-                    <Storyboard>
-                      <DoubleAnimation
-                        Storyboard.TargetProperty="Opacity"
-                        To="1"
-                        Duration="0:0:0.12"
-                      />
-                    </Storyboard>
-                  </BeginStoryboard>
-                </DataTrigger.EnterActions>
-                <DataTrigger.ExitActions>
-                  <BeginStoryboard>
-                    <Storyboard>
-                      <DoubleAnimation
-                        Storyboard.TargetProperty="Opacity"
-                        To="0"
-                        Duration="0:0:0.2"
-                      />
-                    </Storyboard>
-                  </BeginStoryboard>
-                </DataTrigger.ExitActions>
-              </DataTrigger>
-            </Style.Triggers>
-          </Style>
-        </StackPanel.Style>
         <!--  帮助：扁平纯图标（常态无框；悬停中性浅灰）  -->
         <Button
           Name="HelpButton"

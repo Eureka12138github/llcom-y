@@ -46,19 +46,19 @@ public partial class DataShowPage : Page
         //分包/流式显示切换
         _vm.PackModeChanged += pack =>
         {
-            MainListScrollViewer.Visibility = pack ? Visibility.Visible : Visibility.Collapsed;
+            MainList.Visibility = pack ? Visibility.Visible : Visibility.Collapsed;
             MainTextBox.Visibility = pack ? Visibility.Collapsed : Visibility.Visible;
         };
-        //分包模式新增条目后滚动到底部
+        //分包模式新增条目后滚动到底部（虚拟化列表用 ScrollIntoView）
         _vm.ScrollRequested += () =>
         {
-            if (!_vm.LockLog)
-                MainListScrollViewer.ScrollToEnd();
+            if (!_vm.LockLog && MainList.Items.Count > 0)
+                MainList.ScrollIntoView(MainList.Items[MainList.Items.Count - 1]);
         };
 
         //初始显示模式（timeout≥0 分包，否则流式）
         var needPack = _vm.Setting.timeout >= 0;
-        MainListScrollViewer.Visibility = needPack ? Visibility.Visible : Visibility.Collapsed;
+        MainList.Visibility = needPack ? Visibility.Visible : Visibility.Collapsed;
         MainTextBox.Visibility = needPack ? Visibility.Collapsed : Visibility.Visible;
     }
 
