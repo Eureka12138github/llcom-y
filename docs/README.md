@@ -15,6 +15,7 @@
 | [09-github-publish-plan.md](09-github-publish-plan.md) | GitHub 发布与归因计划：Fork 流程、Apache-2.0 合规清单、README/CHANGES 草稿 | 准备对外发布时 |
 | [10-ui-layout-plan.md](10-ui-layout-plan.md) | UI/交互优化完整计划 + 逐轮改动记录（含待办/待确认项） | 继续做界面与交互调整 |
 | [11-ui-fixes-plan.md](11-ui-fixes-plan.md) | 问题 9–15 的修复计划（底栏三按钮/串口开关/发送记录弹层/日志性能） | 本轮修复实施 |
+| [12-serial-monitor-plan.md](12-serial-monitor-plan.md) | 串口监听改进计划：位数支持、已打开端口接管、32 位助手、验收清单 | 后续做监听增强时 |
 
 ## 分支说明
 
