@@ -58,7 +58,7 @@
       <TextBlock Style="{StaticResource HelpLi}" Text="· 自动重连：串口被拔出后自动恢复连接（只重连上次手动打开过的端口）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· RTS / DTR：串口两根硬件控制信号线的电平（详见文末「RTS / DTR 详解」）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 打开串口 / 关闭串口：打开成功后按钮变绿，状态栏显示 COM 与波特率。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 顶部工具栏：☰ 更多设置、🌐 切换语言、? 使用说明。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 日志底栏右端（与「清空日志」同一行、靠右对齐）：鼠标移入该角落才显示 ? 使用说明、☰ 更多设置、🌐 切换语言；移开自动隐藏。" />
 
       <TextBlock Style="{StaticResource HelpH}" Text="三、收发数据显示区（左侧）" />
       <TextBlock Style="{StaticResource HelpP}" Text="每行显示：时间 + 方向（→ 发送 / ← 接收）+ 数据（十六进制或文本，单行）。" />
@@ -71,12 +71,14 @@
       <TextBlock Style="{StaticResource HelpLi}" Text="· 垃圾桶图标：清空日志显示。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 保存图标：把当前日志保存为文件。" />
       <TextBlock Style="{StaticResource HelpP}" Text="终端模式（在「更多设置」中开启）：日志区可直接键盘输入并即时发送按键。" />
+      <TextBlock Style="{StaticResource HelpP}" Text="日志很多时只渲染当前可见的行（虚拟化），滚动、拖拽分隔条、切换 字符串/Hex 都不会明显卡顿。" />
 
       <TextBlock Style="{StaticResource HelpH}" Text="四、发送区（底部）" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 输入内容后点「发送」，或按 Ctrl+Enter。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 发送按钮左侧三个控件（从左到右）：" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 发送按钮左侧：插头图标 = 开/关串口（绿色=未打开，红色=已打开；悬停提示「打开串口 / 关闭串口」），不用再切到「串口设置」页。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 插头图标左侧三个控件（从左到右）：" />
       <TextBlock Style="{StaticResource HelpLi}" Text="    - 橡皮图标：清空发送框内容。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="    - 记录图标：发送记录。点其中一条会把该内容填回发送框；底部「记录上限（条）」可调最多保存多少条（最新在前，范围 1~200）。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="    - 记录图标：发送记录。点其中一条会把该内容填回发送框；弹层固定高度、列表可滚动（不会把底部设置挤掉）；底部「记录上限（条）」可直接键盘输入（5~200，回车或失焦生效），右侧「清空记录」一键清空（不可恢复）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="    - 换行下拉：发送时在末尾追加的换行，可选 无追加 / \n / \r / \n\r / \r\n。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 发送按钮右侧的下拉（▾）是「发送选项」：连续发送（按「发送后延时」和「重复次数」周期性发送）、按 Enter 发送 / 按 Ctrl+Enter 发送。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="    - 关于「重复次数」：它表示在首次发送之后再重复几次。填 3 = 总共发 4 次；填 0 = 只发一次；填 -1 = 一直重复，直到再次点「发送」停止。" />
