@@ -105,7 +105,7 @@
     <system:String x:Key="AboutDiscriptionMain">LLCOM-Y 是一款串口调试工具，连接可靠、断线后可自动重连，右侧带快捷发送区。</system:String>
     <system:String x:Key="AboutDiscriptionMore">本工具除了具有与其他同类工具，所包含的数据收发功能外，还添加了Lua运行环境。用户可自行使用Lua，完成几乎所有可以想象到的自动化操作，大大提高了串口工具的可用性。</system:String>
     <system:String x:Key="AboutNotice">非官方个人维护版 · 基于 chenxuuu 的 LLCOM（Apache-2.0）&#x0a;本项目仅用于个人学习与自用，与原作者无隶属关系。</system:String>
-    <system:String x:Key="AboutDevelopers">维护者：Eureka12138github&#x0a;原作者：chenxuuu、whc2001、7158（上游贡献者）</system:String>
+    <system:String x:Key="AboutDevelopers">维护者：Eureka12138github&#x0a;原作者：chenxuuu、whc2001（上游贡献者）</system:String>
     <system:String x:Key="AboutTranslator">简体中文为原版语言</system:String>
     <system:String x:Key="AboutGitHubText">本项目开源地址，欢迎 star</system:String>
     <system:String x:Key="AboutGitHubButton">前往本项目 GitHub</system:String>

@@ -8,12 +8,12 @@ using System.Windows;
 // 控制。更改这些特性值可修改
 // 与程序集关联的信息。
 [assembly: AssemblyTitle("LLCOM-Y")]
-[assembly: AssemblyDescription("https://github.com/Eureka12138github/llcom-y")]
+[assembly: AssemblyDescription("https://github.com/Eureka12138github/llcom-y (unofficial fork of LLCOM)")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Eureka12138github")]
 [assembly: AssemblyProduct("LLCOM-Y")]
-[assembly: AssemblyCopyright("Apache-2.0; based on LLCOM by chenxuuu")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCopyright("Copyright (c) chenxuuu and contributors; modifications (c) Eureka12138github; Apache-2.0")]
+[assembly: AssemblyTrademark("LLCOM is a trademark of chenxuuu (chenxublog.com); LLCOM-Y is an unofficial fork")]
 [assembly: AssemblyCulture("")]
 
 // 将 ComVisible 设置为 false 会使此程序集中的类型

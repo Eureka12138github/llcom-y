@@ -55,3 +55,11 @@
 - `MainWindow.xaml.cs` 约 730 行：Lua 日志（`Services/LuaLogPump`）与升级/热更（`Services/AppUpdateService`）
   已下沉为服务，导航 / Lua 运行等 UI 绑定逻辑保留在 code-behind。
 - 工具页弹窗（接收脚本 / 参数选择）保留 code-behind（依赖 Popup 控件，VM 化收益低）。
+
+## 七、发布前待办（个人维护版 / LLCOM-Y）
+
+> 配套：[09-github-publish-plan.md](09-github-publish-plan.md)、[12-serial-monitor-plan.md](12-serial-monitor-plan.md)。
+
+- [ ] **在线脚本列表的数据源**：`Services/OnlineScriptService` 目前从 `https://llcom.papapoi.com/token.txt` 拉取（仅打开「在线脚本」页时才请求）。发布前决定：改为自己的静态文件/仓库，或保留并在页面/README 注明「数据来自上游 LLCOM」。
+- [ ] **MSIX 身份重新关联**：`WapProj/Package.appxmanifest` 的 `Identity Name/Publisher` 仍是原作者信息。自行打包（Desktop Bridge / MSIX）前需在 Visual Studio 里重新关联到自己的开发者账号；仅发布 exe 不受影响。
+- [ ] （建议）发布 zip 内一并附带 `LICENSE` 与 `CHANGES.md`：Apache-2.0 要求随分发提供许可证副本，并保留版权/归属声明。
