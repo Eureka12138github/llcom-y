@@ -40,7 +40,15 @@ public partial class DataShowPage : Page
                 if (!_vm.LockLog)
                     MainTextBox.ScrollToEnd();
             },
-            () => MainTextBox.Clear()
+            () => MainTextBox.Clear(),
+            //流式缓冲超过字符上限：从文本框头部删掉同样的字符数
+            n =>
+            {
+                var text = MainTextBox.Text;
+                MainTextBox.Text = n >= text.Length ? "" : text.Substring(n);
+                if (!_vm.LockLog)
+                    MainTextBox.ScrollToEnd();
+            }
         );
 
         //分包/流式显示切换

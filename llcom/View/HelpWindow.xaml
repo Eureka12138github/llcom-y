@@ -72,6 +72,7 @@
       <TextBlock Style="{StaticResource HelpLi}" Text="· 保存图标：把当前日志保存为文件。" />
       <TextBlock Style="{StaticResource HelpP}" Text="终端模式（在「更多设置」中开启）：日志区可直接键盘输入并即时发送按键。" />
       <TextBlock Style="{StaticResource HelpP}" Text="日志很多时只渲染当前可见的行（虚拟化），滚动、拖拽分隔条、切换 字符串/Hex 都不会明显卡顿。" />
+      <TextBlock Style="{StaticResource HelpP}" Text="日志有保留上限（见「更多设置」→ 日志保留上限 / 流式保留字符数）：达到上限后自动丢弃最早的记录，避免长时间挂机占满内存。" />
 
       <TextBlock Style="{StaticResource HelpH}" Text="四、发送区（底部）" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 输入内容后点「发送」，或按 Ctrl+Enter。" />
@@ -120,8 +121,10 @@
       <TextBlock Style="{StaticResource HelpLi}" Text="· 绘图：接收 Lua 通过接口上报的数据点并绘制曲线；可查看全图 / 清空图表 / 切换主题。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· WinUSB：选择 USB 设备、读/写端点，连接后收发（可 Hex）。" />
 
-      <TextBlock Style="{StaticResource HelpH}" Text="九、更多设置（点顶栏 ☰ 直接打开）" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 分三个页签：「更多串口设置」（打开日志文件夹、显示发送、数据字号、窗口置顶、串口超时（分包）、按空行分包、终端模式）、「发送脚本」、「接收脚本」。" />
+      <TextBlock Style="{StaticResource HelpH}" Text="九、更多设置（点日志区右下角 ☰ 直接打开，鼠标移入才显示）" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 分三个页签：「更多串口设置」（打开日志文件夹、显示发送、数据字号、窗口置顶、串口超时（分包）、按空行分包、终端模式、日志保留上限、流式保留字符数）、「发送脚本」、「接收脚本」。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 日志保留上限（条）：分包模式最多保留多少条日志（1000~200000，默认 50000），超过后自动丢弃最早的记录；另有 32 MB 负载预算兜底（大包时会先按字节裁剪）。两者谁先到谁生效。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 流式保留字符数：把「串口超时」设为负数进入流式模式后，最多保留多少字符（100000~10000000，默认 2000000），超过后丢弃最早的文本。两个输入框都可直接键盘输入数字，回车或失焦生效。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 窗口保持置顶显示：让主窗口始终显示在其他程序窗口的最上层，不被别的窗口挡住（对「更多设置」窗口本身无影响）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 发送脚本 / 接收脚本：编辑发送前、接收后触发的 Lua 脚本。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 接收数据以十六进制还是字符串显示，由左侧日志区底部的「接收显示Hex」控制。" />
@@ -132,7 +135,7 @@
       <TextBlock Style="{StaticResource HelpLi}" Text="· 串口与各网络工具都作为「通用通道」，Lua 用 apiSend / apiSetCb 收发。" />
 
       <TextBlock Style="{StaticResource HelpH}" Text="十一、其他" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 语言：右上 🌐 切换中/英。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 语言：日志区右下角 🌐 切换中/英（与 ? 使用说明、☰ 更多设置同一行的右端，鼠标移入才显示）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 日志文件：程序目录 logs/（串口日志与崩溃日志 fatal.log）与 user_script_run/logs/（Lua 日志）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 配置与脚本均保存在程序目录。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 程序遇到错误时会弹出一个只有「关闭程序」按钮的窗口，并把错误详情写入 logs/fatal.log。" />

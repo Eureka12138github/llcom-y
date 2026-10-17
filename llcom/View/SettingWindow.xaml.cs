@@ -37,6 +37,71 @@ public partial class SettingWindow : Window
     private LuaEditorViewModel _sendEditor;
     private LuaEditorViewModel _recvEditor;
 
+    // ===== 日志缓冲上限（数字输入） =====
+
+    /// <summary>数字输入框：只允许数字</summary>
+    private void NumericBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+    {
+        foreach (var c in e.Text)
+        {
+            if (!char.IsDigit(c))
+            {
+                e.Handled = true;
+                return;
+            }
+        }
+    }
+
+    /// <summary>数字输入框：粘贴内容也必须是纯数字</summary>
+    private void NumericBox_Pasting(object sender, DataObjectPastingEventArgs e)
+    {
+        if (e.DataObject.GetData(typeof(string)) is not string text)
+        {
+            e.CancelCommand();
+            return;
+        }
+        foreach (var c in text)
+        {
+            if (!char.IsDigit(c))
+            {
+                e.CancelCommand();
+                return;
+            }
+        }
+    }
+
+    /// <summary>数字输入框：回车时移出焦点，触发 LostFocus 校验</summary>
+    private void NumericBox_PreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter && sender is UIElement element)
+        {
+            element.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+            e.Handled = true;
+        }
+    }
+
+    /// <summary>日志保留条数：校验并把夹取后的值写回输入框</summary>
+    private void LogMaxItemsBox_LostFocus(object sender, RoutedEventArgs e)
+    {
+        var setting = Tools.Global.setting;
+        var value = int.TryParse(logMaxItemsBox.Text, out var parsed)
+            ? parsed
+            : setting.logMaxItems;
+        setting.logMaxItems = value;
+        logMaxItemsBox.Text = setting.logMaxItems.ToString();
+    }
+
+    /// <summary>流式保留字符数：校验并把夹取后的值写回输入框</summary>
+    private void StreamMaxCharsBox_LostFocus(object sender, RoutedEventArgs e)
+    {
+        var setting = Tools.Global.setting;
+        var value = int.TryParse(streamMaxCharsBox.Text, out var parsed)
+            ? parsed
+            : setting.streamMaxChars;
+        setting.streamMaxChars = value;
+        streamMaxCharsBox.Text = setting.streamMaxChars.ToString();
+    }
+
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
         this.DataContext = Tools.Global.setting;
@@ -46,6 +111,10 @@ public partial class SettingWindow : Window
 
         //置顶显示以免被挡住
         this.Topmost = true;
+
+        //数字输入框初值（OneWay 绑定之外的兜底同步）
+        logMaxItemsBox.Text = Tools.Global.setting.logMaxItems.ToString();
+        streamMaxCharsBox.Text = Tools.Global.setting.streamMaxChars.ToString();
 
         //快速搜索
         SearchPanel.Install(textEditor.TextArea);

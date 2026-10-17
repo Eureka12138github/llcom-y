@@ -42,6 +42,9 @@ public class DataShowItem : INotifyPropertyChanged
     /// <summary>通用通道条目的文本（前面加换行；普通条目为 null）</summary>
     public string? RawText => _generic ? GetText(true) : null;
 
+    /// <summary>原始负载字节数（日志缓冲按字节预算裁剪时统计用）</summary>
+    public int PayloadLength => _data?.Length ?? 0;
+
     public event PropertyChangedEventHandler PropertyChanged;
 
     private void OnPropertyChanged([CallerMemberName] string name = null) =>

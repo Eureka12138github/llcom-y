@@ -34,6 +34,56 @@ partial class Settings
         }
     }
 
+    /// <summary>日志（分包模式）保留条数下限</summary>
+    public const int LogMaxItemsMin = 1000;
+
+    /// <summary>日志（分包模式）保留条数上限</summary>
+    public const int LogMaxItemsMax = 200000;
+
+    private int _logMaxItems = 50000;
+
+    /// <summary>
+    /// 日志（分包模式）最多保留多少条，超过后自动丢弃最早的记录（范围 1000~200000）。
+    /// </summary>
+    public int logMaxItems
+    {
+        get => _logMaxItems;
+        set
+        {
+            var v =
+                value < LogMaxItemsMin ? LogMaxItemsMin
+                : value > LogMaxItemsMax ? LogMaxItemsMax
+                : value;
+            if (SetProperty(ref _logMaxItems, v))
+                Save();
+        }
+    }
+
+    /// <summary>流式模式（分包超时&lt;0）保留字符数下限</summary>
+    public const int StreamMaxCharsMin = 100000;
+
+    /// <summary>流式模式（分包超时&lt;0）保留字符数上限</summary>
+    public const int StreamMaxCharsMax = 10000000;
+
+    private int _streamMaxChars = 2000000;
+
+    /// <summary>
+    /// 流式模式最多保留多少字符，超过后从头部丢弃最早的文本（范围 100000~10000000）。
+    /// </summary>
+    public int streamMaxChars
+    {
+        get => _streamMaxChars;
+        set
+        {
+            var v =
+                value < StreamMaxCharsMin ? StreamMaxCharsMin
+                : value > StreamMaxCharsMax ? StreamMaxCharsMax
+                : value;
+            if (SetProperty(ref _streamMaxChars, v))
+                Save();
+        }
+    }
+
     private bool _recvShowHex = true;
 
     /// <summary>

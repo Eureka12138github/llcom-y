@@ -59,5 +59,24 @@ namespace llcom.Tests
             Assert.True(File.Exists(path));
             Assert.Contains("57600", File.ReadAllText(path));
         }
+
+        /// <summary>日志缓冲上限：默认 5 万条 / 200 万字符，并夹取到合法范围。</summary>
+        [Fact]
+        public void LogBufferLimits_AreClamped()
+        {
+            var s = new Settings();
+            Assert.Equal(50000, s.logMaxItems);
+            Assert.Equal(2000000, s.streamMaxChars);
+
+            s.logMaxItems = 10;
+            Assert.Equal(Settings.LogMaxItemsMin, s.logMaxItems);
+            s.logMaxItems = 9999999;
+            Assert.Equal(Settings.LogMaxItemsMax, s.logMaxItems);
+
+            s.streamMaxChars = 1;
+            Assert.Equal(Settings.StreamMaxCharsMin, s.streamMaxChars);
+            s.streamMaxChars = 999999999;
+            Assert.Equal(Settings.StreamMaxCharsMax, s.streamMaxChars);
+        }
     }
 }

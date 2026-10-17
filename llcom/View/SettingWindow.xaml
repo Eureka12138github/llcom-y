@@ -72,6 +72,48 @@
                 Text="{DynamicResource SettingMs}"
               />
             </StackPanel>
+            <StackPanel Margin="8" Orientation="Horizontal">
+              <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingLogMaxItems}" />
+              <TextBox
+                Name="logMaxItemsBox"
+                Width="76"
+                Margin="6,0,0,0"
+                DataObject.Pasting="NumericBox_Pasting"
+                LostFocus="LogMaxItemsBox_LostFocus"
+                PreviewKeyDown="NumericBox_PreviewKeyDown"
+                PreviewTextInput="NumericBox_PreviewTextInput"
+                Text="{Binding logMaxItems, Mode=OneWay}"
+                TextAlignment="Center"
+                ToolTip="{DynamicResource SettingLogMaxItemsTip}"
+              />
+              <TextBlock
+                Margin="6,0,0,0"
+                VerticalAlignment="Center"
+                Foreground="{DynamicResource Brush.Foreground.Muted}"
+                Text="1,000~200,000"
+              />
+            </StackPanel>
+            <StackPanel Margin="8" Orientation="Horizontal">
+              <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingStreamMaxChars}" />
+              <TextBox
+                Name="streamMaxCharsBox"
+                Width="90"
+                Margin="6,0,0,0"
+                DataObject.Pasting="NumericBox_Pasting"
+                LostFocus="StreamMaxCharsBox_LostFocus"
+                PreviewKeyDown="NumericBox_PreviewKeyDown"
+                PreviewTextInput="NumericBox_PreviewTextInput"
+                Text="{Binding streamMaxChars, Mode=OneWay}"
+                TextAlignment="Center"
+                ToolTip="{DynamicResource SettingStreamMaxCharsTip}"
+              />
+              <TextBlock
+                Margin="6,0,0,0"
+                VerticalAlignment="Center"
+                Foreground="{DynamicResource Brush.Foreground.Muted}"
+                Text="100,000~10,000,000"
+              />
+            </StackPanel>
             <CheckBox
               Margin="8"
               Content="{DynamicResource SettingSplitByEmpty}"

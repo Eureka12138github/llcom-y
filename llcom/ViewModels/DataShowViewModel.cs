@@ -11,9 +11,9 @@ namespace llcom.ViewModels;
 /// <summary>
 /// 收发数据区 ViewModel（Step 8）。
 /// 职责：订阅 Logger.DataShowTask，将串口/TCP/MQTT 等通道数据分发显示——
-/// 分包模式（timeout≥0）写入 ObservableCollection<DataShowItem>（绑定列表，虚拟化），
+/// 分包模式（timeout≥0）写入 <see cref="ObservableCollection{T}"/>（绑定列表，虚拟化），
 /// 流式模式（timeout&lt;0）追加到流式文本框（经 SetTextBridge 桥接，保持增量追加性能）。
-/// 逻辑从 DataShowPage code-behind 迁移，行为保持一致。
+/// 两种模式都有上限（条数/字节、字符数），超过后自动丢弃最早的记录。
 /// </summary>
 public partial class DataShowViewModel : ObservableObject
 {
@@ -23,9 +23,15 @@ public partial class DataShowViewModel : ObservableObject
     /// <summary>串口服务（RTS/DTR 信号线转发；原直接读 <c>Tools.Global.uart</c>）</summary>
     private readonly Services.ISerialPortService _uart;
 
-    /// <summary>分包模式显示条目（绑定 MainList）</summary>
+    /// <summary>日志负载字节预算（与条数上限同时生效，谁先到谁先裁）</summary>
+    private const long MaxPayloadBytes = 32L * 1024 * 1024;
+
+    /// <summary>分包模式显示条目（绑定 MainList；超过上限时裁剪最早的记录）</summary>
     public ObservableCollection<Model.DataShowItem> Items { get; } =
         new ObservableCollection<Model.DataShowItem>();
+
+    //当前 Items 中的负载字节总数（裁剪依据）
+    private long _payloadBytes;
 
     /// <summary>锁定滚动（绑定锁定按钮）</summary>
     [ObservableProperty]
@@ -45,9 +51,10 @@ public partial class DataShowViewModel : ObservableObject
         set => _uart.Dtr = value;
     }
 
-    //流式模式文本桥（AvalonEdit/TextBox 增量追加保持性能）
+    //流式模式文本桥（TextBox 增量追加 / 清空 / 从头裁掉 n 个字符）
     private Action<string> _appendStreamBridge = _ => { };
     private Action _clearStreamBridge = () => { };
+    private Action<int> _trimStreamBridge = _ => { };
     private readonly StringBuilder _streamBuffer = new StringBuilder();
 
     //当前显示模式（分包/流式）切换标记
@@ -86,18 +93,27 @@ public partial class DataShowViewModel : ObservableObject
                     it.Refresh();
             }
         };
+        //上限调小后立即裁剪到新上限（不用等下一条数据）
+        setting.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(setting.logMaxItems))
+                TrimLogBuffer(force: true);
+            else if (e.PropertyName == nameof(setting.streamMaxChars))
+                TrimStreamBuffer(force: true);
+        };
         Rts = false;
         Dtr = true;
         _lastPackShowMode = setting.timeout >= 0;
     }
 
     /// <summary>
-    /// 由 View 接入流式文本框的追加/清空（TextBox.AppendText 增量追加）
+    /// 由 View 接入流式文本框的追加/清空/头部裁剪（TextBox.AppendText 增量追加）
     /// </summary>
-    public void SetTextBridge(Action<string> append, Action clear)
+    public void SetTextBridge(Action<string> append, Action clear, Action<int> trimHead)
     {
         _appendStreamBridge = append;
         _clearStreamBridge = clear;
+        _trimStreamBridge = trimHead;
     }
 
     /// <summary>清空显示（清空列表 + 流式缓冲 + 流式文本框）</summary>
@@ -106,6 +122,7 @@ public partial class DataShowViewModel : ObservableObject
         //递增代次：丢弃已排队但尚未执行的旧数据，避免清空后又冒出来
         _generation++;
         Items.Clear();
+        _payloadBytes = 0;
         _streamBuffer.Clear();
         _clearStreamBridge();
     }
@@ -162,6 +179,7 @@ public partial class DataShowViewModel : ObservableObject
                 {
                     _lastPackShowMode = needPack;
                     Items.Clear();
+                    _payloadBytes = 0;
                     _streamBuffer.Clear();
                     PackModeChanged?.Invoke(needPack);
                 }
@@ -178,8 +196,7 @@ public partial class DataShowViewModel : ObservableObject
                     var dataText = showHex
                         ? Tools.Global.Byte2Hex(e.data, " ", e.data.Length) + " "
                         : Tools.Global.Byte2Readable(e.data, e.data.Length);
-                    _streamBuffer.Append(dataText);
-                    _appendStreamBridge(dataText);
+                    AppendStream(dataText);
                 }
                 else //分包模式
                 {
@@ -187,20 +204,29 @@ public partial class DataShowViewModel : ObservableObject
                         ? new Model.DataShowItem(raw.title, e.data, e.time, raw.color)
                         : new Model.DataShowItem(e.data, e.time, (e as DataShowPara).send);
                     if (item != null)
-                    {
-                        Items.Add(item);
-                        RequestScroll();
-                    }
+                        AppendPackItem(item);
                 }
             }),
             System.Windows.Threading.DispatcherPriority.Background
         );
     }
 
+    /// <summary>分包模式追加一条日志并按上限裁剪（需在 UI 线程调用）。</summary>
+    internal void AppendPackItem(Model.DataShowItem item)
+    {
+        Items.Add(item);
+        _payloadBytes += item.PayloadLength;
+        TrimLogBuffer();
+        RequestScroll();
+    }
+
+    /// <summary>流式模式追加文本并按字符上限裁剪（需在 UI 线程调用）。</summary>
+    internal void AppendStreamText(string text) => AppendStream(text);
+
     /// <summary>合并滚动请求：同一帧内多条数据只触发一次滚动</summary>
     private void RequestScroll()
     {
-        if (_scrollQueued)
+        if (_scrollQueued || Application.Current == null)
             return;
         _scrollQueued = true;
         Application.Current.Dispatcher.BeginInvoke(
@@ -211,5 +237,61 @@ public partial class DataShowViewModel : ObservableObject
             }),
             System.Windows.Threading.DispatcherPriority.Background
         );
+    }
+
+    /// <summary>
+    /// 流式模式追加文本；超过字符上限时从头部裁掉最早的文本（缓冲与 TextBox 同步）。
+    /// </summary>
+    private void AppendStream(string text)
+    {
+        _streamBuffer.Append(text);
+        _appendStreamBridge(text);
+        TrimStreamBuffer();
+    }
+
+    /// <summary>
+    /// 流式缓冲按字符上限裁头。
+    /// 默认留 10% 余量再裁，避免每包都触发 TextBox 全量重排。
+    /// </summary>
+    private void TrimStreamBuffer(bool force = false)
+    {
+        var max = Math.Max(Model.Settings.StreamMaxCharsMin, Setting.streamMaxChars);
+        var limit = force ? max : max + Math.Max(10_000, max / 10);
+        if (_streamBuffer.Length <= limit)
+            return;
+
+        var remove = _streamBuffer.Length - max;
+        _streamBuffer.Remove(0, remove);
+        _trimStreamBridge(remove);
+    }
+
+    /// <summary>
+    /// 分包日志裁剪：**条数上限与负载字节预算同时生效，谁先到谁先裁**。
+    /// 逐条删除最早的记录（WPF 的 ListCollectionView 不支持“范围删除”通知），
+    /// 留少量余量后再裁，避免每来一条都触发删除。
+    /// </summary>
+    private void TrimLogBuffer(bool force = false)
+    {
+        var maxItems = Math.Max(Model.Settings.LogMaxItemsMin, Setting.logMaxItems);
+        // 余量：攒够 100 条再裁，减少集合变更次数
+        var itemLimit = force ? maxItems : maxItems + 100;
+        var byteLimit = force ? MaxPayloadBytes : MaxPayloadBytes + MaxPayloadBytes / 20;
+        if (Items.Count <= itemLimit && _payloadBytes <= byteLimit)
+            return;
+
+        //从头部逐条计算，直到同时满足「条数 ≤ 上限」且「负载 ≤ 预算」
+        var remove = 0;
+        var bytes = _payloadBytes;
+        while (remove < Items.Count && (Items.Count - remove > maxItems || bytes > MaxPayloadBytes))
+        {
+            bytes -= Items[remove].PayloadLength;
+            remove++;
+        }
+        if (remove <= 0)
+            return;
+
+        for (var i = 0; i < remove; i++)
+            Items.RemoveAt(0);
+        _payloadBytes = bytes;
     }
 }
