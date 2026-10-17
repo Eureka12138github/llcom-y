@@ -1,8 +1,12 @@
 # 09 · GitHub 发布与归因计划
 
-> 状态：**待执行**（2026-10-14 制定；尚未执行）
+> 状态：**部分完成**（2026-10-14 制定；2026-10-17 更新）
 > 目标：把本仓库发布到**自己的** GitHub 供他人使用；**明确署名原作者**；**不推送/不改动原作者仓库**。
 > 关联文档：[05-next-steps.md](05-next-steps.md)（路线图/发布流程）、[07-refactor-continue-status.md](07-refactor-continue-status.md)（当前分支与进度）。
+>
+> **2026-10-17 进展**：名称定为 **LLCOM-Y**、仓库 `llcom-y`；README（中英）、`CHANGES.md`、关于页、程序集信息已落地；
+> 自动更新/热更已关闭；远端已配置 `origin`（自己的仓库）/`upstream`（原作者），**尚未推送**。
+> 下文附录中仍保留旧命名（LLCOM）的草稿，作为历史参考。
 
 ---
 
@@ -24,10 +28,11 @@
 
 1. **发布形态：GitHub Fork**（保留 “forked from chenxuuu/llcom” 徽章 = 最强归因；便于同步上游）。
    将来若要独立运营，再把 fork **detach** 成独立仓库（历史保留）。
-2. **名称：保持 `LLCOM`**，不改名；但明确标注「**非官方个人修改版**」。
+2. **名称：`LLCOM-Y`**（区别于上游 `LLCOM`；仓库为 `llcom-y`），并明确标注「**非官方个人维护版**」。
 3. **不做**「逐步迁移到未修改的干净仓库」（没必要：git 已记录来源；重放改动只会丢历史、徒增风险）。
-4. **不推送/不修改**原作者的 `origin`。
+4. **不推送/不修改**原作者仓库（远端名 `upstream`）；自己的远端正名为 `origin`（`git@github.com:Eureka12138github/llcom-y.git`）。
 5. 若日后想给上游贡献：从 `upstream/master` 拉**小而聚焦**的分支发 PR，把大改动留在自己 fork。
+6. **自动更新/热更暂时关闭**（`AppUpdateService.Enabled = false`）；发布自己的 Release 后再接自己的更新源。
 
 ---
 
@@ -55,11 +60,10 @@
 - [ ] 复核 `LICENSE` 保留、确认无 `NOTICE`。
 
 ### B. 发布到 GitHub（手动 1 次 + git 命令）
-- [ ] 在 GitHub 网页对 `chenxuuu/llcom` 点 **Fork** → 得到 `<你>/llcom`。
-- [ ] 改远端并推送（替换 `<你>`）：
+- [x] Fork 已创建（`Eureka12138github/llcom-y`，2026-10-17）。
+- [x] 远端已配置：`origin` = 自己的仓库，`upstream` = 原作者仓库。
+- [ ] 推送（**待确认后再执行**）：
   ```powershell
-  git remote rename origin upstream
-  git remote add origin https://github.com/<你>/llcom.git
   git push -u origin master
   git push -u origin feature/refactor-continue
   ```
@@ -182,7 +186,7 @@ git merge upstream/master
 ```powershell
 # 一次性：改远端
 git remote rename origin upstream
-git remote add origin https://github.com/<你>/llcom.git
+git remote add origin https://github.com/Eureka12138github/llcom-y.git
 git push -u origin master
 git push -u origin feature/refactor-continue
 
@@ -192,6 +196,6 @@ git checkout master
 git merge upstream/master
 
 # （可选）打 tag
-git tag -a v1.1.4.4-mymod -m "personal mod release"
-git push origin v1.1.4.4-mymod
+git tag -a v2.0.0.0 -m "LLCOM-Y 2.0.0.0 personal release"
+git push origin v2.0.0.0
 ```

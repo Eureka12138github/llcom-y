@@ -239,10 +239,6 @@ public partial class MainWindow : Window
                         this.Title +=
                             $" - {System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString()}";
 
-                        TongjiWebBrowser.Source = new Uri(
-                            $"https://llcom.papapoi.com/tongji.html?{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version}"
-                        );
-
                         _luaLogPump.Start();
 
                         //加载完了，可以允许点击

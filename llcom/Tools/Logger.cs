@@ -60,7 +60,7 @@ namespace llcom.Tools
                     rollOnFileSizeLimit: true
                 )
                 .CreateLogger();
-            AddUartLogInfo("[START]Logs by LLCOM. https://github.com/chenxuuu/llcom");
+            AddUartLogInfo("[START]LLCOM-Y (unofficial fork of LLCOM). https://github.com/Eureka12138github/llcom-y");
         }
 
         public static void CloseUartLog()

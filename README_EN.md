@@ -1,24 +1,32 @@
-# LLCOM
+# LLCOM-Y
+
+> ⚠️ **Unofficial personal build**
+>
+> Based on [**chenxuuu/LLCOM**](https://github.com/chenxuuu/llcom) (Apache-2.0).
+> Original author: chenxuuu and upstream contributors.
+> Maintained by [Eureka12138github](https://github.com/Eureka12138github/llcom-y) for personal learning and use.
+> **Not the official version**, and not affiliated with or endorsed by the original author.
+> See [CHANGES.md](CHANGES.md) for changes relative to upstream.
+
+[中文说明](/README.md)
 
 ![icon](/llcom/llcom.ico)
 
-[![Build status](https://ci.appveyor.com/api/projects/status/telji5j8r0v5001c?svg=true)](https://ci.appveyor.com/project/chenxuuu/llcom)
-[![MIT](https://img.shields.io/static/v1.svg?label=license&message=Apache+2&color=blue)](https://github.com/chenxuuu/llcom/blob/master/LICENSE)
-[![code-size](https://img.shields.io/github/languages/code-size/chenxuuu/llcom.svg)](https://github.com/chenxuuu/llcom/archive/master.zip)
+[![license](https://img.shields.io/static/v1.svg?label=license&message=Apache+2&color=blue)](https://github.com/Eureka12138github/llcom-y/blob/master/LICENSE)
+[![code-size](https://img.shields.io/github/languages/code-size/Eureka12138github/llcom-y.svg)](https://github.com/Eureka12138github/llcom-y)
+[![release](https://img.shields.io/github/v/release/Eureka12138github/llcom-y)](https://github.com/Eureka12138github/llcom-y/releases)
 
-A serial port debugger tool, with lua script.
+A serial port debugger tool with Lua scripting (personal fork).
 
 > this tool is only Chinese and English now, you can help me to translate, thanks!
 
 ## Download
 
-Get it from Microsoft store:
+- Portable exe: [GitHub Releases](https://github.com/Eureka12138github/llcom-y/releases) (available after the first release)
+- CI snapshot: [GitHub Actions](https://github.com/Eureka12138github/llcom-y/actions)
+- Upstream official version: [chenxuuu/llcom](https://github.com/chenxuuu/llcom)
 
-<a href='//www.microsoft.com/store/apps/9PMPB0233S0S?cid=storebadge&ocid=badge'><img src='https://developer.microsoft.com/store/badges/images/English_get-it-from-MS.png' alt='English badge' width='160'/></a>
-
-Portable exe version: [GitHub](https://github.com/chenxuuu/llcom/releases/latest)
-
-Appveyor snapshot version: [Appveyor Artifacts](https://ci.appveyor.com/project/chenxuuu/llcom/build/artifacts)
+> This fork is not published on the Microsoft Store; the store app is the original author's build.
 
 ## Functions
 
@@ -128,12 +136,18 @@ you can make your debug automatic
 
 ## api document (in Chinese)
 
-you can [click here](https://github.com/chenxuuu/llcom/blob/master/LuaApi.md)
+you can [click here](https://github.com/Eureka12138github/llcom-y/blob/master/LuaApi.md) (inherited from upstream LLCOM)
 
 ## Known bugs and functions to be added
 
 - [x] ~~bug: SerialPort The Requested Resource is in Use([.net's bug](https://github.com/dotnet/corefx/issues/39464))~~(fixed #2f26e68)
 
+## License
+
+Apache-2.0, inherited from upstream [LLCOM](https://github.com/chenxuuu/llcom). Keep the links to this project and the upstream project when reusing.
+
 ## Special Thanks
 
 [![icon-resharper](/image/icon-resharper.svg)](https://www.jetbrains.com/?from=LLCOM)
+
+This project is based on [chenxuuu/LLCOM](https://github.com/chenxuuu/llcom). Thanks to the original author and all upstream contributors.

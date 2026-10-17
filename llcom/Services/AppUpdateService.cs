@@ -11,9 +11,20 @@ namespace llcom.Services;
 /// </summary>
 internal static class AppUpdateService
 {
+    /// <summary>
+    /// 自动更新 / 热更总开关。
+    /// 个人维护版目前**关闭**：暂未提供自己的更新源，且不应再向原作者服务器
+    /// 拉取 hotfix.lua（第三方远程代码）。发布自己的 Release 后，把这里改为
+    /// true，并把下面两处 URL 换成自己的更新源。
+    /// </summary>
+    private static readonly bool Enabled = false;
+
     /// <summary>检查新版本（AutoUpdater.NET）；有更新且开启自动升级则弹升级窗口。</summary>
     public static void CheckForUpdate(Dispatcher dispatcher)
     {
+        if (!Enabled)
+            return;
+
         Task.Run(() =>
         {
             bool runed = false;
@@ -47,9 +58,12 @@ internal static class AppUpdateService
         });
     }
 
-    /// <summary>拉取并执行热更脚本（防止恶性 bug 时远程修复）。</summary>
+    /// <summary>拉取并执行热更脚本（防止恶性 bug 时远程修复）。个人维护版已关闭。</summary>
     public static void RunHotfix()
     {
+        if (!Enabled)
+            return;
+
         Task.Run(() =>
         {
             try

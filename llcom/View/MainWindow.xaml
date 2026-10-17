@@ -1433,8 +1433,5 @@
         <Frame Name="aboutFrame" NavigationUIVisibility="Hidden" />
       </TabItem>
     </TabControl>
-
-    <!--  统计  -->
-    <WebBrowser Name="TongjiWebBrowser" Visibility="Collapsed" />
   </Grid>
 </Window>

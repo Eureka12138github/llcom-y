@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:system="clr-namespace:System;assembly=mscorlib"
     xml:space="preserve">
-    <system:String x:Key="AppTitle">LLCOM - Debug serial port with Lua!</system:String>
+    <system:String x:Key="AppTitle">LLCOM-Y - Debug serial port with Lua!</system:String>
     <system:String x:Key="OpenPort_open">Open</system:String>
     <system:String x:Key="OpenPort_close">Close</system:String>
     <system:String x:Key="OpenPort_port">Port</system:String>
@@ -74,7 +74,7 @@
     <system:String x:Key="DeleteConfirmationMsg">it cannot be restored after being deleted.please type "YES" to confirm.</system:String>
     <system:String x:Key="QuickSendImportSSCOM">Import SSCOM Data</system:String>
     <system:String x:Key="QuickSendSSCOMFile">SSCOM|sscom51.ini;sscom.ini</system:String>
-    <system:String x:Key="QuickSendLLCOMFile">LLCOM Quick Send List|*.lclst</system:String>
+    <system:String x:Key="QuickSendLLCOMFile">LLCOM-Y Quick Send List|*.lclst</system:String>
     <system:String x:Key="QuickSendSaveFileDone">All Data of this page has exported!</system:String>
     <system:String x:Key="QuickSendSetButton">Enter you want to show</system:String>
     <system:String x:Key="QuickSendChangeButton">Change content of send button</system:String>
@@ -102,16 +102,15 @@
     <system:String x:Key="LuaCreateFail">Create file failed, please check.</system:String>
     <system:String x:Key="AboutCard">About</system:String>
     <system:String x:Key="AboutSubTitle">Debug with your own script!</system:String>
-    <system:String x:Key="AboutDiscriptionMain">LLCOM是一款串口调试工具，工具连接可靠，断线后可自动重连，同时右侧具有快捷发送区的功能。</system:String>
-    <system:String x:Key="AboutDiscriptionMore">本工具除了具有与其他同类工具，所包含的数据收发功能外，还添加了Lua运行环境。用户可自行使用Lua，完成几乎所有可以想象到的自动化操作，大大提高了串口工具的可用性。</system:String>
-    <system:String x:Key="AboutAutoUpdate">Auto update</system:String>
-    <system:String x:Key="AboutLoadingUpdate">Checking update</system:String>
-    <system:String x:Key="AboutDevelopers">developers: chenxuuu、whc2001、7158</system:String>
+    <system:String x:Key="AboutDiscriptionMain">LLCOM-Y is a serial port debugging tool. It reconnects automatically after the port is lost and includes a quick-send panel.</system:String>
+    <system:String x:Key="AboutDiscriptionMore">Besides basic send/receive, it embeds a Lua runtime, so you can automate almost anything you can imagine.</system:String>
+    <system:String x:Key="AboutNotice">Unofficial personal build · based on LLCOM by chenxuuu (Apache-2.0)&#x0a;For personal learning and use only; not affiliated with the original author.</system:String>
+    <system:String x:Key="AboutDevelopers">maintainer: Eureka12138github&#x0a;original authors: chenxuuu, whc2001, 7158 (upstream contributors)</system:String>
     <system:String x:Key="AboutTranslator">translators: chenxuuu</system:String>
-    <system:String x:Key="AboutQQGroup">QQ group: 931546484</system:String>
-    <system:String x:Key="AboutGitHubText">Github project page</system:String>
-    <system:String x:Key="AboutGitHubButton">Open Github</system:String>
-    <system:String x:Key="AboutFeedBack">Have problem?</system:String>
+    <system:String x:Key="AboutGitHubText">This project on GitHub (stars welcome)</system:String>
+    <system:String x:Key="AboutGitHubButton">Open project GitHub</system:String>
+    <system:String x:Key="AboutOriginalRepoButton">Open original repo (LLCOM)</system:String>
+    <system:String x:Key="AboutFeedBack">Found a problem or have a suggestion? Open an issue in this repo.</system:String>
     <system:String x:Key="AboutFeedBackButton">Create issue</system:String>
     <system:String x:Key="AboutThanksProjects">Thanks these projects:</system:String>
     <system:String x:Key="AboutVersion">Software version</system:String>

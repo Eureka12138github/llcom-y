@@ -1,4 +1,13 @@
-# LLCOM
+# LLCOM-Y
+
+> ⚠️ **非官方个人维护版**
+>
+> 本项目基于 [**chenxuuu/LLCOM**](https://github.com/chenxuuu/llcom)（Apache-2.0）修改而来。
+> 原作者：chenxuuu 及[上游贡献者](https://github.com/chenxuuu/llcom/graphs/contributors)。
+> 由 [Eureka12138github](https://github.com/Eureka12138github/llcom-y) 个人学习与自用维护，**不是官方版本**，
+> 与原作者无隶属关系，也不代表原作者背书。
+> 相对上游的改动见 [CHANGES.md](CHANGES.md)。
+
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-6-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
@@ -12,25 +21,26 @@
 </p>
 
 <p align="center">
-    <img alt="GitHub" src="https://img.shields.io/github/license/chenxuuu/llcom">
-    <img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/chenxuuu/llcom">
-    <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/chenxuuu/llcom">
-    <img alt="code-size" src="https://img.shields.io/github/languages/code-size/chenxuuu/llcom.svg">
+    <img alt="GitHub" src="https://img.shields.io/github/license/Eureka12138github/llcom-y">
+    <img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/Eureka12138github/llcom-y">
+    <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/Eureka12138github/llcom-y">
+    <img alt="code-size" src="https://img.shields.io/github/languages/code-size/Eureka12138github/llcom-y.svg">
 </p>
 
-可运行lua脚本的高自由度串口调试工具。使用交流群：`931546484`
+可运行 lua 脚本的高自由度串口调试工具（个人维护版）。
 
 ## 下载
 
-从微软商店安装：
+- **exe 便携版**：从 [GitHub Releases](https://github.com/Eureka12138github/llcom-y/releases) 下载（首次发布后可用）
+- **CI 快照**：[GitHub Actions](https://github.com/Eureka12138github/llcom-y/actions)
+- **上游官方版本（原作者）**：[chenxuuu/llcom](https://github.com/chenxuuu/llcom)
 
-<a href='//www.microsoft.com/store/apps/9PMPB0233S0S?cid=storebadge&ocid=badge'><img src='https://developer.microsoft.com/store/badges/images/Chinese_Simplified_get-it-from-MS.png' alt='Chinese badge' width='160'/></a>
+> 本仓库不发布到微软商店；商店里的 LLCOM 是原作者版本，与本项目无关。
 
-exe便携版：[国内用户点我下载](https://llcom.papapoi.com/llcom.zip)
+## 相对上游的改动
 
-CI快照版：[Github Action](https://nightly.link/chenxuuu/llcom/workflows/build/master/llcom_x64)
+见 [CHANGES.md](CHANGES.md)。主要方向：界面与交互打磨、日志性能与内存上限、发送记录、串口设置整合、串口监听的错误诊断等。
 
-所有正式版本：[GitHub Releases](https://github.com/chenxuuu/llcom/releases/latest)
 
 ## 功能列表
 
@@ -50,6 +60,10 @@ CI快照版：[Github Action](https://nightly.link/chenxuuu/llcom/workflows/buil
 - 集成乱码恢复功能
 - 集成mqtt测试功能
 - 集成串口监听功能，可监听其他软件的串口通信数据
+- （本版本）日志列表虚拟化 + 缓冲上限，长时间挂机不卡顿、不涨内存
+- （本版本）发送记录可设置上限、支持键盘输入与一键清空
+- （本版本）快捷发送支持每行独立定时发送；发送区可直接开关串口
+- （本版本）串口参数整合到右侧「串口设置」标签页，减少来回切换
 
 ![screen](/image/screen.png)
 ![screen3](/image/screen3.png)
@@ -144,7 +158,7 @@ response:Close()
 
 ## 接口文档
 
-接口文档可以在[这个页面](https://github.com/chenxuuu/llcom/blob/master/LuaApi.md)查看
+接口文档可以在[这个页面](https://github.com/Eureka12138github/llcom-y/blob/master/LuaApi.md)查看（内容继承自上游 LLCOM）。
 
 ## 已知问题与待添加的功能（请大家反馈，谢谢！）
 
@@ -156,9 +170,12 @@ response:Close()
 
 项目已完成一轮分层重构：从早期的"上帝类 + 巨型 code-behind"整理为清晰的 MVVM 分层结构——`ViewModels/`（界面逻辑）、`Services/`（可复用服务）、`Model/`（数据模型）、`Pages/`（工具页）、`LuaEnv/`（Lua 引擎），并配套完整文档与单元测试，**整体结构清晰、分层明确，适合作为阅读与学习的范例**。架构说明与关键设计决策见 [docs/02-architecture.md](docs/02-architecture.md)，文档索引见 [docs/README.md](docs/README.md)。
 
-本项目采用Apache 2.0协议，如有借用，请保留指向该项目的链接。
+本项目沿用上游 LLCOM 的 **Apache-2.0** 协议（见 [LICENSE](LICENSE)）。
+上游项目：[chenxuuu/llcom](https://github.com/chenxuuu/llcom)。如有借用，请保留指向本项目与上游项目的链接。
 
 ## Contributors ✨
+
+> 以下为**上游项目 LLCOM** 的贡献者（本项目继承了全部历史提交）。
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
@@ -187,3 +204,5 @@ This project follows the [all-contributors](htts://github.com/all-contributors/a
 ## 特别感谢
 
 [![icon-resharper](/image/icon-resharper.svg)](https://www.jetbrains.com/?from=LLCOM)
+
+本项目基于 [chenxuuu/LLCOM](https://github.com/chenxuuu/llcom)，在此感谢原作者与所有上游贡献者。

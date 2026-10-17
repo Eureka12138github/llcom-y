@@ -7,13 +7,13 @@ using System.Windows;
 // 有关程序集的一般信息由以下
 // 控制。更改这些特性值可修改
 // 与程序集关联的信息。
-[assembly: AssemblyTitle("能跑lua脚本的开源串口调试工具！")]
-[assembly: AssemblyDescription("https://github.com/chenxuuu/llcom")]
+[assembly: AssemblyTitle("LLCOM-Y")]
+[assembly: AssemblyDescription("https://github.com/Eureka12138github/llcom-y")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("晨旭")]
-[assembly: AssemblyProduct("LLCOM")]
-[assembly: AssemblyCopyright("Apache 2 license")]
-[assembly: AssemblyTrademark("chenxublog.com")]
+[assembly: AssemblyCompany("Eureka12138github")]
+[assembly: AssemblyProduct("LLCOM-Y")]
+[assembly: AssemblyCopyright("Apache-2.0; based on LLCOM by chenxuuu")]
+[assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 // 将 ComVisible 设置为 false 会使此程序集中的类型
