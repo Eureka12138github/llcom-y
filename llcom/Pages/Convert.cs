@@ -157,4 +157,28 @@ public class boolNot : IValueConverter
     ) => throw new NotImplementedException();
 }
 
+/// <summary>
+/// 发送记录单行预览：把换行压成空格，过长截断（完整内容由 ToolTip 显示）。
+/// </summary>
+[ValueConversion(typeof(string), typeof(string))]
+public class sendHistoryPreview : IValueConverter
+{
+    private const int MaxLength = 60;
+
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is not string text || string.IsNullOrEmpty(text))
+            return "";
+        var oneLine = text.Replace("\r", " ").Replace("\n", " ");
+        return oneLine.Length > MaxLength ? oneLine.Substring(0, MaxLength) + "…" : oneLine;
+    }
+
+    public object ConvertBack(
+        object value,
+        Type targetType,
+        object parameter,
+        CultureInfo culture
+    ) => throw new NotImplementedException();
+}
+
 

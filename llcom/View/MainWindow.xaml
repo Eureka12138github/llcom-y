@@ -212,9 +212,6 @@
           Foreground="{DynamicResource Brush.Foreground}"
           Icon="History"
         />
-        <Button.ContextMenu>
-          <ContextMenu Name="sendHistoryContextMenu" Opened="SendHistoryContextMenu_Opened" />
-        </Button.ContextMenu>
       </Button>
       <!--  追加换行  -->
       <ComboBox
@@ -392,6 +389,133 @@
         </Button>
       </StackPanel>
     </Grid>
+
+    <!--  发送记录弹层：固定宽度；列表最多 240px 内滚动，底栏（记录上限/清空）始终可见  -->
+    <Popup
+      Name="sendHistoryPopup"
+      AllowsTransparency="True"
+      Opened="SendHistoryPopup_Opened"
+      Placement="Top"
+      PlacementTarget="{Binding ElementName=sendHistoryButton}"
+      PopupAnimation="Fade"
+      StaysOpen="False"
+      VerticalOffset="-4"
+    >
+      <Border
+        Width="340"
+        Background="{DynamicResource Brush.Surface}"
+        BorderBrush="{DynamicResource Brush.Border}"
+        BorderThickness="1"
+        SnapsToDevicePixels="True"
+      >
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+          </Grid.RowDefinitions>
+          <TextBlock
+            Grid.Row="0"
+            Margin="10,8,10,4"
+            FontWeight="Bold"
+            Text="{DynamicResource SendHistory}"
+          />
+          <Grid Grid.Row="1" Margin="6,0,6,0">
+            <ListBox
+              Name="sendHistoryList"
+              MinHeight="36"
+              MaxHeight="240"
+              Background="Transparent"
+              BorderThickness="0"
+              ItemsSource="{Binding SendHistory}"
+              PreviewMouseLeftButtonUp="SendHistoryList_PreviewMouseLeftButtonUp"
+              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+              ScrollViewer.VerticalScrollBarVisibility="Auto"
+              VirtualizingPanel.IsVirtualizing="True"
+              VirtualizingPanel.ScrollUnit="Pixel"
+              VirtualizingPanel.VirtualizationMode="Recycling"
+            >
+              <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                  <Setter Property="Padding" Value="4,3" />
+                  <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                  <Setter Property="Focusable" Value="False" />
+                </Style>
+              </ListBox.ItemContainerStyle>
+              <ListBox.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock
+                    Text="{Binding Converter={StaticResource SendHistoryPreview}}"
+                    TextTrimming="CharacterEllipsis"
+                    TextWrapping="NoWrap"
+                    ToolTip="{Binding}"
+                  />
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+            <TextBlock
+              Margin="6"
+              Foreground="{DynamicResource Brush.Foreground.Muted}"
+              IsHitTestVisible="False"
+              Text="{DynamicResource SendHistoryEmpty}">
+              <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                  <Setter Property="Visibility" Value="Collapsed" />
+                  <Style.Triggers>
+                    <DataTrigger Binding="{Binding Items.Count, ElementName=sendHistoryList}" Value="0">
+                      <Setter Property="Visibility" Value="Visible" />
+                    </DataTrigger>
+                  </Style.Triggers>
+                </Style>
+              </TextBlock.Style>
+            </TextBlock>
+          </Grid>
+          <Border
+            Grid.Row="2"
+            Padding="10,6"
+            BorderBrush="{DynamicResource Brush.Border.Subtle}"
+            BorderThickness="0,1,0,0"
+          >
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                <TextBlock VerticalAlignment="Center" Text="{DynamicResource SendHistoryLimit}" />
+                <TextBox
+                  Name="historyLimitBox"
+                  Width="52"
+                  Height="26"
+                  Margin="6,0,4,0"
+                  VerticalContentAlignment="Center"
+                  DataObject.Pasting="HistoryLimitBox_Pasting"
+                  LostFocus="HistoryLimitBox_LostFocus"
+                  PreviewKeyDown="HistoryLimitBox_PreviewKeyDown"
+                  PreviewTextInput="HistoryLimitBox_PreviewTextInput"
+                  TextAlignment="Center"
+                  ToolTip="{DynamicResource SendHistoryLimitTip}"
+                />
+                <TextBlock
+                  VerticalAlignment="Center"
+                  Foreground="{DynamicResource Brush.Foreground.Muted}"
+                  Text="5~200"
+                />
+              </StackPanel>
+              <Button
+                Name="clearSendHistoryButton"
+                Grid.Column="1"
+                Height="26"
+                Padding="8,0"
+                Click="ClearSendHistoryButton_Click"
+                Content="{DynamicResource ClearSendHistory}"
+                ToolTip="{DynamicResource ClearSendHistoryTip}"
+              />
+            </Grid>
+          </Border>
+        </Grid>
+      </Border>
+    </Popup>
 
     <!--  底部状态栏：连接状态 · 端口 · 波特率  |  收发计数  -->
     <DockPanel Grid.Row="3" Grid.ColumnSpan="3">

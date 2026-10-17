@@ -188,6 +188,9 @@
     <system:String x:Key="SendHistory">Send history</system:String>
     <system:String x:Key="SendHistoryEmpty">(no history)</system:String>
     <system:String x:Key="SendHistoryLimit">History limit: </system:String>
+    <system:String x:Key="SendHistoryLimitTip">5~200 entries: type a number, press Enter or leave the box</system:String>
+    <system:String x:Key="ClearSendHistory">Clear history</system:String>
+    <system:String x:Key="ClearSendHistoryTip">Clear all send history (cannot be undone)</system:String>
     <system:String x:Key="AppendNone">None</system:String>
     <system:String x:Key="AppendNewlineTip">Append the selected newline to sent data (send script still runs first)</system:String>
     <system:String x:Key="LockLogButton">Lock logs and disable auto scroll</system:String>

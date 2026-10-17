@@ -18,6 +18,7 @@
       <pages:boolVisibe x:Key="boolVisibeConverter" />
       <pages:boolNotVisibe x:Key="boolNotVisibeConverter" />
       <pages:boolNot x:Key="boolNotConverter" />
+      <pages:sendHistoryPreview x:Key="SendHistoryPreview" />
       <pages:boolConnected x:Key="boolConnectedConverter" />
       <pages:rsTooltip x:Key="rsToolTipConverter" />
       <pages:rsOpacity x:Key="rsOpacityConverter" />

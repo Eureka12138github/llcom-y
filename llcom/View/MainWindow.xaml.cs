@@ -448,105 +448,100 @@ public partial class MainWindow : Window
         _vm.SendText = "";
     }
 
-    /// <summary>打开“发送记录”下拉（ContextMenu）。</summary>
+    /// <summary>打开“发送记录”弹层（列表固定高度可滚动）。</summary>
     private void SendHistoryButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is not Button button || button.ContextMenu == null)
-            return;
-        var menu = button.ContextMenu;
-        menu.PlacementTarget = button;
-        menu.Placement = PlacementMode.Bottom;
-        //延迟到本次点击事件处理完之后再打开，避免刚弹出就被这次点击关掉
-        Dispatcher.BeginInvoke(
-            new Action(() => menu.IsOpen = true),
-            System.Windows.Threading.DispatcherPriority.Background
-        );
+        sendHistoryPopup.IsOpen = true;
     }
 
-    /// <summary>构建“发送记录”下拉内容：历史项 + 记录上限调节行。</summary>
-    private void SendHistoryContextMenu_Opened(object sender, RoutedEventArgs e)
+    /// <summary>弹层打开时同步上限输入框内容。</summary>
+    private void SendHistoryPopup_Opened(object sender, EventArgs e)
     {
-        if (sender is not ContextMenu menu)
-            return;
-        menu.Items.Clear();
+        historyLimitBox.Text = _vm.SendHistoryLimit.ToString();
+        sendHistoryList.SelectedIndex = -1;
+    }
 
-        if (_vm.SendHistory.Count == 0)
+    /// <summary>点击历史项：填回发送框并关闭弹层。</summary>
+    private void SendHistoryList_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+    {
+        if (e.OriginalSource is not DependencyObject source)
+            return;
+        if (ItemsControl.ContainerFromElement(sendHistoryList, source) is not ListBoxItem item)
+            return;
+        if (item.DataContext is not string text || string.IsNullOrEmpty(text))
+            return;
+        _vm.SendText = text;
+        sendHistoryPopup.IsOpen = false;
+    }
+
+    /// <summary>发送记录上限的合法范围（与 Settings / 帮助文档保持一致）</summary>
+    private const int SendHistoryLimitMin = 5;
+    private const int SendHistoryLimitMax = 200;
+
+    /// <summary>上限输入框：只允许数字</summary>
+    private void HistoryLimitBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+    {
+        foreach (var c in e.Text)
         {
-            menu.Items.Add(
-                new MenuItem
-                {
-                    Header = TryFindResource("SendHistoryEmpty") as string ?? "(no history)",
-                    IsEnabled = false,
-                }
-            );
-        }
-        else
-        {
-            foreach (var history in _vm.SendHistory)
+            if (!char.IsDigit(c))
             {
-                var text = history;
-                var item = new MenuItem { Header = SummarizeHistory(text), ToolTip = text };
-                item.Click += (_, _) => _vm.SendText = text;
-                menu.Items.Add(item);
+                e.Handled = true;
+                return;
             }
         }
-
-        menu.Items.Add(new Separator());
-
-        //记录上限（条）：－ N ＋
-        var label = new TextBlock
-        {
-            VerticalAlignment = VerticalAlignment.Center,
-            Margin = new Thickness(8, 0, 8, 0),
-        };
-        void UpdateLimitLabel() =>
-            label.Text =
-                (TryFindResource("SendHistoryLimit") as string ?? "History limit: ")
-                + _vm.SendHistoryLimit;
-
-        UpdateLimitLabel();
-
-        var minus = new Button
-        {
-            Content = "－",
-            Width = 24,
-            Padding = new Thickness(0),
-            Background = System.Windows.Media.Brushes.Transparent,
-            BorderThickness = new Thickness(0),
-            Cursor = Cursors.Hand,
-        };
-        var plus = new Button
-        {
-            Content = "＋",
-            Width = 24,
-            Padding = new Thickness(0),
-            Background = System.Windows.Media.Brushes.Transparent,
-            BorderThickness = new Thickness(0),
-            Cursor = Cursors.Hand,
-        };
-        minus.Click += (_, _) =>
-        {
-            _vm.SendHistoryLimit--;
-            UpdateLimitLabel();
-        };
-        plus.Click += (_, _) =>
-        {
-            _vm.SendHistoryLimit++;
-            UpdateLimitLabel();
-        };
-
-        var limitPanel = new StackPanel { Orientation = Orientation.Horizontal };
-        limitPanel.Children.Add(minus);
-        limitPanel.Children.Add(label);
-        limitPanel.Children.Add(plus);
-        menu.Items.Add(new MenuItem { Header = limitPanel, StaysOpenOnClick = true });
     }
 
-    /// <summary>发送记录下拉里的一行显示（单行、过长截断）。</summary>
-    private static string SummarizeHistory(string text)
+    /// <summary>上限输入框：粘贴内容也必须是纯数字</summary>
+    private void HistoryLimitBox_Pasting(object sender, DataObjectPastingEventArgs e)
     {
-        var oneLine = text.Replace("\r", " ").Replace("\n", " ");
-        return oneLine.Length > 40 ? oneLine.Substring(0, 40) + "…" : oneLine;
+        if (e.DataObject.GetData(typeof(string)) is not string text)
+        {
+            e.CancelCommand();
+            return;
+        }
+        foreach (var c in text)
+        {
+            if (!char.IsDigit(c))
+            {
+                e.CancelCommand();
+                return;
+            }
+        }
+    }
+
+    /// <summary>Enter 应用上限，Esc 关闭弹层</summary>
+    private void HistoryLimitBox_PreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter)
+        {
+            ApplySendHistoryLimit();
+            e.Handled = true;
+        }
+        else if (e.Key == Key.Escape)
+        {
+            sendHistoryPopup.IsOpen = false;
+            e.Handled = true;
+        }
+    }
+
+    private void HistoryLimitBox_LostFocus(object sender, RoutedEventArgs e) =>
+        ApplySendHistoryLimit();
+
+    /// <summary>应用上限：非法输入回退到当前值，越界夹到 5~200</summary>
+    private void ApplySendHistoryLimit()
+    {
+        var value = int.TryParse(historyLimitBox.Text, out var parsed)
+            ? parsed
+            : _vm.SendHistoryLimit;
+        value = Math.Max(SendHistoryLimitMin, Math.Min(SendHistoryLimitMax, value));
+        _vm.SendHistoryLimit = value;
+        historyLimitBox.Text = value.ToString();
+    }
+
+    /// <summary>清空发送记录（列表 + 持久化）</summary>
+    private void ClearSendHistoryButton_Click(object sender, RoutedEventArgs e)
+    {
+        _vm.ClearSendHistory();
     }
 
     // ===== 发送选项（连续发送 / 发送后延时 / 重复次数 / Enter 行为） =====

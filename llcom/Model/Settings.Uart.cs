@@ -323,13 +323,13 @@ private int _parity = 0;
 
     private int _sendHistoryLimit = 30;
 
-    /// <summary>发送记录条数上限（1~200）</summary>
+    /// <summary>发送记录条数上限（5~200）</summary>
     public int sendHistoryLimit
     {
         get => _sendHistoryLimit;
         set
         {
-            var v = value < 1 ? 1 : (value > 200 ? 200 : value);
+            var v = value < 5 ? 5 : (value > 200 ? 200 : value);
             if (SetProperty(ref _sendHistoryLimit, v))
                 Save();
         }

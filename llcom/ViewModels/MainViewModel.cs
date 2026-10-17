@@ -191,6 +191,13 @@ public partial class MainViewModel : ObservableObject
             SendHistory.RemoveAt(SendHistory.Count - 1);
     }
 
+    /// <summary>清空发送记录（列表 + 持久化设置）</summary>
+    public void ClearSendHistory()
+    {
+        SendHistory.Clear();
+        Tools.Global.setting.sendHistory = new List<string>();
+    }
+
     /// <summary>按设置生成末尾追加的换行字节：0=无，1=\n，2=\r，3=\n\r，4=\r\n</summary>
     internal static byte[] AppendNewlineBytes(int mode) =>
         mode switch

@@ -39,7 +39,7 @@ namespace llcom.Tests
             Assert.Equal(0, s.appendNewline);
 
             s.sendHistoryLimit = 0;
-            Assert.Equal(1, s.sendHistoryLimit);
+            Assert.Equal(5, s.sendHistoryLimit);
             s.sendHistoryLimit = 9999;
             Assert.Equal(200, s.sendHistoryLimit);
         }

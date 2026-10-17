@@ -188,6 +188,9 @@
     <system:String x:Key="SendHistory">发送记录</system:String>
     <system:String x:Key="SendHistoryEmpty">（暂无发送记录）</system:String>
     <system:String x:Key="SendHistoryLimit">记录上限（条）：</system:String>
+    <system:String x:Key="SendHistoryLimitTip">5~200 条：可直接键盘输入，回车或失焦生效</system:String>
+    <system:String x:Key="ClearSendHistory">清空记录</system:String>
+    <system:String x:Key="ClearSendHistoryTip">清空全部发送记录（不可恢复）</system:String>
     <system:String x:Key="AppendNone">无追加</system:String>
     <system:String x:Key="AppendNewlineTip">发送时在末尾追加所选换行（追加前同样会经过发送脚本）</system:String>
     <system:String x:Key="LockLogButton">锁定视图禁止滚动</system:String>
