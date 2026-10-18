@@ -339,3 +339,7 @@ serial_monitor_rs/Cargo.lock
 
 # 本地测试快捷方式
 *.lnk
+
+# MSIX 自签名证书（私钥/密码不提交；公钥 .cer 可提交）
+WapProj/LLCOM-Y.pfx
+WapProj/LLCOM-Y.pfx.password.txt

@@ -61,5 +61,6 @@
 > 配套：[09-github-publish-plan.md](09-github-publish-plan.md)、[12-serial-monitor-plan.md](12-serial-monitor-plan.md)。
 
 - [ ] **在线脚本列表的数据源**：`Services/OnlineScriptService` 目前从 `https://llcom.papapoi.com/token.txt` 拉取（仅打开「在线脚本」页时才请求）。发布前决定：改为自己的静态文件/仓库，或保留并在页面/README 注明「数据来自上游 LLCOM」。
-- [ ] **MSIX 身份重新关联**：`WapProj/Package.appxmanifest` 的 `Identity Name/Publisher` 仍是原作者信息。自行打包（Desktop Bridge / MSIX）前需在 Visual Studio 里重新关联到自己的开发者账号；仅发布 exe 不受影响。
+- [x] **MSIX 身份**：已改为 `Eureka12138github.LLCOM-Y` / `Publisher=CN=Eureka12138github`，并生成自签名证书与脚本（见 [13-msix-packaging.md](13-msix-packaging.md)）。
+- [ ] **MSIX 打包组件**：本机未安装 VS 的「Windows 应用打包项目」组件；需要打 MSIX 时补装，再按 13 号文档生成安装包。
 - [ ] （建议）发布 zip 内一并附带 `LICENSE` 与 `CHANGES.md`：Apache-2.0 要求随分发提供许可证副本，并保留版权/归属声明。
