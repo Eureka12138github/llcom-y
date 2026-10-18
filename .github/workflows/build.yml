@@ -11,6 +11,10 @@ on:
       - next
   workflow_dispatch:
 
+# 创建 Release 需要写权限（否则 GITHUB_TOKEN 只能读）
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: windows-latest
@@ -63,6 +67,8 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
+          name: LLCOM-Y ${{ github.ref_name }}
+          body_path: CHANGES.md
           draft: false
           files: temp/llcom-y.zip
         env:
