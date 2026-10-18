@@ -210,6 +210,7 @@ internal static class ProfileInitializer
                 "GPS NMEA.lua",
                 "加上换行回车.lua",
                 "解析换行回车的转义字符.lua",
+                "crc16.lua",
                 "default.lua"
             );
 

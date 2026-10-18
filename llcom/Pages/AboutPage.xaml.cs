@@ -51,7 +51,7 @@ namespace llcom.Pages
         /// <summary>本项目反馈：GitHub Issues</summary>
         private void NewissueButton_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start(ProjectRepo + "/issues/new/choose");
+            System.Diagnostics.Process.Start(ProjectRepo + "/issues/");
         }
 
         /// <summary>本项目仓库</summary>
