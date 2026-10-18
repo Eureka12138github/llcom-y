@@ -4,6 +4,13 @@
 > 规模：约 96 个提交（含 1 个合并），改动集中在 `llcom/`、`tests/`、`docs/`、`WapProj/` 与构建配置。
 > 许可证沿用 **Apache-2.0**；原始版权归 chenxuuu 及贡献者，修改部分归 Eureka12138github。
 
+## 2.0.0.1
+
+- **自动更新**接入本项目 GitHub Releases：启动时可开关；CI 在每次 Release 自动生成 `autoUpdate.xml`，并上传 `llcom-y.zip`。
+- **默认脚本**改为「缺失即补齐」：新增默认发送脚本 `crc16.lua`；以后加脚本只需放进 `DefaultFiles/user_script_*` 并在 `ProfileInitializer` 的列表登记。
+- 「关于」页反馈链接统一为 `https://github.com/Eureka12138github/llcom-y/issues/`；`反馈网址.txt` 同步，并在启动时刷新。
+- 构建产物与版本号同步更新为 `2.0.0.1`。
+
 ## 2.0.0.0（个人维护版）
 
 ### 一、定位与品牌
