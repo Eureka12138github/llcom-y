@@ -5,149 +5,78 @@
 > Based on [**chenxuuu/LLCOM**](https://github.com/chenxuuu/llcom) (Apache-2.0).
 > Original author: chenxuuu and upstream contributors.
 > Maintained by [Eureka12138github](https://github.com/Eureka12138github/llcom-y) for personal learning and use.
-> **Not the official version**, and not affiliated with or endorsed by the original author.
+> **Not the official version**; not affiliated with or endorsed by the original author.
 > See [CHANGES.md](CHANGES.md) for changes relative to upstream.
 
 [中文说明](/README.md)
 
-![icon](/llcom/llcom.ico)
+![LLCOM-Y main window](image/shot-main.png)
 
-[![license](https://img.shields.io/static/v1.svg?label=license&message=Apache+2&color=blue)](https://github.com/Eureka12138github/llcom-y/blob/master/LICENSE)
-[![code-size](https://img.shields.io/github/languages/code-size/Eureka12138github/llcom-y.svg)](https://github.com/Eureka12138github/llcom-y)
-[![release](https://img.shields.io/github/v/release/Eureka12138github/llcom-y)](https://github.com/Eureka12138github/llcom-y/releases)
+A serial port debugger with Lua scripting (personal refactor).
 
-A serial port debugger tool with Lua scripting (personal fork).
+## Scope & risks (read first)
 
-> this tool is only Chinese and English now, you can help me to translate, thanks!
+- Personal learning / personal-use project: the main goal was refactoring and everyday usability.
+- **Not** an official upstream branch, and behavior may differ from the original.
+- **Verified**: x64/x86 builds, 44 unit tests, serial send/receive and log display, send history, quick-send/timers, serial settings.
+- **Not fully regression-tested**: TCP/UDP/MQTT, WinUSB, serial monitor, plot, online scripts, terminal mode. Most of these are inherited from upstream and were only refactored/deduplicated here, so regressions are possible.
+- **Not recommended for production or critical work.** Back up your settings; verify important operations against the original version.
+- Maintenance is best-effort; issues are welcome but response time is not guaranteed.
+
+## Features
+
+- Serial send/receive with a configurable log (Abc/Hex per direction, font size, pause / lock / clear / save)
+- Virtualized log list; log retention limit (50k entries / 32 MB payload by default; 2M chars in stream mode)
+- Send history (limit 5~200, keyboard input, one-click clear)
+- Quick-send panel (10 pages, per-item timer)
+- Dedicated serial-settings tab (port / baud / data bits / parity / stop bits / encoding / auto-reconnect / RTS / DTR / open-close)
+- Lua scripting via XLua (send/receive processing and standalone scripts; see [LuaApi.md](LuaApi.md))
+- Inherited tools: TCP/UDP/MQTT, WinUSB, serial monitor, plot, encoding converter (see the risk note above)
+
+## Screenshots
+
+| Main window | Quick send |
+|---|---|
+| ![Main window](image/shot-main.png) | ![Quick send](image/shot-quick.png) |
+
+![About](image/shot-about.png)
 
 ## Download
 
-- Portable exe: [GitHub Releases](https://github.com/Eureka12138github/llcom-y/releases) (available after the first release)
-- CI snapshot: [GitHub Actions](https://github.com/Eureka12138github/llcom-y/actions)
-- Upstream official version: [chenxuuu/llcom](https://github.com/chenxuuu/llcom)
+- **Portable exe**: [GitHub Releases](https://github.com/Eureka12138github/llcom-y/releases) (available after the first release)
+- **CI snapshot**: [GitHub Actions](https://github.com/Eureka12138github/llcom-y/actions)
+- **Upstream official version**: [chenxuuu/llcom](https://github.com/chenxuuu/llcom)
 
 > This fork is not published on the Microsoft Store; the store app is the original author's build.
 
-## Functions
+## Build
 
-- Basic functions of serial port debugger tools.
-- The log is clear with two colors, display both HEX values and strings at same time.
-- Auto save serial and lua script logs, with time stamp.
-- Auto reconnect serial port after disconnected.
-- Data you want to send can be processed with your own Lua scripts.
-- Quick send bar on the right.
-- Lua scripts can be run independently with timer and co-process task features.([Based on LUAT TASK](http://wiki.openluat.com/doc/luatFramework/))
-- TCP, UDP, SSL test server and client. Also support IPV6.
-- mqtt client test
-- Encoding converter
-- Garbled code fix
-- monitor serial data which send or received by other software
+Requires .NET Framework 4.6.2 (reference assemblies come from NuGet) and the .NET SDK:
 
-![screenEN](/image/screenEN.png)
-![screen3](/image/screen3EN.png)
-![screen2](/image/screen2.jpg)
-
-## features' exemples
-
-### Use Lua script process data you want to send
-
-1. end with "\r\n"
-
-```lua
-return uartData.."\r\n"
+```powershell
+dotnet build llcom\llcom.csproj -c Release -p:Platform=x64
+dotnet build llcom\llcom.csproj -c Release -p:Platform=x86
+dotnet test tests\llcom.Tests\llcom.Tests.csproj -p:Platform=x64
 ```
 
-2. send HEX values
+Output: `artifacts\Release\{x64|x86}\llcom.exe` (single file; managed dependencies are embedded by Costura).
+The exe must be named `llcom.exe`; settings/scripts/logs live next to it (or in `%LOCALAPPDATA%\llcom\` for MSIX installs).
 
-```lua
-return uartData:fromHex()
-```
+## Relationship to upstream
 
-this script can change `30313233` to `0123`.
+- Full upstream git history is preserved; licensed under **Apache-2.0** (see [LICENSE](LICENSE)).
+- Original code copyright chenxuuu and contributors; modifications copyright Eureka12138github.
+- Detailed changes: [CHANGES.md](CHANGES.md). Upstream release notes: the original project's Releases.
+- Auto-update, hot-fix (`hotfix.lua`) and crash reports have been **disabled** — this build sends nothing to the original author's servers.
 
-3. another script example
+## Development & docs
 
-```lua
-json = require("JSON")
-t = uartData:split(",")
-return json:encode({
-    key1 = t[1],
-    key2 = t[2],
-    key3 = t[3],
-})
-```
+- `docs/`: architecture, maintenance, test checklist and plans; start at [docs/README.md](docs/README.md).
+- `tests/llcom.Tests`: xUnit tests.
+- Layout: `ViewModels/`, `Services/`, `Model/`, `Pages/`, `LuaEnv/`.
 
-this script can change `a,b,c` to `{"key1":"a","key2":"b","key3":"c"}`.
+## License & credits
 
-**these scripts also work with Quick send bar**
-
-### independent script auto process uart sand and receive
-
-you can run your own Lua script on the right, such as llcom's example:
-
-```lua
---register serial port receiver function
-uartReceive = function (data)
-    log.info("uartReceive",data)
-    sys.publish("UART",data)--publish message
-end
-
---create a task, wait for message
-sys.taskInit(function()
-    while true do
-        local _,udata = sys.waitUntil("UART")--wait for message
-        log.info("task waitUntil",udata)
-        local sendResult = apiSendUartData("ok!")--send uart data
-        log.info("uart send",sendResult)
-    end
-end)
-
---reate a task, sleep 1000ms and loop
-sys.taskInit(function()
-    while true do
-        sys.wait(1000)--wait 1000ms
-        log.info("task wait",os.time())
-    end
-end)
-
---1000ms loop timer
-sys.timerLoopStart(log.info,1000,"timer test")
-```
-
-you alse can use `xlua` to use C# codes
-
-```lua
-request = CS.System.Net.WebRequest.Create("http://example.com")
-request.ContentType = "text/html;charset=UTF-8";
-request.Timeout = 5000;
-request.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36 Vivaldi/2.2.1388.37";
-
-response = request:GetResponse():GetResponseStream()
-
-myStreamReader = CS.System.IO.StreamReader(response, CS.System.Text.Encoding.UTF8);
-
-print(myStreamReader:ReadToEnd())--get body
-
-myStreamReader:Close()
-response:Close()
-```
-
-you can make your debug automatic
-
-## api document (in Chinese)
-
-you can [click here](https://github.com/Eureka12138github/llcom-y/blob/master/LuaApi.md) (inherited from upstream LLCOM)
-
-## Known bugs and functions to be added
-
-- [x] ~~bug: SerialPort The Requested Resource is in Use([.net's bug](https://github.com/dotnet/corefx/issues/39464))~~(fixed #2f26e68)
-
-## License
-
-Apache-2.0, inherited from upstream [LLCOM](https://github.com/chenxuuu/llcom). Keep the links to this project and the upstream project when reusing.
-
-## Special Thanks
-
-[![icon-resharper](/image/icon-resharper.svg)](https://www.jetbrains.com/?from=LLCOM)
-
-This project is based on [chenxuuu/LLCOM](https://github.com/chenxuuu/llcom). Thanks to the original author and all upstream contributors.
+- **Apache-2.0**; original copyright `Copyright 2021 chenxuuu`, modifications `Copyright 2026 Eureka12138github`.
+- Thanks to [chenxuuu](https://github.com/chenxuuu) and all [upstream contributors](https://github.com/chenxuuu/llcom/graphs/contributors).
+- Third-party: xLua, AdonisUI, AvalonEdit, LibUsbDotNet, Costura.Fody.
