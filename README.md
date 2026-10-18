@@ -67,7 +67,7 @@ dotnet test tests\llcom.Tests\llcom.Tests.csproj -p:Platform=x64
 - 本项目继承上游完整 git 历史，许可证为 **Apache-2.0**（见 [LICENSE](LICENSE)）。
 - 原始代码版权归 chenxuuu 及贡献者；本版本的修改部分版权归 Eureka12138github。
 - 相对上游的详细改动见 [CHANGES.md](CHANGES.md)；上游更新记录见原项目 Releases。
-- 本项目**关闭**了向上游服务器拉取的自动更新、热更新与崩溃上报（不会向原作者发送任何数据）。
+- 自动更新改为检查**本项目的 GitHub Releases**（启动时可开关）；热更新与崩溃上报仍关闭，不会向原作者发送任何数据。
 
 ## 开发与文档
 

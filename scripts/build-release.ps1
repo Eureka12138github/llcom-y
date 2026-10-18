@@ -45,14 +45,31 @@ try {
 
     $outDir = "artifacts\release"
     New-Item -ItemType Directory -Force -Path $outDir | Out-Null
-    $zip = Join-Path $outDir "llcom-y-$Version-$Platform.zip"
+    $assetName = if ($Platform -eq "x64") { "llcom-y.zip" } else { "llcom-y-x86.zip" }
+    $zip = Join-Path $outDir $assetName
     if (Test-Path $zip) { Remove-Item $zip -Force }
     Compress-Archive -Path (Join-Path $stage "*") -DestinationPath $zip -Force
     Remove-Item $stage -Recurse -Force
 
+    # 自动更新清单（与 zip 一起上传到同一个 Release）
+    $tag = "v$Version"
+    $manifest = @(
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<item>',
+        "    <version>$Version</version>",
+        "    <url>https://github.com/Eureka12138github/llcom-y/releases/download/$tag/$assetName</url>",
+        "    <changelog>https://github.com/Eureka12138github/llcom-y/releases/tag/$tag</changelog>",
+        '    <mandatory mode="1">false</mandatory>',
+        '</item>'
+    ) -join "`r`n"
+    $manifestPath = Join-Path $outDir "autoUpdate.xml"
+    Set-Content -Path $manifestPath -Value $manifest -Encoding UTF8
+
     Write-Host ""
-    Write-Host "已生成: $zip" -ForegroundColor Green
-    Write-Host "上传到 GitHub Release 即可；或推送 tag 后由 CI 自动完成。"
+    Write-Host "已生成:" -ForegroundColor Green
+    Write-Host "  $zip"
+    Write-Host "  $manifestPath"
+    Write-Host "把这两个文件一起上传到 GitHub Release；或推送 tag 后由 CI 自动完成。"
 }
 finally {
     Pop-Location

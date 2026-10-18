@@ -1,6 +1,7 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using llcom.Services;
 
 namespace llcom.Pages
 {
@@ -26,6 +27,9 @@ namespace llcom.Pages
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            //自动更新开关绑定到设置
+            DataContext = Tools.Global.setting;
+
             //每次切回「关于」都回到顶部（避免上次滚动位置残留）
             aboutScrollViewer.ScrollToTop();
 
@@ -36,6 +40,12 @@ namespace llcom.Pages
                 .Reflection.Assembly.GetExecutingAssembly()
                 .GetName()
                 .Version.ToString();
+        }
+
+        /// <summary>手动检查更新（检查本项目的 GitHub Releases）。</summary>
+        private void CheckUpdateButton_Click(object sender, RoutedEventArgs e)
+        {
+            AppUpdateService.CheckForUpdate(Dispatcher, manual: true);
         }
 
         /// <summary>本项目反馈：GitHub Issues</summary>

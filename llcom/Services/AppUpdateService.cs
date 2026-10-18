@@ -1,84 +1,73 @@
 using System;
-using System.Threading.Tasks;
 using System.Windows.Threading;
-using RestSharp;
+using AutoUpdaterDotNET;
 
 namespace llcom.Services;
 
 /// <summary>
-/// 应用升级 / 热更（原散落在 <c>MainWindow.Window_Loaded</c> 的两段后台 Task）。
-/// 都属“启动时联网做一次”的自包含逻辑，下沉到服务层，View 只负责调用。
+/// 自动更新：检查本项目的 GitHub Releases。
+/// 更新清单由 CI 在每次 Release 中附带（autoUpdate.xml），这个地址始终指向最新版本；
+/// zip 更新会解压到程序所在目录。热更新（远程执行 Lua）已停用。
 /// </summary>
 internal static class AppUpdateService
 {
+    /// <summary>始终指向“最新 Release”的更新清单。</summary>
+    private const string AppCastUrl =
+        "https://github.com/Eureka12138github/llcom-y/releases/latest/download/autoUpdate.xml";
+
     /// <summary>
-    /// 自动更新 / 热更总开关。
-    /// 个人维护版目前**关闭**：暂未提供自己的更新源，且不应再向原作者服务器
-    /// 拉取 hotfix.lua（第三方远程代码）。发布自己的 Release 后，把这里改为
-    /// true，并把下面两处 URL 换成自己的更新源。
+    /// 检查更新。
     /// </summary>
-    private static readonly bool Enabled = false;
-
-    /// <summary>检查新版本（AutoUpdater.NET）；有更新且开启自动升级则弹升级窗口。</summary>
-    public static void CheckForUpdate(Dispatcher dispatcher)
+    /// <param name="dispatcher">UI 线程调度器</param>
+    /// <param name="manual">true = 用户手动点击（无更新/失败会提示）；false = 启动时检查（静默）</param>
+    public static void CheckForUpdate(Dispatcher dispatcher, bool manual = false)
     {
-        if (!Enabled)
+        if (!manual && !Tools.Global.setting.autoUpdate)
             return;
 
-        Task.Run(() =>
+        // 便携版：zip 解压到 exe 所在目录
+        AutoUpdater.InstallationPath = AppDomain.CurrentDomain.BaseDirectory;
+
+        AutoUpdater.CheckForUpdateEventHandler handler = null;
+        handler = args =>
         {
-            bool runed = false;
-            AutoUpdaterDotNET.AutoUpdater.CheckForUpdateEvent += args =>
+            AutoUpdater.CheckForUpdateEvent -= handler;
+
+            if (args == null)
             {
-                if (runed)
-                    return;
-                runed = true;
-                if (args.IsUpdateAvailable)
-                {
-                    Tools.Global.HasNewVersion = true; // 有新版本
-                    if (Tools.Global.setting.autoUpdate) // 开了自动升级功能再开
-                    {
-                        dispatcher.Invoke(
-                            () => AutoUpdaterDotNET.AutoUpdater.ShowUpdateForm(args)
-                        );
-                    }
-                }
-            };
-            Random r = new Random(); // 加上随机参数，确保获取的是最新数据
-            try
-            {
-                AutoUpdaterDotNET.AutoUpdater.Start(
-                    "https://llcom.papapoi.com/autoUpdate.xml?" + r
-                );
+                Tools.Logger.Swallowed("update", new Exception("check update failed"));
+                if (manual)
+                    dispatcher.Invoke(() =>
+                        Tools.MessageBox.Show("检查更新失败，请检查网络或稍后再试。")
+                    );
+                return;
             }
-            catch
+
+            if (args.IsUpdateAvailable)
             {
-                runed = true;
+                Tools.Global.HasNewVersion = true;
+                dispatcher.Invoke(() => AutoUpdater.ShowUpdateForm(args));
             }
-        });
+            else if (manual)
+            {
+                dispatcher.Invoke(() => Tools.MessageBox.Show("已是最新版。"));
+            }
+        };
+
+        AutoUpdater.CheckForUpdateEvent += handler;
+        try
+        {
+            AutoUpdater.Start(AppCastUrl);
+        }
+        catch (Exception ex)
+        {
+            AutoUpdater.CheckForUpdateEvent -= handler;
+            Tools.Logger.Swallowed("update", ex);
+            if (manual)
+                dispatcher.Invoke(() => Tools.MessageBox.Show("检查更新失败：" + ex.Message));
+        }
     }
 
-    /// <summary>拉取并执行热更脚本（防止恶性 bug 时远程修复）。个人维护版已关闭。</summary>
-    public static void RunHotfix()
-    {
-        if (!Enabled)
-            return;
-
-        Task.Run(() =>
-        {
-            try
-            {
-                Random r = new Random(); // 加上随机参数，确保获取的是最新数据
-                var client = new RestClient("https://llcom.papapoi.com/hotfix.lua?" + r.Next());
-                var request = new RestRequest();
-                var response = client.Get(request);
-                var lua = new LuaEnv.LuaEnv();
-                lua.DoString(response.Content);
-            }
-            catch (Exception ex)
-            {
-                Tools.Logger.Swallowed("hotfix", ex);
-            }
-        });
-    }
+    /// <summary>热更已停用（不再从任何服务器下载并执行 Lua）。</summary>
+    public static void RunHotfix() { }
 }

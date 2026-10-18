@@ -67,7 +67,7 @@ The exe must be named `llcom.exe`; settings/scripts/logs live next to it (or in 
 - Full upstream git history is preserved; licensed under **Apache-2.0** (see [LICENSE](LICENSE)).
 - Original code copyright chenxuuu and contributors; modifications copyright Eureka12138github.
 - Detailed changes: [CHANGES.md](CHANGES.md). Upstream release notes: the original project's Releases.
-- Auto-update, hot-fix (`hotfix.lua`) and crash reports have been **disabled** — this build sends nothing to the original author's servers.
+- Auto-update now checks **this project's GitHub Releases** (can be disabled); hot-fix (`hotfix.lua`) and crash reports remain disabled, so nothing is sent to the original author's servers.
 
 ## Development & docs
 

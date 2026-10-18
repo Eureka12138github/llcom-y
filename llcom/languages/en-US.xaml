@@ -105,6 +105,8 @@
     <system:String x:Key="AboutDiscriptionMain">LLCOM-Y is a serial port debugging tool. It reconnects automatically after the port is lost and includes a quick-send panel.</system:String>
     <system:String x:Key="AboutDiscriptionMore">Besides basic send/receive, it embeds a Lua runtime, so you can automate almost anything you can imagine.</system:String>
     <system:String x:Key="AboutNotice">Unofficial personal build · based on LLCOM by chenxuuu (Apache-2.0)&#x0a;For personal learning and use only; not affiliated with the original author.</system:String>
+    <system:String x:Key="AboutAutoUpdate">Check for updates on startup</system:String>
+    <system:String x:Key="AboutCheckUpdate">Check for updates</system:String>
     <system:String x:Key="AboutDevelopers">maintainer: Eureka12138github&#x0a;original authors: chenxuuu, whc2001 (upstream contributors)</system:String>
     <system:String x:Key="AboutTranslator">translators: chenxuuu</system:String>
     <system:String x:Key="AboutGitHubText">This project on GitHub (stars welcome)</system:String>

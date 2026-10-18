@@ -60,6 +60,21 @@
         Text="{DynamicResource AboutDiscriptionMore}"
       />
 
+      <!--  自动更新（检查本项目的 GitHub Releases）  -->
+      <CheckBox
+        Margin="0,16,0,0"
+        HorizontalAlignment="Center"
+        Content="{DynamicResource AboutAutoUpdate}"
+        IsChecked="{Binding autoUpdate}"
+      />
+      <Button
+        Name="CheckUpdateButton"
+        Width="auto"
+        HorizontalAlignment="Center"
+        Click="CheckUpdateButton_Click"
+        Content="{DynamicResource AboutCheckUpdate}"
+      />
+
       <TextBlock Text="{DynamicResource AboutDevelopers}" FontSize="15" Margin="10,20,0,0" />
       <TextBlock Text="{DynamicResource AboutTranslator}" FontSize="15" Margin="10,0,0,0" />
 

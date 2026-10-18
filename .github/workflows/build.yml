@@ -63,6 +63,24 @@ jobs:
           Copy-Item CHANGES.md artifacts\Release\x64\CHANGES.md -Force
           Compress-Archive -Path artifacts\Release\x64\* -Force -DestinationPath temp\llcom-y.zip
 
+      - name: Generate update manifest
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}"
+          $version = $tag.TrimStart('v')
+          $base = "https://github.com/Eureka12138github/llcom-y/releases/download/$tag"
+          $xml = @"
+          <?xml version="1.0" encoding="UTF-8"?>
+          <item>
+              <version>$version</version>
+              <url>$base/llcom-y.zip</url>
+              <changelog>https://github.com/Eureka12138github/llcom-y/releases/tag/$tag</changelog>
+              <mandatory mode="1">false</mandatory>
+          </item>
+          "@
+          Set-Content -Path temp/autoUpdate.xml -Value $xml -Encoding UTF8
+
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
@@ -70,6 +88,8 @@ jobs:
           name: LLCOM-Y ${{ github.ref_name }}
           body_path: CHANGES.md
           draft: false
-          files: temp/llcom-y.zip
+          files: |
+            temp/llcom-y.zip
+            temp/autoUpdate.xml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

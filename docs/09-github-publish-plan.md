@@ -5,7 +5,7 @@
 > 关联文档：[05-next-steps.md](05-next-steps.md)（路线图/发布流程）、[07-refactor-continue-status.md](07-refactor-continue-status.md)（当前分支与进度）。
 >
 > **2026-10-17 进展**：名称定为 **LLCOM-Y**、仓库 `llcom-y`；README（中英）、`CHANGES.md`、关于页、程序集信息已落地；
-> 自动更新/热更已关闭；远端已配置 `origin`（自己的仓库）/`upstream`（原作者），**尚未推送**。
+> 热更/崩溃上报已关闭，自动更新改为检查**本项目 GitHub Releases**；远端已配置 `origin`（自己的仓库）/`upstream`（原作者），并已推送 `master` / `feature/refactor-continue` 与 `v2.0.0.0` 标签。
 > 下文附录中仍保留旧命名（LLCOM）的草稿，作为历史参考。
 
 ---
@@ -17,7 +17,7 @@
 | 项目 | 状态 |
 |---|---|
 | 崩溃上报：异常 + 环境信息 + **屏幕截图** → `lolicon@papapoi.com`（CrashReporter.NET） | ✅ 已关闭并移除依赖；崩溃只写本地 `logs/fatal.log` |
-| 自动更新 / 热更（`papapoi.com/autoUpdate.xml`、`hotfix.lua`） | ✅ 已关闭（`AppUpdateService.Enabled=false`） |
+| 自动更新 / 热更（原先指向 `papapoi.com`） | ✅ 热更已关闭；自动更新改为检查**本项目 Releases**（`/releases/latest/download/autoUpdate.xml`） |
 | 启动统计（隐藏 WebBrowser → `tongji.html`） | ✅ 已移除 |
 | CI 上传到原作者腾讯 COS（`secrets.COS_*`） | ✅ 已移除该步骤 |
 | `FUNDING.yml`（`ko_fi: chenxuuu`） | ✅ 已清空 |
@@ -32,7 +32,7 @@
    - 说明：有 1 条历史提交消息仍含旧代号「7158」，如需一并清理可再改写消息（会再次改变哈希）。
 2. **在线脚本数据源**：仍指向 `llcom.papapoi.com/token.txt`（见 [05-next-steps.md](05-next-steps.md) 第七节）。
 3. ✅ **`AGENTS.md` 已从历史中清除**（2026-10-18）：当前树不再包含，并用区间重写把**历史提交里的 AGENTS.md 也删除**了（上游提交不动，自己的提交哈希再次变化）。本地文件保留（OpenCode 仍会读取），已加入 `.gitignore`。备份：`%TEMP%\opencode\llcom-before-agents-purge.bundle`。
-4. `autoUpdate.xml` 里的 URL 仍指向原作者站点（自动更新已关闭，仅作历史模板保留）。
+4. ✅ `changlog/autoUpdate.xml` 已改为指向本项目的 Release 资产（该文件仅作模板；实际清单由 CI 随 Release 生成）。
 
 ---
 
@@ -58,7 +58,7 @@
 3. **不做**「逐步迁移到未修改的干净仓库」（没必要：git 已记录来源；重放改动只会丢历史、徒增风险）。
 4. **不推送/不修改**原作者仓库（远端名 `upstream`）；自己的远端正名为 `origin`（`git@github.com:Eureka12138github/llcom-y.git`）。
 5. 若日后想给上游贡献：从 `upstream/master` 拉**小而聚焦**的分支发 PR，把大改动留在自己 fork。
-6. **自动更新/热更暂时关闭**（`AppUpdateService.Enabled = false`）；发布自己的 Release 后再接自己的更新源。
+6. **自动更新**已接本项目的 GitHub Releases（启动时检查，可关闭）；**热更**保持关闭。
 
 ---
 
