@@ -347,3 +347,6 @@ WapProj/LLCOM-Y.pfx.password.txt
 # LLCOM 运行时数据（避免误提交本机配置）
 settings.json
 settings.json.bakup
+
+# Agent 本机协作记忆（保留本地，不公开）
+/AGENTS.md
