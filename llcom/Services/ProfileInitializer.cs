@@ -187,100 +187,46 @@ internal static class ProfileInitializer
 
             if (!Directory.Exists(AppPaths.ProfilePath + "logs"))
                 Directory.CreateDirectory(AppPaths.ProfilePath + "logs");
-            if (!Directory.Exists(AppPaths.ProfilePath + "user_script_run"))
-            {
-                Directory.CreateDirectory(AppPaths.ProfilePath + "user_script_run");
-                FileUtils.CreateFile(
-                    "DefaultFiles/user_script_run/AT控制TCP连接-快发模式.lua",
-                    AppPaths.ProfilePath + "user_script_run/AT控制TCP连接-快发模式.lua"
-                );
-                FileUtils.CreateFile(
-                    "DefaultFiles/user_script_run/AT控制TCP连接-慢发模式.lua",
-                    AppPaths.ProfilePath + "user_script_run/AT控制TCP连接-慢发模式.lua"
-                );
-                FileUtils.CreateFile(
-                    "DefaultFiles/user_script_run/example.lua",
-                    AppPaths.ProfilePath + "user_script_run/example.lua"
-                );
-                FileUtils.CreateFile(
-                    "DefaultFiles/user_script_run/循环发送快捷发送区数据.lua",
-                    AppPaths.ProfilePath + "user_script_run/循环发送快捷发送区数据.lua"
-                );
-            }
-            //通用消息通道的demo
-            if (!File.Exists(AppPaths.ProfilePath + "user_script_run/channel-demo.lua"))
-                FileUtils.CreateFile(
-                    "DefaultFiles/user_script_run/channel-demo.lua",
-                    AppPaths.ProfilePath + "user_script_run/channel-demo.lua"
-                );
+
+            // 默认脚本：已存在的不覆盖；新增的默认脚本会在下次启动时自动补齐
+            ReleaseDefaultScripts(
+                "user_script_run",
+                "AT控制TCP连接-快发模式.lua",
+                "AT控制TCP连接-慢发模式.lua",
+                "example.lua",
+                "循环发送快捷发送区数据.lua",
+                "channel-demo.lua"
+            );
 
             if (!Directory.Exists(AppPaths.ProfilePath + "user_script_run/requires"))
                 Directory.CreateDirectory(AppPaths.ProfilePath + "user_script_run/requires");
             if (!Directory.Exists(AppPaths.ProfilePath + "user_script_run/logs"))
                 Directory.CreateDirectory(AppPaths.ProfilePath + "user_script_run/logs");
 
-            if (!Directory.Exists(AppPaths.ProfilePath + "user_script_send_convert"))
-            {
-                Directory.CreateDirectory(AppPaths.ProfilePath + "user_script_send_convert");
-                FileUtils.CreateFile(
-                    "DefaultFiles/user_script_send_convert/checksum.lua",
-                    AppPaths.ProfilePath + "user_script_send_convert/checksum.lua"
-                );
-                FileUtils.CreateFile(
-                    "DefaultFiles/user_script_send_convert/16进制数据.lua",
-                    AppPaths.ProfilePath + "user_script_send_convert/16进制数据.lua"
-                );
-                FileUtils.CreateFile(
-                    "DefaultFiles/user_script_send_convert/GPS NMEA.lua",
-                    AppPaths.ProfilePath + "user_script_send_convert/GPS NMEA.lua"
-                );
-                FileUtils.CreateFile(
-                    "DefaultFiles/user_script_send_convert/加上换行回车.lua",
-                    AppPaths.ProfilePath + "user_script_send_convert/加上换行回车.lua"
-                );
-                FileUtils.CreateFile(
-                    "DefaultFiles/user_script_send_convert/解析换行回车的转义字符.lua",
-                    AppPaths.ProfilePath + "user_script_send_convert/解析换行回车的转义字符.lua"
-                );
-                FileUtils.CreateFile(
-                    "DefaultFiles/user_script_send_convert/default.lua",
-                    AppPaths.ProfilePath + "user_script_send_convert/default.lua"
-                );
-            }
-            if (!Directory.Exists(AppPaths.ProfilePath + "user_script_recv_convert"))
-            {
-                Directory.CreateDirectory(AppPaths.ProfilePath + "user_script_recv_convert");
-            }
-            if (!File.Exists(AppPaths.ProfilePath + "user_script_recv_convert/default.lua"))
-                FileUtils.CreateFile(
-                    "DefaultFiles/user_script_recv_convert/default.lua",
-                    AppPaths.ProfilePath + "user_script_recv_convert/default.lua"
-                );
-            if (!File.Exists(AppPaths.ProfilePath + "user_script_recv_convert/绘制曲线.lua"))
-                FileUtils.CreateFile(
-                    "DefaultFiles/user_script_recv_convert/绘制曲线.lua",
-                    AppPaths.ProfilePath + "user_script_recv_convert/绘制曲线.lua"
-                );
-            if (!File.Exists(AppPaths.ProfilePath + "user_scrispt_recv_convert/绘制曲线-多条.lua"))
-                FileUtils.CreateFile(
-                    "DefaultFiles/user_script_recv_convert/绘制曲线-多条.lua",
-                    AppPaths.ProfilePath + "user_script_recv_convert/绘制曲线-多条.lua"
-                );
-            if (
-                !File.Exists(
-                    AppPaths.ProfilePath + "user_script_recv_convert/绘制曲线-解析结构体.lua"
-                )
-            )
-                FileUtils.CreateFile(
-                    "DefaultFiles/user_script_recv_convert/绘制曲线-解析结构体.lua",
-                    AppPaths.ProfilePath + "user_script_recv_convert/绘制曲线-解析结构体.lua"
-                );
+            ReleaseDefaultScripts(
+                "user_script_send_convert",
+                "checksum.lua",
+                "16进制数据.lua",
+                "GPS NMEA.lua",
+                "加上换行回车.lua",
+                "解析换行回车的转义字符.lua",
+                "default.lua"
+            );
+
+            ReleaseDefaultScripts(
+                "user_script_recv_convert",
+                "default.lua",
+                "绘制曲线.lua",
+                "绘制曲线-多条.lua",
+                "绘制曲线-解析结构体.lua"
+            );
 
             FileUtils.CreateFile("DefaultFiles/LICENSE", AppPaths.ProfilePath + "LICENSE", false);
+            // 反馈网址：每次启动刷新（旧版本曾指向原作者仓库）
             FileUtils.CreateFile(
                 "DefaultFiles/反馈网址.txt",
                 AppPaths.ProfilePath + "反馈网址.txt",
-                false
+                true
             );
 
             if (IntPtr.Size == 8)
@@ -353,5 +299,22 @@ internal static class ProfileInitializer
     {
         Logger.AddUartLogInfo($"->{EncodingHelper.Byte2Readable((byte[])sender)}");
         Logger.AddUartLogDebug($"[HEX]{EncodingHelper.Byte2Hex((byte[])sender, " ")}");
+    }
+
+    /// <summary>
+    /// 释放 DefaultFiles 下某个脚本目录里的默认脚本（已存在的不覆盖）。
+    /// 新增默认脚本：把 .lua 放进 llcom/DefaultFiles/&lt;folder&gt;/，再把文件名加到调用处即可；
+    /// 已经运行过的配置目录也会在下次启动时自动补齐缺失的脚本。
+    /// </summary>
+    private static void ReleaseDefaultScripts(string folder, params string[] files)
+    {
+        var destDir = AppPaths.ProfilePath + folder;
+        if (!Directory.Exists(destDir))
+            Directory.CreateDirectory(destDir);
+
+        foreach (var file in files)
+        {
+            FileUtils.CreateFile($"DefaultFiles/{folder}/{file}", destDir + "/" + file, false);
+        }
     }
 }

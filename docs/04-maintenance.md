@@ -57,6 +57,23 @@ llcom/
 
 详细架构见 [02-architecture.md](02-architecture.md)。
 
+### 默认脚本 / 默认文件（DefaultFiles）
+
+`llcom/DefaultFiles/` 下的内容通过 csproj 的 `<Resource Include="DefaultFiles\**" />` 自动嵌入，由
+`Services/ProfileInitializer.cs` 在启动时释放到配置目录（exe 同目录，或 MSIX 的 `%LOCALAPPDATA%\llcom\`）。
+
+新增一个**默认脚本**：
+
+1. 把 `.lua` 放进对应目录：
+   - `DefaultFiles/user_script_run/`（独立运行脚本）
+   - `DefaultFiles/user_script_send_convert/`（发送处理脚本）
+   - `DefaultFiles/user_script_recv_convert/`（接收处理脚本）
+2. 在 `ProfileInitializer.cs` 里对应 `ReleaseDefaultScripts("<目录>", "文件名.lua", ...)` 的参数中加上文件名；
+3. 重新构建。下次启动时，缺失的默认脚本会补齐；**已存在的同名文件不会被覆盖**（保留用户修改）。
+   - 想立即生效，也可以直接把脚本放进配置目录的对应文件夹（无需重建）。
+
+其他默认文件（`反馈网址.txt`、`LICENSE`、`core_script/`、`libusb-1.0` 等）在同一个 `Initial()` 里释放。
+
 ## 三、依赖清单
 
 ### 重构后新增
