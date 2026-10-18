@@ -58,9 +58,8 @@
 
 ## 七、发布前待办（个人维护版 / LLCOM-Y）
 
-> 配套：[09-github-publish-plan.md](09-github-publish-plan.md)、[12-serial-monitor-plan.md](12-serial-monitor-plan.md)。
+> 配套：[09-github-publish-plan.md](09-github-publish-plan.md)、[12-serial-monitor-plan.md](12-serial-monitor-plan.md)、[13-msix-packaging.md](13-msix-packaging.md)。
 
 - [ ] **在线脚本列表的数据源**：`Services/OnlineScriptService` 目前从 `https://llcom.papapoi.com/token.txt` 拉取（仅打开「在线脚本」页时才请求）。发布前决定：改为自己的静态文件/仓库，或保留并在页面/README 注明「数据来自上游 LLCOM」。
-- [x] **MSIX 身份**：已改为 `Eureka12138github.LLCOM-Y` / `Publisher=CN=Eureka12138github`，并生成自签名证书与脚本（见 [13-msix-packaging.md](13-msix-packaging.md)）。
-- [ ] **MSIX 打包组件**：本机未安装 VS 的「Windows 应用打包项目」组件；需要打 MSIX 时补装，再按 13 号文档生成安装包。
 - [ ] （建议）发布 zip 内一并附带 `LICENSE` 与 `CHANGES.md`：Apache-2.0 要求随分发提供许可证副本，并保留版权/归属声明。
+- ⏸ **MSIX / 安装包：暂缓**（2026-10-18 决定）。不上架微软商店、不发布 MSIX；`WapProj` 原样保留，身份已修正（不再冒用原作者商店身份），签名未启用，仓库内不保存证书。将来需要时见 [13-msix-packaging.md](13-msix-packaging.md)（`WapProj/make-cert.ps1` 可一键重建证书）。

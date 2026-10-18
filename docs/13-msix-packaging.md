@@ -1,7 +1,11 @@
-# 13 · MSIX 打包与签名（LLCOM-Y）
+# 13 · MSIX 打包与签名（LLCOM-Y）—— 暂缓
 
-> 状态：**身份已改好、自签名证书已生成**；本机未安装 VS 的「Windows 应用打包项目」组件，打包前需补装。
-> 仅发布 exe 时不需要看本文档。
+> 状态：**暂缓（不发布 MSIX）**
+> 本项目不打算上架微软商店，日常发布只提供 **exe / zip**，因此**不需要**安装包与签名。
+> 工程身份已修正（不再冒用原作者的商店身份），但**不启用签名、不产出 MSIX**。
+> 将来若确实需要"安装版"，再按本文档执行即可；证书脚本已保留。
+>
+> 仅发布 exe 时不需要改动本目录任何文件。
 
 ---
 
@@ -29,23 +33,22 @@ MSIX 安装时会校验：**签名证书的 Subject == manifest 的 Publisher**�
 
 ---
 
-## 3. 自签名证书（侧载用）
+## 3. 自签名证书（仅在需要侧载时生成）
 
-已生成（脚本：`WapProj/make-cert.ps1`）：
+仓库里**不保存任何证书文件**；需要打包时运行脚本现场生成：
 
 | 文件 | 是否提交 | 用途 |
 |---|---|---|
-| `LLCOM-Y.cer` | ✅ 提交 | 公钥证书，给用户安装信任 |
+| `LLCOM-Y.cer` | ❌ 不提交（脚本生成） | 公钥证书，给用户安装信任 |
 | `LLCOM-Y.pfx` | ❌ 忽略（`.gitignore`） | 私钥，用于签名 |
-| `LLCOM-Y.pfx.password.txt` | ❌ 忽略 | 生成时的随机密码 |
-
-重新生成（改了 Publisher / 证书过期）：
+| `LLCOM-Y.pfx.password.txt` | ❌ 忽略 | 脚本生成的随机密码 |
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File WapProj\make-cert.ps1
 ```
 
-脚本会输出 **Subject / Thumbprint / 有效期 / 密码文件位置**。
+脚本会输出 **Subject / Thumbprint / 有效期 / 密码文件位置**（证书写入当前用户的「个人」存储）。
+改了 `Publisher` 或证书过期时，重新跑一次即可。
 
 ---
 

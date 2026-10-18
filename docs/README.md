@@ -16,7 +16,7 @@
 | [10-ui-layout-plan.md](10-ui-layout-plan.md) | UI/交互优化完整计划 + 逐轮改动记录（含待办/待确认项） | 继续做界面与交互调整 |
 | [11-ui-fixes-plan.md](11-ui-fixes-plan.md) | 问题 9–15 的修复计划（底栏三按钮/串口开关/发送记录弹层/日志性能） | 本轮修复实施 |
 | [12-serial-monitor-plan.md](12-serial-monitor-plan.md) | 串口监听改进计划：位数支持、已打开端口接管、32 位助手、验收清单 | 后续做监听增强时 |
-| [13-msix-packaging.md](13-msix-packaging.md) | MSIX 身份、自签名证书、侧载打包与签名、商店关联说明 | 需要打 MSIX 安装包时 |
+| [13-msix-packaging.md](13-msix-packaging.md) | MSIX 打包与签名说明（**暂缓**：不上架商店、不发布 MSIX；需要时再按文档执行） | 以后要做安装版时 |
 
 ## 分支说明
 
