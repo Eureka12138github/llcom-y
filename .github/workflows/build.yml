@@ -55,28 +55,15 @@ jobs:
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path temp
-          Compress-Archive -Path artifacts\Release\x64\* -Force -DestinationPath temp\llcom.zip
-          Copy-Item llcom\changlog\index.html     temp\changelog.html
-          Copy-Item llcom\changlog\autoUpdate.xml temp\autoUpdate.xml
+          Copy-Item LICENSE artifacts\Release\x64\LICENSE.txt -Force
+          Copy-Item CHANGES.md artifacts\Release\x64\CHANGES.md -Force
+          Compress-Archive -Path artifacts\Release\x64\* -Force -DestinationPath temp\llcom-y.zip
 
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
           draft: false
-          files: temp/llcom.zip
+          files: temp/llcom-y.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload to COS
-        if: startsWith(github.ref, 'refs/tags/')
-        shell: cmd
-        env:
-          COS_A: ${{ secrets.COS_A }}
-          COS_S: ${{ secrets.COS_S }}
-          COS_B: ${{ secrets.COS_B }}
-          COS_R: ${{ secrets.COS_R }}
-        run: |
-          python -m pip install coscmd==1.8.6.31
-          coscmd config -a %COS_A% -s %COS_S% -b %COS_B% -r %COS_R%
-          coscmd upload temp/ / -r

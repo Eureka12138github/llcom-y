@@ -10,9 +10,34 @@
 
 ---
 
+## 〇、推送前安全审计（2026-10-18）
+
+**结论：已跟踪文件里没有硬编码的令牌 / 私钥 / 密码。** 但发现并处理了几处"会把数据发给原作者"或依赖原作者凭据的问题：
+
+| 项目 | 状态 |
+|---|---|
+| 崩溃上报：异常 + 环境信息 + **屏幕截图** → `lolicon@papapoi.com`（CrashReporter.NET） | ✅ 已关闭并移除依赖；崩溃只写本地 `logs/fatal.log` |
+| 自动更新 / 热更（`papapoi.com/autoUpdate.xml`、`hotfix.lua`） | ✅ 已关闭（`AppUpdateService.Enabled=false`） |
+| 启动统计（隐藏 WebBrowser → `tongji.html`） | ✅ 已移除 |
+| CI 上传到原作者腾讯 COS（`secrets.COS_*`） | ✅ 已移除该步骤 |
+| `FUNDING.yml`（`ko_fi: chenxuuu`） | ✅ 已清空 |
+| 隐私政策（提到百度统计 / 崩溃上报） | ✅ 已重写为「不收集、不上传」 |
+| `WapProj` 自签名证书 | ✅ 仓库不保存证书（由脚本生成） |
+
+**已确认被忽略 / 未跟踪**：`.vs/`、`packages/`、`UpgradeLog`、`artifacts/`、`settings.json(.bakup)`、`*.log`、`*.pfx`。
+
+**发布前仍需决定**：
+
+1. **提交邮箱**：历史中有 91 个提交使用 `2560291241@qq.com`，推送后会公开。建议把 `user.email` 改为 GitHub 的 noreply 地址；若在意历史，可在**首次推送前**重写这些提交的作者邮箱（会改变提交哈希）。
+2. **在线脚本数据源**：仍指向 `llcom.papapoi.com/token.txt`（见 [05-next-steps.md](05-next-steps.md) 第七节）。
+3. **`AGENTS.md`**：已跟踪，内容是工程约定（无密钥）；若不想公开本机环境说明，可移出仓库。
+4. `autoUpdate.xml` 里的 URL 仍指向原作者站点（自动更新已关闭，仅作历史模板保留）。
+
+---
+
 ## 一、背景与现状（已核实，2026-10-14）
 
-- 本地仓库：`D:\学习\瞎鼓捣\LLCOM`，git 历史**完整保留上游**（chenxuuu/llcom）的提交。
+- 本地仓库：本机工作副本（下文用 `<repo>` 代指），git 历史**完整保留上游**（chenxuuu/llcom）的提交。
 - 远端：只有一个 `origin` = `https://github.com/chenxuuu/llcom.git`（**原作者的，不推送**）。
 - 分支：
   - `feature/refactor-continue`：比 `origin/refactor` **领先 72 个提交**（当前主要开发线）。

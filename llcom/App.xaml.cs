@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
-using CrashReporterDotNET;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace llcom
@@ -169,30 +168,13 @@ namespace llcom
         }
 
         /// <summary>
-        /// 尽力上报崩溃信息（静默，不再弹出额外窗口，失败也不影响退出）。
+        /// 个人维护版：已关闭崩溃上报。
+        /// 原实现会把异常、环境信息与**屏幕截图**发送到原作者的邮箱，
+        /// 这里不再上传；崩溃详情仍写入 logs/fatal.log 并显示崩溃窗口。
         /// </summary>
         private static void TryUploadReport(Exception exception)
         {
-            try
-            {
-                if (exception == null || !Tools.Global.ReportBug || Tools.Global.HasNewVersion)
-                    return;
-                var reportCrash = new ReportCrash("lolicon@papapoi.com")
-                {
-                    CaptureScreen = true,
-                    Silent = true,
-                };
-                //后台发送，避免网络慢时卡住界面
-                Task.Run(() =>
-                {
-                    try
-                    {
-                        reportCrash.Send(exception);
-                    }
-                    catch { }
-                });
-            }
-            catch { }
+            _ = exception;
         }
     }
 }
