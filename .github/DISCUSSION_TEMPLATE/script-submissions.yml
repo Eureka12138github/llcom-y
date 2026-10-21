@@ -1,11 +1,10 @@
-name: 投稿社区脚本
-description: 向 LLCOM-Y 的社区脚本库投稿（人工审核）
 title: "[Script] "
 body:
   - type: markdown
     attributes:
       value: |
-        感谢投稿！提交后会人工审核，通过后加入 `community-scripts/index.json`。
+        感谢投稿！这是 GitHub Discussions 的脚本投稿分类，不是 Issue。
+        提交后会人工审核，通过后加入 `community-scripts/index.json`。
         社区脚本可能调用串口、文件等 API，请只提交你有权分享、且不包含恶意代码/密钥/隐私的内容。
   - type: input
     id: name

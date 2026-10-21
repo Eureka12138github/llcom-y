@@ -40,7 +40,7 @@ public partial class OnlineScriptsPage : Page, INotifyPropertyChanged
     private const string ProjectInfoUrl =
         "https://github.com/Eureka12138github/llcom-y/tree/master/community-scripts";
     private const string ProjectSubmitUrl =
-        "https://github.com/Eureka12138github/llcom-y/issues/new?template=script-submission.yml";
+        "https://github.com/Eureka12138github/llcom-y/discussions/new?category=script-submissions";
 
     private readonly ObservableCollection<OnlineScript> scripts =
         new ObservableCollection<OnlineScript>();
@@ -114,6 +114,14 @@ public partial class OnlineScriptsPage : Page, INotifyPropertyChanged
             OfficialSourceButton.IsChecked = _source == OnlineScriptSource.Official;
         if (ProjectSourceButton != null)
             ProjectSourceButton.IsChecked = _source == OnlineScriptSource.Project;
+
+        // 官方源的说明和投稿是同一个 Discussions 入口，只保留 Info 按钮；
+        // 本项目需要“说明(README)”和“投稿(Discussions 表单)”两个入口。
+        if (SubmitButton != null)
+            SubmitButton.Visibility =
+                _source == OnlineScriptSource.Official
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
     }
 
     /// <summary>空列表 / 加载失败时的提示文本。</summary>
@@ -277,7 +285,8 @@ public partial class OnlineScriptsPage : Page, INotifyPropertyChanged
 
     private void SubmitButton_Click(object sender, RoutedEventArgs e)
     {
-        //官方脚本沿用原项目的讨论区投稿；本项目使用 Issue 表单
+        //官方脚本没有单独的投稿入口（Info 打开的讨论帖同时包含投稿规则）；
+        //本项目投稿到 Discussions 的“Script submissions”分类，不再走 Issues。
         OpenUrl(_source == OnlineScriptSource.Official ? OfficialInfoUrl : ProjectSubmitUrl);
     }
 

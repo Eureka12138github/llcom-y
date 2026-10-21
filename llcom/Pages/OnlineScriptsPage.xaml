@@ -100,6 +100,7 @@
           <Button
             Name="SubmitButton"
             Margin="4"
+            Visibility="Collapsed"
             Click="SubmitButton_Click"
             ToolTip="{DynamicResource OnlineScriptSubmit}"
           >
