@@ -3,19 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using llcom.Model;
 
 namespace llcom.Pages;
@@ -43,6 +34,17 @@ public partial class OnlineScriptsPage : Page, INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         return true;
     }
+
+    private const string OfficialInfoUrl = "https://github.com/chenxuuu/llcom/discussions/87";
+    private const string ProjectInfoUrl =
+        "https://github.com/Eureka12138github/llcom-y/tree/master/community-scripts";
+    private const string ProjectSubmitUrl =
+        "https://github.com/Eureka12138github/llcom-y/issues/new?template=script-submission.yml";
+
+    private readonly ObservableCollection<OnlineScript> scripts =
+        new ObservableCollection<OnlineScript>();
+    private bool _loaded;
+    private int _refreshVersion;
 
     public OnlineScriptsPage()
     {
@@ -77,6 +79,57 @@ public partial class OnlineScriptsPage : Page, INotifyPropertyChanged
         set => SetProperty(ref _isLoding, value);
     }
 
+    /// <summary>当前脚本来源。</summary>
+    private OnlineScriptSource _source = OnlineScriptSource.Official;
+
+    private void SourceButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender == OfficialSourceButton)
+            SetSource(OnlineScriptSource.Official);
+        else if (sender == ProjectSourceButton)
+            SetSource(OnlineScriptSource.Project);
+    }
+
+    private void SetSource(OnlineScriptSource source)
+    {
+        if (_source == source)
+        {
+            //ToggleButton 点击后可能把自己取消选中；这里恢复两个按钮的选中态
+            UpdateSourceButtons();
+            return;
+        }
+
+        _source = source;
+        Tools.Global.setting.onlineScriptSource = (int)source;
+        UpdateSourceButtons();
+
+        if (_loaded)
+            _ = RefreshList();
+    }
+
+    private void UpdateSourceButtons()
+    {
+        if (OfficialSourceButton != null)
+            OfficialSourceButton.IsChecked = _source == OnlineScriptSource.Official;
+        if (ProjectSourceButton != null)
+            ProjectSourceButton.IsChecked = _source == OnlineScriptSource.Project;
+    }
+
+    /// <summary>空列表 / 加载失败时的提示文本。</summary>
+    private string _listStateText = "";
+    public string ListStateText
+    {
+        get => _listStateText;
+        set => SetProperty(ref _listStateText, value);
+    }
+
+    private bool _hasListState;
+    public bool HasListState
+    {
+        get => _hasListState;
+        set => SetProperty(ref _hasListState, value);
+    }
+
     /// <summary>
     /// 加载中。。。
     /// </summary>
@@ -92,49 +145,117 @@ public partial class OnlineScriptsPage : Page, INotifyPropertyChanged
 
     private void UnLoading() => IsLoding = false;
 
-    ObservableCollection<OnlineScript> scripts = new ObservableCollection<OnlineScript>();
-
     /// <summary>
     /// 刷新脚本列表
     /// </summary>
     /// <returns></returns>
     private async Task RefreshList()
     {
+        if (!_loaded)
+            return;
+
+        var version = ++_refreshVersion;
+        var source = _source;
         Loading(TryFindResource("OnlineScriptLoading") as string);
+        HasListState = false;
         scripts.Clear();
-        await Task.Run(() =>
+
+        List<OnlineScript> result = null;
+        var fetchTask = Task.Run(() =>
         {
             try
             {
-                var r = Tools.Global.GetOnlineScripts(
+                result = Tools.Global.GetOnlineScripts(
+                    source,
                     (got, total) =>
                     {
-                        Loading(
-                            TryFindResource("OnlineScriptLoading") as string,
-                            (int)(got * 100.0 / total)
+                        var percent = total > 0 ? (int)(got * 100.0 / total) : 0;
+                        //进度回调来自后台线程，必须回到 UI 线程再更新绑定属性
+                        Dispatcher.BeginInvoke(
+                            new Action(() =>
+                            {
+                                if (version != _refreshVersion)
+                                    return;
+                                Loading(
+                                    TryFindResource("OnlineScriptLoading") as string,
+                                    percent
+                                );
+                            })
                         );
                     }
                 );
-                Dispatcher.Invoke(() =>
-                {
-                    foreach (var d in r)
-                        scripts.Add(d);
-                });
             }
-            catch (System.Exception ex) { Tools.Logger.Swallowed("online scripts", ex); }
+            catch (Exception ex)
+            {
+                Tools.Logger.Swallowed("online scripts", ex);
+            }
         });
+
+        //官方 GraphQL 没有设置请求超时；这里兜底，避免页面无限转圈
+        var completed = await Task.WhenAny(fetchTask, Task.Delay(30000));
+        if (completed != fetchTask)
+        {
+            if (version == _refreshVersion)
+            {
+                //让仍在后台运行的请求的进度回调失效，避免超时后又把页面拉回加载中
+                _refreshVersion++;
+                ListStateText = GetLoadFailedText();
+                HasListState = true;
+                UnLoading();
+            }
+            return;
+        }
+        await fetchTask;
+
+        if (version != _refreshVersion)
+            return;
+
+        if (result != null)
+        {
+            foreach (var d in result)
+            {
+                d.TypeText = GetTypeText(d.Type);
+                scripts.Add(d);
+            }
+
+            if (scripts.Count == 0)
+            {
+                ListStateText = TryFindResource("OnlineScriptEmpty") as string ?? "?!";
+                HasListState = true;
+            }
+        }
+        else
+        {
+            ListStateText = GetLoadFailedText();
+            HasListState = true;
+        }
+
         UnLoading();
     }
 
-    private static bool loaded = false;
+    private string GetLoadFailedText()
+    {
+        return _source == OnlineScriptSource.Project
+            ? TryFindResource("OnlineScriptProjectLoadFailed") as string
+                ?? TryFindResource("OnlineScriptLoadFailed") as string
+                ?? "?!"
+            : TryFindResource("OnlineScriptLoadFailed") as string ?? "?!";
+    }
 
     private async void Page_Loaded(object sender, RoutedEventArgs e)
     {
-        if (loaded)
+        if (_loaded)
             return;
-        loaded = true;
+        _loaded = true;
+
+        var saved = (OnlineScriptSource)Tools.Global.setting.onlineScriptSource;
+        _source =
+            saved == OnlineScriptSource.Project
+                ? OnlineScriptSource.Project
+                : OnlineScriptSource.Official;
 
         this.DataContext = this;
+        UpdateSourceButtons();
 
         //绑上去
         ScriptListItemsControl.ItemsSource = scripts;
@@ -150,11 +271,13 @@ public partial class OnlineScriptsPage : Page, INotifyPropertyChanged
 
     private void InfoButton_Click(object sender, RoutedEventArgs e)
     {
-        try
-        {
-            System.Diagnostics.Process.Start("https://github.com/chenxuuu/llcom/discussions/87");
-        }
-        catch (System.Exception ex) { Tools.Logger.Swallowed("online scripts", ex); }
+        OpenUrl(_source == OnlineScriptSource.Official ? OfficialInfoUrl : ProjectInfoUrl);
+    }
+
+    private void SubmitButton_Click(object sender, RoutedEventArgs e)
+    {
+        //官方脚本沿用原项目的讨论区投稿；本项目使用 Issue 表单
+        OpenUrl(_source == OnlineScriptSource.Official ? OfficialInfoUrl : ProjectSubmitUrl);
     }
 
     /// <summary>
@@ -180,6 +303,7 @@ public partial class OnlineScriptsPage : Page, INotifyPropertyChanged
         var data = ((Button)sender).Tag as OnlineScript;
         if (data == null)
             return;
+
         ScriptNow.Author = data.Author;
         ScriptNow.Version = data.Version;
         ScriptNow.Name = data.Name;
@@ -187,6 +311,8 @@ public partial class OnlineScriptsPage : Page, INotifyPropertyChanged
         ScriptNow.Note = data.Note;
         ScriptNow.Url = data.Url;
         ScriptNow.Script = data.Script;
+        ScriptNow.Type = data.Type;
+        ScriptNow.TypeText = data.TypeText;
 
         IsInList = false;
     }
@@ -198,6 +324,14 @@ public partial class OnlineScriptsPage : Page, INotifyPropertyChanged
 
     private void DownloadButton_Click(object sender, RoutedEventArgs e)
     {
+        var folder = ScriptNow.Type switch
+        {
+            "send" => "user_script_send_convert",
+            "recv" => "user_script_recv_convert",
+            _ => "user_script_run",
+        };
+        var destDir = $"{Tools.Global.ProfilePath}{folder}/";
+
         while (true)
         {
             var (result, fileName) = Tools.InputDialog.OpenDialog(
@@ -207,8 +341,18 @@ public partial class OnlineScriptsPage : Page, INotifyPropertyChanged
             );
             if (!result)
                 return;
+
+            var safeName = string.Join(
+                "_",
+                (fileName ?? "").Split(Path.GetInvalidFileNameChars())
+            );
+            if (string.IsNullOrWhiteSpace(safeName))
+                continue;
+
+            var dest = $"{destDir}{safeName}.lua";
+
             //文件已经有了
-            if (File.Exists($"{Tools.Global.ProfilePath}user_script_run/{fileName}.lua"))
+            if (File.Exists(dest))
             {
                 Tools.MessageBox.Show(TryFindResource("LuaExist") as string ?? "?!");
                 continue; //回到最开始
@@ -216,12 +360,18 @@ public partial class OnlineScriptsPage : Page, INotifyPropertyChanged
 
             try
             {
-                File.WriteAllText(
-                    $"{Tools.Global.ProfilePath}user_script_run/{fileName}.lua",
-                    ScriptNow.Script
-                );
+                if (!Directory.Exists(destDir))
+                    Directory.CreateDirectory(destDir);
+
+                File.WriteAllText(dest, ScriptNow.Script);
                 Tools.Global.RefreshLuaScriptList();
-                Tools.MessageBox.Show(TryFindResource("SaveSucceed") as string ?? "?!");
+
+                var message = TryFindResource("SaveSucceed") as string ?? "?!";
+                if (ScriptNow.Type == "send" || ScriptNow.Type == "recv")
+                    message +=
+                        "\r\n"
+                        + (TryFindResource("OnlineScriptSavedConvertTip") as string ?? "");
+                Tools.MessageBox.Show(message);
             }
             catch (Exception err)
             {
@@ -233,10 +383,29 @@ public partial class OnlineScriptsPage : Page, INotifyPropertyChanged
 
     private void UrlButton_Click(object sender, RoutedEventArgs e)
     {
+        OpenUrl(ScriptNow.Url);
+    }
+
+    private string GetTypeText(string type)
+    {
+        return type switch
+        {
+            "send" => TryFindResource("OnlineScriptTypeSend") as string ?? "send",
+            "recv" => TryFindResource("OnlineScriptTypeRecv") as string ?? "recv",
+            _ => TryFindResource("OnlineScriptTypeRun") as string ?? "run",
+        };
+    }
+
+    private void OpenUrl(string url)
+    {
         try
         {
-            System.Diagnostics.Process.Start(ScriptNow.Url);
+            if (!string.IsNullOrWhiteSpace(url))
+                System.Diagnostics.Process.Start(url);
         }
-        catch (System.Exception ex) { Tools.Logger.Swallowed("online scripts", ex); }
+        catch (Exception ex)
+        {
+            Tools.Logger.Swallowed("online scripts", ex);
+        }
     }
 }

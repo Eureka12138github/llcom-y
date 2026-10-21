@@ -74,6 +74,15 @@ llcom/
 
 其他默认文件（`反馈网址.txt`、`LICENSE`、`core_script/`、`libusb-1.0` 等）在同一个 `Initial()` 里释放。
 
+### 社区脚本（community-scripts）
+
+- **上游源**保持原实现（`chenxuuu/llcom` 的 Discussions，token 从 `llcom.papapoi.com` 获取）。
+- **本项目源**读取 `community-scripts/index.json`，脚本文件放在同一目录；App 优先走 jsDelivr，失败再走 raw。
+- 新增本项目脚本：放 `.lua` 文件，并在 `index.json` 加一条记录；`type` 可选 `run` / `send` / `recv`，下载时会分别保存到 `user_script_run` / `user_script_send_convert` / `user_script_recv_convert`。
+- 投稿：GitHub Issue 表单 `.github/ISSUE_TEMPLATE/script-submission.yml`，人工审核后合入。
+- 校验：`.github/workflows/validate-community-scripts.yml`（检查 JSON、类型、文件是否存在）。
+- 格式与投稿说明见 [community-scripts/README.md](../community-scripts/README.md)。
+
 ## 三、依赖清单
 
 ### 重构后新增

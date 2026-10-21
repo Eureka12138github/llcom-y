@@ -1,0 +1,49 @@
+name: Validate community scripts
+
+on:
+  push:
+    paths:
+      - "community-scripts/**"
+  pull_request:
+    paths:
+      - "community-scripts/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate index.json
+        shell: pwsh
+        run: |
+          $path = "community-scripts/index.json"
+          $json = Get-Content $path -Raw -Encoding UTF8 | ConvertFrom-Json
+          if ($json.schema -ne 1) { throw "schema must be 1" }
+
+          $seen = @{}
+          foreach ($s in $json.scripts) {
+            if ([string]::IsNullOrWhiteSpace($s.name)) { throw "name is required" }
+            $type = if ($s.type) { $s.type } else { "run" }
+            if ($type -notin @("run", "send", "recv")) { throw "invalid type: $type ($($s.name))" }
+
+            if ($s.file) {
+              if ($s.file -match "\.\.") { throw "invalid file path: $($s.file)" }
+              if ($s.file -notmatch "^https?://") {
+                $file = Join-Path "community-scripts" $s.file
+                if (-not (Test-Path $file)) { throw "missing file: $($s.file)" }
+              }
+            } elseif (-not $s.script) {
+              throw "file or script is required: $($s.name)"
+            }
+
+            if ($seen.ContainsKey($s.name)) { throw "duplicate name: $($s.name)" }
+            $seen[$s.name] = $true
+          }
+
+          Write-Host "OK: $($json.scripts.Count) script(s)"

@@ -156,6 +156,13 @@ public partial class SettingWindow : Window
         //编辑器文本桥接（AvalonEdit Text 不可绑定，经回调访问）
         _sendEditor.SetTextBridge(() => textEditor.Text, t => textEditor.Text = t);
         _recvEditor.SetTextBridge(() => textEditorRev.Text, t => textEditorRev.Text = t);
+
+        //在线脚本页下载/新增处理脚本后，刷新这里的文件下拉列表
+        Tools.Global.RefreshLuaScriptListEvent += (_, _) =>
+        {
+            _sendEditor?.RefreshList();
+            _recvEditor?.RefreshList();
+        };
     }
 
     private void SettingWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)

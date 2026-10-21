@@ -207,4 +207,12 @@ class Global
     /// <returns></returns>
     public static List<OnlineScript> GetOnlineScripts(Action<int, int> callback = null) =>
         OnlineScriptService.GetOnlineScripts(callback);
+
+    /// <summary>
+    /// 按来源获取在线脚本（官方 / 本项目）。
+    /// </summary>
+    public static List<OnlineScript> GetOnlineScripts(
+        OnlineScriptSource source,
+        Action<int, int> callback = null
+    ) => OnlineScriptService.GetOnlineScripts(source, callback);
 }

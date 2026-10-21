@@ -47,6 +47,16 @@ public partial class OnlineScript : ObservableObject
     private string _script;
 
     /// <summary>
+    /// 脚本类型：run = 运行脚本，send = 发送处理，recv = 接收处理。
+    /// </summary>
+    [ObservableProperty]
+    private string _type = "run";
+
+    /// <summary>列表/详情里显示的类型文案（运行/发送/接收）。</summary>
+    [ObservableProperty]
+    private string _typeText = "";
+
+    /// <summary>
     /// 脚本网址
     /// </summary>
     [ObservableProperty]

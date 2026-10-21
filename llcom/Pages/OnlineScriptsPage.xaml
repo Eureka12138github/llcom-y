@@ -15,17 +15,57 @@
   Loaded="Page_Loaded"
   mc:Ignorable="d"
 >
-  
+  <Page.Resources>
+    <!--  脚本来源切换：两个紧凑的按钮式单选，选中项用强调色描边  -->
+    <Style x:Key="OnlineScriptSourceButton" TargetType="{x:Type ToggleButton}">
+      <Setter Property="Margin" Value="2,0" />
+      <Setter Property="Padding" Value="9,3" />
+      <Setter Property="FontSize" Value="13" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Foreground" Value="{DynamicResource Brush.Foreground}" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="{x:Type ToggleButton}">
+            <Border
+              x:Name="SourceBorder"
+              Padding="{TemplateBinding Padding}"
+              Background="Transparent"
+              BorderBrush="{DynamicResource Brush.Border.Subtle}"
+              BorderThickness="1"
+              CornerRadius="3"
+            >
+              <ContentPresenter
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+              />
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="SourceBorder" Property="Background" Value="{DynamicResource Brush.Surface.Muted}" />
+              </Trigger>
+              <Trigger Property="IsChecked" Value="True">
+                <Setter TargetName="SourceBorder" Property="Background" Value="{DynamicResource Brush.Surface.Subtle}" />
+                <Setter TargetName="SourceBorder" Property="BorderBrush" Value="{DynamicResource Brush.Accent.Teal}" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+  </Page.Resources>
+
   <Grid>
-    <Grid Visibility="{Binding IsLoding, Converter={StaticResource boolNotVisibeConverter}}">
+    <Grid>
       <Grid Visibility="{Binding IsInList, Converter={StaticResource boolVisibeConverter}}">
         <Grid.RowDefinitions>
           <RowDefinition Height="40" />
+          <RowDefinition Height="Auto" />
           <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <TextBlock
           HorizontalAlignment="Center"
-          FontSize="25"
+          FontSize="22"
           Text="{DynamicResource OnlineScriptTitle}"
         />
         <Button
@@ -34,24 +74,63 @@
           HorizontalAlignment="Left"
           VerticalAlignment="Center"
           Click="RefreshButton_Click"
+          ToolTip="{DynamicResource OnlineScriptRefresh}"
         >
           <Button.Content>
             <fa:FontAwesome Width="20" Height="20" FontSize="20" Foreground="{DynamicResource Brush.Foreground}" Icon="undo" />
           </Button.Content>
         </Button>
-        <Button
-          Name="InfoButton"
-          Margin="5"
+        <StackPanel
+          Margin="0,0,4,0"
           HorizontalAlignment="Right"
           VerticalAlignment="Center"
-          Click="InfoButton_Click"
+          Orientation="Horizontal"
         >
-          <Button.Content>
-            <fa:FontAwesome Width="20" Height="20" FontSize="20" Foreground="{DynamicResource Brush.Foreground}" Icon="Info" />
-          </Button.Content>
-        </Button>
+          <Button
+            Name="InfoButton"
+            Margin="4"
+            Click="InfoButton_Click"
+            ToolTip="{DynamicResource OnlineScriptInfo}"
+          >
+            <Button.Content>
+              <fa:FontAwesome Width="20" Height="20" FontSize="20" Foreground="{DynamicResource Brush.Foreground}" Icon="Info" />
+            </Button.Content>
+          </Button>
+          <Button
+            Name="SubmitButton"
+            Margin="4"
+            Click="SubmitButton_Click"
+            ToolTip="{DynamicResource OnlineScriptSubmit}"
+          >
+            <Button.Content>
+              <fa:FontAwesome Width="20" Height="20" FontSize="20" Foreground="{DynamicResource Brush.Accent.Teal}" Icon="PaperPlane" />
+            </Button.Content>
+          </Button>
+        </StackPanel>
 
-        <ScrollViewer Grid.Row="1" VerticalAlignment="Top" VerticalScrollBarVisibility="Auto">
+        <WrapPanel
+          Grid.Row="1"
+          Margin="4,0,4,4"
+          HorizontalAlignment="Center"
+          Orientation="Horizontal"
+        >
+          <ToggleButton
+            Name="OfficialSourceButton"
+            Content="{DynamicResource OnlineScriptSourceOfficial}"
+            Click="SourceButton_Click"
+            Style="{StaticResource OnlineScriptSourceButton}"
+            ToolTip="{DynamicResource OnlineScriptSourceOfficialTip}"
+          />
+          <ToggleButton
+            Name="ProjectSourceButton"
+            Content="{DynamicResource OnlineScriptSourceProject}"
+            Click="SourceButton_Click"
+            Style="{StaticResource OnlineScriptSourceButton}"
+            ToolTip="{DynamicResource OnlineScriptSourceProjectTip}"
+          />
+        </WrapPanel>
+
+        <ScrollViewer Grid.Row="2" VerticalAlignment="Top" VerticalScrollBarVisibility="Auto">
           <ItemsControl x:Name="ScriptListItemsControl">
             <ItemsControl.ItemTemplate>
               <DataTemplate>
@@ -100,20 +179,39 @@
                       Margin="0,6"
                       Background="{DynamicResource Brush.Border.Subtle}"
                     />
-                    <!--  版本（左） / 简介（右）  -->
+                    <!--  类型 / 版本 / 简介  -->
                     <Grid Grid.Row="2">
                       <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                       </Grid.ColumnDefinitions>
+                      <Border
+                        Grid.Column="0"
+                        Margin="0,0,8,0"
+                        Padding="5,1"
+                        VerticalAlignment="Center"
+                        Background="{DynamicResource Brush.Surface.Subtle}"
+                        BorderBrush="{DynamicResource Brush.Border.Subtle}"
+                        BorderThickness="1"
+                        CornerRadius="2"
+                        ToolTip="{DynamicResource OnlineScriptTypeTip}"
+                      >
+                        <TextBlock
+                          FontSize="12"
+                          Foreground="{DynamicResource Brush.Foreground.Muted}"
+                          Text="{Binding TypeText}"
+                        />
+                      </Border>
                       <TextBlock
+                        Grid.Column="1"
                         VerticalAlignment="Center"
                         FontSize="14"
                         Foreground="{DynamicResource Brush.Foreground.Muted}"
                         Text="{Binding Version, StringFormat=v{0}}"
                       />
                       <TextBlock
-                        Grid.Column="1"
+                        Grid.Column="2"
                         Margin="10,0,0,0"
                         VerticalAlignment="Center"
                         FontSize="14"
@@ -129,6 +227,43 @@
             </ItemsControl.ItemTemplate>
           </ItemsControl>
         </ScrollViewer>
+
+        <TextBlock
+          Grid.Row="2"
+          Margin="16"
+          HorizontalAlignment="Center"
+          VerticalAlignment="Center"
+          FontSize="16"
+          Foreground="{DynamicResource Brush.Foreground.Muted}"
+          Text="{Binding ListStateText}"
+          TextAlignment="Center"
+          TextWrapping="Wrap"
+          Visibility="{Binding HasListState, Converter={StaticResource boolVisibeConverter}}"
+        />
+
+        <!--  加载遮罩只覆盖列表区域，来源切换按钮始终可用  -->
+        <Grid
+          Grid.Row="2"
+          Background="{DynamicResource Brush.Surface}"
+          Visibility="{Binding IsLoding, Converter={StaticResource boolVisibeConverter}}"
+        >
+          <StackPanel VerticalAlignment="Center">
+            <TextBlock
+              Name="StatusTextBlock"
+              HorizontalAlignment="Center"
+              FontSize="30"
+              Text="{Binding LoadingMsg}"
+            />
+            <ProgressBar
+              x:Name="StatusProgressBar"
+              Height="10"
+              Margin="10"
+              IsIndeterminate="{Binding IsIndeterminate}"
+              Maximum="100"
+              Value="{Binding Progress}"
+            />
+          </StackPanel>
+        </Grid>
       </Grid>
       <Grid Visibility="{Binding IsInList, Converter={StaticResource boolNotVisibeConverter}}">
         <Grid.RowDefinitions>
@@ -144,6 +279,7 @@
           HorizontalAlignment="Left"
           VerticalAlignment="Center"
           Click="BackButton_Click"
+          ToolTip="{DynamicResource OnlineScriptBack}"
         >
           <Button.Content>
             <fa:FontAwesome
@@ -161,6 +297,7 @@
           HorizontalAlignment="Right"
           VerticalAlignment="Center"
           Click="UrlButton_Click"
+          ToolTip="{DynamicResource OnlineScriptViewOnGitHub}"
         >
           <Button.Content>
             <fa:FontAwesome
@@ -176,6 +313,13 @@
         <StackPanel Grid.Row="1" Margin="5" Orientation="Horizontal">
           <TextBlock FontSize="20" Text="{DynamicResource OnlineScriptAuthor}" />
           <TextBlock FontSize="20" Text="{Binding ScriptNow.Author}" />
+          <TextBlock FontSize="20" Text="  ·  " />
+          <TextBlock
+            FontSize="20"
+            Foreground="{DynamicResource Brush.Foreground.Muted}"
+            Text="{Binding ScriptNow.TypeText}"
+            ToolTip="{DynamicResource OnlineScriptTypeTip}"
+          />
         </StackPanel>
         <StackPanel Grid.Row="1" Margin="5" HorizontalAlignment="Right" Orientation="Horizontal">
           <TextBlock FontSize="20" Text="{DynamicResource OnlineScriptVersion}" />
@@ -209,24 +353,6 @@
           FontSize="20"
         />
       </Grid>
-    </Grid>
-    <Grid Visibility="{Binding IsLoding, Converter={StaticResource boolVisibeConverter}}">
-      <StackPanel VerticalAlignment="Center">
-        <TextBlock
-          Name="StatusTextBlock"
-          HorizontalAlignment="Center"
-          FontSize="30"
-          Text="{Binding LoadingMsg}"
-        />
-        <ProgressBar
-          x:Name="StatusProgressBar"
-          Height="10"
-          Margin="10"
-          IsIndeterminate="{Binding IsIndeterminate}"
-          Maximum="100"
-          Value="{Binding Progress}"
-        />
-      </StackPanel>
     </Grid>
   </Grid>
 </Page>

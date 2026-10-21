@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "scripts": [
+    {
+      "name": "Modbus CRC16",
+      "author": "Eureka12138github",
+      "description": "发送前为数据追加 Modbus CRC16",
+      "version": 1,
+      "type": "send",
+      "note": "在快捷发送的发送处理脚本中选择；也可复制到其他项目使用。",
+      "file": "crc16.lua",
+      "url": "https://github.com/Eureka12138github/llcom-y/blob/master/community-scripts/crc16.lua"
+    }
+  ]
+}

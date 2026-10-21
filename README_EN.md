@@ -31,6 +31,7 @@ A serial port debugger with Lua scripting (personal refactor).
 - Quick-send panel (10 pages, per-item timer)
 - Dedicated serial-settings tab (port / baud / data bits / parity / stop bits / encoding / auto-reconnect / RTS / DTR / open-close)
 - Lua scripting via XLua (send/receive processing and standalone scripts; see [LuaApi.md](LuaApi.md))
+- Community scripts: switch between upstream (chenxuuu) and this project (Eureka12138github); project scripts support run/send/receive types with an in-app submission link
 - Inherited tools: TCP/UDP/MQTT, WinUSB, serial monitor, plot, encoding converter (see the risk note above)
 
 ## Screenshots

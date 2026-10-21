@@ -1,0 +1,66 @@
+name: 投稿社区脚本
+description: 向 LLCOM-Y 的社区脚本库投稿（人工审核）
+title: "[Script] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢投稿！提交后会人工审核，通过后加入 `community-scripts/index.json`。
+        社区脚本可能调用串口、文件等 API，请只提交你有权分享、且不包含恶意代码/密钥/隐私的内容。
+  - type: input
+    id: name
+    attributes:
+      label: 脚本名称
+      placeholder: 例如：Modbus CRC16
+    validations:
+      required: true
+  - type: input
+    id: author
+    attributes:
+      label: 作者署名
+      placeholder: 你的昵称或 GitHub ID
+    validations:
+      required: true
+  - type: dropdown
+    id: script_type
+    attributes:
+      label: 脚本类型
+      options:
+        - 运行脚本（user_script_run）
+        - 发送处理（user_script_send_convert）
+        - 接收处理（user_script_recv_convert）
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: 版本（整数）
+      value: "1"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: 一句话简介
+      placeholder: 脚本做什么、适合什么场景
+    validations:
+      required: true
+  - type: textarea
+    id: note
+    attributes:
+      label: 备注 / 使用说明
+      placeholder: 例如需要配合哪个设置、注意事项
+  - type: textarea
+    id: script
+    attributes:
+      label: Lua 代码
+      description: 请粘贴完整脚本
+    validations:
+      required: true
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: 确认
+      options:
+        - label: 我确认脚本为原创或有权分享，并同意以与项目兼容的许可证收录
+          required: true

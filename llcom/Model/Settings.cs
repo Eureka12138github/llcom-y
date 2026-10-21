@@ -112,6 +112,20 @@ public partial class Settings : ObservableObject
         }
     }
 
+    /// <summary>
+    /// 在线脚本来源：0 = 上游（chenxuuu），1 = 本项目（Eureka12138github）。
+    /// </summary>
+    private int _onlineScriptSource = 0;
+    public int onlineScriptSource
+    {
+        get => _onlineScriptSource;
+        set
+        {
+            if (SetProperty(ref _onlineScriptSource, value))
+                Save();
+        }
+    }
+
     // ========== 配置持久化（防抖保存） ==========
 
     private static readonly object saveLock = new object();

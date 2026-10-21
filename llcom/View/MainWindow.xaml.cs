@@ -966,7 +966,26 @@ public partial class MainWindow : Window
 
     private void ScriptShareButton_Click(object sender, RoutedEventArgs e)
     {
-        System.Diagnostics.Process.Start("https://github.com/chenxuuu/llcom/blob/master/scripts");
+        //切到应用内的「社区脚本」页；页内可切换官方 / 本项目来源
+        foreach (TabItem item in mainTabControl.Items)
+        {
+            if (item.Content == OnlineScriptsFrame)
+            {
+                mainTabControl.SelectedItem = item;
+                return;
+            }
+        }
+
+        try
+        {
+            System.Diagnostics.Process.Start(
+                "https://github.com/Eureka12138github/llcom-y/tree/master/community-scripts"
+            );
+        }
+        catch (System.Exception ex)
+        {
+            Tools.Logger.Swallowed("online scripts", ex);
+        }
     }
 
     private void MenuItem_Click(object sender, RoutedEventArgs e)
