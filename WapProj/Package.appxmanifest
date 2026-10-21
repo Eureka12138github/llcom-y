@@ -9,7 +9,7 @@
   <Identity
     Name="Eureka12138github.LLCOM-Y"
     Publisher="CN=Eureka12138github"
-    Version="2.0.0.2" />
+    Version="2.0.0.3" />
 
   <Properties>
     <DisplayName>LLCOM-Y</DisplayName>

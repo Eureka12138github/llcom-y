@@ -1,4 +1,4 @@
-﻿#requires -Version 5.1
+#requires -Version 5.1
 <#
 .SYNOPSIS
 本地生成发布 zip（不依赖 GitHub Actions）。
@@ -11,10 +11,10 @@
 
 .EXAMPLE
 powershell -ExecutionPolicy Bypass -File scripts\build-release.ps1
-powershell -ExecutionPolicy Bypass -File scripts\build-release.ps1 -Version 2.0.0.2 -Platform x86
+powershell -ExecutionPolicy Bypass -File scripts\build-release.ps1 -Version 2.0.0.3 -Platform x86
 #>
 param(
-    [string]$Version = "2.0.0.2",
+    [string]$Version = "2.0.0.3",
     [ValidateSet("x64", "x86")]
     [string]$Platform = "x64"
 )
