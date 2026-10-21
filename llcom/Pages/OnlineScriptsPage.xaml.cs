@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using llcom.Model;
 
 namespace llcom.Pages;
@@ -174,7 +175,8 @@ public partial class OnlineScriptsPage : Page, INotifyPropertyChanged
                         Dispatcher.BeginInvoke(
                             new Action(() =>
                             {
-                                if (version != _refreshVersion)
+                                // 已结束/已切换到其他来源时，丢弃排队中的进度刷新
+                                if (version != _refreshVersion || !IsLoding)
                                     return;
                                 Loading(
                                     TryFindResource("OnlineScriptLoading") as string,
@@ -320,6 +322,16 @@ public partial class OnlineScriptsPage : Page, INotifyPropertyChanged
     private void BackButton_Click(object sender, RoutedEventArgs e)
     {
         IsInList = true;
+    }
+
+    private void Page_PreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        //详情页按 Esc 返回列表；作为返回按钮的键盘兜底
+        if (e.Key == Key.Escape && !IsInList)
+        {
+            IsInList = true;
+            e.Handled = true;
+        }
     }
 
     private void DownloadButton_Click(object sender, RoutedEventArgs e)
