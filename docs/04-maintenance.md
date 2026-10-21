@@ -78,9 +78,9 @@ llcom/
 
 - **上游源**保持原实现（`chenxuuu/llcom` 的 Discussions，token 从 `llcom.papapoi.com` 获取）。
 - **本项目源**读取 `community-scripts/index.json`，脚本文件放在同一目录；App 优先走 jsDelivr，失败再走 raw。
-- 新增本项目脚本：放 `.lua` 文件，并在 `index.json` 加一条记录；`type` 可选 `run` / `send` / `recv`，下载时会分别保存到 `user_script_run` / `user_script_send_convert` / `user_script_recv_convert`。
+- 新增本项目脚本：放 `.lua` 文件，并在 `index.json` 加一条记录；`saveTo` 可选 `run` / `send` / `recv`，仅决定下载目录（`user_script_run` / `user_script_send_convert` / `user_script_recv_convert`），**界面不显示为分类标签**。
 - 投稿：GitHub Issue 表单 `.github/ISSUE_TEMPLATE/script-submission.yml`，人工审核后合入。
-- 校验：`.github/workflows/validate-community-scripts.yml`（检查 JSON、类型、文件是否存在）。
+- 校验：`.github/workflows/validate-community-scripts.yml`（检查 JSON、保存位置、文件是否存在）。
 - 格式与投稿说明见 [community-scripts/README.md](../community-scripts/README.md)。
 
 ## 三、依赖清单

@@ -22,13 +22,14 @@ body:
     validations:
       required: true
   - type: dropdown
-    id: script_type
+    id: save_to
     attributes:
-      label: 脚本类型
+      label: 下载后保存到
+      description: 仅决定文件保存目录，不会在界面上显示为分类标签
       options:
-        - 运行脚本（user_script_run）
-        - 发送处理（user_script_send_convert）
-        - 接收处理（user_script_recv_convert）
+        - 运行脚本目录（user_script_run）
+        - 发送处理目录（user_script_send_convert）
+        - 接收处理目录（user_script_recv_convert）
     validations:
       required: true
   - type: input

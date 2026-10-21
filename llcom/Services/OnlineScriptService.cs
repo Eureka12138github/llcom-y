@@ -182,7 +182,9 @@ internal static class OnlineScriptService
                 Description = (string)item["description"] ?? "",
                 Version = version,
                 Note = (string)item["note"] ?? "",
-                Type = NormalizeProjectType((string)item["type"]),
+                Type = NormalizeProjectType(
+                    (string)item["saveTo"] ?? (string)item["type"]
+                ),
                 Script = inline ?? "",
             };
 

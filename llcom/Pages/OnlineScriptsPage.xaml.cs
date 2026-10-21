@@ -216,7 +216,6 @@ public partial class OnlineScriptsPage : Page, INotifyPropertyChanged
         {
             foreach (var d in result)
             {
-                d.TypeText = GetTypeText(d.Type);
                 scripts.Add(d);
             }
 
@@ -314,7 +313,6 @@ public partial class OnlineScriptsPage : Page, INotifyPropertyChanged
         ScriptNow.Url = data.Url;
         ScriptNow.Script = data.Script;
         ScriptNow.Type = data.Type;
-        ScriptNow.TypeText = data.TypeText;
 
         IsInList = false;
     }
@@ -396,16 +394,6 @@ public partial class OnlineScriptsPage : Page, INotifyPropertyChanged
     private void UrlButton_Click(object sender, RoutedEventArgs e)
     {
         OpenUrl(ScriptNow.Url);
-    }
-
-    private string GetTypeText(string type)
-    {
-        return type switch
-        {
-            "send" => TryFindResource("OnlineScriptTypeSend") as string ?? "send",
-            "recv" => TryFindResource("OnlineScriptTypeRecv") as string ?? "recv",
-            _ => TryFindResource("OnlineScriptTypeRun") as string ?? "run",
-        };
     }
 
     private void OpenUrl(string url)

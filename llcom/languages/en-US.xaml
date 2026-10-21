@@ -280,10 +280,6 @@
     <system:String x:Key="OnlineScriptEmpty">No scripts yet. Use the submit button to contribute one.</system:String>
     <system:String x:Key="OnlineScriptLoadFailed">Failed to load. Check your network/proxy and try again.</system:String>
     <system:String x:Key="OnlineScriptProjectLoadFailed">Failed to load project scripts. Make sure community-scripts is published to master, or check your network/proxy.</system:String>
-    <system:String x:Key="OnlineScriptTypeRun">Run</system:String>
-    <system:String x:Key="OnlineScriptTypeSend">Send</system:String>
-    <system:String x:Key="OnlineScriptTypeRecv">Receive</system:String>
-    <system:String x:Key="OnlineScriptTypeTip">Script type</system:String>
     <system:String x:Key="OnlineScriptBack">Back to list</system:String>
     <system:String x:Key="OnlineScriptViewOnGitHub">Open source page</system:String>
     <system:String x:Key="OnlineScriptSavedConvertTip">Saved to the convert-script folder. Select it in the corresponding settings.</system:String>

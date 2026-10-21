@@ -280,10 +280,6 @@
     <system:String x:Key="OnlineScriptEmpty">暂无脚本，欢迎点右上角投稿</system:String>
     <system:String x:Key="OnlineScriptLoadFailed">获取失败，请检查网络/代理后重试</system:String>
     <system:String x:Key="OnlineScriptProjectLoadFailed">本项目脚本获取失败：请确认 community-scripts 已发布到 master，或检查网络/代理</system:String>
-    <system:String x:Key="OnlineScriptTypeRun">运行</system:String>
-    <system:String x:Key="OnlineScriptTypeSend">发送</system:String>
-    <system:String x:Key="OnlineScriptTypeRecv">接收</system:String>
-    <system:String x:Key="OnlineScriptTypeTip">脚本类型</system:String>
     <system:String x:Key="OnlineScriptBack">返回列表</system:String>
     <system:String x:Key="OnlineScriptViewOnGitHub">打开来源页面</system:String>
     <system:String x:Key="OnlineScriptSavedConvertTip">已保存到处理脚本目录，请在对应设置中选择。</system:String>

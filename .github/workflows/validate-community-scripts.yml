@@ -29,8 +29,8 @@ jobs:
           $seen = @{}
           foreach ($s in $json.scripts) {
             if ([string]::IsNullOrWhiteSpace($s.name)) { throw "name is required" }
-            $type = if ($s.type) { $s.type } else { "run" }
-            if ($type -notin @("run", "send", "recv")) { throw "invalid type: $type ($($s.name))" }
+            $saveTo = if ($s.saveTo) { $s.saveTo } elseif ($s.type) { $s.type } else { "run" }
+            if ($saveTo -notin @("run", "send", "recv")) { throw "invalid saveTo: $saveTo ($($s.name))" }
 
             if ($s.file) {
               if ($s.file -match "\.\.") { throw "invalid file path: $($s.file)" }
