@@ -267,12 +267,35 @@ internal static class OnlineScriptService
         }
         else
         {
+            // jsDelivr / raw 同时请求，谁先成功用谁：国内网络对两者的可达性不稳定，
+            // 串行尝试会让不可达的那个源把加载时间拖长。
+            var pending = new List<Task<string>>();
             foreach (var root in ProjectRoots)
             {
                 try
                 {
                     var url = new Uri(new Uri(root), pathOrUrl);
-                    return projectHttpClient.GetStringAsync(url).GetAwaiter().GetResult();
+                    var task = projectHttpClient.GetStringAsync(url);
+                    //观察失败任务的异常，避免未观察异常
+                    task.ContinueWith(
+                        t => { _ = t.Exception; },
+                        TaskContinuationOptions.OnlyOnFaulted
+                    );
+                    pending.Add(task);
+                }
+                catch (Exception ex)
+                {
+                    lastError = ex;
+                }
+            }
+
+            while (pending.Count > 0)
+            {
+                var done = Task.WhenAny(pending).GetAwaiter().GetResult();
+                pending.Remove(done);
+                try
+                {
+                    return done.GetAwaiter().GetResult();
                 }
                 catch (Exception ex)
                 {
