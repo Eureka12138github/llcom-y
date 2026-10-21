@@ -59,8 +59,8 @@ dotnet build llcom\llcom.csproj -c Release -p:Platform=x86
 dotnet test tests\llcom.Tests\llcom.Tests.csproj -p:Platform=x64
 ```
 
-产物在 `artifacts\Release\{x64|x86}\llcom.exe`（单文件，托管依赖由 Costura 嵌入）。
-运行约束：exe 必须叫 `llcom.exe`；配置 / 脚本 / 日志默认写在程序目录（MSIX 安装时在 `%LOCALAPPDATA%\llcom\`）。
+产物在 `artifacts\Release\{x64|x86}\llcom-y.exe`（单文件，托管依赖由 Costura 嵌入）。
+运行约束：exe 必须叫 `llcom-y.exe`；配置 / 脚本 / 日志默认写在程序目录（MSIX 安装时在 `%LOCALAPPDATA%\llcom\`）。
 
 ## 与上游的关系
 
@@ -68,6 +68,7 @@ dotnet test tests\llcom.Tests\llcom.Tests.csproj -p:Platform=x64
 - 原始代码版权归 chenxuuu 及贡献者；本版本的修改部分版权归 Eureka12138github。
 - 相对上游的详细改动见 [CHANGES.md](CHANGES.md)；上游更新记录见原项目 Releases。
 - 自动更新改为检查**本项目的 GitHub Releases**（启动时可开关）；热更新与崩溃上报仍关闭，不会向原作者发送任何数据。
+- 从 v2.0.0.1（`llcom.exe`）升级到 2.0.0.2 时因可执行文件更名为 `llcom-y.exe`，请手动下载/替换一次；之后的自动更新正常。
 
 ## 开发与文档
 

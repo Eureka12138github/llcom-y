@@ -1316,8 +1316,10 @@
               Name="luaLogTextBox"
               VerticalContentAlignment="Top"
               IsReadOnly="true"
+              IsUndoEnabled="False"
               MouseLeave="luaLogTextBox_MouseLeave"
-              TextWrapping="Wrap"
+              ScrollViewer.HorizontalScrollBarVisibility="Auto"
+              TextWrapping="NoWrap"
               VerticalScrollBarVisibility="Auto"
             />
             <Grid Grid.Row="1">

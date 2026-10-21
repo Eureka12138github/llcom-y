@@ -119,8 +119,8 @@ public partial class SettingWindow : Window
         //快速搜索
         SearchPanel.Install(textEditor.TextArea);
         SearchPanel.Install(textEditorRev.TextArea);
-        string name =
-            System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + ".Lua.xshd";
+        //嵌入资源的逻辑名由 RootNamespace 决定，不随 AssemblyName/exe 名变化
+        string name = "llcom.Lua.xshd";
         System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
         using (System.IO.Stream s = assembly.GetManifestResourceStream(name))
         {

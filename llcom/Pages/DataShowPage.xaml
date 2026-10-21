@@ -29,8 +29,9 @@
       FontSize="{Binding Setting.logFontSize}"
       Foreground="{DynamicResource Brush.Data.Received}"
       IsReadOnly="True"
+      ScrollViewer.HorizontalScrollBarVisibility="Auto"
       ScrollViewer.VerticalScrollBarVisibility="Auto"
-      TextWrapping="Wrap"
+      TextWrapping="NoWrap"
     />
     <ListBox
       Name="MainList"

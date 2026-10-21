@@ -9,7 +9,7 @@ Maintains full API compatibility with the original DLL so it drops in as a repla
 ## Architecture
 
 ```
-llcom.exe
+llcom-y.exe
   │
   │  MonitorComm(pid, port, callback)
   ▼
@@ -114,7 +114,7 @@ public struct Udata {
 ## 整体架构
 
 ```
-llcom.exe
+llcom-y.exe
   │
   │  MonitorComm(pid, port, callback)
   ▼

@@ -6,7 +6,7 @@
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>llcom</RootNamespace>
-    <AssemblyName>llcom</AssemblyName>
+    <AssemblyName>llcom-y</AssemblyName>
     <ApplicationIcon>llcom.ico</ApplicationIcon>
     <LangVersion>latest</LangVersion>
     <!-- 可空引用类型（渐进：先全局开启，警告逐步消除） -->

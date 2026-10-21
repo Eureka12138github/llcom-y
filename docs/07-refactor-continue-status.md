@@ -35,7 +35,7 @@
 
 ## 三、验证状态（截至该里程碑）
 
-- **构建**：`llcom` 四种配置全部成功 —— x86/x64 × Debug/Release（单文件 `llcom.exe`）。
+- **构建**：`llcom` 四种配置全部成功 —— x86/x64 × Debug/Release（单文件 `llcom-y.exe`）。
   迁移 SDK-style 后 **`dotnet build` 亦可**（x86/x64 需各自还原）。
 - **测试**：`tests/llcom.Tests` 共 **20 个用例全部通过**（Debug/Release x64 均验证）。
 - **冒烟**：清空输出目录模拟全新安装 → 正常启动（主窗口标题正确）+ 生成完整文件结构；
@@ -95,7 +95,7 @@ dotnet test tests\llcom.Tests\llcom.Tests.csproj -p:Platform=x64
 - **本机缺 .NET Framework 4.6.2 目标包**：已用 NuGet 包 `Microsoft.NETFramework.ReferenceAssemblies.net462` 解决。
 - **SDK-style 注意**：.NET Framework 的 exe 工程按 `PlatformTarget` 推断 RID（`win-x64`/`win-x86`），
   x86/x64 需各自还原（`dotnet build -p:Platform=x86` 会自动处理）。
-- **exe 运行约束**：必须叫 `llcom.exe`，且不能在压缩包/临时目录直接运行（源码 `ProfileInitializer.Initial()` 校验）。
+- **exe 运行约束**：必须叫 `llcom-y.exe`，且不能在压缩包/临时目录直接运行（源码 `ProfileInitializer.Initial()` 校验）。
 - **已知坑**沿用 `docs/02-architecture.md` 第四节与 `AGENTS.md`：WPF Page 需手写 INPC、AvalonEdit Text 不可绑定、
   `Settings.quickSend` 必须 `[JsonIgnore]`、串口 SafeHandle 释放勿改同步等。
 - **测试约定**：涉及静态全局状态（`Global.setting`/`AppPaths.ProfilePath`），已禁用并行；

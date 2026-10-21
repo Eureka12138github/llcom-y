@@ -16,7 +16,7 @@
   - 内容搜索：`Select-String -Path <文件或 glob> -Pattern <正则>`
   - 文件查找：`Get-ChildItem -Recurse -Filter <名字>`
 - **构建/测试**：SDK-style 工程，`dotnet build` / `dotnet test` 均可（命令见 04）。
-- **运行约束**：exe 必须叫 `llcom.exe`，且不能在压缩包/临时目录直接运行。
+- **运行约束**：exe 必须叫 `llcom-y.exe`，且不能在压缩包/临时目录直接运行。
 
 ## 三、历史说明
 

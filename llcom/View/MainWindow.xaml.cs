@@ -60,6 +60,14 @@ public partial class MainWindow : Window
     /// <summary>Lua 日志缓冲/后台泵（列表批处理与渲染解耦，原为类内字段 + 线程）</summary>
     private readonly LuaLogPump _luaLogPump = new LuaLogPump();
 
+    /// <summary>Lua 日志框保留的最大字符数（超过后从头部裁剪，避免 TextBox 无限膨胀）</summary>
+    private const int LuaLogMaxChars = 200_000;
+
+    /// <summary>等待追加到 Lua 日志框的文本（后台线程写入，UI 线程取走）</summary>
+    private readonly object _luaLogPendingLock = new object();
+    private readonly StringBuilder _luaLogPending = new StringBuilder();
+    private bool _luaLogFlushQueued;
+
     public MainWindow(MainViewModel vm)
     {
         InitializeComponent();
@@ -159,9 +167,8 @@ public partial class MainWindow : Window
                         };
                         _foldingTimer.Start();
 
-                        string name =
-                            System.Reflection.Assembly.GetExecutingAssembly().GetName().Name
-                            + ".Lua.xshd";
+                        //嵌入资源的逻辑名由 RootNamespace 决定，不随 AssemblyName/exe 名变化
+                        string name = "llcom.Lua.xshd";
                         System.Reflection.Assembly assembly =
                             System.Reflection.Assembly.GetExecutingAssembly();
                         using (System.IO.Stream s = assembly.GetManifestResourceStream(name))
@@ -817,12 +824,49 @@ public partial class MainWindow : Window
         _luaLogPump.Enqueue(sender as string);
     }
 
-    /// <summary>Lua 日志一批渲染（由 LuaLogPump 在后台线程触发）。</summary>
+    /// <summary>
+    /// Lua 日志一批渲染（由 LuaLogPump 在后台线程触发）。
+    /// 先在后台合并多批，再以 Background 优先级异步追加到 UI，
+    /// 避免日志刷新和拖拽分隔条/输入抢 UI 线程。
+    /// </summary>
     private void OnLuaLogFlush(string logs)
     {
-        DoInvoke(() =>
+        if (string.IsNullOrEmpty(logs) || Tools.Global.isMainWindowsClosed)
+            return;
+
+        lock (_luaLogPendingLock)
         {
-            luaLogTextBox.IsEnabled = false; //确保文字不再被选中，防止wpf卡死
+            _luaLogPending.Append(logs);
+            if (_luaLogFlushQueued)
+                return;
+            _luaLogFlushQueued = true;
+        }
+
+        Dispatcher.BeginInvoke(
+            System.Windows.Threading.DispatcherPriority.Background,
+            new Action(FlushLuaLogToUi)
+        );
+    }
+
+    /// <summary>把合并后的 Lua 日志追加到控件（UI 线程执行）。</summary>
+    private void FlushLuaLogToUi()
+    {
+        string logs;
+        lock (_luaLogPendingLock)
+        {
+            logs = _luaLogPending.ToString();
+            _luaLogPending.Clear();
+            _luaLogFlushQueued = false;
+        }
+        if (string.IsNullOrEmpty(logs) || Tools.Global.isMainWindowsClosed)
+            return;
+
+        //有选中文本时临时禁用，避免 WPF 在追加时反复重排选中区域（原逻辑）
+        var hadSelection = luaLogTextBox.SelectionLength > 0;
+        if (hadSelection)
+            luaLogTextBox.IsEnabled = false;
+        try
+        {
             if (_luaLogPump.Count >= 1000)
             {
                 luaLogTextBox.Clear();
@@ -832,10 +876,29 @@ public partial class MainWindow : Window
                 _luaLogPump.Reset();
             }
             luaLogTextBox.AppendText(logs);
-            luaLogTextBox.ScrollToEnd();
-            if (!luaLogTextBox.IsMouseOver)
+
+            //只在原本就贴着底部时跟随滚动，向上翻看历史时不强行拉回
+            if (
+                luaLogTextBox.VerticalOffset + luaLogTextBox.ViewportHeight
+                >= luaLogTextBox.ExtentHeight - 1
+            )
+                luaLogTextBox.ScrollToEnd();
+
+            //单行很长的日志（Lua 表等）也要有上限，避免 TextBox 无限膨胀
+            if (luaLogTextBox.Text.Length > LuaLogMaxChars)
+            {
+                var text = luaLogTextBox.Text;
+                var keep = LuaLogMaxChars / 2;
+                var cut = text.LastIndexOf('\n', text.Length - keep - 1);
+                luaLogTextBox.Text =
+                    cut >= 0 ? text.Substring(cut + 1) : text.Substring(text.Length - keep);
+            }
+        }
+        finally
+        {
+            if (hadSelection)
                 luaLogTextBox.IsEnabled = true;
-        });
+        }
     }
 
     private void luaLogTextBox_MouseLeave(object sender, MouseEventArgs e)

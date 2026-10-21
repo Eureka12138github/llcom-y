@@ -24,7 +24,7 @@ dotnet build llcom\llcom.csproj -c Debug -p:Platform=x64
 ```
 - 平台：x64 / x86（.NET Framework exe 工程按 `PlatformTarget` 推断 RID，**x86/x64 需各自还原**）
 - 配置：Debug / Release
-- 输出：`artifacts\Debug\x64\llcom.exe`（单文件，托管依赖被 Costura 嵌入；**Release 与 Debug 各占一个顶层文件夹**）
+- 输出：`artifacts\Debug\x64\llcom-y.exe`（单文件，托管依赖被 Costura 嵌入；**Release 与 Debug 各占一个顶层文件夹**）
 
 ### 单元测试
 ```powershell

@@ -85,8 +85,8 @@ internal sealed class LuaLogPump
                 continue;
 
             FlushRequested?.Invoke(logsb.ToString());
-            //正常就延时 10ms，防止卡住 UI 线程
-            Thread.Sleep(10);
+            //合并刷新：50ms 一批，避免日志刷屏和拖拽/输入抢 UI 线程
+            Thread.Sleep(50);
         }
     }
 }

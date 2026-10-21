@@ -354,7 +354,7 @@
 - 每个条目/条目组**独立提交**（中文信息），便于回退。
 - 每步验证：`dotnet build llcom\llcom.csproj -c Release -p:Platform=x64` **0 错误**；
   `dotnet test tests\llcom.Tests\llcom.Tests.csproj -p:Platform=x64` 全绿；
-  启动 `artifacts\Release\x64\llcom.exe` 冒烟（无串口设备时也能开）。
+  启动 `artifacts\Release\x64\llcom-y.exe` 冒烟（无串口设备时也能开）。
 - 12.7/12.8 需人工 GUI 冒烟（见 `docs/03-test-checklist.md`），本机无法可靠截图，需你实测。
 
 ---

@@ -92,7 +92,7 @@ msbuild WapProj\WapProj.wapproj /p:Configuration=Release /p:Platform=x64 `
 
 ## 7. 注意事项
 
-- **exe 文件名必须保持 `llcom.exe`**（`ProfileInitializer` 有硬性检查）；显示名才是 LLCOM-Y。
+- **exe 文件名必须保持 `llcom-y.exe`**（`ProfileInitializer` 有硬性检查）；显示名才是 LLCOM-Y。
 - 改 `Publisher` 后必须重新生成证书，否则安装报证书不匹配。
 - 自签名证书只适合侧载；公网分发建议使用正规代码签名证书或走商店。
 - 升级包时只改 `Version`（4 段递增），不要改 `Identity`。

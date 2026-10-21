@@ -59,8 +59,8 @@ dotnet build llcom\llcom.csproj -c Release -p:Platform=x86
 dotnet test tests\llcom.Tests\llcom.Tests.csproj -p:Platform=x64
 ```
 
-Output: `artifacts\Release\{x64|x86}\llcom.exe` (single file; managed dependencies are embedded by Costura).
-The exe must be named `llcom.exe`; settings/scripts/logs live next to it (or in `%LOCALAPPDATA%\llcom\` for MSIX installs).
+Output: `artifacts\Release\{x64|x86}\llcom-y.exe` (single file; managed dependencies are embedded by Costura).
+The exe must be named `llcom-y.exe`; settings/scripts/logs live next to it (or in `%LOCALAPPDATA%\llcom\` for MSIX installs).
 
 ## Relationship to upstream
 
@@ -68,6 +68,7 @@ The exe must be named `llcom.exe`; settings/scripts/logs live next to it (or in 
 - Original code copyright chenxuuu and contributors; modifications copyright Eureka12138github.
 - Detailed changes: [CHANGES.md](CHANGES.md). Upstream release notes: the original project's Releases.
 - Auto-update now checks **this project's GitHub Releases** (can be disabled); hot-fix (`hotfix.lua`) and crash reports remain disabled, so nothing is sent to the original author's servers.
+- Upgrading from v2.0.0.1 (`llcom.exe`) to 2.0.0.2 requires a one-time manual download because the executable is renamed to `llcom-y.exe`; auto-update works normally afterwards.
 
 ## Development & docs
 

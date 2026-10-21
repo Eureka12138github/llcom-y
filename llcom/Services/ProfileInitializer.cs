@@ -68,7 +68,7 @@ internal static class ProfileInitializer
             {
                 var r = Tools.InputDialog.OpenDialog(
                     "检测到当前文件夹有其他文件\r\n"
-                        + "建议新建一个文件夹给llcom，并将llcom.exe放入其中\r\n"
+                        + "建议新建一个文件夹给LLCOM-Y，并将llcom-y.exe放入其中\r\n"
                         + "不然当前文件夹会显得很乱哦~\r\n"
                         + "是否想要继续运行呢？",
                     null,
@@ -112,11 +112,11 @@ internal static class ProfileInitializer
             Tools.Global.ReportBug = false;
         }
         //文件名不能改！
-        if (AppPaths.FileName.ToUpper() != "LLCOM.EXE")
+        if (AppPaths.FileName.ToUpper() != "LLCOM-Y.EXE")
         {
             Tools.MessageBox.Show(
                 "啊呀呀，软件文件名被改了。。。\r\n"
-                    + "为了保证软件功能的正常运行，请将exe名改回llcom.exe"
+                    + "为了保证软件功能的正常运行，请将exe名改回llcom-y.exe"
             );
             Environment.Exit(1);
         }
@@ -148,7 +148,7 @@ internal static class ProfileInitializer
         if (processes.Length > 1 && File.Exists(AppPaths.ProfilePath + "lock"))
         {
             Tools.MessageBox.Show(
-                "不支持同文件夹多开！\r\n如需多开，请在多个文件夹分别存放llcom.exe后，分别运行。"
+                "不支持同文件夹多开！\r\n如需多开，请在多个文件夹分别存放llcom-y.exe后，分别运行。"
             );
             Environment.Exit(1);
         }

@@ -10,10 +10,10 @@
 
 .EXAMPLE
 powershell -ExecutionPolicy Bypass -File scripts\build-release.ps1
-powershell -ExecutionPolicy Bypass -File scripts\build-release.ps1 -Version 2.0.0.0 -Platform x86
+powershell -ExecutionPolicy Bypass -File scripts\build-release.ps1 -Version 2.0.0.2 -Platform x86
 #>
 param(
-    [string]$Version = "2.0.0.0",
+    [string]$Version = "2.0.0.2",
     [ValidateSet("x64", "x86")]
     [string]$Platform = "x64"
 )
@@ -29,8 +29,8 @@ try {
     New-Item -ItemType Directory -Force -Path $stage | Out-Null
     $src = "artifacts\Release\$Platform"
 
-    Copy-Item (Join-Path $src "llcom.exe") $stage
-    $cfg = Join-Path $src "llcom.exe.config"
+    Copy-Item (Join-Path $src "llcom-y.exe") $stage
+    $cfg = Join-Path $src "llcom-y.exe.config"
     if (Test-Path $cfg) { Copy-Item $cfg $stage }
 
     # 默认 Lua 脚本（首启也会从内嵌资源释放，这里预置一份）
