@@ -6,14 +6,23 @@ namespace llcom.Services;
 
 /// <summary>
 /// 自动更新：检查本项目的 GitHub Releases。
-/// 更新清单由 CI 在每次 Release 中附带（autoUpdate.xml），这个地址始终指向最新版本；
+/// 更新清单由 CI 在每次 Release 中附带（x64: autoUpdate.xml，x86: autoUpdate-x86.xml），这个地址始终指向最新版本；
 /// zip 更新会解压到程序所在目录。热更新（远程执行 Lua）已停用。
 /// </summary>
 internal static class AppUpdateService
 {
-    /// <summary>始终指向“最新 Release”的更新清单。</summary>
-    private const string AppCastUrl =
+    /// <summary>
+    /// 自动更新清单：x64 / x86 各一份，按当前进程位数选择，
+    /// 避免 32 位程序下载到 64 位压缩包。
+    /// </summary>
+    private const string AppCastUrlX64 =
         "https://github.com/Eureka12138github/llcom-y/releases/latest/download/autoUpdate.xml";
+
+    private const string AppCastUrlX86 =
+        "https://github.com/Eureka12138github/llcom-y/releases/latest/download/autoUpdate-x86.xml";
+
+    private static string AppCastUrl =>
+        Environment.Is64BitProcess ? AppCastUrlX64 : AppCastUrlX86;
 
     /// <summary>
     /// 检查更新。

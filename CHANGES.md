@@ -4,6 +4,11 @@
 > 规模：约 96 个提交（含 1 个合并），改动集中在 `llcom/`、`tests/`、`docs/`、`WapProj/` 与构建配置。
 > 许可证沿用 **Apache-2.0**；原始版权归 chenxuuu 及贡献者，修改部分归 Eureka12138github。
 
+## 2.0.0.3（未发布）
+
+- CI 同时构建 **x64 / x86**；发布资产按架构区分：`llcom-y-x64.zip` / `llcom-y-x86.zip`。
+- 自动更新按进程位数选择清单：x64 用 `autoUpdate.xml`，x86 用 `autoUpdate-x86.xml`，避免 32 位程序下载到 64 位包。
+
 ## 2.0.0.2
 
 - **exe 更名为 `llcom-y.exe`**（程序集名同步；内部命名空间仍为 `llcom`，配置/脚本/日志目录不变）。从 v2.0.0.1（`llcom.exe`）升级需**手动替换一次**，之后自动更新正常。

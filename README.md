@@ -44,7 +44,8 @@
 
 ## 下载
 
-- **exe 便携版**：从 [GitHub Releases](https://github.com/Eureka12138github/llcom-y/releases) 下载（首次发布后可用）
+- **exe 便携版**：从 [GitHub Releases](https://github.com/Eureka12138github/llcom-y/releases) 下载（`llcom-y-x64.zip` / `llcom-y-x86.zip`）
+- **自动更新**：x64 读取 `autoUpdate.xml`，x86 读取 `autoUpdate-x86.xml`
 - **CI 快照**：[GitHub Actions](https://github.com/Eureka12138github/llcom-y/actions)
 - **上游官方版本（原作者）**：[chenxuuu/llcom](https://github.com/chenxuuu/llcom)
 

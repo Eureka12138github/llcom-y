@@ -44,7 +44,8 @@ A serial port debugger with Lua scripting (personal refactor).
 
 ## Download
 
-- **Portable exe**: [GitHub Releases](https://github.com/Eureka12138github/llcom-y/releases) (available after the first release)
+- **Portable exe**: [GitHub Releases](https://github.com/Eureka12138github/llcom-y/releases) (`llcom-y-x64.zip` / `llcom-y-x86.zip`)
+- **Auto-update**: x64 uses `autoUpdate.xml`, x86 uses `autoUpdate-x86.xml`
 - **CI snapshot**: [GitHub Actions](https://github.com/Eureka12138github/llcom-y/actions)
 - **Upstream official version**: [chenxuuu/llcom](https://github.com/chenxuuu/llcom)
 

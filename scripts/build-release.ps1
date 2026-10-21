@@ -4,9 +4,10 @@
 本地生成发布 zip（不依赖 GitHub Actions）。
 
 .DESCRIPTION
-构建 Release，并把运行所需文件打包到 artifacts\release\llcom-y-<version>-<platform>.zip。
+构建 Release，并生成 x64 / x86 发布包：artifacts\release\llcom-y-x64.zip 或 llcom-y-x86.zip。
 只包含构建产物 + core_script + 许可证 + CHANGES；
 **不会**打进本机的 settings.json / logs / 用户脚本。
+自动更新清单：x64 用 autoUpdate.xml，x86 用 autoUpdate-x86.xml。
 
 .EXAMPLE
 powershell -ExecutionPolicy Bypass -File scripts\build-release.ps1
@@ -45,13 +46,13 @@ try {
 
     $outDir = "artifacts\release"
     New-Item -ItemType Directory -Force -Path $outDir | Out-Null
-    $assetName = if ($Platform -eq "x64") { "llcom-y.zip" } else { "llcom-y-x86.zip" }
+    $assetName = "llcom-y-$Platform.zip"
     $zip = Join-Path $outDir $assetName
     if (Test-Path $zip) { Remove-Item $zip -Force }
     Compress-Archive -Path (Join-Path $stage "*") -DestinationPath $zip -Force
     Remove-Item $stage -Recurse -Force
 
-    # 自动更新清单（与 zip 一起上传到同一个 Release）
+    # 自动更新清单：x64 用 autoUpdate.xml，x86 用 autoUpdate-x86.xml
     $tag = "v$Version"
     $manifest = @(
         '<?xml version="1.0" encoding="UTF-8"?>',
@@ -62,7 +63,8 @@ try {
         '    <mandatory mode="1">false</mandatory>',
         '</item>'
     ) -join "`r`n"
-    $manifestPath = Join-Path $outDir "autoUpdate.xml"
+    $manifestName = if ($Platform -eq "x64") { "autoUpdate.xml" } else { "autoUpdate-x86.xml" }
+    $manifestPath = Join-Path $outDir $manifestName
     Set-Content -Path $manifestPath -Value $manifest -Encoding UTF8
 
     Write-Host ""
