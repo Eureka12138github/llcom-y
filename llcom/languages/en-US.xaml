@@ -282,6 +282,7 @@
     <system:String x:Key="OnlineScriptProjectLoadFailed">Failed to load project scripts. Make sure community-scripts is published to master, or check your network/proxy.</system:String>
     <system:String x:Key="OnlineScriptBack">Back to list</system:String>
     <system:String x:Key="OnlineScriptViewOnGitHub">Open source page</system:String>
+    <system:String x:Key="OnlineScriptSavedPath">Saved to: </system:String>
     <system:String x:Key="OnlineScriptSavedConvertTip">Saved to the convert-script folder. Select it in the corresponding settings.</system:String>
     <system:String x:Key="SaveSucceed">File saved!</system:String>
     <system:String x:Key="DisableLog">Stop print</system:String>

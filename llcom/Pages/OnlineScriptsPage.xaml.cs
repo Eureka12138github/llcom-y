@@ -368,7 +368,7 @@ public partial class OnlineScriptsPage : Page, INotifyPropertyChanged
             if (string.IsNullOrWhiteSpace(safeName))
                 continue;
 
-            var dest = $"{destDir}{safeName}.lua";
+            var dest = Path.GetFullPath($"{destDir}{safeName}.lua");
 
             //文件已经有了
             if (File.Exists(dest))
@@ -386,6 +386,10 @@ public partial class OnlineScriptsPage : Page, INotifyPropertyChanged
                 Tools.Global.RefreshLuaScriptList();
 
                 var message = TryFindResource("SaveSucceed") as string ?? "?!";
+                message +=
+                    "\r\n"
+                    + (TryFindResource("OnlineScriptSavedPath") as string ?? "")
+                    + dest;
                 if (ScriptNow.Type == "send" || ScriptNow.Type == "recv")
                     message +=
                         "\r\n"

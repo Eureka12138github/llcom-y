@@ -282,6 +282,7 @@
     <system:String x:Key="OnlineScriptProjectLoadFailed">本项目脚本获取失败：请确认 community-scripts 已发布到 master，或检查网络/代理</system:String>
     <system:String x:Key="OnlineScriptBack">返回列表</system:String>
     <system:String x:Key="OnlineScriptViewOnGitHub">打开来源页面</system:String>
+    <system:String x:Key="OnlineScriptSavedPath">保存位置：</system:String>
     <system:String x:Key="OnlineScriptSavedConvertTip">已保存到处理脚本目录，请在对应设置中选择。</system:String>
     <system:String x:Key="SaveSucceed">文件保存成功！</system:String>
     <system:String x:Key="DisableLog">停止打印</system:String>
