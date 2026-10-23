@@ -84,3 +84,5 @@ App 的「在线脚本」页切到「本项目」后，点右上角 **投稿脚�
 ## 当前收录
 
 - `Modbus CRC16`（`saveTo: send`）：发送前追加 Modbus CRC16，和 `llcom/DefaultFiles/user_script_send_convert/crc16.lua` 内容一致。
+- `电表上下电循环测试`（`saveTo: run`）：`上下电测试.lua`，通过 Modbus 控制继电器 DO 通断，循环执行电表上下电测试。
+- `定时修改时间（月）`（`saveTo: run`）：`定时修改时间（月）.lua`，按月批量写入电表时间（0x0500），用于整点/月冻结数据测试。
