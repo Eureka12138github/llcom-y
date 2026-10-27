@@ -32,6 +32,15 @@ dotnet test tests\llcom.Tests\llcom.Tests.csproj -p:Platform=x64
 ```
 测试工程通过 `[assembly: InternalsVisibleTo("llcom.Tests")]` 访问 `internal` 成员；涉及静态全局状态，已禁用并行。
 
+### 构建警告
+
+- 已移除 `App.config` 中冗余的 `System.Runtime` 绑定重定向，消除 `MSB3836`。
+- 目前仍有约 **544 条 C# 可空性分析警告**（`CS8618` / `CS8625` / `CS8600` / `CS8602` 等），原因是项目开启了 `<Nullable>enable</Nullable>`，但大量旧代码没有按可空性标注。
+- 这些警告不影响构建/运行，但建议单独做“可空性清理”：
+  - 不要直接关闭 `<Nullable>` 或用 `NoWarn` 全局隐藏；
+  - 按文件分批处理：事件/字段初始化、可为空的返回值、参数和 `null` 判断；
+  - 新增代码继续保持可空性标注，避免继续增加基数。
+
 ### 代码格式化
 ```bat
 csharpier format llcom\ --skip-write 2>nul  # 或直接
@@ -79,7 +88,7 @@ llcom/
 - **上游源**保持原实现（`chenxuuu/llcom` 的 Discussions，token 从 `llcom.papapoi.com` 获取）。
 - **本项目源**读取 `community-scripts/index.json`，脚本文件放在同一目录；App 优先走 jsDelivr，失败再走 raw。
 - 新增本项目脚本：放 `.lua` 文件，并在 `index.json` 加一条记录；`saveTo` 可选 `run` / `send` / `recv`，仅决定下载目录（`user_script_run` / `user_script_send_convert` / `user_script_recv_convert`），**界面不显示为分类标签**。
-- 投稿：GitHub Discussions 分类表单 `.github/DISCUSSION_TEMPLATE/script-submissions.yml`，人工审核后合入。需在仓库 Discussions 创建 **Script submissions** 分类（slug `script-submissions`）。
+- 投稿：GitHub Discussions 分类表单 `.github/DISCUSSION_TEMPLATE/script-submissions.yml`；维护者审核后在本帖评论 `/import`，`.github/workflows/import-community-script.yml` 会自动生成 `.lua`、更新 `index.json` 并创建 PR（不自动合并、不执行脚本）。需在仓库 Discussions 创建 **Script submissions** 分类（slug `script-submissions`）。
 - 校验：`.github/workflows/validate-community-scripts.yml`（检查 JSON、保存位置、文件是否存在）。
 - 格式与投稿说明见 [community-scripts/README.md](../community-scripts/README.md)。
 
