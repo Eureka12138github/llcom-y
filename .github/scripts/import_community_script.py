@@ -302,16 +302,20 @@ def create_pull_request(
             "请在仓库 Settings → Actions → General → Workflow permissions 中勾选 "
             "“Allow GitHub Actions to create and approve pull requests”，然后重新评论 /import。"
         )
-    compare_url = (
-        f"https://github.com/{repository}/compare/{default_branch}...{branch}?expand=1"
-    )
     raise ImportError(
-        "创建 PR 失败；分支已推送，可手动打开比较页："
-        f"{compare_url}\n"
+        "创建 PR 失败；失败分支会自动清理，请修复权限后重新评论 /import。\n"
         f"gh pr create: {first_error}\n"
         f"gh api fallback: {second_error}\n"
         f"{hint}"
     )
+
+
+def delete_remote_branch(branch: str) -> None:
+    try:
+        run(["git", "push", "origin", "--delete", branch])
+        print(f"已清理失败分支：{branch}", file=sys.stderr)
+    except Exception as exc:
+        print(f"失败分支清理失败：{branch}: {exc}", file=sys.stderr)
 
 
 def main() -> int:
@@ -410,23 +414,30 @@ def main() -> int:
     run(["git", "push", "--set-upstream", "origin", branch])
 
     pr_body = build_pr_body(fields, discussion_url, comment_author)
-    pr_url = create_pull_request(
-        repository,
-        branch,
-        default_branch,
-        f"[Script] {fields['name']}",
-        pr_body,
-        default_branch,
-    )
+    pr_url = ""
     try:
-        comment_discussion(
-            discussion_id,
-            f"已生成 PR：{pr_url}\n\n请审核后合并。",
+        pr_url = create_pull_request(
+            repository,
+            branch,
+            default_branch,
+            f"[Script] {fields['name']}",
+            pr_body,
+            default_branch,
         )
-    except Exception as comment_exc:
-        print(f"PR 已创建，但无法回复 Discussion：{comment_exc}", file=sys.stderr)
-    print(pr_url)
-    return 0
+        try:
+            comment_discussion(
+                discussion_id,
+                f"已生成 PR：{pr_url}\n\n请审核后合并。",
+            )
+        except Exception as comment_exc:
+            print(f"PR 已创建，但无法回复 Discussion：{comment_exc}", file=sys.stderr)
+        print(pr_url)
+        return 0
+    except Exception:
+        # 只有“分支已推送但 PR 未创建”时才清理，避免误删已有 PR 的分支。
+        if not pr_url:
+            delete_remote_branch(branch)
+        raise
 
 
 if __name__ == "__main__":

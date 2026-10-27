@@ -83,6 +83,8 @@ App 的「在线脚本」页切到「本项目」后，点右上角 **投稿脚�
 
 > 如果 Action 推送了分支但创建 PR 失败，请在仓库 **Settings → Actions → General → Workflow permissions** 勾选 **Allow GitHub Actions to create and approve pull requests**，然后重新评论 `/import`。
 
+> 自动清理：`community-scripts/import-*` 分支在 PR 关闭/合并后由 `Cleanup import branch` workflow 删除；创建 PR 失败时导入脚本也会尝试删除本次失败分支。仍建议在仓库 Settings → General → Pull Requests 开启 **Automatically delete head branches**。
+
 > 维护者一次性设置：在仓库 Discussions 中创建分类 **Script submissions**（slug 为 `script-submissions`）。  
 > 分类表单文件是 `.github/DISCUSSION_TEMPLATE/script-submissions.yml`；文件名必须和分类 slug 一致。
 

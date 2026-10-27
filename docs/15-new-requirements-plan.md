@@ -246,6 +246,11 @@
 
 已完成真实链路验证：Discussion 表单 → `/import` → Action → PR #4 → 合并；测试用 `import-smoke-test.lua` 已从本地和 `index.json` 清理。`Validate community scripts` 现已包含 `luac5.3 -p` 语法检查，PR 阶段只需这一个检查；Build 对脚本/文档变更跳过。
 
+分支自动清理：
+- PR 关闭/合并后，`Cleanup import branch` workflow 删除对应的 `community-scripts/import-*` 分支；
+- 创建 PR 失败时，导入脚本会尝试删除本次失败分支；
+- 建议同时开启仓库的 **Automatically delete head branches**。
+
 **估算：1–2 天（Action + 解析 + PR + 文档）；已完成。**
 
 ---

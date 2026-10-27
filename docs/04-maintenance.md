@@ -54,7 +54,8 @@ csharpier format <文件或目录>
 - `pull_request` / 分支 `push` 会忽略 `community-scripts/**`、`docs/**`、`*.md` 和 `.github/**`，避免脚本/文档 PR 触发整包构建；
 - tag 推送仍会执行构建与 Release；
 - 同一分支/PR 的旧构建会被 `concurrency` 取消，减少重复运行；
-- `.github/workflows/validate-community-scripts.yml` 负责社区脚本校验，并用 `luac5.3 -p` 做 Lua 语法检查。
+- `.github/workflows/validate-community-scripts.yml` 负责社区脚本校验，并用 `luac5.3 -p` 做 Lua 语法检查；
+- `.github/workflows/cleanup-import-branch.yml` 在 `/import` PR 关闭/合并后删除 `community-scripts/import-*` 临时分支；导入失败时脚本也会尝试清理失败分支。
 
 改动构建系统前需同步检查 CI。
 
