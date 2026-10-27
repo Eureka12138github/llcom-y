@@ -40,6 +40,16 @@
       "note": "_No response_",
       "file": "import-smoke-test.lua",
       "url": "https://github.com/Eureka12138github/llcom-y/blob/master/community-scripts/import-smoke-test.lua"
+    },
+    {
+      "name": "1111",
+      "author": "Eureka12138github",
+      "description": "这只是一个测试",
+      "version": 1,
+      "saveTo": "run",
+      "note": "_No response_",
+      "file": "1111.lua",
+      "url": "https://github.com/Eureka12138github/llcom-y/blob/master/community-scripts/1111.lua"
     }
   ]
 }
