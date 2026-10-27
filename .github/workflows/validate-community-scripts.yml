@@ -47,3 +47,12 @@ jobs:
           }
 
           Write-Host "OK: $($json.scripts.Count) script(s)"
+
+      - name: Check Lua syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y lua5.3
+          find community-scripts -type f -name "*.lua" -print0 |
+            xargs -0 -r -n1 luac5.3 -p

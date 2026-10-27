@@ -49,7 +49,14 @@ csharpier format <文件或目录>
 ⚠️ 只对 `.cs` 和 UI `.xaml` 执行；**不要**对 `llcom.csproj` / `packages.config` / 语言文件 / FodyWeavers.xml 执行（会被重排）。
 
 ### CI（GitHub Actions）
-`.github/workflows/build.yml`：windows-latest + `dotnet build` / `dotnet test`。改动构建系统前需同步检查 CI。
+`.github/workflows/build.yml`：windows-latest + `dotnet build` / `dotnet test`。
+
+- `pull_request` / 分支 `push` 会忽略 `community-scripts/**`、`docs/**`、`*.md` 和 `.github/**`，避免脚本/文档 PR 触发整包构建；
+- tag 推送仍会执行构建与 Release；
+- 同一分支/PR 的旧构建会被 `concurrency` 取消，减少重复运行；
+- `.github/workflows/validate-community-scripts.yml` 负责社区脚本校验，并用 `luac5.3 -p` 做 Lua 语法检查。
+
+改动构建系统前需同步检查 CI。
 
 ## 二、目录速览（改代码前必读）
 

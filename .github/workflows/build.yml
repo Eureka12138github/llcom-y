@@ -6,10 +6,25 @@ on:
       - next
     tags:
       - '*'
+    paths-ignore:
+      - "community-scripts/**"
+      - "docs/**"
+      - "**/*.md"
+      - ".github/**"
   pull_request:
     branches-ignore:
       - next
+    paths-ignore:
+      - "community-scripts/**"
+      - "docs/**"
+      - "**/*.md"
+      - ".github/**"
   workflow_dispatch:
+
+# 同一分支/PR 只保留最新一次构建，快速连续 push 时取消旧任务
+concurrency:
+  group: build-release-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 # 创建 Release 需要写权限，默认 GITHUB_TOKEN 只读
 permissions:
