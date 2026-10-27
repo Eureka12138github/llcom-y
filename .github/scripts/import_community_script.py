@@ -176,13 +176,18 @@ def write_text(path: Path, text: str) -> None:
 
 
 def run(cmd: list[str], *, capture: bool = False) -> str:
-    result = subprocess.run(
-        cmd,
-        check=True,
-        text=True,
-        stdout=subprocess.PIPE if capture else None,
-        stderr=subprocess.STDOUT if capture else None,
-    )
+    try:
+        result = subprocess.run(
+            cmd,
+            check=True,
+            text=True,
+            stdout=subprocess.PIPE if capture else None,
+            stderr=subprocess.STDOUT if capture else None,
+        )
+    except subprocess.CalledProcessError as exc:
+        output = (exc.stdout or "").strip() if capture else ""
+        detail = f"\n{output}" if output else ""
+        raise ImportError(f"命令失败：{' '.join(cmd)}{detail}") from exc
     return (result.stdout or "").strip()
 
 
@@ -230,6 +235,85 @@ def build_pr_body(fields: dict[str, object], discussion_url: str, author: str) -
     )
 
 
+def create_pull_request(
+    repository: str,
+    branch: str,
+    base: str,
+    title: str,
+    body: str,
+    default_branch: str,
+) -> str:
+    """Create a PR; fall back to the REST API and include a manual link on failure."""
+    first_error = ""
+    try:
+        return run(
+            [
+                "gh",
+                "pr",
+                "create",
+                "--repo",
+                repository,
+                "--base",
+                base,
+                "--head",
+                branch,
+                "--title",
+                title,
+                "--body",
+                body,
+            ],
+            capture=True,
+        )
+    except Exception as exc:
+        first_error = str(exc)
+
+    try:
+        return run(
+            [
+                "gh",
+                "api",
+                "--method",
+                "POST",
+                f"repos/{repository}/pulls",
+                "-f",
+                f"title={title}",
+                "-f",
+                f"head={branch}",
+                "-f",
+                f"base={base}",
+                "-f",
+                f"body={body}",
+                "--jq",
+                ".html_url",
+            ],
+            capture=True,
+        )
+    except Exception as exc:
+        second_error = str(exc)
+
+    lower = f"{first_error}\n{second_error}".lower()
+    hint = ""
+    if (
+        "not permitted" in lower
+        or "create or approve pull requests" in lower
+        or "resource not accessible by integration" in lower
+    ):
+        hint = (
+            "请在仓库 Settings → Actions → General → Workflow permissions 中勾选 "
+            "“Allow GitHub Actions to create and approve pull requests”，然后重新评论 /import。"
+        )
+    compare_url = (
+        f"https://github.com/{repository}/compare/{default_branch}...{branch}?expand=1"
+    )
+    raise ImportError(
+        "创建 PR 失败；分支已推送，可手动打开比较页："
+        f"{compare_url}\n"
+        f"gh pr create: {first_error}\n"
+        f"gh api fallback: {second_error}\n"
+        f"{hint}"
+    )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true", help="parse only; do not write/PR")
@@ -255,7 +339,7 @@ def main() -> int:
         raise ImportError(f"不是 script-submissions 分类（{category or 'unknown'}）")
 
     number = env("DISCUSSION_NUMBER")
-    repository = env("REPOSITORY")
+    repository = env("REPOSITORY") or env("GITHUB_REPOSITORY")
     default_branch = env("DEFAULT_BRANCH", "master")
     discussion_id = env("DISCUSSION_ID")
     discussion_url = env("DISCUSSION_URL")
@@ -264,6 +348,12 @@ def main() -> int:
 
     if not number or not repository:
         raise ImportError("缺少 Discussion 编号或仓库信息")
+
+    # github.event.discussion.html_url 在部分 webhook 里可能缺少 owner/repo；
+    # 用 repository + number 重建，避免 PR 正文出现 https://github.com//discussions/3。
+    expected_discussion_prefix = f"https://github.com/{repository}/discussions/"
+    if not discussion_url.startswith(expected_discussion_prefix):
+        discussion_url = f"https://github.com/{repository}/discussions/{number}"
 
     repo_root = Path(__file__).resolve().parents[2]
     community_dir = repo_root / "community-scripts"
@@ -320,21 +410,13 @@ def main() -> int:
     run(["git", "push", "--set-upstream", "origin", branch])
 
     pr_body = build_pr_body(fields, discussion_url, comment_author)
-    pr_url = run(
-        [
-            "gh",
-            "pr",
-            "create",
-            "--base",
-            default_branch,
-            "--head",
-            branch,
-            "--title",
-            f"[Script] {fields['name']}",
-            "--body",
-            pr_body,
-        ],
-        capture=True,
+    pr_url = create_pull_request(
+        repository,
+        branch,
+        default_branch,
+        f"[Script] {fields['name']}",
+        pr_body,
+        default_branch,
     )
     try:
         comment_discussion(

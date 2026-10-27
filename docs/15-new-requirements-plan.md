@@ -243,7 +243,7 @@
 - 脚本不执行 Lua，限制文件大小，拒绝同名脚本，错误会回复到 Discussion；
 - 本地已用示例表单测试解析（dry-run）。
 
-仍需在真实 Discussion 中验证一次 `discussions: write` 权限、分类 slug 和 PR 创建流程。
+首次真实运行结果：解析、生成文件和推送分支成功，但 `gh pr create` 失败。若错误包含 `not permitted` / `create or approve pull requests`，需要在仓库 **Settings → Actions → General → Workflow permissions** 勾选 **Allow GitHub Actions to create and approve pull requests**，然后重新评论 `/import`。脚本已增加 `--repo`、REST API 兜底、手动比较链接和该提示。
 
 **估算：1–2 天（Action + 解析 + PR + 文档），外部权限和事件行为需要实际验证。**
 

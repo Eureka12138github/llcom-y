@@ -81,6 +81,8 @@ App 的「在线脚本」页切到「本项目」后，点右上角 **投稿脚�
 
 > `/import` 只接受仓库维护者（OWNER / MEMBER / COLLABORATOR）触发；普通评论不会触发自动导入。
 
+> 如果 Action 推送了分支但创建 PR 失败，请在仓库 **Settings → Actions → General → Workflow permissions** 勾选 **Allow GitHub Actions to create and approve pull requests**，然后重新评论 `/import`。
+
 > 维护者一次性设置：在仓库 Discussions 中创建分类 **Script submissions**（slug 为 `script-submissions`）。  
 > 分类表单文件是 `.github/DISCUSSION_TEMPLATE/script-submissions.yml`；文件名必须和分类 slug 一致。
 
