@@ -677,6 +677,31 @@ public partial class MainWindow : Window
     /// <summary>“按 Enter 发送”模式下 Enter 直接发送（Shift+Enter 仍为换行）</summary>
     private void ToSendDataTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
     {
+        // 上下箭头按逻辑行移动光标，目标列尽量保持；Shift/Ctrl/Alt 组合键交给
+        // WPF 默认行为（例如 Shift+Up/Down 选择文本），避免破坏原有快捷键。
+        if (e.Key == Key.Up || e.Key == Key.Down)
+        {
+            if (Keyboard.Modifiers != ModifierKeys.None)
+                return;
+
+            if (
+                TextCaretNavigator.TryMoveVertical(
+                    toSendDataTextBox.Text,
+                    toSendDataTextBox.CaretIndex,
+                    e.Key == Key.Down,
+                    out var newCaretIndex,
+                    out var targetLine
+                )
+            )
+            {
+                toSendDataTextBox.SelectionLength = 0;
+                toSendDataTextBox.CaretIndex = newCaretIndex;
+                toSendDataTextBox.ScrollToLine(targetLine);
+                e.Handled = true;
+            }
+            return;
+        }
+
         if (e.Key != Key.Enter)
             return;
         if (Tools.Global.setting.sendByEnter && !Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
