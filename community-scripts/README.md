@@ -70,7 +70,16 @@ App 的「在线脚本」页切到「本项目」后，点右上角 **投稿脚�
 - Lua 代码；
 - 原创/分享授权确认。
 
-提交后会人工审核。审核通过后由维护者把 `.lua` 放进本目录，并在 `index.json` 增加一条记录。也可以直接提 PR。
+提交后由维护者审核。维护者在 Discussion 评论 **`/import`** 后，`Import community script` Action 会自动：
+
+- 解析表单字段与 Lua 代码；
+- 生成本目录下的 `.lua` 文件；
+- 更新 `index.json`；
+- 创建分支和 PR（不会自动合并，也不会执行 Lua 代码）。
+
+维护者审核 PR 后合并即可；也可以继续手动提 PR。
+
+> `/import` 只接受仓库维护者（OWNER / MEMBER / COLLABORATOR）触发；普通评论不会触发自动导入。
 
 > 维护者一次性设置：在仓库 Discussions 中创建分类 **Script submissions**（slug 为 `script-submissions`）。  
 > 分类表单文件是 `.github/DISCUSSION_TEMPLATE/script-submissions.yml`；文件名必须和分类 slug 一致。
