@@ -25,6 +25,14 @@ namespace llcom.LuaEnv
             lua.DoString("apiPrintLog = CS.llcom.LuaEnv.LuaApis.PrintLog");
             //获取快捷发送区数据
             lua.DoString("apiQuickSendList = CS.llcom.LuaEnv.LuaApis.QuickSendList");
+            //校验/编码/时间辅助
+            lua.DoString("apiSum8 = CS.llcom.LuaEnv.LuaApis.Sum8");
+            lua.DoString("apiXor8 = CS.llcom.LuaEnv.LuaApis.Xor8");
+            lua.DoString("apiCrc16Modbus = CS.llcom.LuaEnv.LuaApis.Crc16Modbus");
+            lua.DoString("apiBase64Encode = CS.llcom.LuaEnv.LuaApis.Base64Encode");
+            lua.DoString("apiBase64Decode = CS.llcom.LuaEnv.LuaApis.Base64Decode");
+            lua.DoString("apiNowMs = CS.llcom.LuaEnv.LuaApis.NowMs");
+            lua.DoString("apiGetVersion = CS.llcom.LuaEnv.LuaApis.GetVersion");
             //输入框
             lua.DoString("apiInputBox = CS.llcom.LuaEnv.LuaApis.InputBox");
             //加点

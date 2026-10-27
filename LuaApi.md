@@ -38,7 +38,7 @@ boolean，发送结果，成功为true
 
 ```lua
 local str = ("01020304"):fromHex()
-local result = apiData("uart",str)
+local result = apiSend("uart", str)
 ```
 
 ### apiSetCb(channel,callback)
@@ -170,6 +170,130 @@ local str = apiUtf8ToHex("中文"):fromHex()
 
 此功能仅用来兼容中文目录加载错误的问题，具体请见`head.lua`里的用法
 
+### apiAscii2Utf8(bytes)
+
+把 GBK/本地代码页字节转换为 UTF-8 字节，主要用于旧脚本兼容。
+
+* 参数
+
+|传入值类型|释义|
+|-|-|
+|byte[]|bytes，待转换的字节|
+
+* 返回值
+
+byte[]，UTF-8 编码后的字节
+
+### apiPrintLog(string)
+
+把文本追加到 Lua 运行日志（带时间前缀），不会自动换行。
+
+* 参数
+
+|传入值类型|释义|
+|-|-|
+|string|str，要输出的日志文本|
+
+### apiSum8(data)
+
+计算 8 位算术和（模 256），常用于 DL/T 645 等协议的校验和。
+
+* 参数
+
+|传入值类型|释义|
+|-|-|
+|byte[]|data，待计算的数据|
+
+* 返回值
+
+number，0~255
+
+* 例子
+
+```lua
+local cs = apiSum8(("68 11 04 02 01 01 00"):fromHex())
+```
+
+### apiXor8(data)
+
+计算 8 位异或校验。
+
+* 参数
+
+|传入值类型|释义|
+|-|-|
+|byte[]|data，待计算的数据|
+
+* 返回值
+
+number，0~255
+
+### apiCrc16Modbus(data)
+
+计算 Modbus RTU CRC16（多项式 `0xA001`，初值 `0xFFFF`）。
+
+* 参数
+
+|传入值类型|释义|
+|-|-|
+|byte[]|data，待计算的数据|
+
+* 返回值
+
+number，0~65535；发送时低字节在前
+
+* 例子
+
+```lua
+local crc = apiCrc16Modbus(("01 03 00 00 00 01"):fromHex())
+local lo = crc & 0xFF
+local hi = (crc >> 8) & 0xFF
+```
+
+### apiBase64Encode(string)
+
+把 UTF-8 字符串编码为 Base64。
+
+* 参数
+
+|传入值类型|释义|
+|-|-|
+|string|str，UTF-8 字符串|
+
+* 返回值
+
+string，Base64 文本
+
+### apiBase64Decode(string)
+
+把 Base64 解码为 UTF-8 字符串。
+
+* 参数
+
+|传入值类型|释义|
+|-|-|
+|string|str，Base64 文本|
+
+* 返回值
+
+string，解码后的 UTF-8 字符串
+
+### apiNowMs()
+
+获取当前 Unix 时间戳（毫秒）。
+
+* 返回值
+
+number，毫秒时间戳
+
+### apiGetVersion()
+
+获取当前主程序版本号。
+
+* 返回值
+
+string，版本号字符串
+
 ### apiQuickSendList(id)
 
 获取快捷发送区中的数据
@@ -216,7 +340,7 @@ string，返回的结果
 local ok, result = apiInputBox("请输入你要发送的tcp数据")
 ```
 
-### AddPoint(num,line)
+### apiAddPoint(num,line)
 
 绘制曲线，添加点（添加的点会被加到曲线末端）
 

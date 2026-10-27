@@ -138,7 +138,8 @@
     <system:String x:Key="SettingLogMaxItemsTip">Max entries kept in packet mode; oldest are dropped (a 32 MB payload budget also applies). Range 1000~200000</system:String>
     <system:String x:Key="SettingStreamMaxChars">Stream buffer (chars):</system:String>
     <system:String x:Key="SettingStreamMaxCharsTip">Max characters kept in stream mode (pack timeout &lt; 0); oldest text is dropped. Range 100000~10000000</system:String>
-    <system:String x:Key="SettingTerminal">Terminal (select data space and send key datas)</system:String>
+    <system:String x:Key="SettingTerminal">Terminal mode (type directly in the log area)</system:String>
+    <system:String x:Key="SettingTerminalTip">When enabled, click the log area and type: characters are sent to the serial port immediately. Ctrl+C sends 0x03, which conflicts with copying.</system:String>
     <system:String x:Key="EnterTerminalMode">Forced entry into terminal mode</system:String>
     <system:String x:Key="SettingMaxPack">Max length per packet</system:String>
     <system:String x:Key="SettingMaxShowPack">Max log print pack length</system:String>
@@ -170,7 +171,7 @@
     <system:String x:Key="SettingLuaText3">Click api reference button to see api reference.</system:String>
     <system:String x:Key="SettingLuaRunResult">Result</system:String>
     <system:String x:Key="SettingLuaRawText">Raw text:</system:String>
-    <system:String x:Key="ChangeLanguage">语言/Language</system:String>
+    <system:String x:Key="ChangeLanguage">Language</system:String>
     <system:String x:Key="TcpTabTitle">Socket Public Server</system:String>
     <system:String x:Key="TcpLocalTabTitle">TCP Local Server</system:String>
     <system:String x:Key="UdpLocalTabTitle">UDP Local Server</system:String>

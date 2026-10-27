@@ -71,6 +71,12 @@
       <TextBlock Style="{StaticResource HelpLi}" Text="· 垃圾桶图标：清空日志显示。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 保存图标：把当前日志保存为文件。" />
       <TextBlock Style="{StaticResource HelpP}" Text="终端模式（在「更多设置」中开启）：日志区可直接键盘输入并即时发送按键。" />
+      <TextBlock Style="{StaticResource HelpP}" FontWeight="Bold" Text="终端模式（键盘直发）详解" />
+      <TextBlock Style="{StaticResource HelpP}" Text="作用：开启后，点击上方日志/接收区域再敲键盘，字符会直接发送到串口，不需要经过发送框。适合 Bootloader、AT 命令、交互式命令行等需要“敲一个字符立刻发一个”的场景。" />
+      <TextBlock Style="{StaticResource HelpP}" Text="控制字符：Ctrl+A ~ Ctrl+Z 会发送对应的 ASCII 控制码（1~26）。例如 Ctrl+C = 0x03、Ctrl+D = 0x04、Ctrl+Z = 0x1A。终端模式默认开启；日志区获得焦点时边框会变绿。" />
+      <TextBlock Style="{StaticResource HelpP}" Text="这不是完整终端：不模拟 Enter、Backspace、方向键和功能键；Ctrl+V 会被当作 0x16 发送，不能可靠粘贴；非 ASCII 字符按 ASCII 处理，可能变成 ?。它也不会自动打开串口。" />
+      <TextBlock Style="{StaticResource HelpP}" Text="注意：终端模式下 Ctrl+C 的语义是发送 0x03，和“复制”快捷键冲突；需要复制日志时，建议先关闭终端模式。点击日志区后误触键盘也可能向设备发送数据。" />
+      <TextBlock Style="{StaticResource HelpP}" Text="如果只是普通收发数据，建议关闭终端模式，使用下方发送框。" />
       <TextBlock Style="{StaticResource HelpP}" Text="日志很多时只渲染当前可见的行（虚拟化），滚动、拖拽分隔条、切换 字符串/Hex 都不会明显卡顿。" />
       <TextBlock Style="{StaticResource HelpP}" Text="日志有保留上限（见「更多设置」→ 日志保留上限 / 流式保留字符数）：达到上限后自动丢弃最早的记录，避免长时间挂机占满内存。" />
 

@@ -232,7 +232,7 @@ FE FE 68 00 00 00 00 00 55 68 93 06 33 33 33 33 33 88 45 16
 
 ### ToolSelector 注意
 
-当前 `MainWindow.ToolSelector_SelectionChanged` 的 Frame 数组里 `EncodingFixFrame` 出现了两次，索引已经错位。加 645 页时应改成显式索引映射，否则可能出现“选中了 645 但显示别的页”。
+新增 645 页时，要同时修改 `MainWindow.xaml` 的 `ToolSelector` 项、`ToolSelector_SelectionChanged` 的 Frame 数组以及初始化时的 `Frame.Navigate`。当前数组与 10 个工具项一一对应；新页建议追加到末尾，避免打乱已有索引。
 
 ## 7. 工作量
 

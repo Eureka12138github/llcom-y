@@ -68,6 +68,84 @@ namespace llcom.LuaEnv
         }
 
         /// <summary>
+        /// 计算 8 位算术和（模 256），可直接用于 DL/T 645 等协议的校验和。
+        /// </summary>
+        public static int Sum8(byte[] data)
+        {
+            var sum = 0;
+            if (data != null)
+            {
+                foreach (var b in data)
+                    sum = (sum + b) & 0xFF;
+            }
+            return sum;
+        }
+
+        /// <summary>
+        /// 计算 8 位异或校验。
+        /// </summary>
+        public static int Xor8(byte[] data)
+        {
+            var value = 0;
+            if (data != null)
+            {
+                foreach (var b in data)
+                    value ^= b;
+            }
+            return value & 0xFF;
+        }
+
+        /// <summary>
+        /// 计算 Modbus RTU CRC16（多项式 0xA001，初值 0xFFFF）。
+        /// </summary>
+        /// <returns>0~65535 的 CRC 值，低字节在前发送。</returns>
+        public static int Crc16Modbus(byte[] data)
+        {
+            ushort crc = 0xFFFF;
+            if (data != null)
+            {
+                foreach (var b in data)
+                {
+                    crc ^= b;
+                    for (var i = 0; i < 8; i++)
+                    {
+                        if ((crc & 1) != 0)
+                            crc = (ushort)((crc >> 1) ^ 0xA001);
+                        else
+                            crc >>= 1;
+                    }
+                }
+            }
+            return crc;
+        }
+
+        /// <summary>
+        /// 将 UTF-8 字符串编码为 Base64。
+        /// </summary>
+        public static string Base64Encode(string input) =>
+            Convert.ToBase64String(Encoding.UTF8.GetBytes(input ?? ""));
+
+        /// <summary>
+        /// 将 Base64 解码为 UTF-8 字符串。
+        /// </summary>
+        public static string Base64Decode(string input) =>
+            string.IsNullOrEmpty(input)
+                ? ""
+                : Encoding.UTF8.GetString(Convert.FromBase64String(input));
+
+        /// <summary>
+        /// 当前 Unix 时间戳（毫秒）。
+        /// </summary>
+        public static long NowMs() =>
+            (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
+
+        /// <summary>
+        /// 当前主程序版本号。
+        /// </summary>
+        public static string GetVersion() =>
+            typeof(LuaApis).Assembly.GetName().Version?.ToString() ?? "";
+
+        /// <summary>
         /// 输入框
         /// </summary>
         /// <returns></returns>
