@@ -19,6 +19,7 @@
 | [13-msix-packaging.md](13-msix-packaging.md) | MSIX 打包与签名说明（**暂缓**：不上架商店、不发布 MSIX；需要时再按文档执行） | 以后要做安装版时 |
 | [14-dark-mode-plan.md](14-dark-mode-plan.md) | 黑暗模式可行性评估、调色板设计、分阶段实施与验收清单（**仅计划，未改代码**） | 以后做深色主题时 |
 | [15-new-requirements-plan.md](15-new-requirements-plan.md) | 新需求 #18–#26 的难度评估、推荐顺序、实现方案与待确认项（**仅计划，未改代码**） | 规划下一批改动时 |
+| [16-dlt645-tool-design.md](16-dlt645-tool-design.md) | DL/T 645-2007 组帧工具设计：向导/高级、自动读表地址、应答解析、协议与分支计划（**仅设计，未实现**） | 后续做 645 组帧时 |
 
 ## 分支说明
 
