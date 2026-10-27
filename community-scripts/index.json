@@ -30,16 +30,6 @@
       "note": "参数在脚本开头的【用户配置区】修改；",
       "file": "定时修改时间（月）.lua",
       "url": "https://github.com/Eureka12138github/llcom-y/blob/master/community-scripts/定时修改时间（月）.lua"
-    },
-    {
-      "name": "Import smoke test",
-      "author": "Eureka12138github",
-      "description": "用于验证 /import 自动导入流程的简单 Lua 脚本。",
-      "version": 1,
-      "saveTo": "run",
-      "note": "_No response_",
-      "file": "import-smoke-test.lua",
-      "url": "https://github.com/Eureka12138github/llcom-y/blob/master/community-scripts/import-smoke-test.lua"
     }
   ]
 }
