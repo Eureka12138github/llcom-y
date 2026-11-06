@@ -102,7 +102,7 @@ public partial class DataShowViewModel : ObservableObject
                 TrimStreamBuffer(force: true);
         };
         Rts = false;
-        Dtr = true;
+        Dtr = false;
         _lastPackShowMode = setting.timeout >= 0;
     }
 

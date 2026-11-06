@@ -27,7 +27,7 @@ class SerialPortService : ISerialPortService
     public event EventHandler UartDataRawSent;
     private Stream lastPortBaseStream = null;
     private bool _rts = false;
-    private bool _dtr = true;
+    private bool _dtr = false;
 
     public bool Rts
     {

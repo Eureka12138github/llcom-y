@@ -64,7 +64,7 @@ partial class Settings
         }
     }
 
-private bool _hexSend = false;
+private bool _hexSend = true;
 
     /// <summary>
     /// 主数据发送框是否发hex
