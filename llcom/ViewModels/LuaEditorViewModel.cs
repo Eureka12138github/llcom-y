@@ -463,8 +463,32 @@ public partial class LuaEditorViewModel : ObservableObject
             }
         }
 
+        if (NormalizePinnedOrders(_metadata.Values))
+            needsSave = true;
+
         if (needsSave)
             SaveMetadata();
+    }
+
+    /// <summary>
+    /// 兼容旧版本：旧逻辑会把所有置顶项都写成 order = -1。
+    /// 当发现重复 order 时，按当前“order + 名称”顺序重新编号为 -1、-2、-3…，
+    /// 保持现有显示顺序不变，同时让后续置顶能继续排到最前。
+    /// </summary>
+    private static bool NormalizePinnedOrders(IEnumerable<ScriptMetadata> scripts)
+    {
+        var pinned = scripts
+            .Where(script => script.Order != 0)
+            .OrderBy(script => script.Order)
+            .ThenBy(script => script.File, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        if (!pinned.GroupBy(script => script.Order).Any(group => group.Count() > 1))
+            return false;
+
+        for (var index = 0; index < pinned.Count; index++)
+            pinned[index].Order = index - pinned.Count;
+        return true;
     }
 
     private void RefreshCategoriesCore()

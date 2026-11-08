@@ -80,6 +80,37 @@ namespace llcom.Tests
         }
 
         [Fact]
+        public void LegacyDuplicatePinnedOrders_AreNormalized()
+        {
+            CreateScripts("a", "b", "c", "d");
+            File.WriteAllText(
+                Path.Combine(ScriptDir, "scripts.index.json"),
+                @"{
+  ""version"": 1,
+  ""scripts"": [
+    { ""file"": ""a"", ""order"": -1 },
+    { ""file"": ""b"", ""order"": -1 },
+    { ""file"": ""c"", ""order"": -1 },
+    { ""file"": ""d"", ""order"": 0 }
+  ]
+}"
+            );
+
+            var current = "a";
+            var vm = new LuaEditorViewModel("user_script_run/", () => current, v => current = v);
+
+            // 旧数据保持原有显示顺序，但 order 已被拆成唯一的负数
+            Assert.Equal(new[] { "a", "b", "c", "d" }, vm.Files.ToArray());
+
+            vm.SelectedFile = "d";
+            vm.SetSelectedPinned(true);
+            vm.RefreshList();
+
+            // 新置顶仍能排到最前
+            Assert.Equal(new[] { "d", "a", "b", "c" }, vm.Files.ToArray());
+        }
+
+        [Fact]
         public void PinningAnotherScript_MovesItAboveExistingPins()
         {
             CreateScripts("a", "b", "c", "d", "e");
