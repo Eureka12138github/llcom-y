@@ -153,6 +153,8 @@ public partial class SettingWindow : Window
         );
         luaFileList.DataContext = _sendEditor;
         luaFileListRev.DataContext = _recvEditor;
+        sendScriptBar.DataContext = _sendEditor;
+        recvScriptBar.DataContext = _recvEditor;
         //编辑器文本桥接（AvalonEdit Text 不可绑定，经回调访问）
         _sendEditor.SetTextBridge(() => textEditor.Text, t => textEditor.Text = t);
         _recvEditor.SetTextBridge(() => textEditorRev.Text, t => textEditorRev.Text = t);
@@ -163,6 +165,61 @@ public partial class SettingWindow : Window
             _sendEditor?.RefreshList();
             _recvEditor?.RefreshList();
         };
+    }
+
+    private void SendScriptToggleFavorite_Click(object sender, RoutedEventArgs e) =>
+        _sendEditor?.ToggleSelectedFavorite();
+
+    private void SendScriptPin_Click(object sender, RoutedEventArgs e) =>
+        _sendEditor?.SetSelectedPinned(true);
+
+    private void SendScriptUnpin_Click(object sender, RoutedEventArgs e) =>
+        _sendEditor?.SetSelectedPinned(false);
+
+    private void SendScriptSetCategory_Click(object sender, RoutedEventArgs e) =>
+        EditScriptMetadata(_sendEditor, true);
+
+    private void SendScriptSetDescription_Click(object sender, RoutedEventArgs e) =>
+        EditScriptMetadata(_sendEditor, false);
+
+    private void RecvScriptToggleFavorite_Click(object sender, RoutedEventArgs e) =>
+        _recvEditor?.ToggleSelectedFavorite();
+
+    private void RecvScriptPin_Click(object sender, RoutedEventArgs e) =>
+        _recvEditor?.SetSelectedPinned(true);
+
+    private void RecvScriptUnpin_Click(object sender, RoutedEventArgs e) =>
+        _recvEditor?.SetSelectedPinned(false);
+
+    private void RecvScriptSetCategory_Click(object sender, RoutedEventArgs e) =>
+        EditScriptMetadata(_recvEditor, true);
+
+    private void RecvScriptSetDescription_Click(object sender, RoutedEventArgs e) =>
+        EditScriptMetadata(_recvEditor, false);
+
+    /// <summary>编辑当前脚本的分类或描述（设置窗口发送/接收两个编辑器共用）。</summary>
+    private void EditScriptMetadata(LuaEditorViewModel editor, bool editCategory)
+    {
+        if (editor == null || string.IsNullOrEmpty(editor.SelectedFile))
+            return;
+
+        var titleKey = editCategory ? "ScriptSetCategory" : "ScriptSetDescription";
+        var promptKey = editCategory
+            ? "ScriptCategoryPrompt"
+            : "ScriptDescriptionPrompt";
+        var title = TryFindResource(titleKey) as string ?? titleKey;
+        var prompt = TryFindResource(promptKey) as string ?? title;
+        var current = editCategory
+            ? editor.SelectedCategoryValue
+            : editor.SelectedDescriptionValue;
+
+        var result = Tools.InputDialog.OpenDialog(prompt, current, title);
+        if (!result.Item1)
+            return;
+        if (editCategory)
+            editor.SetSelectedCategory(result.Item2);
+        else
+            editor.SetSelectedDescription(result.Item2);
     }
 
     private void SettingWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)

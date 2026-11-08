@@ -1205,7 +1205,49 @@
                 Name="luaFileList"
                 Width="150"
                 ItemsSource="{Binding LuaEditor.Files}"
-                SelectedItem="{Binding LuaEditor.SelectedFile}"
+                SelectedItem="{Binding LuaEditor.VisibleSelectedFile}"
+                ToolTip="{DynamicResource ScriptListTip}"
+              >
+                <ComboBox.ContextMenu>
+                  <ContextMenu>
+                    <MenuItem
+                      Header="{DynamicResource ScriptToggleFavorite}"
+                      Click="ScriptToggleFavorite_Click"
+                    />
+                    <MenuItem Header="{DynamicResource ScriptPin}" Click="ScriptPin_Click" />
+                    <MenuItem Header="{DynamicResource ScriptUnpin}" Click="ScriptUnpin_Click" />
+                    <Separator />
+                    <MenuItem
+                      Header="{DynamicResource ScriptSetCategory}"
+                      Click="ScriptSetCategory_Click"
+                    />
+                    <MenuItem
+                      Header="{DynamicResource ScriptSetDescription}"
+                      Click="ScriptSetDescription_Click"
+                    />
+                  </ContextMenu>
+                </ComboBox.ContextMenu>
+              </ComboBox>
+              <TextBox
+                Width="100"
+                Margin="3,0,0,0"
+                VerticalContentAlignment="Center"
+                Text="{Binding LuaEditor.SearchText, UpdateSourceTrigger=PropertyChanged}"
+                ToolTip="{DynamicResource ScriptSearchTip}"
+              />
+              <ComboBox
+                Width="100"
+                Margin="3,0,0,0"
+                DisplayMemberPath="Label"
+                ItemsSource="{Binding LuaEditor.CategoryOptions}"
+                SelectedItem="{Binding LuaEditor.SelectedCategoryOption}"
+                ToolTip="{DynamicResource ScriptCategoryTip}"
+              />
+              <CheckBox
+                Margin="6,0,0,0"
+                VerticalAlignment="Center"
+                Content="{DynamicResource ScriptFavoritesOnly}"
+                IsChecked="{Binding LuaEditor.FavoritesOnly}"
               />
               <Button
                 Name="newScriptButton"

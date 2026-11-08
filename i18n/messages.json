@@ -1,0 +1,1238 @@
+{
+  "schema": 1,
+  "defaultLanguage": "zh-CN",
+  "languages": [
+    "zh-CN",
+    "en-US"
+  ],
+  "messages": {
+    "AppTitle": {
+      "zh-CN": "LLCOM-Y - 能跑Lua脚本的串口调试工具",
+      "en-US": "LLCOM-Y - Debug serial port with Lua!"
+    },
+    "OpenPort_open": {
+      "zh-CN": "打开",
+      "en-US": "Open"
+    },
+    "OpenPort_close": {
+      "zh-CN": "关闭",
+      "en-US": "Close"
+    },
+    "OpenPort_port": {
+      "zh-CN": "串口",
+      "en-US": "Port"
+    },
+    "ErrorOpenPort": {
+      "zh-CN": "串口打开失败！",
+      "en-US": "Serial port open failed!"
+    },
+    "ErrorClosePort": {
+      "zh-CN": "串口关闭失败！",
+      "en-US": "Serial port close failed!"
+    },
+    "ErrorSendFail": {
+      "zh-CN": "串口数据发送失败！请检查连接！",
+      "en-US": "Serial port data send failed! Please check connection!"
+    },
+    "ErrorPortNotOpen": {
+      "zh-CN": "请先打开串口！",
+      "en-US": "Please open the serial port first!"
+    },
+    "CrashTitle": {
+      "zh-CN": "程序错误",
+      "en-US": "Program Error"
+    },
+    "CrashMessage": {
+      "zh-CN": "程序遇到一个错误，需要关闭。详情已记录到下面的日志文件：",
+      "en-US": "The program hit an error and must be closed. Details were written to the log file below:"
+    },
+    "CrashCloseButton": {
+      "zh-CN": "关闭程序",
+      "en-US": "Close program"
+    },
+    "ErrorScript": {
+      "zh-CN": "处理发送数据的脚本运行错误，请检查发送脚本后再试，错误信息：",
+      "en-US": "Lua script for send data has error,please check:"
+    },
+    "ClearLog": {
+      "zh-CN": "清空日志",
+      "en-US": "Clear Log"
+    },
+    "MoreSettings": {
+      "zh-CN": "更多设置",
+      "en-US": "Settings"
+    },
+    "MoreSettingsTip": {
+      "zh-CN": "可设置串口校验位停止位等信息、设置发送前的自动处理脚本。",
+      "en-US": "Set stopbit, parity, Lua script for data to send and so on."
+    },
+    "MoreActions": {
+      "zh-CN": "更多操作",
+      "en-US": "More actions"
+    },
+    "SettingLogFontSize": {
+      "zh-CN": "数据字号：",
+      "en-US": "Log font size:"
+    },
+    "RecvHexView": {
+      "zh-CN": "接收显示Hex",
+      "en-US": "Show received as Hex"
+    },
+    "SerialSettingsCard": {
+      "zh-CN": "串口设置",
+      "en-US": "Serial Port"
+    },
+    "RTSTip": {
+      "zh-CN": "RTS（请求发送）：勾选=拉高电平，取消=拉低。常用于硬件流控，也可作为通用输出脚控制外部电路。详见使用说明。",
+      "en-US": "RTS (Request To Send): checked = high, unchecked = low. Used for hardware flow control or as a general output pin."
+    },
+    "DTRTip": {
+      "zh-CN": "DTR（数据终端就绪）：勾选=拉高电平，取消=拉低。常被开发板用于复位或进入下载模式。详见使用说明。",
+      "en-US": "DTR (Data Terminal Ready): checked = high, unchecked = low. Often used by dev boards to reset or enter bootloader mode."
+    },
+    "Help": {
+      "zh-CN": "使用说明",
+      "en-US": "Help"
+    },
+    "SendDataButton": {
+      "zh-CN": "发送",
+      "en-US": "Send"
+    },
+    "SendDataButtonTip": {
+      "zh-CN": "按Ctrl+Enter同样也可以发送数据。",
+      "en-US": "same as Ctrl+Enter"
+    },
+    "SendOption": {
+      "zh-CN": "发送选项",
+      "en-US": "Send options"
+    },
+    "SendOptionTip": {
+      "zh-CN": "发送选项：连续发送 / 发送后延时 / 重复次数 / Enter 行为",
+      "en-US": "Send options: continuous send / delay / repeat count / Enter behavior"
+    },
+    "ContinuousSend": {
+      "zh-CN": "连续发送",
+      "en-US": "Continuous send"
+    },
+    "ContinuousDelayText": {
+      "zh-CN": "发送后延时(ms)：",
+      "en-US": "Delay after send (ms): "
+    },
+    "ContinuousRepeatText": {
+      "zh-CN": "重复次数：",
+      "en-US": "Repeat count: "
+    },
+    "SendByEnter": {
+      "zh-CN": "按 Enter 发送",
+      "en-US": "Send by Enter"
+    },
+    "SendByCtrlEnter": {
+      "zh-CN": "按 Ctrl+Enter 发送",
+      "en-US": "Send by Ctrl+Enter"
+    },
+    "RefreshPortButton": {
+      "zh-CN": "刷新串口",
+      "en-US": "Refresh List"
+    },
+    "ShowPorts": {
+      "zh-CN": "串口：",
+      "en-US": "Serial Ports:"
+    },
+    "ShowBaudRate": {
+      "zh-CN": "波特率：",
+      "en-US": "Baud Rate:"
+    },
+    "OtherRate": {
+      "zh-CN": "自定义",
+      "en-US": "Custom"
+    },
+    "OtherRateFail": {
+      "zh-CN": "自定义波特率设置失败",
+      "en-US": "Custom baud rate set fail."
+    },
+    "ShowStatus": {
+      "zh-CN": "状态：",
+      "en-US": "Status:"
+    },
+    "SentCount": {
+      "zh-CN": "已发送字节：",
+      "en-US": "Data sent:"
+    },
+    "ReceivedCount": {
+      "zh-CN": "已接收字节：",
+      "en-US": "Data received:"
+    },
+    "ClearCountTip": {
+      "zh-CN": "右键可清空此计数",
+      "en-US": "Right click to clear this"
+    },
+    "QuickSendLoadError": {
+      "zh-CN": "待发送列表，数据损坏，全部清空",
+      "en-US": "Quick send List error, return to default data."
+    },
+    "QuickSendCard": {
+      "zh-CN": "快捷发送",
+      "en-US": "Quick send"
+    },
+    "QuickSendId": {
+      "zh-CN": "编号",
+      "en-US": "ID"
+    },
+    "QuickSendContent": {
+      "zh-CN": "内容",
+      "en-US": "Content"
+    },
+    "QuickSendHex": {
+      "zh-CN": "HEX",
+      "en-US": "Hex"
+    },
+    "QuickSendTimer": {
+      "zh-CN": "定时",
+      "en-US": "Timer"
+    },
+    "QuickSendInterval": {
+      "zh-CN": "间隔(ms)：",
+      "en-US": "Interval (ms): "
+    },
+    "QuickSendTimerTip": {
+      "zh-CN": "定时发送：点开设置「定时」开关与间隔（可多条同时定时）",
+      "en-US": "Periodic send: click to set the timer switch and interval"
+    },
+    "QuickSendIntervalTip": {
+      "zh-CN": "定时发送间隔，单位毫秒（10~3600000）",
+      "en-US": "Interval in milliseconds (10~3600000)"
+    },
+    "ContinuousRepeatTip": {
+      "zh-CN": "在首次发送之后重复的次数：-1=一直重复；0=只发一次",
+      "en-US": "Repeats AFTER the first send: -1 = forever; 0 = send once only"
+    },
+    "ContinuousDelayTip": {
+      "zh-CN": "连续发送时每次之间的间隔，单位毫秒（10~3600000）；可直接输入数字",
+      "en-US": "Delay between sends in milliseconds (10~3600000); you can type a number directly"
+    },
+    "QuickSendRecvScript": {
+      "zh-CN": "脚本",
+      "en-US": "Rcvs"
+    },
+    "QuickSendRecvScriptPara": {
+      "zh-CN": "参数",
+      "en-US": "Para"
+    },
+    "QuickSendButtonTip": {
+      "zh-CN": "右击此按键，设置显示内容。",
+      "en-US": "Right click to change Button Content."
+    },
+    "QuickSendIdTip": {
+      "zh-CN": "右击序号，可更改改条目位置。",
+      "en-US": "Right click id to change the index of this line."
+    },
+    "QuickSendListNameTip": {
+      "zh-CN": "右击名称，可更改当前快捷发送列表名称。",
+      "en-US": "Right click id to change this quick send list name"
+    },
+    "QuickSendListNameChangeTip": {
+      "zh-CN": "更改当前快捷发送列表名称",
+      "en-US": "change this quick send list name"
+    },
+    "QuickSendButton": {
+      "zh-CN": "发送",
+      "en-US": "Send"
+    },
+    "QuickSendRecvScriptNil": {
+      "zh-CN": "无接收脚本\n左击选择脚本",
+      "en-US": "No receive script\nLeft click to set script"
+    },
+    "QuickSendRecvScriptShow": {
+      "zh-CN": "当前接收脚本为：[{0}]\n右击清除脚本",
+      "en-US": "Current receive script is: [{0}]\nRight click to clear the script"
+    },
+    "QuickSendRecvScriptParaSet": {
+      "zh-CN": "左击设置脚本参数\n右击清除脚本参数",
+      "en-US": "Left click to set script parameter\nRight click to clear the script parameter"
+    },
+    "QuickSendAdd": {
+      "zh-CN": "添加新项目",
+      "en-US": "Add new"
+    },
+    "QuickSendRemoveLast": {
+      "zh-CN": "删除最后一项",
+      "en-US": "Remove last one"
+    },
+    "QuickSendTip": {
+      "zh-CN": "发送处理的lua脚本，同样对此处发送的数据生效。",
+      "en-US": "Lua script for data to send, also influence the data here"
+    },
+    "QuickSendImport": {
+      "zh-CN": "导入数据到该页",
+      "en-US": "import data to here"
+    },
+    "QuickSendExport": {
+      "zh-CN": "导出该页数据",
+      "en-US": "export this page's data"
+    },
+    "QuickSendRemoveAll": {
+      "zh-CN": "一键清空该页数据",
+      "en-US": "clear this page's data"
+    },
+    "DeleteConfirmation": {
+      "zh-CN": "删除确认",
+      "en-US": "delete confirmation"
+    },
+    "DeleteConfirmationMsg": {
+      "zh-CN": "删除后不可恢复，请手动输入“YES”确认删除",
+      "en-US": "it cannot be restored after being deleted.please type \"YES\" to confirm."
+    },
+    "QuickSendImportSSCOM": {
+      "zh-CN": "一键导入SSCOM数据",
+      "en-US": "Import SSCOM Data"
+    },
+    "QuickSendSSCOMFile": {
+      "zh-CN": "SSCOM配置文件|sscom51.ini;sscom.ini",
+      "en-US": "SSCOM|sscom51.ini;sscom.ini"
+    },
+    "QuickSendLLCOMFile": {
+      "zh-CN": "LLCOM-Y 列表文件|*.lclst",
+      "en-US": "LLCOM-Y Quick Send List|*.lclst"
+    },
+    "QuickSendSaveFileDone": {
+      "zh-CN": "数据导出成功！",
+      "en-US": "All Data of this page has exported!"
+    },
+    "QuickSendSetButton": {
+      "zh-CN": "输入你想显示的内容",
+      "en-US": "Enter you want to show"
+    },
+    "QuickSendChangeButton": {
+      "zh-CN": "更改发送按键显示内容",
+      "en-US": "Change content of send button"
+    },
+    "QuickSendChangeIdButton": {
+      "zh-CN": "输入你想改到哪个序号的位置（留空表示删除该项目）",
+      "en-US": "Enter where you want to insert(empty means delete this line)"
+    },
+    "QuickSendChangeIdTitle": {
+      "zh-CN": "更改这个条目的序号",
+      "en-US": "Change index of this line"
+    },
+    "QuickSendChangeList": {
+      "zh-CN": "切换到其他快捷发送数据列表",
+      "en-US": "Change to another quick send list"
+    },
+    "LuaCard": {
+      "zh-CN": "运行脚本",
+      "en-US": "Run script"
+    },
+    "LuaNewScript": {
+      "zh-CN": "新建脚本",
+      "en-US": "New script"
+    },
+    "LuaRunScript": {
+      "zh-CN": "运行脚本",
+      "en-US": "Run script"
+    },
+    "LuaOpenFolder": {
+      "zh-CN": "打开脚本目录",
+      "en-US": "Open script folder"
+    },
+    "LuaRefreshList": {
+      "zh-CN": "刷新脚本列表",
+      "en-US": "Refresh script List"
+    },
+    "LuaApiReference": {
+      "zh-CN": "查看接口文档",
+      "en-US": "See api reference"
+    },
+    "LuaGetShare": {
+      "zh-CN": "打开社区脚本（官方 / 本项目）",
+      "en-US": "Open community scripts (upstream / this project)"
+    },
+    "LuaFileName": {
+      "zh-CN": "文件名：",
+      "en-US": "File name:"
+    },
+    "LuaConfirmCreate": {
+      "zh-CN": "确认新建文件",
+      "en-US": "Confirm create file"
+    },
+    "LuaCancel": {
+      "zh-CN": "取消",
+      "en-US": "Cancel"
+    },
+    "LuaStop": {
+      "zh-CN": "停止运行",
+      "en-US": "Stop run"
+    },
+    "LuaQuit": {
+      "zh-CN": "退出",
+      "en-US": "Quit"
+    },
+    "LuaOverload": {
+      "zh-CN": "重新载入代码并运行",
+      "en-US": "Reload and run"
+    },
+    "LuaPause": {
+      "zh-CN": "暂停打印,右键单击清空日志",
+      "en-US": "Pause Log print,Right-click Clear Log"
+    },
+    "LuaContinue": {
+      "zh-CN": "继续打印",
+      "en-US": "Continue print log"
+    },
+    "LuaSendScript": {
+      "zh-CN": "实时执行lua语句 - [Enter]",
+      "en-US": "Run Lua command - [Enter]"
+    },
+    "LuaNoName": {
+      "zh-CN": "请输入文件名！",
+      "en-US": "Please enter file name!"
+    },
+    "LuaExist": {
+      "zh-CN": "该文件已存在！",
+      "en-US": "File is exist!"
+    },
+    "LuaCreateFail": {
+      "zh-CN": "新建失败，请检查！",
+      "en-US": "Create file failed, please check."
+    },
+    "AboutCard": {
+      "zh-CN": "关于",
+      "en-US": "About"
+    },
+    "AboutSubTitle": {
+      "zh-CN": "能跑Lua脚本的串口调试工具",
+      "en-US": "Debug with your own script!"
+    },
+    "AboutDiscriptionMain": {
+      "zh-CN": "LLCOM-Y 是一款串口调试工具，连接可靠、断线后可自动重连，右侧带快捷发送区。",
+      "en-US": "LLCOM-Y is a serial port debugging tool. It reconnects automatically after the port is lost and includes a quick-send panel."
+    },
+    "AboutDiscriptionMore": {
+      "zh-CN": "本工具除了具有与其他同类工具，所包含的数据收发功能外，还添加了Lua运行环境。用户可自行使用Lua，完成几乎所有可以想象到的自动化操作，大大提高了串口工具的可用性。",
+      "en-US": "Besides basic send/receive, it embeds a Lua runtime, so you can automate almost anything you can imagine."
+    },
+    "AboutNotice": {
+      "zh-CN": "非官方个人维护版 · 基于 chenxuuu 的 LLCOM（Apache-2.0）\n本项目仅用于个人学习与自用，与原作者无隶属关系。",
+      "en-US": "Unofficial personal build · based on LLCOM by chenxuuu (Apache-2.0)\nFor personal learning and use only; not affiliated with the original author."
+    },
+    "AboutAutoUpdate": {
+      "zh-CN": "启动时自动检查更新",
+      "en-US": "Check for updates on startup"
+    },
+    "AboutCheckUpdate": {
+      "zh-CN": "检查更新",
+      "en-US": "Check for updates"
+    },
+    "AboutDevelopers": {
+      "zh-CN": "维护者：Eureka12138github\n原作者：chenxuuu、whc2001（上游贡献者）",
+      "en-US": "maintainer: Eureka12138github\noriginal authors: chenxuuu, whc2001 (upstream contributors)"
+    },
+    "AboutTranslator": {
+      "zh-CN": "简体中文为原版语言",
+      "en-US": "translators: chenxuuu"
+    },
+    "AboutGitHubText": {
+      "zh-CN": "本项目开源地址，欢迎 star",
+      "en-US": "This project on GitHub (stars welcome)"
+    },
+    "AboutGitHubButton": {
+      "zh-CN": "前往本项目 GitHub",
+      "en-US": "Open project GitHub"
+    },
+    "AboutOriginalRepoButton": {
+      "zh-CN": "查看原作者仓库（LLCOM）",
+      "en-US": "Open original repo (LLCOM)"
+    },
+    "AboutFeedBack": {
+      "zh-CN": "遇到问题或有建议，请到本项目提 Issue",
+      "en-US": "Found a problem or have a suggestion? Open an issue in this repo."
+    },
+    "AboutFeedBackButton": {
+      "zh-CN": "提交 Issue",
+      "en-US": "Create issue"
+    },
+    "AboutThanksProjects": {
+      "zh-CN": "感谢以下项目：",
+      "en-US": "Thanks these projects:"
+    },
+    "AboutVersion": {
+      "zh-CN": "软件版本",
+      "en-US": "Software version"
+    },
+    "InputDialogConfirm": {
+      "zh-CN": "确定",
+      "en-US": "OK"
+    },
+    "InputDialogCancel": {
+      "zh-CN": "取消",
+      "en-US": "Cancel"
+    },
+    "InputDialogTitle": {
+      "zh-CN": "提示",
+      "en-US": "Notice"
+    },
+    "SettingTitle": {
+      "zh-CN": "更多设置",
+      "en-US": "More settings"
+    },
+    "SettingBasic": {
+      "zh-CN": "更多串口设置",
+      "en-US": "More serial port settings"
+    },
+    "SettingAutoReconnect": {
+      "zh-CN": "自动恢复被断开的串口连接",
+      "en-US": "Auto reconnect after disconnect"
+    },
+    "SettingOpenLogFolder": {
+      "zh-CN": "打开串口收发日志目录",
+      "en-US": "Open serial port log data folder"
+    },
+    "SettingShowFormat": {
+      "zh-CN": "串口数据显示方式：",
+      "en-US": "Data show format:"
+    },
+    "SettingShowBoth": {
+      "zh-CN": "同时显示Hex和文本数据",
+      "en-US": "Both Text and Hex"
+    },
+    "SettingShoText": {
+      "zh-CN": "只显示文本数据",
+      "en-US": "Only Text"
+    },
+    "SettingShowHexOnly": {
+      "zh-CN": "只显示Hex数据",
+      "en-US": "Only Hex"
+    },
+    "SettingShowSend": {
+      "zh-CN": "显示串口实际发出去的数据",
+      "en-US": "Show data you really sent"
+    },
+    "SettingShowSendRaw": {
+      "zh-CN": "显示原始发送数据（用户请求发送时的原始数据）",
+      "en-US": "Show raw data that you used for sending"
+    },
+    "RawDataSentTitle": {
+      "zh-CN": "原始数据",
+      "en-US": "Raw data"
+    },
+    "SettingKeepTop": {
+      "zh-CN": "窗口保持置顶显示",
+      "en-US": "Keep Window on top"
+    },
+    "SettingUartTimeout": {
+      "zh-CN": "分包数据超时时间：",
+      "en-US": "Data pack time:"
+    },
+    "SettingMs": {
+      "zh-CN": "毫秒（负数为不分包模式）",
+      "en-US": "Ms(minus means Not Pack Mode)"
+    },
+    "SettingSplitByEmpty": {
+      "zh-CN": "超时时间表示空白间隔（不勾选表示从第一个字节开始算超时时间）",
+      "en-US": "Split by no data time(or split by time from first time)"
+    },
+    "SettingLogMaxItems": {
+      "zh-CN": "日志保留上限（条）：",
+      "en-US": "Log buffer limit (items):"
+    },
+    "SettingLogMaxItemsTip": {
+      "zh-CN": "分包模式最多保留多少条日志，超过后自动丢弃最早的记录（另有 32 MB 负载预算兜底）；范围 1000~200000",
+      "en-US": "Max entries kept in packet mode; oldest are dropped (a 32 MB payload budget also applies). Range 1000~200000"
+    },
+    "SettingStreamMaxChars": {
+      "zh-CN": "流式保留字符数：",
+      "en-US": "Stream buffer (chars):"
+    },
+    "SettingStreamMaxCharsTip": {
+      "zh-CN": "流式模式（分包数据超时设为负数）最多保留多少字符，超过后自动丢弃最早的文本；范围 100000~10000000",
+      "en-US": "Max characters kept in stream mode (pack timeout < 0); oldest text is dropped. Range 100000~10000000"
+    },
+    "SettingTerminal": {
+      "zh-CN": "终端模式（在日志区直接键盘发送）",
+      "en-US": "Terminal mode (type directly in the log area)"
+    },
+    "SettingTerminalTip": {
+      "zh-CN": "开启后，点击日志区并敲键盘，字符会直接发送到串口。终端模式下 Ctrl+C 会发送 0x03，与复制快捷键冲突；复制日志前建议先关闭。",
+      "en-US": "When enabled, click the log area and type: characters are sent to the serial port immediately. Ctrl+C sends 0x03, which conflicts with copying."
+    },
+    "EnterTerminalMode": {
+      "zh-CN": "强制进入终端模式",
+      "en-US": "Forced entry into terminal mode"
+    },
+    "SettingMaxPack": {
+      "zh-CN": "串口数据每包最大",
+      "en-US": "Max length per packet"
+    },
+    "SettingMaxShowPack": {
+      "zh-CN": "日志打印每最大显示长度限制",
+      "en-US": "Max log print pack length"
+    },
+    "SettingMaxShowPackWarn": {
+      "zh-CN": "!!数据过长自动截断显示，可前往设置更改长度限制!!",
+      "en-US": "!!Auto cut because data too long, you can change this in settings!!"
+    },
+    "SettingMaxPacksWarn": {
+      "zh-CN": "!!数据包过多自动清空，可前往设置更改此限制!!",
+      "en-US": "!!Auto clear because packs too much, you can change this in settings!!"
+    },
+    "SettingByte": {
+      "zh-CN": "字节",
+      "en-US": "Byte(s)"
+    },
+    "SettingPacksText": {
+      "zh-CN": "收到",
+      "en-US": "Auto clear log display area after"
+    },
+    "SettingPacks": {
+      "zh-CN": "包数据后，自动清空日志区域",
+      "en-US": "packs received"
+    },
+    "SettingLagAutoClear": {
+      "zh-CN": "日志界面卡顿超过250ms，自动清空",
+      "en-US": "Suto clear log when lag more then 250ms"
+    },
+    "SettingDataBits": {
+      "zh-CN": "数据位长度：",
+      "en-US": "Data bits:"
+    },
+    "SettingStopBit": {
+      "zh-CN": "停止位：",
+      "en-US": "Stop bit:"
+    },
+    "SettingParity": {
+      "zh-CN": "校验位：",
+      "en-US": "Parity"
+    },
+    "SettingParityNone": {
+      "zh-CN": "无校验",
+      "en-US": "None"
+    },
+    "SettingParityOdd": {
+      "zh-CN": "奇校验",
+      "en-US": "Odd"
+    },
+    "SettingParityEven": {
+      "zh-CN": "偶校验",
+      "en-US": "Even"
+    },
+    "SettingParityMark": {
+      "zh-CN": "高电平",
+      "en-US": "Mark"
+    },
+    "SettingParitySpace": {
+      "zh-CN": "低电平",
+      "en-US": "Space"
+    },
+    "Encoding": {
+      "zh-CN": "字符编码：",
+      "en-US": "Encoding:"
+    },
+    "SettingSendLuaScript": {
+      "zh-CN": "发送脚本",
+      "en-US": "Send script"
+    },
+    "SettingRecvLuaScript": {
+      "zh-CN": "接收脚本",
+      "en-US": "Receive script"
+    },
+    "SettingLuaTestScript": {
+      "zh-CN": "测试脚本",
+      "en-US": "Test script"
+    },
+    "SettingLuaTestInput": {
+      "zh-CN": "待测试的值：",
+      "en-US": "Data to test:"
+    },
+    "SettingLuaTestPara": {
+      "zh-CN": "参数：",
+      "en-US": "parameter:"
+    },
+    "SettingLuaTestButton": {
+      "zh-CN": "测试输入值",
+      "en-US": "Test data"
+    },
+    "SettingLuaText1": {
+      "zh-CN": "传入数据为uartData，传出数据为你脚本return的结果。",
+      "en-US": "'uartData' is received data, you can return your own result."
+    },
+    "SettingLuaText1Recv": {
+      "zh-CN": "传入数据为uartData，传出数据为你脚本return的结果。",
+      "en-US": "'uartData' is received data, you can return your own result."
+    },
+    "SettingLuaText2": {
+      "zh-CN": "此处脚本对快捷发送区也生效，对脚本输出数据无效。",
+      "en-US": "This script won't change your data of sent by automatic script."
+    },
+    "SettingLuaText2Recv": {
+      "zh-CN": "此处脚本仅对数据显示页面有效，对脚本接收接口的数据无影响。",
+      "en-US": "This script won't change your data in your own lua script which got from data receive api."
+    },
+    "SettingLuaText3": {
+      "zh-CN": "查看接口文档，可点击接口文档按钮。",
+      "en-US": "Click api reference button to see api reference."
+    },
+    "SettingLuaRunResult": {
+      "zh-CN": "运行结果",
+      "en-US": "Result"
+    },
+    "SettingLuaRawText": {
+      "zh-CN": "原始字符串：",
+      "en-US": "Raw text:"
+    },
+    "ChangeLanguage": {
+      "zh-CN": "语言/Language",
+      "en-US": "Language"
+    },
+    "TcpTabTitle": {
+      "zh-CN": "socket公共服务端",
+      "en-US": "Socket Public Server"
+    },
+    "TcpLocalTabTitle": {
+      "zh-CN": "本机TCP服务端",
+      "en-US": "TCP Local Server"
+    },
+    "UdpLocalTabTitle": {
+      "zh-CN": "本机UDP服务端",
+      "en-US": "UDP Local Server"
+    },
+    "TcpClientTitle": {
+      "zh-CN": "socket客户端",
+      "en-US": "Socket Client"
+    },
+    "CreateTcpButton": {
+      "zh-CN": "测试TCP",
+      "en-US": "Tset TCP"
+    },
+    "CreateTcpSSLButton": {
+      "zh-CN": "测试TCPSSL",
+      "en-US": "Tset TCP SSL"
+    },
+    "CreateUdpButton": {
+      "zh-CN": "测试UDP",
+      "en-US": "Test UDP"
+    },
+    "CreateTcpIpv6Button": {
+      "zh-CN": "测试TCP (ipv6)",
+      "en-US": "Test TCP (ipv6)"
+    },
+    "DisconnectButton": {
+      "zh-CN": "断开",
+      "en-US": "Disconnect"
+    },
+    "ConnectButton": {
+      "zh-CN": "连接",
+      "en-US": "Connect"
+    },
+    "TcpReconnect": {
+      "zh-CN": "自动重连",
+      "en-US": "Auto Reconnect"
+    },
+    "TcpReconnectInterval": {
+      "zh-CN": "重连间隔:",
+      "en-US": "Reconnect Interval:"
+    },
+    "TcpServerAddr": {
+      "zh-CN": "服务器地址",
+      "en-US": "Server address"
+    },
+    "TcpServerPort": {
+      "zh-CN": "服务器端口",
+      "en-US": "Server port"
+    },
+    "TcpServerProtocol": {
+      "zh-CN": "协议",
+      "en-US": "Protocol"
+    },
+    "ToSendDataTextBlock": {
+      "zh-CN": "待发送数据：",
+      "en-US": "To send data:"
+    },
+    "NetSendDataButton": {
+      "zh-CN": "发送",
+      "en-US": "Send"
+    },
+    "KickClientButton": {
+      "zh-CN": "断开客户端",
+      "en-US": "Kick Client"
+    },
+    "ClearSendBox": {
+      "zh-CN": "清除发送框内容",
+      "en-US": "Clear input"
+    },
+    "SendHistory": {
+      "zh-CN": "发送记录",
+      "en-US": "Send history"
+    },
+    "SendHistoryEmpty": {
+      "zh-CN": "（暂无发送记录）",
+      "en-US": "(no history)"
+    },
+    "SendHistoryLimit": {
+      "zh-CN": "记录上限（条）：",
+      "en-US": "History limit: "
+    },
+    "SendHistoryLimitTip": {
+      "zh-CN": "5~200 条：可直接键盘输入，回车或失焦生效",
+      "en-US": "5~200 entries: type a number, press Enter or leave the box"
+    },
+    "ClearSendHistory": {
+      "zh-CN": "清空记录",
+      "en-US": "Clear history"
+    },
+    "ClearSendHistoryTip": {
+      "zh-CN": "清空全部发送记录（不可恢复）",
+      "en-US": "Clear all send history (cannot be undone)"
+    },
+    "AppendNone": {
+      "zh-CN": "无追加",
+      "en-US": "None"
+    },
+    "AppendNewlineTip": {
+      "zh-CN": "发送时在末尾追加所选换行（追加前同样会经过发送脚本）",
+      "en-US": "Append the selected newline to sent data (send script still runs first)"
+    },
+    "LockLogButton": {
+      "zh-CN": "锁定视图禁止滚动",
+      "en-US": "Lock logs and disable auto scroll"
+    },
+    "LockLogText": {
+      "zh-CN": "已锁定",
+      "en-US": "Locked"
+    },
+    "SaveLogButton": {
+      "zh-CN": "点击按钮保存接收日志",
+      "en-US": "Click to save received logs"
+    },
+    "ShowHexFormat": {
+      "zh-CN": "Hex显示",
+      "en-US": "Hex format"
+    },
+    "ShowHexFormatTip": {
+      "zh-CN": "切换为：只显示Hex/只显示文本数据/同时显示Hex与文本数据",
+      "en-US": "modes: Only Hex/Only Text/Both Hex and Text"
+    },
+    "HexSendMode": {
+      "zh-CN": "发送Hex",
+      "en-US": "Send Hex"
+    },
+    "HexSendModeTip": {
+      "zh-CN": "勾选后：输入内容按十六进制解析，且发送的数据以十六进制显示；取消则按字符串收发/显示。",
+      "en-US": "When checked: input is parsed as Hex and sent data is shown as Hex; otherwise as text."
+    },
+    "SendModeTextTip": {
+      "zh-CN": "发送信息 - 字符串（点击切换为十六进制）",
+      "en-US": "Send - Text (click to switch to Hex)"
+    },
+    "SendModeHexTip": {
+      "zh-CN": "发送信息 - 十六进制（点击切换为字符串）",
+      "en-US": "Send - Hex (click to switch to Text)"
+    },
+    "RecvModeTextTip": {
+      "zh-CN": "接收信息 - 字符串（点击切换为十六进制）",
+      "en-US": "Received - Text (click to switch to Hex)"
+    },
+    "RecvModeHexTip": {
+      "zh-CN": "接收信息 - 十六进制（点击切换为字符串）",
+      "en-US": "Received - Hex (click to switch to Text)"
+    },
+    "ShowSymbolIconTip": {
+      "zh-CN": "替换不可见字符（仅支持 UTF-8 编码）",
+      "en-US": "Replace invisible characters (UTF-8 only)"
+    },
+    "DisableLogIconTip": {
+      "zh-CN": "停止打印 / 继续打印日志",
+      "en-US": "Stop / resume log printing"
+    },
+    "ToolsTab": {
+      "zh-CN": "小工具",
+      "en-US": "Tools"
+    },
+    "EncodingToolsTab": {
+      "zh-CN": "编码转换工具",
+      "en-US": "Encoding Converter"
+    },
+    "EncodingToolsJobs": {
+      "zh-CN": "转换任务",
+      "en-US": "Jobs"
+    },
+    "EncodingToolsAddJob": {
+      "zh-CN": "添加任务",
+      "en-US": "Add a job"
+    },
+    "EncodingToolsDeleteJob": {
+      "zh-CN": "删除末项",
+      "en-US": "Remove Last one"
+    },
+    "EncodingToolsRowData": {
+      "zh-CN": "原始数据",
+      "en-US": "Raw data"
+    },
+    "EncodingToolsResultData": {
+      "zh-CN": "转换结果",
+      "en-US": "Result"
+    },
+    "EncodingFixHeader": {
+      "zh-CN": "乱码修复",
+      "en-US": "Garbled code fix"
+    },
+    "GarbledCodeData": {
+      "zh-CN": "待处理乱码数据：",
+      "en-US": "unfixed Garbled code:"
+    },
+    "GarbledCodeDataFixed": {
+      "zh-CN": "修复尝试：",
+      "en-US": "Fixed list:"
+    },
+    "GarbledCodeDataRaw": {
+      "zh-CN": "原编码",
+      "en-US": "Raw"
+    },
+    "GarbledCodeDataTarget": {
+      "zh-CN": "错当成",
+      "en-US": "Wrong"
+    },
+    "GarbledCodeDataResult": {
+      "zh-CN": "还原结果",
+      "en-US": "Fix Result"
+    },
+    "GarbledCodeDataCopy": {
+      "zh-CN": "复制选中数据",
+      "en-US": "Copy selected data"
+    },
+    "MQTTHeardr1": {
+      "zh-CN": "订阅/推送",
+      "en-US": "Subscribe/Publish"
+    },
+    "MQTTHeardr2": {
+      "zh-CN": "连接配置",
+      "en-US": "Settings"
+    },
+    "MQTTSubcribe": {
+      "zh-CN": "订阅",
+      "en-US": "Subscribe"
+    },
+    "MQTTPublish": {
+      "zh-CN": "推送",
+      "en-US": "Publish"
+    },
+    "MQTTSubcribeList": {
+      "zh-CN": "已订阅主题：",
+      "en-US": "Subscribes:"
+    },
+    "MQTTNotConnect": {
+      "zh-CN": "未连接服务器",
+      "en-US": "Not connect"
+    },
+    "MQTTServer": {
+      "zh-CN": "服务器地址",
+      "en-US": "Broker address"
+    },
+    "MQTTPort": {
+      "zh-CN": "服务器端口",
+      "en-US": "Broker port"
+    },
+    "MQTTClientID": {
+      "zh-CN": "设备Client ID",
+      "en-US": "Client ID"
+    },
+    "MQTTTLS": {
+      "zh-CN": "启用TLS",
+      "en-US": "Enable TLS"
+    },
+    "MQTTUser": {
+      "zh-CN": "用户名",
+      "en-US": "User name"
+    },
+    "MQTTPassword": {
+      "zh-CN": "密码",
+      "en-US": "password"
+    },
+    "MQTTKeepAlive": {
+      "zh-CN": "保活时间",
+      "en-US": "Keep alive period"
+    },
+    "MQTTClean": {
+      "zh-CN": "Clean session",
+      "en-US": "Clean session"
+    },
+    "MQTTWsPath": {
+      "zh-CN": "websocket路径",
+      "en-US": "websocket path"
+    },
+    "MQTTWS": {
+      "zh-CN": "websocket",
+      "en-US": "websocket"
+    },
+    "SerialMonitorHeader": {
+      "zh-CN": "串口监听",
+      "en-US": "Serial Monitor"
+    },
+    "SerialMonitorRefresh": {
+      "zh-CN": "刷新进程和串口列表",
+      "en-US": "Refresh process and serial list"
+    },
+    "SerialMonitorStart": {
+      "zh-CN": "开始监听",
+      "en-US": "Start monitor"
+    },
+    "SerialMonitorStop": {
+      "zh-CN": "停止监听",
+      "en-US": "Stop monitor"
+    },
+    "SerialMonitorHint": {
+      "zh-CN": "提示：先点「开始监听」，再让目标程序打开串口——监听开始前已打开的串口不会被捕获。目标程序位数需与 LLCOM 一致：64 位版只能监听 64 位程序（32 位目标暂不支持）。",
+      "en-US": "Tip: start monitoring first, then let the target app open the serial port — ports already open before monitoring starts are not captured. Target bitness must match LLCOM: the x64 build can only monitor 64-bit apps (32-bit targets are not supported yet)."
+    },
+    "SerialMonitorSelectHint": {
+      "zh-CN": "请先选择要监听的进程和串口。",
+      "en-US": "Please select a process and a serial port first."
+    },
+    "SerialMonitorStartFailed": {
+      "zh-CN": "监听启动失败。\n\n常见原因：权限不足（可尝试以管理员身份运行）、被安全软件拦截，或目标进程已退出。",
+      "en-US": "Failed to start monitoring.\n\nCommon causes: insufficient permission (try running as administrator), blocked by security software, or the target exited."
+    },
+    "SerialMonitorInjectFailed": {
+      "zh-CN": "监听启动失败：未能把监听模块注入目标进程。\n\n常见原因：目标进程位数不一致、权限不足（可尝试以管理员身份运行），或被安全软件拦截。",
+      "en-US": "Failed to start monitoring: could not inject the hook into the target process.\n\nCommon causes: bitness mismatch, insufficient permission (try running as administrator), or blocked by security software."
+    },
+    "SerialMonitorBitnessMismatch": {
+      "zh-CN": "目标进程是 {0} 位程序，而当前 LLCOM 是 {1} 位版本，无法监听。\n\n64 位版只能监听 64 位程序。32 位目标的监听暂不可用（x86 版的旧插件在部分系统上会导致目标程序崩溃），请改用 64 位目标程序。",
+      "en-US": "The target process is {0}-bit while this LLCOM is {1}-bit.\n\nThe x64 build can only monitor 64-bit apps; monitoring 32-bit targets is currently unavailable (the legacy x86 plugin can crash the target on some systems). Use a 64-bit target."
+    },
+    "SerialMonitorLoadFailed": {
+      "zh-CN": "串口监听插件加载失败：{0}\n\n可能是被杀毒软件拦截或系统缺少运行库；可尝试以管理员身份运行。",
+      "en-US": "Failed to load the serial monitor plugin: {0}\n\nIt may be blocked by antivirus or a runtime is missing; try running as administrator."
+    },
+    "PlotHeader": {
+      "zh-CN": "曲线",
+      "en-US": "Chart"
+    },
+    "PlotFit": {
+      "zh-CN": "查看全局",
+      "en-US": "Fit"
+    },
+    "PlotClear": {
+      "zh-CN": "清空图像",
+      "en-US": "Clear"
+    },
+    "PlotTheme": {
+      "zh-CN": "切换主题",
+      "en-US": "Theme"
+    },
+    "RefreshIpList": {
+      "zh-CN": "刷新IP",
+      "en-US": "Refresh IP"
+    },
+    "StartListen": {
+      "zh-CN": "开始监听",
+      "en-US": "Start listen"
+    },
+    "StopListen": {
+      "zh-CN": "停止监听",
+      "en-US": "Stop listen"
+    },
+    "RefreshDevices": {
+      "zh-CN": "刷新设备",
+      "en-US": "Refresh"
+    },
+    "ReadEndpoint": {
+      "zh-CN": "入端点",
+      "en-US": "Read endpoint"
+    },
+    "WriteEndpoint": {
+      "zh-CN": "出端点",
+      "en-US": "Write endpoint"
+    },
+    "ReadData": {
+      "zh-CN": "读取数据",
+      "en-US": "Read data"
+    },
+    "Loading": {
+      "zh-CN": "加载中...",
+      "en-US": "Loading..."
+    },
+    "OnlineScriptLoading": {
+      "zh-CN": "正在获取在线脚本列表...",
+      "en-US": "Fetching online scripts..."
+    },
+    "OnlineScriptTitle": {
+      "zh-CN": "社区脚本",
+      "en-US": "Community scripts"
+    },
+    "OnlineScriptAuthor": {
+      "zh-CN": "作者：",
+      "en-US": "Author:"
+    },
+    "OnlineScriptVersion": {
+      "zh-CN": "版本：",
+      "en-US": "Version:"
+    },
+    "OnlineScriptDownload": {
+      "zh-CN": "下载此脚本",
+      "en-US": "Download this script"
+    },
+    "OnlineScriptDownloadTitle": {
+      "zh-CN": "下载脚本",
+      "en-US": "Download script"
+    },
+    "OnlineScriptDownloadSaveNotice": {
+      "zh-CN": "请设置要保存为的文件名：",
+      "en-US": "Please input a file name:"
+    },
+    "OnlineScriptRefresh": {
+      "zh-CN": "刷新列表",
+      "en-US": "Refresh list"
+    },
+    "OnlineScriptSourceOfficial": {
+      "zh-CN": "官方",
+      "en-US": "Official"
+    },
+    "OnlineScriptSourceProject": {
+      "zh-CN": "本项目",
+      "en-US": "This project"
+    },
+    "OnlineScriptSourceOfficialTip": {
+      "zh-CN": "chenxuuu/llcom 的社区脚本（原项目）",
+      "en-US": "Community scripts from chenxuuu/llcom (upstream)"
+    },
+    "OnlineScriptSourceProjectTip": {
+      "zh-CN": "Eureka12138github/llcom-y 的社区脚本（本项目）",
+      "en-US": "Community scripts from Eureka12138github/llcom-y (this project)"
+    },
+    "OnlineScriptInfo": {
+      "zh-CN": "脚本说明 / 投稿方式",
+      "en-US": "Script info / submission"
+    },
+    "OnlineScriptSubmit": {
+      "zh-CN": "投稿脚本",
+      "en-US": "Submit a script"
+    },
+    "OnlineScriptEmpty": {
+      "zh-CN": "暂无脚本，欢迎点右上角投稿",
+      "en-US": "No scripts yet. Use the submit button to contribute one."
+    },
+    "OnlineScriptLoadFailed": {
+      "zh-CN": "获取失败，请检查网络/代理后重试",
+      "en-US": "Failed to load. Check your network/proxy and try again."
+    },
+    "OnlineScriptProjectLoadFailed": {
+      "zh-CN": "本项目脚本获取失败：请确认 community-scripts 已发布到 master，或检查网络/代理",
+      "en-US": "Failed to load project scripts. Make sure community-scripts is published to master, or check your network/proxy."
+    },
+    "OnlineScriptBack": {
+      "zh-CN": "返回列表",
+      "en-US": "Back to list"
+    },
+    "OnlineScriptViewOnGitHub": {
+      "zh-CN": "打开来源页面",
+      "en-US": "Open source page"
+    },
+    "OnlineScriptSavedPath": {
+      "zh-CN": "保存位置：",
+      "en-US": "Saved to: "
+    },
+    "OnlineScriptSavedConvertTip": {
+      "zh-CN": "已保存到处理脚本目录，请在对应设置中选择。",
+      "en-US": "Saved to the convert-script folder. Select it in the corresponding settings."
+    },
+    "SaveSucceed": {
+      "zh-CN": "文件保存成功！",
+      "en-US": "File saved!"
+    },
+    "DisableLog": {
+      "zh-CN": "停止打印",
+      "en-US": "Stop print"
+    },
+    "ShowSymbol": {
+      "zh-CN": "替换不可见字符",
+      "en-US": "Replace invisible characters"
+    },
+    "ShowSymbolTooltip": {
+      "zh-CN": "仅支持在UTF8编码时生效",
+      "en-US": "Only support UTF8"
+    },
+    "MQTTTLSCert": {
+      "zh-CN": "指定tls证书",
+      "en-US": "use user's certificate"
+    },
+    "MQTTTLSCA": {
+      "zh-CN": "CA证书路径（右击我选择文件）",
+      "en-US": "CA file path(right click me to select file)"
+    },
+    "MQTTTLSClient": {
+      "zh-CN": "客户端证书路径（右击我选择文件）",
+      "en-US": "Client certificate path(right click me to select file)"
+    },
+    "MQTTTLSPassword": {
+      "zh-CN": "客户端证书密码（没有则留空）",
+      "en-US": "Client certificate password(leave empty if none)"
+    },
+    "BuffPacksTooMuchWarn": {
+      "zh-CN": "!!缓冲区数据超过100条，为避免卡顿已自动合并!!如需查看，请前往日志文件查看",
+      "en-US": "!!Buff data much more then 100, auto clear!!you can see them in log files"
+    },
+    "LogLagWarn": {
+      "zh-CN": "!!检测到日志刷新卡顿超过250毫秒，自动执行清空数据操作!!",
+      "en-US": "!!Detect log print lag 250ms, auto clear logs!!"
+    },
+    "ScriptSearchTip": {
+      "zh-CN": "搜索脚本（文件名、描述或分类）",
+      "en-US": "Search scripts (file name, description, or category)",
+      "note": "脚本列表搜索框"
+    },
+    "ScriptCategoryTip": {
+      "zh-CN": "按分类筛选脚本",
+      "en-US": "Filter scripts by category",
+      "note": "脚本分类筛选下拉框"
+    },
+    "ScriptCategoryAll": {
+      "zh-CN": "全部分类",
+      "en-US": "All categories",
+      "note": "脚本分类筛选的第一项"
+    },
+    "ScriptFavoritesOnly": {
+      "zh-CN": "只看收藏",
+      "en-US": "Favorites only",
+      "note": "脚本列表收藏筛选"
+    },
+    "ScriptToggleFavorite": {
+      "zh-CN": "收藏 / 取消收藏",
+      "en-US": "Favorite / unfavorite",
+      "note": "脚本列表右键菜单"
+    },
+    "ScriptPin": {
+      "zh-CN": "置顶",
+      "en-US": "Pin to top",
+      "note": "脚本列表右键菜单"
+    },
+    "ScriptUnpin": {
+      "zh-CN": "取消置顶",
+      "en-US": "Unpin",
+      "note": "脚本列表右键菜单"
+    },
+    "ScriptSetCategory": {
+      "zh-CN": "设置分类…",
+      "en-US": "Set category…",
+      "note": "脚本列表右键菜单"
+    },
+    "ScriptSetDescription": {
+      "zh-CN": "设置描述…",
+      "en-US": "Set description…",
+      "note": "脚本列表右键菜单"
+    },
+    "ScriptCategoryPrompt": {
+      "zh-CN": "输入分类名称（留空表示未分类）",
+      "en-US": "Enter a category name (leave empty for uncategorized)",
+      "note": "设置脚本分类对话框"
+    },
+    "ScriptDescriptionPrompt": {
+      "zh-CN": "输入脚本描述（留空表示无描述）",
+      "en-US": "Enter a script description (leave empty for none)",
+      "note": "设置脚本描述对话框"
+    },
+    "ScriptListTip": {
+      "zh-CN": "右键可收藏、置顶、设置分类或描述",
+      "en-US": "Right-click to favorite, pin, set category, or set description",
+      "note": "脚本下拉框右键菜单提示"
+    }
+  }
+}

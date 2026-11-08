@@ -48,6 +48,12 @@ csharpier format <文件或目录>
 ```
 ⚠️ 只对 `.cs` 和 UI `.xaml` 执行；**不要**对 `llcom.csproj` / `packages.config` / 语言文件 / FodyWeavers.xml 执行（会被重排）。
 
+### 国际化（i18n）
+- 唯一翻译源：`i18n/messages.json`；**不要直接手改** `llcom/languages/*.xaml`。
+- 改完 JSON 后运行 `pwsh ./scripts/generate-i18n.ps1`（Windows PowerShell 5.1 可用 `powershell -File scripts/generate-i18n.ps1`）。
+- 本地校验：`pwsh ./scripts/generate-i18n.ps1 -Check`；可选 `pwsh ./scripts/export-i18n-csv.ps1` 导出 CSV 供表格审校。
+- 脚本管理元数据：每个脚本目录的 `scripts.index.json`（分类/收藏/排序/描述），由 `ScriptMetadataStore` 读写；删除脚本后孤立条目会在刷新列表时清理。
+
 ### CI（GitHub Actions）
 `.github/workflows/build.yml`：windows-latest + `dotnet build` / `dotnet test`。
 
@@ -55,6 +61,7 @@ csharpier format <文件或目录>
 - tag 推送仍会执行构建与 Release；
 - 同一分支/PR 的旧构建会被 `concurrency` 取消，减少重复运行；
 - `.github/workflows/validate-community-scripts.yml` 负责社区脚本校验，并用 `luac5.3 -p` 做 Lua 语法检查；
+- `.github/workflows/validate-i18n.yml` 校验 `i18n/messages.json` 与生成的 XAML 是否同步；
 - `.github/workflows/cleanup-import-branch.yml` 在 `/import` PR 关闭/合并后删除 `community-scripts/import-*` 临时分支；导入失败时脚本也会尝试清理失败分支。
 
 改动构建系统前需同步检查 CI。

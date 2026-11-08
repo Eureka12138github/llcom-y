@@ -136,12 +136,58 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
           </Grid.RowDefinitions>
-          <WrapPanel Margin="0,0,0,5" Orientation="Horizontal">
+          <WrapPanel
+            Name="sendScriptBar"
+            Margin="0,0,0,5"
+            Orientation="Horizontal"
+          >
             <ComboBox
               Name="luaFileList"
-              Width="250"
+              Width="200"
               ItemsSource="{Binding Files}"
-              SelectedItem="{Binding SelectedFile}"
+              SelectedItem="{Binding VisibleSelectedFile}"
+              ToolTip="{DynamicResource ScriptListTip}"
+            >
+              <ComboBox.ContextMenu>
+                <ContextMenu>
+                  <MenuItem
+                    Header="{DynamicResource ScriptToggleFavorite}"
+                    Click="SendScriptToggleFavorite_Click"
+                  />
+                  <MenuItem Header="{DynamicResource ScriptPin}" Click="SendScriptPin_Click" />
+                  <MenuItem Header="{DynamicResource ScriptUnpin}" Click="SendScriptUnpin_Click" />
+                  <Separator />
+                  <MenuItem
+                    Header="{DynamicResource ScriptSetCategory}"
+                    Click="SendScriptSetCategory_Click"
+                  />
+                  <MenuItem
+                    Header="{DynamicResource ScriptSetDescription}"
+                    Click="SendScriptSetDescription_Click"
+                  />
+                </ContextMenu>
+              </ComboBox.ContextMenu>
+            </ComboBox>
+            <TextBox
+              Width="100"
+              Margin="4,0,0,0"
+              VerticalContentAlignment="Center"
+              Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+              ToolTip="{DynamicResource ScriptSearchTip}"
+            />
+            <ComboBox
+              Width="100"
+              Margin="4,0,0,0"
+              DisplayMemberPath="Label"
+              ItemsSource="{Binding CategoryOptions}"
+              SelectedItem="{Binding SelectedCategoryOption}"
+              ToolTip="{DynamicResource ScriptCategoryTip}"
+            />
+            <CheckBox
+              Margin="6,0,0,0"
+              VerticalAlignment="Center"
+              Content="{DynamicResource ScriptFavoritesOnly}"
+              IsChecked="{Binding FavoritesOnly}"
             />
             <Button
               Name="newScriptButton"
@@ -272,12 +318,54 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
           </Grid.RowDefinitions>
-          <WrapPanel Margin="0,0,0,5" Orientation="Horizontal">
+          <WrapPanel Name="recvScriptBar" Margin="0,0,0,5" Orientation="Horizontal">
             <ComboBox
               Name="luaFileListRev"
-              Width="250"
+              Width="200"
               ItemsSource="{Binding Files}"
-              SelectedItem="{Binding SelectedFile}"
+              SelectedItem="{Binding VisibleSelectedFile}"
+              ToolTip="{DynamicResource ScriptListTip}"
+            >
+              <ComboBox.ContextMenu>
+                <ContextMenu>
+                  <MenuItem
+                    Header="{DynamicResource ScriptToggleFavorite}"
+                    Click="RecvScriptToggleFavorite_Click"
+                  />
+                  <MenuItem Header="{DynamicResource ScriptPin}" Click="RecvScriptPin_Click" />
+                  <MenuItem Header="{DynamicResource ScriptUnpin}" Click="RecvScriptUnpin_Click" />
+                  <Separator />
+                  <MenuItem
+                    Header="{DynamicResource ScriptSetCategory}"
+                    Click="RecvScriptSetCategory_Click"
+                  />
+                  <MenuItem
+                    Header="{DynamicResource ScriptSetDescription}"
+                    Click="RecvScriptSetDescription_Click"
+                  />
+                </ContextMenu>
+              </ComboBox.ContextMenu>
+            </ComboBox>
+            <TextBox
+              Width="100"
+              Margin="4,0,0,0"
+              VerticalContentAlignment="Center"
+              Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+              ToolTip="{DynamicResource ScriptSearchTip}"
+            />
+            <ComboBox
+              Width="100"
+              Margin="4,0,0,0"
+              DisplayMemberPath="Label"
+              ItemsSource="{Binding CategoryOptions}"
+              SelectedItem="{Binding SelectedCategoryOption}"
+              ToolTip="{DynamicResource ScriptCategoryTip}"
+            />
+            <CheckBox
+              Margin="6,0,0,0"
+              VerticalAlignment="Center"
+              Content="{DynamicResource ScriptFavoritesOnly}"
+              IsChecked="{Binding FavoritesOnly}"
             />
             <Button
               Name="newScriptButtonRev"

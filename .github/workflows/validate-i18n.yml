@@ -1,0 +1,54 @@
+name: Validate i18n
+
+on:
+  push:
+    paths:
+      - "i18n/**"
+      - "llcom/languages/**"
+      - "scripts/generate-i18n.ps1"
+      - "scripts/export-i18n-csv.ps1"
+      - ".github/workflows/validate-i18n.yml"
+  pull_request:
+    paths:
+      - "i18n/**"
+      - "llcom/languages/**"
+      - "scripts/generate-i18n.ps1"
+      - "scripts/export-i18n-csv.ps1"
+      - ".github/workflows/validate-i18n.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: validate-i18n-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check generated XAML is in sync
+        shell: pwsh
+        run: ./scripts/generate-i18n.ps1 -Check
+
+      - name: Warn about untranslated English entries
+        shell: pwsh
+        run: |
+          $data = Get-Content -LiteralPath "i18n/messages.json" -Raw -Encoding UTF8 | ConvertFrom-Json
+          $untranslated = @()
+          foreach ($message in @($data.messages.PSObject.Properties)) {
+            if ([string]$message.Value.'en-US' -match '[\u4e00-\u9fff]') {
+              $untranslated += $message.Name
+            }
+          }
+          if ($untranslated.Count -gt 0) {
+            Write-Host "::warning::en-US still contains Chinese characters in $($untranslated.Count) key(s): $($untranslated -join ', ')"
+          }
+          else {
+            Write-Host "No Chinese characters found in en-US values."
+          }

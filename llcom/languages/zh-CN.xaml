@@ -104,10 +104,10 @@
     <system:String x:Key="AboutSubTitle">能跑Lua脚本的串口调试工具</system:String>
     <system:String x:Key="AboutDiscriptionMain">LLCOM-Y 是一款串口调试工具，连接可靠、断线后可自动重连，右侧带快捷发送区。</system:String>
     <system:String x:Key="AboutDiscriptionMore">本工具除了具有与其他同类工具，所包含的数据收发功能外，还添加了Lua运行环境。用户可自行使用Lua，完成几乎所有可以想象到的自动化操作，大大提高了串口工具的可用性。</system:String>
-    <system:String x:Key="AboutNotice">非官方个人维护版 · 基于 chenxuuu 的 LLCOM（Apache-2.0）&#x0a;本项目仅用于个人学习与自用，与原作者无隶属关系。</system:String>
+    <system:String x:Key="AboutNotice">非官方个人维护版 · 基于 chenxuuu 的 LLCOM（Apache-2.0）&#10;本项目仅用于个人学习与自用，与原作者无隶属关系。</system:String>
     <system:String x:Key="AboutAutoUpdate">启动时自动检查更新</system:String>
     <system:String x:Key="AboutCheckUpdate">检查更新</system:String>
-    <system:String x:Key="AboutDevelopers">维护者：Eureka12138github&#x0a;原作者：chenxuuu、whc2001（上游贡献者）</system:String>
+    <system:String x:Key="AboutDevelopers">维护者：Eureka12138github&#10;原作者：chenxuuu、whc2001（上游贡献者）</system:String>
     <system:String x:Key="AboutTranslator">简体中文为原版语言</system:String>
     <system:String x:Key="AboutGitHubText">本项目开源地址，欢迎 star</system:String>
     <system:String x:Key="AboutGitHubButton">前往本项目 GitHub</system:String>
@@ -248,10 +248,10 @@
     <system:String x:Key="SerialMonitorStop">停止监听</system:String>
     <system:String x:Key="SerialMonitorHint">提示：先点「开始监听」，再让目标程序打开串口——监听开始前已打开的串口不会被捕获。目标程序位数需与 LLCOM 一致：64 位版只能监听 64 位程序（32 位目标暂不支持）。</system:String>
     <system:String x:Key="SerialMonitorSelectHint">请先选择要监听的进程和串口。</system:String>
-    <system:String x:Key="SerialMonitorStartFailed">监听启动失败。&#x0a;&#x0a;常见原因：权限不足（可尝试以管理员身份运行）、被安全软件拦截，或目标进程已退出。</system:String>
-    <system:String x:Key="SerialMonitorInjectFailed">监听启动失败：未能把监听模块注入目标进程。&#x0a;&#x0a;常见原因：目标进程位数不一致、权限不足（可尝试以管理员身份运行），或被安全软件拦截。</system:String>
-    <system:String x:Key="SerialMonitorBitnessMismatch">目标进程是 {0} 位程序，而当前 LLCOM 是 {1} 位版本，无法监听。&#x0a;&#x0a;64 位版只能监听 64 位程序。32 位目标的监听暂不可用（x86 版的旧插件在部分系统上会导致目标程序崩溃），请改用 64 位目标程序。</system:String>
-    <system:String x:Key="SerialMonitorLoadFailed">串口监听插件加载失败：{0}&#x0a;&#x0a;可能是被杀毒软件拦截或系统缺少运行库；可尝试以管理员身份运行。</system:String>
+    <system:String x:Key="SerialMonitorStartFailed">监听启动失败。&#10;&#10;常见原因：权限不足（可尝试以管理员身份运行）、被安全软件拦截，或目标进程已退出。</system:String>
+    <system:String x:Key="SerialMonitorInjectFailed">监听启动失败：未能把监听模块注入目标进程。&#10;&#10;常见原因：目标进程位数不一致、权限不足（可尝试以管理员身份运行），或被安全软件拦截。</system:String>
+    <system:String x:Key="SerialMonitorBitnessMismatch">目标进程是 {0} 位程序，而当前 LLCOM 是 {1} 位版本，无法监听。&#10;&#10;64 位版只能监听 64 位程序。32 位目标的监听暂不可用（x86 版的旧插件在部分系统上会导致目标程序崩溃），请改用 64 位目标程序。</system:String>
+    <system:String x:Key="SerialMonitorLoadFailed">串口监听插件加载失败：{0}&#10;&#10;可能是被杀毒软件拦截或系统缺少运行库；可尝试以管理员身份运行。</system:String>
     <system:String x:Key="PlotHeader">曲线</system:String>
     <system:String x:Key="PlotFit">查看全局</system:String>
     <system:String x:Key="PlotClear">清空图像</system:String>
@@ -295,4 +295,16 @@
     <system:String x:Key="MQTTTLSPassword">客户端证书密码（没有则留空）</system:String>
     <system:String x:Key="BuffPacksTooMuchWarn">!!缓冲区数据超过100条，为避免卡顿已自动合并!!如需查看，请前往日志文件查看</system:String>
     <system:String x:Key="LogLagWarn">!!检测到日志刷新卡顿超过250毫秒，自动执行清空数据操作!!</system:String>
+    <system:String x:Key="ScriptSearchTip">搜索脚本（文件名、描述或分类）</system:String>
+    <system:String x:Key="ScriptCategoryTip">按分类筛选脚本</system:String>
+    <system:String x:Key="ScriptCategoryAll">全部分类</system:String>
+    <system:String x:Key="ScriptFavoritesOnly">只看收藏</system:String>
+    <system:String x:Key="ScriptToggleFavorite">收藏 / 取消收藏</system:String>
+    <system:String x:Key="ScriptPin">置顶</system:String>
+    <system:String x:Key="ScriptUnpin">取消置顶</system:String>
+    <system:String x:Key="ScriptSetCategory">设置分类…</system:String>
+    <system:String x:Key="ScriptSetDescription">设置描述…</system:String>
+    <system:String x:Key="ScriptCategoryPrompt">输入分类名称（留空表示未分类）</system:String>
+    <system:String x:Key="ScriptDescriptionPrompt">输入脚本描述（留空表示无描述）</system:String>
+    <system:String x:Key="ScriptListTip">右键可收藏、置顶、设置分类或描述</system:String>
 </ResourceDictionary>
