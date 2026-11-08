@@ -13,10 +13,11 @@ class InputDialog
     public static Tuple<bool, string> OpenDialog(
         string prompt,
         string? defaultInput = "",
-        string? title = null
+        string? title = null,
+        IEnumerable<string>? suggestions = null
     )
     {
-        InputDialogWindow dialog = new InputDialogWindow(prompt, defaultInput, title);
+        InputDialogWindow dialog = new InputDialogWindow(prompt, defaultInput, title, suggestions);
         bool ret = dialog.ShowDialog() ?? false;
         return Tuple.Create(ret, dialog.Value);
     }

@@ -1220,8 +1220,8 @@
       "note": "脚本列表右键菜单"
     },
     "ScriptCategoryPrompt": {
-      "zh-CN": "输入分类名称（留空表示未分类）",
-      "en-US": "Enter a category name (leave empty for uncategorized)",
+      "zh-CN": "输入或选择分类名称（留空表示未分类）",
+      "en-US": "Enter or select a category name (leave empty for uncategorized)",
       "note": "设置脚本分类对话框"
     },
     "ScriptDescriptionPrompt": {

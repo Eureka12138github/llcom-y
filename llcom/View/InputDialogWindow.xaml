@@ -9,7 +9,6 @@
   Title=""
   MinWidth="250"
   MinHeight="100"
-  FocusManager.FocusedElement="{Binding ElementName=InputText}"
   SizeToContent="WidthAndHeight"
   SourceInitialized="Window_SourceInitialized"
   Topmost="True"
@@ -53,6 +52,14 @@
         />
       </Grid>
     </Grid>
-    <TextBox x:Name="InputText" Margin="5" Text="{Binding Value}" />
+    <Grid Margin="5">
+      <TextBox x:Name="InputText" Text="{Binding Value}" />
+      <ComboBox
+        x:Name="InputCombo"
+        IsEditable="True"
+        Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"
+        Visibility="Collapsed"
+      />
+    </Grid>
   </DockPanel>
 </Window>

@@ -21,16 +21,33 @@ public partial class InputDialogWindow : Window
 
     public string Value { get; set; } = "";
 
-    public InputDialogWindow(string prompt, string? defaultInput = "", string? title = null)
+    public InputDialogWindow(
+        string prompt,
+        string? defaultInput = "",
+        string? title = null,
+        IEnumerable<string>? suggestions = null
+    )
     {
         InitializeComponent();
         this.DataContext = this;
         if (defaultInput == null)
+        {
             InputText.Visibility = Visibility.Collapsed;
+            InputCombo.Visibility = Visibility.Collapsed;
+        }
         else
         {
             this.Value = defaultInput;
-            InputText.Visibility = Visibility.Visible;
+            if (suggestions != null)
+            {
+                InputText.Visibility = Visibility.Collapsed;
+                InputCombo.ItemsSource = suggestions;
+                InputCombo.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                InputText.Visibility = Visibility.Visible;
+            }
         }
         this.Title = title ?? TryFindResource("InputDialogTitle") as string ?? "?!";
         SingleButton.Visibility = title == null ? Visibility.Visible : Visibility.Collapsed;
@@ -43,7 +60,20 @@ public partial class InputDialogWindow : Window
         IntPtr handle = new WindowInteropHelper(this).Handle;
         Tools.Win32.HideControlBox(handle);
         HwndSource.FromHwnd(handle)?.AddHook(new HwndSourceHook(WndProc));
-        this.InputText.SelectAll();
+        if (InputCombo.Visibility == Visibility.Visible)
+        {
+            InputCombo.Focus();
+            InputCombo.ApplyTemplate();
+            if (
+                InputCombo.Template.FindName("PART_EditableTextBox", InputCombo)
+                is TextBox editBox
+            )
+                editBox.SelectAll();
+        }
+        else if (InputText.Visibility == Visibility.Visible)
+        {
+            this.InputText.SelectAll();
+        }
     }
 
     private void OkButton_Click(object sender, RoutedEventArgs e)

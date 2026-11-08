@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -132,10 +133,16 @@ public partial class ScriptPickerBar : UserControl
             return;
         var title = TryFindResource("ScriptSetCategory") as string ?? "Category";
         var prompt = TryFindResource("ScriptCategoryPrompt") as string ?? title;
+        var suggestions = editor
+            .CategoryOptions.Select(option => option.Value)
+            .Where(value => !string.IsNullOrWhiteSpace(value))
+            .OrderBy(value => value, System.StringComparer.CurrentCultureIgnoreCase)
+            .ToList();
         var result = Tools.InputDialog.OpenDialog(
             prompt,
             editor.SelectedCategoryValue,
-            title
+            title,
+            suggestions.Count > 0 ? suggestions : null
         );
         if (result.Item1)
             editor.SetSelectedCategory(result.Item2);

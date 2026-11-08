@@ -304,7 +304,7 @@
     <system:String x:Key="ScriptUnpin">Unpin</system:String>
     <system:String x:Key="ScriptSetCategory">Set category…</system:String>
     <system:String x:Key="ScriptSetDescription">Set description…</system:String>
-    <system:String x:Key="ScriptCategoryPrompt">Enter a category name (leave empty for uncategorized)</system:String>
+    <system:String x:Key="ScriptCategoryPrompt">Enter or select a category name (leave empty for uncategorized)</system:String>
     <system:String x:Key="ScriptDescriptionPrompt">Enter a script description (leave empty for none)</system:String>
     <system:String x:Key="ScriptListTip">Right-click to favorite, pin, set category, or set description</system:String>
     <system:String x:Key="ScriptSearchPlaceholder">Search scripts…</system:String>

@@ -304,7 +304,7 @@
     <system:String x:Key="ScriptUnpin">取消置顶</system:String>
     <system:String x:Key="ScriptSetCategory">设置分类…</system:String>
     <system:String x:Key="ScriptSetDescription">设置描述…</system:String>
-    <system:String x:Key="ScriptCategoryPrompt">输入分类名称（留空表示未分类）</system:String>
+    <system:String x:Key="ScriptCategoryPrompt">输入或选择分类名称（留空表示未分类）</system:String>
     <system:String x:Key="ScriptDescriptionPrompt">输入脚本描述（留空表示无描述）</system:String>
     <system:String x:Key="ScriptListTip">右键可收藏、置顶、设置分类或描述</system:String>
     <system:String x:Key="ScriptSearchPlaceholder">搜索脚本…</system:String>
