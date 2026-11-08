@@ -57,6 +57,10 @@ public partial class LuaEditorViewModel : ObservableObject
     /// <summary>当前筛选条件下可见的脚本文件列表（不带 .lua 后缀）</summary>
     public ObservableCollection<string> Files { get; } = new ObservableCollection<string>();
 
+    /// <summary>当前筛选条件下的脚本项（含分类/描述/收藏），供搜索结果展示</summary>
+    public ObservableCollection<ScriptListItem> ScriptItems { get; } =
+        new ObservableCollection<ScriptListItem>();
+
     /// <summary>分类筛选项；第一项固定为“全部分类”</summary>
     public ObservableCollection<ScriptCategoryOption> CategoryOptions { get; } =
         new ObservableCollection<ScriptCategoryOption>();
@@ -129,6 +133,19 @@ public partial class LuaEditorViewModel : ObservableObject
 
     /// <summary>当前脚本的描述（只读，供设置描述对话框显示默认值）</summary>
     public string SelectedDescriptionValue => GetSelectedMetadata()?.Description ?? "";
+
+    /// <summary>当前脚本的分类显示文本（未分类时显示本地化占位文字）</summary>
+    public string SelectedCategoryDisplay
+    {
+        get
+        {
+            var category = SelectedCategoryValue;
+            if (!string.IsNullOrWhiteSpace(category))
+                return category;
+            return Application.Current?.TryFindResource("ScriptUncategorized") as string
+                ?? "Uncategorized";
+        }
+    }
 
     /// <summary>
     /// 由 View 接入编辑器文本读写（AvalonEdit TextEditor.Text）。
@@ -312,6 +329,7 @@ public partial class LuaEditorViewModel : ObservableObject
         SaveMetadata();
         RefreshCategoriesCore();
         ApplyFilter();
+        OnPropertyChanged(nameof(SelectedCategoryDisplay));
     }
 
     /// <summary>设置当前脚本的描述</summary>
@@ -371,9 +389,28 @@ public partial class LuaEditorViewModel : ObservableObject
             .ThenBy(name => name, StringComparer.CurrentCultureIgnoreCase)
             .ToList();
 
+        ScriptItems.Clear();
+        foreach (var name in ordered)
+        {
+            ScriptItems.Add(
+                new ScriptListItem(
+                    name,
+                    GetMetadata(name) ?? new ScriptMetadata { File = name }
+                )
+            );
+        }
+
         Files.Clear();
         foreach (var name in ordered)
             Files.Add(name);
+
+        //当前脚本即使不匹配筛选条件也保留在下拉列表中，避免 ComboBox 变成空白。
+        if (
+            !string.IsNullOrEmpty(SelectedFile)
+            && _allFiles.Contains(SelectedFile, StringComparer.OrdinalIgnoreCase)
+            && !Files.Contains(SelectedFile)
+        )
+            Files.Add(SelectedFile);
     }
 
     private bool MatchesSearch(string name, string search)
@@ -461,6 +498,7 @@ public partial class LuaEditorViewModel : ObservableObject
     private void SyncSelectedMetadata()
     {
         IsSelectedFavorite = GetSelectedMetadata()?.Favorite ?? false;
+        OnPropertyChanged(nameof(SelectedCategoryDisplay));
     }
 
     private void SyncVisibleSelection()

@@ -8,6 +8,7 @@
   xmlns:local="clr-namespace:llcom"
   xmlns:local_page="clr-namespace:llcom.Pages"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:view="clr-namespace:llcom.View"
   Title="{DynamicResource SettingTitle}"
   Width="450"
   Height="490"
@@ -136,61 +137,13 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
           </Grid.RowDefinitions>
-          <WrapPanel
-            Name="sendScriptBar"
-            Margin="0,0,0,5"
-            Orientation="Horizontal"
+          <view:ScriptPickerBar
+            x:Name="sendScriptPicker"
+            Grid.Row="0"
           >
-            <ComboBox
-              Name="luaFileList"
-              Width="200"
-              ItemsSource="{Binding Files}"
-              SelectedItem="{Binding VisibleSelectedFile}"
-              ToolTip="{DynamicResource ScriptListTip}"
-            >
-              <ComboBox.ContextMenu>
-                <ContextMenu>
-                  <MenuItem
-                    Header="{DynamicResource ScriptToggleFavorite}"
-                    Click="SendScriptToggleFavorite_Click"
-                  />
-                  <MenuItem Header="{DynamicResource ScriptPin}" Click="SendScriptPin_Click" />
-                  <MenuItem Header="{DynamicResource ScriptUnpin}" Click="SendScriptUnpin_Click" />
-                  <Separator />
-                  <MenuItem
-                    Header="{DynamicResource ScriptSetCategory}"
-                    Click="SendScriptSetCategory_Click"
-                  />
-                  <MenuItem
-                    Header="{DynamicResource ScriptSetDescription}"
-                    Click="SendScriptSetDescription_Click"
-                  />
-                </ContextMenu>
-              </ComboBox.ContextMenu>
-            </ComboBox>
-            <TextBox
-              Width="100"
-              Margin="4,0,0,0"
-              VerticalContentAlignment="Center"
-              Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-              ToolTip="{DynamicResource ScriptSearchTip}"
-            />
-            <ComboBox
-              Width="100"
-              Margin="4,0,0,0"
-              DisplayMemberPath="Label"
-              ItemsSource="{Binding CategoryOptions}"
-              SelectedItem="{Binding SelectedCategoryOption}"
-              ToolTip="{DynamicResource ScriptCategoryTip}"
-            />
-            <CheckBox
-              Margin="6,0,0,0"
-              VerticalAlignment="Center"
-              Content="{DynamicResource ScriptFavoritesOnly}"
-              IsChecked="{Binding FavoritesOnly}"
-            />
+            <view:ScriptPickerBar.ActionsContent>
+              <WrapPanel Orientation="Horizontal">
             <Button
-              Name="newScriptButton"
               Style="{StaticResource IconButton}"
               Margin="4,0,0,0"
               Click="NewScriptButton_Click"
@@ -202,7 +155,6 @@
               </Grid>
             </Button>
             <Button
-              Name="testScriptButton"
               Style="{StaticResource IconButton}"
               Margin="4,0,0,0"
               Click="TestScriptButton_Click"
@@ -211,7 +163,6 @@
               <fa:FontAwesome Foreground="{DynamicResource Brush.Icon.Run}" Icon="Play" />
             </Button>
             <Button
-              Name="openScriptFolderButton"
               Style="{StaticResource IconButton}"
               Margin="4,0,0,0"
               Click="OpenScriptFolderButton_Click"
@@ -223,7 +174,6 @@
               </Grid>
             </Button>
             <Button
-              Name="apiDocumentButton"
               Style="{StaticResource IconButton}"
               Margin="4,0,0,0"
               Click="ApiDocumentButton_Click"
@@ -231,7 +181,9 @@
             >
               <fa:FontAwesome Foreground="{DynamicResource Brush.Icon.Doc}" Icon="Book" />
             </Button>
-          </WrapPanel>
+              </WrapPanel>
+            </view:ScriptPickerBar.ActionsContent>
+          </view:ScriptPickerBar>
           <WrapPanel Name="newLuaFileWrapPanel" Grid.Row="1" Margin="3" Visibility="Collapsed">
             <TextBlock VerticalAlignment="Center" Text="{DynamicResource LuaFileName}" />
             <TextBox Name="newLuaFileNameTextBox" Width="90" Text="new script" />
@@ -318,57 +270,13 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
           </Grid.RowDefinitions>
-          <WrapPanel Name="recvScriptBar" Margin="0,0,0,5" Orientation="Horizontal">
-            <ComboBox
-              Name="luaFileListRev"
-              Width="200"
-              ItemsSource="{Binding Files}"
-              SelectedItem="{Binding VisibleSelectedFile}"
-              ToolTip="{DynamicResource ScriptListTip}"
-            >
-              <ComboBox.ContextMenu>
-                <ContextMenu>
-                  <MenuItem
-                    Header="{DynamicResource ScriptToggleFavorite}"
-                    Click="RecvScriptToggleFavorite_Click"
-                  />
-                  <MenuItem Header="{DynamicResource ScriptPin}" Click="RecvScriptPin_Click" />
-                  <MenuItem Header="{DynamicResource ScriptUnpin}" Click="RecvScriptUnpin_Click" />
-                  <Separator />
-                  <MenuItem
-                    Header="{DynamicResource ScriptSetCategory}"
-                    Click="RecvScriptSetCategory_Click"
-                  />
-                  <MenuItem
-                    Header="{DynamicResource ScriptSetDescription}"
-                    Click="RecvScriptSetDescription_Click"
-                  />
-                </ContextMenu>
-              </ComboBox.ContextMenu>
-            </ComboBox>
-            <TextBox
-              Width="100"
-              Margin="4,0,0,0"
-              VerticalContentAlignment="Center"
-              Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-              ToolTip="{DynamicResource ScriptSearchTip}"
-            />
-            <ComboBox
-              Width="100"
-              Margin="4,0,0,0"
-              DisplayMemberPath="Label"
-              ItemsSource="{Binding CategoryOptions}"
-              SelectedItem="{Binding SelectedCategoryOption}"
-              ToolTip="{DynamicResource ScriptCategoryTip}"
-            />
-            <CheckBox
-              Margin="6,0,0,0"
-              VerticalAlignment="Center"
-              Content="{DynamicResource ScriptFavoritesOnly}"
-              IsChecked="{Binding FavoritesOnly}"
-            />
+          <view:ScriptPickerBar
+            x:Name="recvScriptPicker"
+            Grid.Row="0"
+          >
+            <view:ScriptPickerBar.ActionsContent>
+              <WrapPanel Orientation="Horizontal">
             <Button
-              Name="newScriptButtonRev"
               Style="{StaticResource IconButton}"
               Margin="4,0,0,0"
               Click="newScriptButtonRev_Click"
@@ -380,7 +288,6 @@
               </Grid>
             </Button>
             <Button
-              Name="testScriptButtonRev"
               Style="{StaticResource IconButton}"
               Margin="4,0,0,0"
               Click="testScriptButtonRev_Click"
@@ -389,7 +296,6 @@
               <fa:FontAwesome Foreground="{DynamicResource Brush.Icon.Run}" Icon="Play" />
             </Button>
             <Button
-              Name="openScriptFolderButtonRev"
               Style="{StaticResource IconButton}"
               Margin="4,0,0,0"
               Click="openScriptFolderButtonRev_Click"
@@ -401,7 +307,6 @@
               </Grid>
             </Button>
             <Button
-              Name="apiDocumentButtonRev"
               Style="{StaticResource IconButton}"
               Margin="4,0,0,0"
               Click="ApiDocumentButton_Click"
@@ -409,7 +314,9 @@
             >
               <fa:FontAwesome Foreground="{DynamicResource Brush.Icon.Doc}" Icon="Book" />
             </Button>
-          </WrapPanel>
+              </WrapPanel>
+            </view:ScriptPickerBar.ActionsContent>
+          </view:ScriptPickerBar>
           <WrapPanel Name="newLuaFileWrapPanelRev" Grid.Row="1" Margin="3" Visibility="Collapsed">
             <TextBlock VerticalAlignment="Center" Text="{DynamicResource LuaFileName}" />
             <TextBox Name="newLuaFileNameTextBoxRev" Width="90" Text="new script" />

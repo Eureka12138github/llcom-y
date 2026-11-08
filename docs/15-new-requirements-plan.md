@@ -320,7 +320,7 @@
 
 ### 已完成（第一阶段）
 
-- `i18n/messages.json`：304 个 key（292 个原有 + 12 个脚本管理新增），JSON 为唯一翻译源；
+- `i18n/messages.json`：313 个 key（292 个原有 + 21 个脚本管理/界面新增），JSON 为唯一翻译源；
 - `scripts/generate-i18n.ps1`：生成 `llcom/languages/*.xaml`，固定 UTF-8 无 BOM、CRLF、4 空格缩进；`-Check` 供 CI 校验；
 - `scripts/export-i18n-csv.ps1`：可选导出 `i18n/messages.csv` 供表格审校；
 - `.github/workflows/validate-i18n.yml`：校验 JSON 结构与生成文件同步，并对英文残留中文给出 warning；
@@ -458,8 +458,9 @@
 
 - `llcom/Model/ScriptMetadata.cs` + `llcom/Services/ScriptMetadataStore.cs`：每个脚本目录维护 `scripts.index.json`（category / favorite / order / description）；
 - `LuaEditorViewModel`：扫描 `.lua` 与 JSON 合并、清理孤立条目、按 order + 名称排序；支持搜索（文件名/描述/分类）、分类筛选、只看收藏、置顶；
-- 主窗口和设置窗口的发送/接收脚本编辑器统一加入筛选栏；右键菜单支持收藏、置顶、设置分类、设置描述；
-- 新增 5 个单元测试，总计 67 个测试通过。
+- 主窗口和设置窗口的发送/接收脚本编辑器统一使用 `ScriptPickerBar`：搜索框带占位提示和清空按钮，搜索时直接弹出结果列表（不依赖 ComboBox 下拉），当前脚本不会因筛选变空白；
+- 收藏星标、分类按钮、`⋮` 更多菜单改为可见入口，右键菜单保留为快捷方式；
+- 新增 5 个单元测试，总计 68 个测试通过。
 
 仍待做：拖拽排序写回 order、右键重命名/移动、批量清理。
 

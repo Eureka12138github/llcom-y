@@ -9,6 +9,7 @@
   xmlns:local_page="clr-namespace:llcom.Pages"
   xmlns:local_tool="clr-namespace:llcom.Tools"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:view="clr-namespace:llcom.View"
   Title="{DynamicResource AppTitle}"
   Width="900"
   Height="500"
@@ -1200,116 +1201,65 @@
               <RowDefinition Height="auto" />
               <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <WrapPanel Margin="0,0,0,5" Orientation="Horizontal">
-              <ComboBox
-                Name="luaFileList"
-                Width="150"
-                ItemsSource="{Binding LuaEditor.Files}"
-                SelectedItem="{Binding LuaEditor.VisibleSelectedFile}"
-                ToolTip="{DynamicResource ScriptListTip}"
-              >
-                <ComboBox.ContextMenu>
-                  <ContextMenu>
-                    <MenuItem
-                      Header="{DynamicResource ScriptToggleFavorite}"
-                      Click="ScriptToggleFavorite_Click"
-                    />
-                    <MenuItem Header="{DynamicResource ScriptPin}" Click="ScriptPin_Click" />
-                    <MenuItem Header="{DynamicResource ScriptUnpin}" Click="ScriptUnpin_Click" />
-                    <Separator />
-                    <MenuItem
-                      Header="{DynamicResource ScriptSetCategory}"
-                      Click="ScriptSetCategory_Click"
-                    />
-                    <MenuItem
-                      Header="{DynamicResource ScriptSetDescription}"
-                      Click="ScriptSetDescription_Click"
-                    />
-                  </ContextMenu>
-                </ComboBox.ContextMenu>
-              </ComboBox>
-              <TextBox
-                Width="100"
-                Margin="3,0,0,0"
-                VerticalContentAlignment="Center"
-                Text="{Binding LuaEditor.SearchText, UpdateSourceTrigger=PropertyChanged}"
-                ToolTip="{DynamicResource ScriptSearchTip}"
-              />
-              <ComboBox
-                Width="100"
-                Margin="3,0,0,0"
-                DisplayMemberPath="Label"
-                ItemsSource="{Binding LuaEditor.CategoryOptions}"
-                SelectedItem="{Binding LuaEditor.SelectedCategoryOption}"
-                ToolTip="{DynamicResource ScriptCategoryTip}"
-              />
-              <CheckBox
-                Margin="6,0,0,0"
-                VerticalAlignment="Center"
-                Content="{DynamicResource ScriptFavoritesOnly}"
-                IsChecked="{Binding LuaEditor.FavoritesOnly}"
-              />
-              <Button
-                Name="newScriptButton"
-                Style="{StaticResource IconButton}"
-                Margin="3,0,0,0"
-                Click="NewScriptButton_Click"
-                ToolTip="{DynamicResource LuaNewScript}"
-              >
-                <Grid>
-                  <fa:FontAwesome Foreground="{DynamicResource Brush.Icon.New}" Icon="File" />
-                  <fa:FontAwesome Icon="FileCodeOutline" />
-                </Grid>
-              </Button>
-              <Button
-                Name="runScriptButton"
-                Style="{StaticResource IconButton}"
-                Margin="2,0,0,0"
-                Click="RunScriptButton_Click"
-                ToolTip="{DynamicResource LuaRunScript}"
-              >
-                <fa:FontAwesome Foreground="{DynamicResource Brush.Icon.Run}" Icon="Play" />
-              </Button>
-              <Button
-                Name="openScriptFolderButton"
-                Style="{StaticResource IconButton}"
-                Margin="2,0,0,0"
-                Click="OpenScriptFolderButton_Click"
-                ToolTip="{DynamicResource LuaOpenFolder}"
-              >
-                <Grid>
-                  <fa:FontAwesome Foreground="{DynamicResource Brush.Icon.Folder}" Icon="FolderOpen" />
-                  <fa:FontAwesome Icon="FolderOutlinepenOutline" />
-                </Grid>
-              </Button>
-              <Button
-                Name="refreshScriptListButton"
-                Style="{StaticResource IconButton}"
-                Margin="2,0,0,0"
-                Click="RefreshScriptListButton_Click"
-                ToolTip="{DynamicResource LuaRefreshList}"
-              >
-                <fa:FontAwesome Foreground="{DynamicResource Brush.State.Success}" Icon="Refresh" />
-              </Button>
-              <Button
-                Name="apiDocumentButton"
-                Style="{StaticResource IconButton}"
-                Margin="2,0,0,0"
-                Click="ApiDocumentButton_Click"
-                ToolTip="{DynamicResource LuaApiReference}"
-              >
-                <fa:FontAwesome Foreground="{DynamicResource Brush.Icon.Doc}" Icon="Book" />
-              </Button>
-              <Button
-                Name="scriptShareButton"
-                Style="{StaticResource IconButton}"
-                Margin="2,0,0,0"
-                Click="ScriptShareButton_Click"
-                ToolTip="{DynamicResource LuaGetShare}"
-              >
-                <fa:FontAwesome Foreground="{DynamicResource Brush.Accent.Teal}" Icon="ShareAlt" />
-              </Button>
-            </WrapPanel>
+            <view:ScriptPickerBar Grid.Row="0" DataContext="{Binding LuaEditor}">
+              <view:ScriptPickerBar.ActionsContent>
+                <WrapPanel Orientation="Horizontal">
+                  <Button
+                    Style="{StaticResource IconButton}"
+                    Click="NewScriptButton_Click"
+                    ToolTip="{DynamicResource LuaNewScript}"
+                  >
+                    <Grid>
+                      <fa:FontAwesome Foreground="{DynamicResource Brush.Icon.New}" Icon="File" />
+                      <fa:FontAwesome Icon="FileCodeOutline" />
+                    </Grid>
+                  </Button>
+                  <Button
+                    Style="{StaticResource IconButton}"
+                    Margin="2,0,0,0"
+                    Click="RunScriptButton_Click"
+                    ToolTip="{DynamicResource LuaRunScript}"
+                  >
+                    <fa:FontAwesome Foreground="{DynamicResource Brush.Icon.Run}" Icon="Play" />
+                  </Button>
+                  <Button
+                    Style="{StaticResource IconButton}"
+                    Margin="2,0,0,0"
+                    Click="OpenScriptFolderButton_Click"
+                    ToolTip="{DynamicResource LuaOpenFolder}"
+                  >
+                    <Grid>
+                      <fa:FontAwesome Foreground="{DynamicResource Brush.Icon.Folder}" Icon="FolderOpen" />
+                      <fa:FontAwesome Icon="FolderOutlinepenOutline" />
+                    </Grid>
+                  </Button>
+                  <Button
+                    Style="{StaticResource IconButton}"
+                    Margin="2,0,0,0"
+                    Click="RefreshScriptListButton_Click"
+                    ToolTip="{DynamicResource LuaRefreshList}"
+                  >
+                    <fa:FontAwesome Foreground="{DynamicResource Brush.State.Success}" Icon="Refresh" />
+                  </Button>
+                  <Button
+                    Style="{StaticResource IconButton}"
+                    Margin="2,0,0,0"
+                    Click="ApiDocumentButton_Click"
+                    ToolTip="{DynamicResource LuaApiReference}"
+                  >
+                    <fa:FontAwesome Foreground="{DynamicResource Brush.Icon.Doc}" Icon="Book" />
+                  </Button>
+                  <Button
+                    Style="{StaticResource IconButton}"
+                    Margin="2,0,0,0"
+                    Click="ScriptShareButton_Click"
+                    ToolTip="{DynamicResource LuaGetShare}"
+                  >
+                    <fa:FontAwesome Foreground="{DynamicResource Brush.Accent.Teal}" Icon="ShareAlt" />
+                  </Button>
+                </WrapPanel>
+              </view:ScriptPickerBar.ActionsContent>
+            </view:ScriptPickerBar>
             <WrapPanel Name="newLuaFileWrapPanel" Grid.Row="1" Margin="3" Visibility="Collapsed">
               <TextBlock VerticalAlignment="Center" Text="{DynamicResource LuaFileName}" />
               <TextBox Name="newLuaFileNameTextBox" Width="90" Text="new script" />

@@ -307,4 +307,13 @@
     <system:String x:Key="ScriptCategoryPrompt">Enter a category name (leave empty for uncategorized)</system:String>
     <system:String x:Key="ScriptDescriptionPrompt">Enter a script description (leave empty for none)</system:String>
     <system:String x:Key="ScriptListTip">Right-click to favorite, pin, set category, or set description</system:String>
+    <system:String x:Key="ScriptSearchPlaceholder">Search scripts…</system:String>
+    <system:String x:Key="ScriptSearchClear">Clear search</system:String>
+    <system:String x:Key="ScriptSearchResults">Search results</system:String>
+    <system:String x:Key="ScriptNoMatch">No matching scripts</system:String>
+    <system:String x:Key="ScriptUncategorized">Uncategorized</system:String>
+    <system:String x:Key="ScriptMore">More actions</system:String>
+    <system:String x:Key="ScriptCategoryChipTip">Click to set the current script category</system:String>
+    <system:String x:Key="ScriptFavoriteAdd">Favorite current script</system:String>
+    <system:String x:Key="ScriptFavoriteRemove">Unfavorite current script</system:String>
 </ResourceDictionary>

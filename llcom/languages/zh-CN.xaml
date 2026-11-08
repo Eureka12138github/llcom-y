@@ -307,4 +307,13 @@
     <system:String x:Key="ScriptCategoryPrompt">输入分类名称（留空表示未分类）</system:String>
     <system:String x:Key="ScriptDescriptionPrompt">输入脚本描述（留空表示无描述）</system:String>
     <system:String x:Key="ScriptListTip">右键可收藏、置顶、设置分类或描述</system:String>
+    <system:String x:Key="ScriptSearchPlaceholder">搜索脚本…</system:String>
+    <system:String x:Key="ScriptSearchClear">清空搜索</system:String>
+    <system:String x:Key="ScriptSearchResults">搜索结果</system:String>
+    <system:String x:Key="ScriptNoMatch">没有匹配的脚本</system:String>
+    <system:String x:Key="ScriptUncategorized">未分类</system:String>
+    <system:String x:Key="ScriptMore">更多操作</system:String>
+    <system:String x:Key="ScriptCategoryChipTip">点击设置当前脚本分类</system:String>
+    <system:String x:Key="ScriptFavoriteAdd">收藏当前脚本</system:String>
+    <system:String x:Key="ScriptFavoriteRemove">取消收藏当前脚本</system:String>
 </ResourceDictionary>

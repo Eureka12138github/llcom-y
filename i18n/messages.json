@@ -1233,6 +1233,51 @@
       "zh-CN": "右键可收藏、置顶、设置分类或描述",
       "en-US": "Right-click to favorite, pin, set category, or set description",
       "note": "脚本下拉框右键菜单提示"
+    },
+    "ScriptSearchPlaceholder": {
+      "zh-CN": "搜索脚本…",
+      "en-US": "Search scripts…",
+      "note": "脚本搜索框占位文字"
+    },
+    "ScriptSearchClear": {
+      "zh-CN": "清空搜索",
+      "en-US": "Clear search",
+      "note": "脚本搜索框清空按钮"
+    },
+    "ScriptSearchResults": {
+      "zh-CN": "搜索结果",
+      "en-US": "Search results",
+      "note": "脚本搜索结果弹层标题"
+    },
+    "ScriptNoMatch": {
+      "zh-CN": "没有匹配的脚本",
+      "en-US": "No matching scripts",
+      "note": "脚本搜索无结果"
+    },
+    "ScriptUncategorized": {
+      "zh-CN": "未分类",
+      "en-US": "Uncategorized",
+      "note": "脚本分类为空时的显示文字"
+    },
+    "ScriptMore": {
+      "zh-CN": "更多操作",
+      "en-US": "More actions",
+      "note": "脚本更多操作按钮"
+    },
+    "ScriptCategoryChipTip": {
+      "zh-CN": "点击设置当前脚本分类",
+      "en-US": "Click to set the current script category",
+      "note": "脚本分类按钮提示"
+    },
+    "ScriptFavoriteAdd": {
+      "zh-CN": "收藏当前脚本",
+      "en-US": "Favorite current script",
+      "note": "收藏按钮提示（未收藏）"
+    },
+    "ScriptFavoriteRemove": {
+      "zh-CN": "取消收藏当前脚本",
+      "en-US": "Unfavorite current script",
+      "note": "收藏按钮提示（已收藏）"
     }
   }
 }

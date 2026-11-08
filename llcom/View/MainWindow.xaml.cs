@@ -791,43 +791,6 @@ public partial class MainWindow : Window
         newLuaFileWrapPanel.Visibility = Visibility.Visible;
     }
 
-    private void ScriptToggleFavorite_Click(object sender, RoutedEventArgs e) =>
-        _vm.LuaEditor.ToggleSelectedFavorite();
-
-    private void ScriptPin_Click(object sender, RoutedEventArgs e) =>
-        _vm.LuaEditor.SetSelectedPinned(true);
-
-    private void ScriptUnpin_Click(object sender, RoutedEventArgs e) =>
-        _vm.LuaEditor.SetSelectedPinned(false);
-
-    private void ScriptSetCategory_Click(object sender, RoutedEventArgs e)
-    {
-        var editor = _vm.LuaEditor;
-        if (string.IsNullOrEmpty(editor.SelectedFile))
-            return;
-        var result = Tools.InputDialog.OpenDialog(
-            TryFindResource("ScriptCategoryPrompt") as string ?? "Category",
-            editor.SelectedCategoryValue,
-            TryFindResource("ScriptSetCategory") as string ?? "Category"
-        );
-        if (result.Item1)
-            editor.SetSelectedCategory(result.Item2);
-    }
-
-    private void ScriptSetDescription_Click(object sender, RoutedEventArgs e)
-    {
-        var editor = _vm.LuaEditor;
-        if (string.IsNullOrEmpty(editor.SelectedFile))
-            return;
-        var result = Tools.InputDialog.OpenDialog(
-            TryFindResource("ScriptDescriptionPrompt") as string ?? "Description",
-            editor.SelectedDescriptionValue,
-            TryFindResource("ScriptSetDescription") as string ?? "Description"
-        );
-        if (result.Item1)
-            editor.SetSelectedDescription(result.Item2);
-    }
-
     private void RunScriptButton_Click(object sender, RoutedEventArgs e)
     {
         if (!string.IsNullOrEmpty(_vm.LuaEditor.SelectedFile))

@@ -95,19 +95,19 @@ namespace llcom.Tests
             vm.ToggleSelectedFavorite();
 
             vm.SearchText = "crc";
-            Assert.Equal(new[] { "a" }, vm.Files.ToArray());
+            Assert.Equal(new[] { "a" }, vm.ScriptItems.Select(x => x.Name).ToArray());
 
             vm.SearchText = "";
             vm.SelectedCategoryOption = vm.CategoryOptions.Single(o => o.Value == "Timer");
-            Assert.Equal(new[] { "b" }, vm.Files.ToArray());
+            Assert.Equal(new[] { "b" }, vm.ScriptItems.Select(x => x.Name).ToArray());
 
             vm.SelectedCategoryOption = vm.CategoryOptions[0];
             vm.FavoritesOnly = true;
-            Assert.Equal(new[] { "b" }, vm.Files.ToArray());
+            Assert.Equal(new[] { "b" }, vm.ScriptItems.Select(x => x.Name).ToArray());
         }
 
         [Fact]
-        public void FilteredOutSelection_DoesNotClearSelectedFile()
+        public void FilteredOutSelection_KeepsCurrentScriptVisible()
         {
             CreateScripts("a", "b");
             var current = "a";
@@ -116,8 +116,27 @@ namespace llcom.Tests
             vm.SearchText = "b";
 
             Assert.Equal("a", vm.SelectedFile);
-            Assert.Equal(new[] { "b" }, vm.Files.ToArray());
-            Assert.Equal("", vm.VisibleSelectedFile);
+            Assert.Equal(new[] { "b" }, vm.ScriptItems.Select(x => x.Name).ToArray());
+            Assert.Contains("a", vm.Files);
+            Assert.Equal("a", vm.VisibleSelectedFile);
+        }
+
+        [Fact]
+        public void ScriptItems_ExposeCategoryDescriptionAndFavorite()
+        {
+            CreateScripts("a");
+            var current = "a";
+            var vm = new LuaEditorViewModel("user_script_run/", () => current, v => current = v);
+
+            vm.SetSelectedCategory("Modbus");
+            vm.SetSelectedDescription("crc table");
+            vm.ToggleSelectedFavorite();
+
+            var item = Assert.Single(vm.ScriptItems);
+            Assert.Equal("a", item.Name);
+            Assert.Equal("Modbus", item.Category);
+            Assert.Equal("crc table", item.Description);
+            Assert.True(item.Favorite);
         }
     }
 }
