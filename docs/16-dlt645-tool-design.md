@@ -1,6 +1,6 @@
 # DL/T 645-2007 组帧工具设计（草案）
 
-> 状态：**设计/评估，未实现代码**。  
+> 状态：**Phase 0 协议层已实现（公开示例帧）；UI 与真实电表校准待做**。  
 > 计划分支：`feature/dlt645-tool`。本文件先记录设计，后续在独立分支实现；`feature/refactor-continue` 继续做其他功能。
 > 协议版本：首版只做 **DL/T 645-2007**，不兼容 1997。
 
@@ -233,6 +233,21 @@ FE FE 68 00 00 00 00 00 55 68 93 06 33 33 33 33 33 88 45 16
 ### ToolSelector 注意
 
 新增 645 页时，要同时修改 `MainWindow.xaml` 的 `ToolSelector` 项、`ToolSelector_SelectionChanged` 的 Frame 数组以及初始化时的 `Frame.Navigate`。当前数组与 10 个工具项一一对应；新页建议追加到末尾，避免打乱已有索引。
+
+### Phase 0 已完成
+
+- `llcom/Services/Dlt645/Dlt645Codec.cs`：BCD 地址（支持 `AA` 通配）、组帧/解析、FE 前导、长度、校验和、数据域 ±0x33、异常/正常应答标记、读地址应答提取；
+- `llcom/Services/Dlt645/Dlt645Catalog.cs`：读数据/读地址/写数据控制码，以及常用 DI；
+- `tests/llcom.Tests/Dlt645CodecTests.cs`：公开示例帧、地址往返、校验和/结束符/长度错误、异常应答、HEX 解析等 15 个用例。
+
+已用公开示例帧验证：
+
+```text
+FE FE FE 68 AA AA AA AA AA AA 68 13 00 DF 16
+FE FE 68 00 00 00 00 00 55 68 93 06 33 33 33 33 33 88 45 16
+```
+
+真实电表到位后需要重点校准：FE 数量、异常应答数据格式、DI 长度/小数位/单位。
 
 ## 7. 工作量
 
