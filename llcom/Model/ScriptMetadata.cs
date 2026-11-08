@@ -18,7 +18,7 @@ public sealed class ScriptMetadata
     [JsonProperty("favorite")]
     public bool Favorite { get; set; }
 
-    /// <summary>数值越小越靠前；0 为默认，-1 表示置顶。</summary>
+    /// <summary>数值越小越靠前；0 为默认，负数表示置顶，后置顶的脚本数值更小。</summary>
     [JsonProperty("order")]
     public int Order { get; set; }
 

@@ -343,13 +343,26 @@ public partial class LuaEditorViewModel : ObservableObject
         ApplyFilter();
     }
 
-    /// <summary>置顶/取消置顶当前脚本（置顶项按名称排序在普通项之前）</summary>
+    /// <summary>
+    /// 置顶/取消置顶当前脚本。
+    /// 后置顶的脚本会获得更小的 order，从而排到已有置顶项之前；
+    /// 取消置顶恢复为默认值 0。
+    /// </summary>
     public void SetSelectedPinned(bool pinned)
     {
         var metadata = GetSelectedMetadata();
         if (metadata == null)
             return;
-        metadata.Order = pinned ? -1 : 0;
+        if (pinned)
+        {
+            var minOrder =
+                _metadata.Count == 0 ? 0 : _metadata.Values.Min(item => item.Order);
+            metadata.Order = minOrder == int.MinValue ? int.MinValue : minOrder - 1;
+        }
+        else
+        {
+            metadata.Order = 0;
+        }
         SaveMetadata();
         ApplyFilter();
     }

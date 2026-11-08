@@ -80,6 +80,31 @@ namespace llcom.Tests
         }
 
         [Fact]
+        public void PinningAnotherScript_MovesItAboveExistingPins()
+        {
+            CreateScripts("a", "b", "c", "d", "e");
+            var current = "a";
+            var vm = new LuaEditorViewModel("user_script_run/", () => current, v => current = v);
+
+            vm.SelectedFile = "c";
+            vm.SetSelectedPinned(true);
+            vm.SelectedFile = "e";
+            vm.SetSelectedPinned(true);
+
+            Assert.Equal(new[] { "e", "c", "a", "b", "d" }, vm.Files.ToArray());
+
+            // 再次置顶已置顶的脚本，应重新回到最前
+            vm.SelectedFile = "c";
+            vm.SetSelectedPinned(true);
+            Assert.Equal(new[] { "c", "e", "a", "b", "d" }, vm.Files.ToArray());
+
+            // 取消置顶后回到普通项
+            vm.SelectedFile = "e";
+            vm.SetSelectedPinned(false);
+            Assert.Equal(new[] { "c", "a", "b", "d", "e" }, vm.Files.ToArray());
+        }
+
+        [Fact]
         public void Filters_SearchCategoryAndFavorite()
         {
             CreateScripts("a", "b");
