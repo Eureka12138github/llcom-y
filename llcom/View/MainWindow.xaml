@@ -1393,6 +1393,7 @@
             <ComboBoxItem Content="{DynamicResource SerialMonitorHeader}" />
             <ComboBoxItem Content="{DynamicResource PlotHeader}" />
             <ComboBoxItem Content="WinUSB" />
+            <ComboBoxItem Content="{DynamicResource Dlt645Title}" />
           </ComboBox>
           <Grid Grid.Row="1">
             <Frame Name="tcpTestFrame" NavigationUIVisibility="Hidden" />
@@ -1421,6 +1422,11 @@
             />
             <Frame Name="PlotFrame" NavigationUIVisibility="Hidden" Visibility="Collapsed" />
             <Frame Name="WinUSBFrame" NavigationUIVisibility="Hidden" Visibility="Collapsed" />
+            <Frame
+              Name="Dlt645ToolFrame"
+              NavigationUIVisibility="Hidden"
+              Visibility="Collapsed"
+            />
           </Grid>
         </Grid>
       </TabItem>

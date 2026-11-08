@@ -240,6 +240,11 @@ public partial class MainWindow : Window
 
                         //WinUSB
                         WinUSBFrame.Navigate(new Uri("Pages/WinUSBPage.xaml", UriKind.Relative));
+
+                        //DL/T 645-2007
+                        Dlt645ToolFrame.Navigate(
+                            new Uri("Pages/Dlt645Page.xaml", UriKind.Relative)
+                        );
                         //工具选择器默认选中第一个（触发一次可见性切换）
                         ToolSelector.SelectedIndex = 0;
 
@@ -417,6 +422,7 @@ public partial class MainWindow : Window
             SerialMonitorFrame,
             PlotFrame,
             WinUSBFrame,
+            Dlt645ToolFrame,
         };
         int index = ToolSelector.SelectedIndex;
         for (int i = 0; i < frames.Length; i++)

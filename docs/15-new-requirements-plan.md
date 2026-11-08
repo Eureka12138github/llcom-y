@@ -15,7 +15,7 @@
 | 4 | #18 | 社区脚本投稿自动化（`/import` → PR） | 中 | 已完成 | Action 已通过真实 PR 验证；测试脚本已清理 |
 | 5 | #20 | i18n 统一管理与英文优化 | 中 | 第一阶段已完成 | JSON 单一源 + 生成/校验脚本 + CI 已做；硬编码提取和英文审校待做 |
 | 6 | #25 | 脚本分类/搜索/收藏/排序 | 中 | MVP 已完成 | sidecar JSON + 搜索/分类/收藏/置顶已做；拖拽排序等后续 |
-| 7 | #22 | “小工具”增加 DL/T 645-2007 组帧 | 中–大 | 3–5 天 | 设计已归档，独立分支 `feature/dlt645-tool`；暂不做 |
+| 7 | #22 | “小工具”增加 DL/T 645-2007 组帧 | 中–大 | Phase 0–1 已完成 | 独立分支 `feature/dlt645-tool`；协议层 + 页面已实现，待真实电表校准 |
 | 8 | #19 | 黑暗模式 | 中–大 | 4–6 天 | 已有 `docs/14-dark-mode-plan.md` |
 | 9 | #23 | 多脚本同时运行/相互调用 | 大 | 1–2 周 | 方案已归档，后续再评估 |
 
@@ -169,7 +169,7 @@
 ### 已确认
 
 首版只做 **DL/T 645-2007**，暂不兼容 1997。  
-详细设计已单独记录在 [`docs/16-dlt645-tool-design.md`](16-dlt645-tool-design.md)，并补充“用 `AAAAAAAAAAAA` 通配地址自动读取电表地址”的通讯连接流程。该功能放在独立分支 `feature/dlt645-tool`，等确定开发时再做。
+详细设计已单独记录在 [`docs/16-dlt645-tool-design.md`](16-dlt645-tool-design.md)，并补充“用 `AAAAAAAAAAAA` 通配地址自动读取电表地址”的通讯连接流程。该功能放在独立分支 `feature/dlt645-tool`；Phase 0 协议层与 Phase 1 页面已完成，真实电表到位后校准。
 
 ### 推荐范围
 
@@ -320,7 +320,7 @@
 
 ### 已完成（第一阶段）
 
-- `i18n/messages.json`：313 个 key（292 个原有 + 21 个脚本管理/界面新增），JSON 为唯一翻译源；
+- `i18n/messages.json`：362 个 key（含脚本管理、645 页面和界面新增），JSON 为唯一翻译源；
 - `scripts/generate-i18n.ps1`：生成 `llcom/languages/*.xaml`，固定 UTF-8 无 BOM、CRLF、4 空格缩进；`-Check` 供 CI 校验；
 - `scripts/export-i18n-csv.ps1`：可选导出 `i18n/messages.csv` 供表格审校；
 - `.github/workflows/validate-i18n.yml`：校验 JSON 结构与生成文件同步，并对英文残留中文给出 warning；

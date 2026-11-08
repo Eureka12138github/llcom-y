@@ -7,20 +7,26 @@ namespace llcom.Services.Dlt645;
 public sealed class Dlt645Operation
 {
     public Dlt645Operation(
-        string name,
+        string nameKey,
+        string fallbackName,
         byte control,
         bool requiresDataIdentifier = false,
         bool isWrite = false,
         bool needsConfirmation = false
     )
     {
-        Name = name;
+        NameKey = nameKey;
+        Name = fallbackName;
         Control = control;
         RequiresDataIdentifier = requiresDataIdentifier;
         IsWrite = isWrite;
         NeedsConfirmation = needsConfirmation;
     }
 
+    /// <summary>本地化资源键。</summary>
+    public string NameKey { get; }
+
+    /// <summary>资源缺失时的回退名称。</summary>
     public string Name { get; }
 
     public byte Control { get; }
@@ -35,14 +41,19 @@ public sealed class Dlt645Operation
 /// <summary>常用数据标识（DI）。</summary>
 public sealed class Dlt645DataIdentifier
 {
-    public Dlt645DataIdentifier(string name, params byte[] bytes)
+    public Dlt645DataIdentifier(string nameKey, string fallbackName, params byte[] bytes)
     {
         if (bytes == null || bytes.Length != 4)
             throw new ArgumentException("DI 必须是 4 字节", nameof(bytes));
-        Name = name;
+        NameKey = nameKey;
+        Name = fallbackName;
         Bytes = (byte[])bytes.Clone();
     }
 
+    /// <summary>本地化资源键。</summary>
+    public string NameKey { get; }
+
+    /// <summary>资源缺失时的回退名称。</summary>
     public string Name { get; }
 
     /// <summary>按帧内传输顺序保存的 4 字节 DI。</summary>
@@ -60,9 +71,19 @@ public static class Dlt645Catalog
     public static IReadOnlyList<Dlt645Operation> Operations { get; } =
         new[]
         {
-            new Dlt645Operation("读数据", Dlt645Codec.ControlReadData, requiresDataIdentifier: true),
-            new Dlt645Operation("读通信地址", Dlt645Codec.ControlReadAddress),
             new Dlt645Operation(
+                "Dlt645OpReadData",
+                "读数据",
+                Dlt645Codec.ControlReadData,
+                requiresDataIdentifier: true
+            ),
+            new Dlt645Operation(
+                "Dlt645OpReadAddress",
+                "读通信地址",
+                Dlt645Codec.ControlReadAddress
+            ),
+            new Dlt645Operation(
+                "Dlt645OpWriteData",
                 "写数据",
                 Dlt645Codec.ControlWriteData,
                 requiresDataIdentifier: true,
@@ -78,11 +99,39 @@ public static class Dlt645Catalog
     public static IReadOnlyList<Dlt645DataIdentifier> DataIdentifiers { get; } =
         new[]
         {
-            new Dlt645DataIdentifier("A 相电压", 0x02, 0x01, 0x01, 0x00),
-            new Dlt645DataIdentifier("A 相电流", 0x02, 0x02, 0x01, 0x00),
-            new Dlt645DataIdentifier("瞬时有功功率", 0x02, 0x03, 0x00, 0x00),
-            new Dlt645DataIdentifier("功率因数", 0x02, 0x06, 0x00, 0x00),
-            new Dlt645DataIdentifier("正向有功总电能", 0x00, 0x01, 0x00, 0x00),
-            new Dlt645DataIdentifier("组合有功总电能", 0x00, 0x00, 0x00, 0x00),
+            new Dlt645DataIdentifier("Dlt645DiVoltageA", "A 相电压", 0x02, 0x01, 0x01, 0x00),
+            new Dlt645DataIdentifier("Dlt645DiCurrentA", "A 相电流", 0x02, 0x02, 0x01, 0x00),
+            new Dlt645DataIdentifier(
+                "Dlt645DiActivePower",
+                "瞬时有功功率",
+                0x02,
+                0x03,
+                0x00,
+                0x00
+            ),
+            new Dlt645DataIdentifier(
+                "Dlt645DiPowerFactor",
+                "功率因数",
+                0x02,
+                0x06,
+                0x00,
+                0x00
+            ),
+            new Dlt645DataIdentifier(
+                "Dlt645DiEnergyForward",
+                "正向有功总电能",
+                0x00,
+                0x01,
+                0x00,
+                0x00
+            ),
+            new Dlt645DataIdentifier(
+                "Dlt645DiEnergyCombined",
+                "组合有功总电能",
+                0x00,
+                0x00,
+                0x00,
+                0x00
+            ),
         };
 }
