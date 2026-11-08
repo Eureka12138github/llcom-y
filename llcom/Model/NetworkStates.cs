@@ -11,8 +11,8 @@ namespace llcom.Model;
 /// </summary>
 public class StateObject
 {
-    public Socket workSocket = null;
-    public SslStream workStream = null;
+    public Socket? workSocket = null;
+    public SslStream? workStream = null;
     public const int BUFFER_SIZE = 204800;
     public byte[] buffer = new byte[BUFFER_SIZE];
     public bool isSSL = false;
@@ -23,8 +23,8 @@ public class StateObject
 /// </summary>
 public class SocketObj
 {
-    Socket socket;
-    SslStream sslStream;
+    Socket? socket;
+    SslStream? sslStream;
 
     public SocketObj(Socket s)
     {

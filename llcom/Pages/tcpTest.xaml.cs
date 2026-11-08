@@ -31,7 +31,7 @@ namespace llcom.Pages;
 /// </summary>
 public partial class tcpTest : Page, INotifyPropertyChanged
 {
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     /// <summary>
     /// 设置属性值，值变化时触发 PropertyChanged（XAML 生成的 g.cs 基类固定为 Page，
@@ -40,7 +40,7 @@ public partial class tcpTest : Page, INotifyPropertyChanged
     protected bool SetProperty<T>(
         ref T field,
         T value,
-        [CallerMemberName] string propertyName = null
+        [CallerMemberName] string? propertyName = null
     )
     {
         if (EqualityComparer<T>.Default.Equals(field, value))
@@ -139,7 +139,7 @@ public partial class tcpTest : Page, INotifyPropertyChanged
         );
     }
 
-    private void ShowData(string title, byte[] data = null, bool send = false) =>
+    private void ShowData(string title, byte[]? data = null, bool send = false) =>
         Tools.NetworkLog.Show("🚀 public socket server: ", title, data, send);
 
     /// <summary>创建一个 30s 心跳定时器（netlab 连接保活）。</summary>
@@ -191,8 +191,10 @@ public partial class tcpTest : Page, INotifyPropertyChanged
             return;
         try
         {
-            JObject o = (JObject)JsonConvert.DeserializeObject(ee.Data);
-            switch ((string)o["action"])
+            JObject? o = JsonConvert.DeserializeObject<JObject>(ee.Data);
+            if (o == null)
+                return;
+            switch ((string?)o["action"])
             {
                 case "port":
                     if (isV6)
@@ -215,16 +217,16 @@ public partial class tcpTest : Page, INotifyPropertyChanged
                         new Action(
                             delegate
                             {
-                                clients.Add((string)o["client"]);
+                                clients.Add((string?)o["client"] ?? "");
                                 if (ClientList.Text.Length == 0)
-                                    ClientList.Text = (string)o["client"];
+                                    ClientList.Text = (string?)o["client"] ?? "";
                             }
                         )
                     );
                     //适配一下通用通道
                     LuaApis.SendChannelsReceived(
                         "netlab",
-                        new { client = "connected", data = (string)o["client"] }
+                        new { client = "connected", data = (string?)o["client"] ?? "" }
                     );
                     break;
                 case "closed":
@@ -233,7 +235,7 @@ public partial class tcpTest : Page, INotifyPropertyChanged
                         new Action(
                             delegate
                             {
-                                clients.Remove((string)o["client"]);
+                                clients.Remove((string?)o["client"] ?? "");
                                 if (ClientList.Text.Length == 0 && clients.Count > 0)
                                     ClientList.Text = clients[0];
                             }
@@ -242,17 +244,17 @@ public partial class tcpTest : Page, INotifyPropertyChanged
                     //适配一下通用通道
                     LuaApis.SendChannelsReceived(
                         "netlab",
-                        new { client = "disconnected", data = (string)o["client"] }
+                        new { client = "disconnected", data = (string?)o["client"] ?? "" }
                     );
                     break;
                 case "data":
-                    string data = (string)o["data"];
-                    byte[] buff = NetworkHelper.BuildSendBytes(data, (bool)o["hex"]);
+                    string data = (string?)o["data"] ?? "";
+                    byte[] buff = NetworkHelper.BuildSendBytes(data, (bool?)o["hex"] ?? false);
                     ShowData($" → receive from [{o["client"]}]", buff);
                     //适配一下通用通道
                     LuaApis.SendChannelsReceived(
                         "netlab",
-                        new { client = (string)o["client"], data = buff }
+                        new { client = (string?)o["client"] ?? "", data = buff }
                     );
                     break;
                 case "error":
@@ -276,7 +278,7 @@ public partial class tcpTest : Page, INotifyPropertyChanged
         set => SetProperty(ref _connecting, value);
     }
 
-    private async void ConnectWebSocket(string ctype, string stype = null)
+    private async void ConnectWebSocket(string ctype, string? stype = null)
     {
         if (Connecting)
             return;

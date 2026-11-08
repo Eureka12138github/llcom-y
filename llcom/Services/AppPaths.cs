@@ -29,7 +29,7 @@ internal static class AppPaths
     }
 
     //软件根目录
-    private static string _appPath = null;
+    private static string _appPath = "";
 
     /// <summary>
     /// 软件根目录（末尾带\）
@@ -38,11 +38,13 @@ internal static class AppPaths
     {
         get
         {
-            if (_appPath == null)
+            if (string.IsNullOrEmpty(_appPath))
             {
                 using (var processModule = Process.GetCurrentProcess().MainModule)
                 {
-                    _appPath = System.IO.Path.GetDirectoryName(processModule?.FileName);
+                    _appPath =
+                        System.IO.Path.GetDirectoryName(processModule?.FileName)
+                        ?? AppContext.BaseDirectory;
                 }
                 if (!_appPath.EndsWith("\\"))
                     _appPath = _appPath + "\\";

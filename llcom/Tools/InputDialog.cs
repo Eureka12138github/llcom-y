@@ -12,8 +12,8 @@ class InputDialog
 {
     public static Tuple<bool, string> OpenDialog(
         string prompt,
-        string defaultInput = "",
-        string title = null
+        string? defaultInput = "",
+        string? title = null
     )
     {
         InputDialogWindow dialog = new InputDialogWindow(prompt, defaultInput, title);
@@ -28,7 +28,7 @@ class MessageBox
     {
         try
         {
-            InputDialog.OpenDialog(s, null, null);
+            InputDialog.OpenDialog(s);
         }
         catch
         {

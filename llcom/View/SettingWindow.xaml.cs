@@ -34,8 +34,8 @@ public partial class SettingWindow : Window
     }
 
     //发送/接收转换脚本编辑器（与主窗口 Lua 编辑器共用 LuaEditorViewModel）
-    private LuaEditorViewModel _sendEditor;
-    private LuaEditorViewModel _recvEditor;
+    private LuaEditorViewModel _sendEditor = null!;
+    private LuaEditorViewModel _recvEditor = null!;
 
     // ===== 日志缓冲上限（数字输入） =====
 
@@ -283,7 +283,7 @@ public partial class SettingWindow : Window
             try
             {
                 byte[] r = LuaEnv.LuaLoader.Run(
-                    $"{_sendEditor.SelectedFile}.lua",
+                    $"{_sendEditor!.SelectedFile}.lua",
                     new System.Collections.ArrayList
                     {
                         "uartData",
@@ -375,7 +375,7 @@ public partial class SettingWindow : Window
             try
             {
                 byte[] r = LuaEnv.LuaLoader.Run(
-                    $"{_recvEditor.SelectedFile}.lua",
+                    $"{_recvEditor!.SelectedFile}.lua",
                     new System.Collections.ArrayList
                     {
                         "uartData",

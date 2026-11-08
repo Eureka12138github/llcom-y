@@ -45,8 +45,8 @@ public partial class ConvertPage : Page
         byte[] row = Encoding.Default.GetBytes(RawTextBox.Text);
         for (int i = 0; i < ConvertJobsListBox.Items.Count; i++)
         {
-            string name = ConvertJobsListBox.Items[i] as string;
-            if (converters.ContainsKey(name))
+            string? name = ConvertJobsListBox.Items[i] as string;
+            if (name != null && converters.ContainsKey(name))
                 row = converters[name](row);
         }
         ResultTextBox.Text = Encoding.Default.GetString(row);

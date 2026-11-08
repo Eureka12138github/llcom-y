@@ -74,7 +74,9 @@ namespace llcom
             UnhandledExceptionEventArgs unhandledExceptionEventArgs
         )
         {
-            var exception = unhandledExceptionEventArgs.ExceptionObject as Exception;
+            var exception =
+                unhandledExceptionEventArgs.ExceptionObject as Exception
+                ?? new Exception("Unknown unhandled exception");
             LogFatal(exception);
             if (_isHandlingFatal)
                 return;
@@ -139,7 +141,7 @@ namespace llcom
         /// <summary>
         /// 把致命异常写入 logs/fatal.log（上报可能失败，本地留痕更可靠），返回日志文件路径。
         /// </summary>
-        private static string LogFatal(Exception exception)
+        private static string LogFatal(Exception? exception)
         {
             try
             {

@@ -37,10 +37,11 @@ internal static class AppUpdateService
         // 便携版：zip 解压到 exe 所在目录
         AutoUpdater.InstallationPath = AppDomain.CurrentDomain.BaseDirectory;
 
-        AutoUpdater.CheckForUpdateEventHandler handler = null;
+        AutoUpdater.CheckForUpdateEventHandler? handler = null;
         handler = args =>
         {
-            AutoUpdater.CheckForUpdateEvent -= handler;
+            if (handler != null)
+                AutoUpdater.CheckForUpdateEvent -= handler;
 
             if (args == null)
             {

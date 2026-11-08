@@ -13,13 +13,13 @@ namespace llcom.LuaEnv
 {
     class LuaRunEnv
     {
-        public static event EventHandler LuaRunError; //报错的回调
-        private static XLua.LuaEnv lua = null;
-        private static CancellationTokenSource tokenSource = null;
+        public static event EventHandler? LuaRunError; //报错的回调
+        private static XLua.LuaEnv? lua = null;
+        private static CancellationTokenSource? tokenSource = null;
         private static ConcurrentDictionary<int, CancellationTokenSource> pool =
             new ConcurrentDictionary<int, CancellationTokenSource>(); //timer回调池子
         private static ConcurrentBag<LuaPool> toRun = new ConcurrentBag<LuaPool>(); //待运行的池子
-        private static XLua.LuaFunction triggerCB = null;
+        private static XLua.LuaFunction? triggerCB = null;
 
         public static bool isRunning = false;
 
@@ -39,7 +39,7 @@ namespace llcom.LuaEnv
             }
         }
 
-        private static void addTigger(int id, string type = "timer", byte[] data = null)
+        private static void addTigger(int id, string type = "timer", byte[]? data = null)
         {
             if (isRunning)
             {
@@ -85,7 +85,7 @@ namespace llcom.LuaEnv
 
         private static void runTigger()
         {
-            if (!canRun)
+            if (!canRun || lua == null || tokenSource == null)
                 return;
             lock (lua)
             {
@@ -99,9 +99,11 @@ namespace llcom.LuaEnv
                         {
                             try
                             {
-                                LuaPool temp;
+                                LuaPool? temp;
                                 toRun.TryTake(out temp);
-                                triggerCB.Call(temp.id, temp.type, temp.data);
+                                if (temp == null)
+                                    continue;
+                                triggerCB?.Call(temp.id, temp.type, temp.data);
                             }
                             catch (Exception le)
                             {
@@ -187,7 +189,7 @@ namespace llcom.LuaEnv
                 v.Value.Cancel();
             }
             isRunning = false;
-            tokenSource.Cancel();
+            tokenSource?.Cancel();
             pool.Clear();
             lua = null;
         }
@@ -244,7 +246,7 @@ namespace llcom.LuaEnv
     class LuaPool
     {
         public int id { get; set; }
-        public string type { get; set; }
-        public object data { get; set; }
+        public string type { get; set; } = "";
+        public object? data { get; set; }
     }
 }

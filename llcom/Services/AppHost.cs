@@ -13,7 +13,7 @@ namespace llcom.Tools;
 /// </summary>
 internal static class AppHost
 {
-    private static IServiceProvider _provider;
+    private static IServiceProvider _provider = null!;
 
     public static IServiceProvider Services => _provider ??= Build();
 

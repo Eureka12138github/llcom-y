@@ -21,7 +21,7 @@ namespace llcom.Model;
 /// </summary>
 public partial class Settings : ObservableObject
 {
-    public event EventHandler MainWindowTop;
+    public event EventHandler? MainWindowTop;
 
     //窗口大小与位置
     private double _windowTop = 0;
@@ -129,7 +129,7 @@ public partial class Settings : ObservableObject
     // ========== 配置持久化（防抖保存） ==========
 
     private static readonly object saveLock = new object();
-    private static System.Threading.Timer saveTimer = null;
+    private static System.Threading.Timer? saveTimer = null;
     private const int SaveDelayMs = 600;
 
     /// <summary>

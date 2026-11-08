@@ -67,10 +67,10 @@ public partial class DataShowViewModel : ObservableObject
     private bool _scrollQueued;
 
     /// <summary>分包模式变化事件（切换 MainList/MainTextBox 显示）</summary>
-    public event Action<bool> PackModeChanged;
+    public event Action<bool>? PackModeChanged;
 
     /// <summary>分包模式新增条目后触发（View 据此滚动到底部）</summary>
-    public event Action ScrollRequested;
+    public event Action? ScrollRequested;
 
     internal DataShowViewModel(Model.Settings setting, Services.ISerialPortService uart)
     {
@@ -202,7 +202,11 @@ public partial class DataShowViewModel : ObservableObject
                 {
                     var item = e is DataShowRaw raw
                         ? new Model.DataShowItem(raw.title, e.data, e.time, raw.color)
-                        : new Model.DataShowItem(e.data, e.time, (e as DataShowPara).send);
+                        : new Model.DataShowItem(
+                            e.data,
+                            e.time,
+                            (e as DataShowPara)?.send ?? false
+                        );
                     if (item != null)
                         AppendPackItem(item);
                 }

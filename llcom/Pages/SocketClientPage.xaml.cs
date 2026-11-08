@@ -30,7 +30,7 @@ namespace llcom.Pages;
 /// </summary>
 public partial class SocketClientPage : Page, INotifyPropertyChanged
 {
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     /// <summary>
     /// 设置属性值，值变化时触发 PropertyChanged（XAML 生成的 g.cs 基类固定为 Page，
@@ -39,7 +39,7 @@ public partial class SocketClientPage : Page, INotifyPropertyChanged
     protected bool SetProperty<T>(
         ref T field,
         T value,
-        [CallerMemberName] string propertyName = null
+        [CallerMemberName] string? propertyName = null
     )
     {
         if (EqualityComparer<T>.Default.Equals(field, value))
@@ -57,7 +57,7 @@ public partial class SocketClientPage : Page, INotifyPropertyChanged
     private bool initial = false;
 
     //收到消息的事件
-    public event EventHandler<byte[]> DataRecived;
+    public event EventHandler<byte[]>? DataRecived;
 
     private bool _isConnected = false;
     public bool IsConnected
@@ -89,7 +89,7 @@ public partial class SocketClientPage : Page, INotifyPropertyChanged
     }
 
     //暂存一个对象
-    SocketObj socketNow = null;
+    SocketObj? socketNow = null;
 
     private void Page_Loaded(object sender, RoutedEventArgs e)
     {
@@ -120,22 +120,22 @@ public partial class SocketClientPage : Page, INotifyPropertyChanged
         };
     }
 
-    private void ShowData(string title, byte[] data = null, bool send = false) =>
+    private void ShowData(string title, byte[]? data = null, bool send = false) =>
         Tools.NetworkLog.Show("🔗 socket client: ", title, data, send);
 
-    private System.Timers.Timer reconnectTimer = null;
+    private System.Timers.Timer? reconnectTimer = null;
 
     private void Reconnect()
     {
         if (!Changeable || IsConnected)
             return;
 
-        IPEndPoint ipe = null;
-        Socket s = null;
+        IPEndPoint? ipe = null;
+        Socket? s = null;
         try
         {
             Changeable = false;
-            IPAddress ip = null;
+            IPAddress? ip = null;
             try
             {
                 ip = IPAddress.Parse(ServerTextBox.Text);
@@ -155,6 +155,11 @@ public partial class SocketClientPage : Page, INotifyPropertyChanged
         catch (Exception ex)
         {
             ShowData($"❗ Server information error {ex.Message}");
+            Changeable = true;
+            return;
+        }
+        if (ipe == null || s == null)
+        {
             Changeable = true;
             return;
         }
@@ -313,6 +318,8 @@ public partial class SocketClientPage : Page, INotifyPropertyChanged
         if (so.isSSL) //ssl连接
         {
             var ssl = so.workStream;
+            if (ssl == null)
+                return;
             try
             {
                 int read = ssl.EndRead(ar);
@@ -352,7 +359,9 @@ public partial class SocketClientPage : Page, INotifyPropertyChanged
             return;
         }
 
-        Socket s = so.workSocket;
+        Socket? s = so.workSocket;
+        if (s == null)
+            return;
         try
         {
             int read = s.EndReceive(ar);
@@ -436,6 +445,8 @@ public partial class SocketClientPage : Page, INotifyPropertyChanged
     {
         try
         {
+            if (socketNow == null)
+                return false;
             socketNow.Send(buff);
             ShowData($" ← send", buff, true);
             return true;

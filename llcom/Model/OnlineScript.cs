@@ -14,19 +14,19 @@ public partial class OnlineScript : ObservableObject
     /// 作者
     /// </summary>
     [ObservableProperty]
-    private string _author;
+    private string _author = "";
 
     /// <summary>
     /// 脚本名
     /// </summary>
     [ObservableProperty]
-    private string _name;
+    private string _name = "";
 
     /// <summary>
     /// 简介
     /// </summary>
     [ObservableProperty]
-    private string _description;
+    private string _description = "";
 
     /// <summary>
     /// 版本
@@ -38,13 +38,13 @@ public partial class OnlineScript : ObservableObject
     /// 备注
     /// </summary>
     [ObservableProperty]
-    private string _note;
+    private string _note = "";
 
     /// <summary>
     /// 脚本内容
     /// </summary>
     [ObservableProperty]
-    private string _script;
+    private string _script = "";
 
     /// <summary>
     /// 保存位置：run = 运行脚本目录，send = 发送处理目录，recv = 接收处理目录。
@@ -57,7 +57,7 @@ public partial class OnlineScript : ObservableObject
     /// 脚本网址
     /// </summary>
     [ObservableProperty]
-    private string _url = null;
+    private string _url = "";
 
     /// <summary>
     /// 导入来自GitHub的原始数据

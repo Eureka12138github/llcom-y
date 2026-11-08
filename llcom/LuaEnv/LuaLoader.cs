@@ -94,7 +94,7 @@ end
             }
         }
 
-        private static XLua.LuaEnv luaRunner = null;
+        private static XLua.LuaEnv? luaRunner = null;
 
         /// <summary>
         /// 运行lua文件并获取结果
@@ -104,7 +104,7 @@ end
         /// <returns></returns>
         public static byte[] Run(
             string file,
-            ArrayList args = null,
+            ArrayList? args = null,
             string path = "user_script_send_convert/"
         )
         {
@@ -139,7 +139,7 @@ end
                         luaRunner.Global.SetInPath((string)args[i], args[i + 1]);
                     }
 
-                XLua.LuaFunction f = null;
+                XLua.LuaFunction? f = null;
                 try
                 {
                     //有界重试，避免原无界 while 死循环

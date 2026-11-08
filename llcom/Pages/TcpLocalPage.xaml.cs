@@ -30,7 +30,7 @@ namespace llcom.Pages;
 /// </summary>
 public partial class TcpLocalPage : Page, INotifyPropertyChanged
 {
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     /// <summary>
     /// 设置属性值，值变化时触发 PropertyChanged（XAML 生成的 g.cs 基类固定为 Page，
@@ -39,7 +39,7 @@ public partial class TcpLocalPage : Page, INotifyPropertyChanged
     protected bool SetProperty<T>(
         ref T field,
         T value,
-        [CallerMemberName] string propertyName = null
+        [CallerMemberName] string? propertyName = null
     )
     {
         if (EqualityComparer<T>.Default.Equals(field, value))
@@ -55,7 +55,7 @@ public partial class TcpLocalPage : Page, INotifyPropertyChanged
     }
 
     //收到消息的事件
-    public event EventHandler<byte[]> DataRecived;
+    public event EventHandler<byte[]>? DataRecived;
 
     private bool _isConnected = false;
     public bool IsConnected
@@ -97,7 +97,7 @@ public partial class TcpLocalPage : Page, INotifyPropertyChanged
     private void RefreshIp() =>
         Tools.NetworkHelper.FillLocalIpComboBox(IpListComboBox, "tcp server");
 
-    private void ShowData(string title, byte[] data = null, bool send = false) =>
+    private void ShowData(string title, byte[]? data = null, bool send = false) =>
         Tools.NetworkLog.Show("🛰 local tcp server: ", title, data, send);
 
     /// <summary>
@@ -107,13 +107,15 @@ public partial class TcpLocalPage : Page, INotifyPropertyChanged
     /// <returns></returns>
     private string GetClientName(Socket s) => Tools.NetworkHelper.GetSocketName(s);
 
-    private TcpListener Server = null;
+    private TcpListener? Server = null;
     private List<Socket> Clients = new List<Socket>();
 
     public void Read_Callback(IAsyncResult ar)
     {
         StateObject so = (StateObject)ar.AsyncState;
-        Socket s = so.workSocket;
+        Socket? s = so.workSocket;
+        if (s == null)
+            return;
         try
         {
             var name = GetClientName(s);
@@ -181,7 +183,7 @@ public partial class TcpLocalPage : Page, INotifyPropertyChanged
         }
 
         ShowData($"🛰 {Tools.NetworkHelper.FormatHostPort(ip, port)}");
-        AsyncCallback newConnectionCb = null;
+        AsyncCallback? newConnectionCb = null;
         newConnectionCb = new AsyncCallback(
             (ar) =>
             {
@@ -210,14 +212,16 @@ public partial class TcpLocalPage : Page, INotifyPropertyChanged
                     );
 
                     //恢复服务端的回调函数，方便下次接收
-                    Server.BeginAcceptSocket(newConnectionCb, Server);
+                    Server?.BeginAcceptSocket(newConnectionCb!, Server);
                 }
                 catch (System.Exception ex) { Tools.Logger.Swallowed("tcp server", ex); }
             }
         );
         try
         {
-            Server.BeginAcceptSocket(newConnectionCb, Server);
+            if (Server == null)
+                return false;
+            Server.BeginAcceptSocket(newConnectionCb!, Server);
         }
         catch (Exception ex)
         {

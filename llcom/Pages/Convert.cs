@@ -55,8 +55,8 @@ public class rsTooltip : IMultiValueConverter
 {
     public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
     {
-        string rs = value[0] as string;
-        string t = value[1] as string;
+        string? rs = value[0] as string;
+        string? t = value[1] as string;
         ResourceDictionary r = App.Current.Resources;
         if (string.IsNullOrEmpty(rs))
             return r["QuickSendRecvScriptNil"];

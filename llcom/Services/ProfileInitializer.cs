@@ -45,9 +45,10 @@ internal static class ProfileInitializer
             try
             {
                 //cost 309ms
-                Tools.Global.setting = JsonConvert.DeserializeObject<Model.Settings>(
-                    File.ReadAllText(AppPaths.ProfilePath + "settings.json")
-                );
+                Tools.Global.setting =
+                    JsonConvert.DeserializeObject<Model.Settings>(
+                        File.ReadAllText(AppPaths.ProfilePath + "settings.json")
+                    ) ?? new Model.Settings();
                 Tools.Global.setting.SentCount = 0;
                 Tools.Global.setting.ReceivedCount = 0;
                 Tools.Global.setting.DisableLog = false;
@@ -91,7 +92,7 @@ internal static class ProfileInitializer
         var currentVersion = NdpInfo.GetCurrentVersionName();
         try
         {
-            if (currentVersion.StartsWith("4."))
+            if (currentVersion != null && currentVersion.StartsWith("4."))
             {
                 var sv = int.Parse(currentVersion.Substring(2, 1));
                 if (sv < 6)

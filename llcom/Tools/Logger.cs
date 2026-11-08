@@ -12,15 +12,15 @@ namespace llcom.Tools
     class Logger
     {
         //显示日志数据的回调函数
-        public static event EventHandler<DataShow> DataShowTask;
+        public static event EventHandler<DataShow>? DataShowTask;
 
         //清空显示的回调函数
-        public static event EventHandler DataClearEvent;
+        public static event EventHandler? DataClearEvent;
 
         //清空日志显示
         public static void ClearData()
         {
-            DataClearEvent?.Invoke(null, null);
+            DataClearEvent?.Invoke(null, EventArgs.Empty);
         }
 
         //显示日志数据
@@ -41,8 +41,8 @@ namespace llcom.Tools
             DataShowTask?.Invoke(null, s);
         }
 
-        private static Serilog.Core.Logger uartLogFile = null;
-        private static Serilog.Core.Logger luaLogFile = null;
+        private static Serilog.Core.Logger? uartLogFile = null;
+        private static Serilog.Core.Logger? luaLogFile = null;
 
         /// <summary>
         /// 初始化串口日志文件
@@ -79,7 +79,7 @@ namespace llcom.Tools
         {
             if (uartLogFile == null)
                 InitUartLog();
-            uartLogFile.Information(l);
+            uartLogFile?.Information(l);
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace llcom.Tools
         {
             if (uartLogFile == null)
                 InitUartLog();
-            uartLogFile.Debug(l);
+            uartLogFile?.Debug(l);
         }
 
         /// <summary>
@@ -145,7 +145,7 @@ namespace llcom.Tools
         {
             if (luaLogFile == null)
                 InitLuaLog();
-            luaLogFile.Information(l);
+            luaLogFile?.Information(l);
         }
     }
 
@@ -153,7 +153,7 @@ namespace llcom.Tools
     class DataShow
     {
         public DateTime time { get; set; } = DateTime.Now;
-        public byte[] data;
+        public byte[] data = Array.Empty<byte>();
     }
 
     /// <summary>
@@ -169,7 +169,7 @@ namespace llcom.Tools
     /// </summary>
     class DataShowRaw : DataShow
     {
-        public string title;
-        public SolidColorBrush color;
+        public string title = "";
+        public SolidColorBrush color = Brushes.Transparent;
     }
 }

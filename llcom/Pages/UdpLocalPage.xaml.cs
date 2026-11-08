@@ -13,7 +13,7 @@ namespace llcom.Pages;
 /// </summary>
 public partial class UdpLocalPage : Page
 {
-    private UdpLocalViewModel _vm;
+    private UdpLocalViewModel _vm = null!;
     private bool loaded = false;
 
     public UdpLocalPage()

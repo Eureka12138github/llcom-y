@@ -22,10 +22,10 @@ class SerialPortService : ISerialPortService
     private List<SerialPort> useless = new List<SerialPort>();
 
     public SerialPort serial { get; private set; } = new SerialPort();
-    public event EventHandler UartDataRecived;
-    public event EventHandler UartDataSent;
-    public event EventHandler UartDataRawSent;
-    private Stream lastPortBaseStream = null;
+    public event EventHandler? UartDataRecived;
+    public event EventHandler? UartDataSent;
+    public event EventHandler? UartDataRawSent;
+    private Stream? lastPortBaseStream = null;
     private bool _rts = false;
     private bool _dtr = false;
 
@@ -156,7 +156,7 @@ class SerialPortService : ISerialPortService
     /// </summary>
     /// <param name="data">数据内容</param>
     /// <param name="dataRaw">原始数据（Lua 处理前），用于区分回显</param>
-    public void SendData(byte[] data, byte[] dataRaw = null)
+    public void SendData(byte[] data, byte[]? dataRaw = null)
     {
         if (data == null || data.Length == 0)
             return;
@@ -249,7 +249,7 @@ class SerialPortService : ISerialPortService
                 try
                 {
                     var r = result.ToArray();
-                    UartDataRecived(r, EventArgs.Empty); //回调事件
+                    UartDataRecived?.Invoke(r, EventArgs.Empty); //回调事件
                     LuaApis.SendChannelsReceived("uart", r);
                 }
                 catch (Exception ex)

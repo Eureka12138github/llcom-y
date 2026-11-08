@@ -98,8 +98,8 @@ public partial class LuaEditorViewModel : ObservableObject
         string folderName,
         Func<string> getCurrent,
         Action<string> setCurrent,
-        Action onReload = null,
-        Action<string> onLoaded = null
+        Action? onReload = null,
+        Action<string>? onLoaded = null
     )
     {
         _folderName = folderName;

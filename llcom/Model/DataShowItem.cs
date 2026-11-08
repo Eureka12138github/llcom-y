@@ -16,18 +16,18 @@ namespace llcom.Model;
 public class DataShowItem : INotifyPropertyChanged
 {
     //原始（处理后）字节，切换显示格式时据此重算
-    private readonly byte[] _data;
+    private readonly byte[] _data = Array.Empty<byte>();
     private readonly bool _sent;
     private readonly bool _generic; //通用通道条目（带标题，如 MQTT/TCP）
 
-    public string TimeText { get; set; }
+    public string TimeText { get; set; } = "";
 
     /// <summary>方向箭头：发送为“→”，接收为“←”</summary>
-    public string ArrowText { get; set; }
+    public string ArrowText { get; set; } = "";
 
-    public SolidColorBrush DataTextColor { get; set; }
-    public string RawTitle { get; set; }
-    public SolidColorBrush RawTextColor { get; set; }
+    public SolidColorBrush DataTextColor { get; set; } = Brushes.Transparent;
+    public string RawTitle { get; set; } = "";
+    public SolidColorBrush RawTextColor { get; set; } = Brushes.Transparent;
 
     //显示文本按需计算并缓存：切换格式时只失效缓存，不对所有条目做字符串转换
     private string _cachedText = "";
@@ -43,11 +43,11 @@ public class DataShowItem : INotifyPropertyChanged
     public string? RawText => _generic ? GetText(true) : null;
 
     /// <summary>原始负载字节数（日志缓冲按字节预算裁剪时统计用）</summary>
-    public int PayloadLength => _data?.Length ?? 0;
+    public int PayloadLength => _data.Length;
 
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
-    private void OnPropertyChanged([CallerMemberName] string name = null) =>
+    private void OnPropertyChanged([CallerMemberName] string? name = null) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
     /// <summary>

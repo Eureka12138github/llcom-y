@@ -20,7 +20,7 @@ namespace llcom.Tools;
 /// </summary>
 internal static class OnlineScriptService
 {
-    private static string GitHubToken = null;
+    private static string? GitHubToken = null;
 
     private const string ProjectRepo = "Eureka12138github/llcom-y";
     private const string ProjectBranch = "master";
@@ -57,12 +57,12 @@ internal static class OnlineScriptService
     /// </summary>
     public static List<OnlineScript> GetOnlineScripts(
         OnlineScriptSource source,
-        Action<int, int> callback = null
+        Action<int, int>? callback = null
     )
     {
         if (source == OnlineScriptSource.Project)
             return GetProjectScripts(callback);
-        return GetOnlineScripts(callback);
+        return GetOnlineScripts(callback) ?? new List<OnlineScript>();
     }
 
     /// <summary>
@@ -70,7 +70,7 @@ internal static class OnlineScriptService
     /// </summary>
     /// <param name="callback">进度回调（当前页, 总页数）</param>
     /// <returns>脚本列表；获取 Token 失败时返回 null</returns>
-    public static List<OnlineScript> GetOnlineScripts(Action<int, int> callback = null)
+    public static List<OnlineScript>? GetOnlineScripts(Action<int, int>? callback = null)
     {
         if (GitHubToken == null)
         {
@@ -80,15 +80,14 @@ internal static class OnlineScriptService
                 var request = new RestRequest();
                 request.Timeout = 10000;
                 var response = client.Get(request);
-                GitHubToken = response.Content;
-            }
+                GitHubToken = response.Content;            }
             catch
             {
                 return null;
             }
         }
         //请求函数
-        var req = (string after) =>
+        var req = (string? after) =>
         {
             var client = new RestClient();
             client.BaseUrl = new Uri("https://api.github.com/graphql");
@@ -104,19 +103,23 @@ internal static class OnlineScriptService
                 ParameterType.RequestBody
             );
             var response = client.Execute(request);
-            var j = JsonConvert.DeserializeObject<JObject>(response.Content);
+            var j =
+                JsonConvert.DeserializeObject<JObject>(response.Content)
+                ?? throw new Exception("GitHub API 返回空响应");
+            var discussions = j["data"]?["repository"]?["discussions"];
+            var nodes = discussions?["nodes"] ?? new JArray();
             var bodys =
-                from i in j["data"]["repository"]["discussions"]["nodes"]
-                select ((string)i["body"], (string)i["url"]);
+                from i in nodes
+                select ((string?)i["body"] ?? "", (string?)i["url"] ?? "");
             return (
                 bodys.ToList(),
-                (int)j["data"]["repository"]["discussions"]["totalCount"],
-                (string)j["data"]["repository"]["discussions"]["pageInfo"]["endCursor"],
-                (bool)j["data"]["repository"]["discussions"]["pageInfo"]["hasNextPage"]
+                discussions?["totalCount"]?.Value<int>() ?? 0,
+                (string?)discussions?["pageInfo"]?["endCursor"],
+                discussions?["pageInfo"]?["hasNextPage"]?.Value<bool>() ?? false
             );
         };
 
-        string lastPage = null;
+        string? lastPage = null;
         var scripts = new List<OnlineScript>();
         var pages = 0;
         while (true)
@@ -147,7 +150,7 @@ internal static class OnlineScriptService
     /// <summary>
     /// 读取本项目 community-scripts/index.json 及其中的脚本文件。
     /// </summary>
-    private static List<OnlineScript> GetProjectScripts(Action<int, int> callback)
+    private static List<OnlineScript> GetProjectScripts(Action<int, int>? callback)
     {
         var indexJson = GetProjectText(ProjectIndexPath);
         var root = JObject.Parse(indexJson);
@@ -161,12 +164,12 @@ internal static class OnlineScriptService
             if (item == null)
                 continue;
 
-            var name = (string)item["name"];
+            var name = (string?)item["name"];
             if (string.IsNullOrWhiteSpace(name))
                 continue;
 
-            var file = (string)item["file"];
-            var inline = (string)item["script"];
+            var file = (string?)item["file"];
+            var inline = (string?)item["script"];
             if (string.IsNullOrWhiteSpace(file) && string.IsNullOrWhiteSpace(inline))
                 continue;
 
@@ -177,18 +180,18 @@ internal static class OnlineScriptService
 
             var script = new OnlineScript
             {
-                Author = (string)item["author"] ?? "",
-                Name = name,
-                Description = (string)item["description"] ?? "",
+                Author = (string?)item["author"] ?? "",
+                Name = name!,
+                Description = (string?)item["description"] ?? "",
                 Version = version,
-                Note = (string)item["note"] ?? "",
+                Note = (string?)item["note"] ?? "",
                 Type = NormalizeProjectType(
-                    (string)item["saveTo"] ?? (string)item["type"]
+                    (string?)item["saveTo"] ?? (string?)item["type"]
                 ),
                 Script = inline ?? "",
             };
 
-            var url = (string)item["url"];
+            var url = (string?)item["url"];
             if (string.IsNullOrWhiteSpace(url))
             {
                 if (!string.IsNullOrWhiteSpace(file) && !IsAbsoluteUrl(file))
@@ -197,9 +200,9 @@ internal static class OnlineScriptService
                 else
                     url = $"https://github.com/{ProjectRepo}/tree/{ProjectBranch}/{ProjectCommunityPath}";
             }
-            script.Url = url;
+            script.Url = url ?? "";
 
-            entries.Add(new ProjectScriptEntry { Script = script, File = file });
+            entries.Add(new ProjectScriptEntry { Script = script, File = file ?? "" });
         }
 
         var total = entries.Count;
@@ -254,7 +257,7 @@ internal static class OnlineScriptService
     /// </summary>
     private static string GetProjectText(string pathOrUrl)
     {
-        Exception lastError = null;
+        Exception? lastError = null;
 
         if (IsAbsoluteUrl(pathOrUrl))
         {
@@ -309,11 +312,11 @@ internal static class OnlineScriptService
         throw new Exception($"无法获取本项目社区脚本：{pathOrUrl}", lastError);
     }
 
-    private static bool IsAbsoluteUrl(string value) =>
+    private static bool IsAbsoluteUrl(string? value) =>
         Uri.TryCreate(value, UriKind.Absolute, out var uri)
         && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
 
-    private static string NormalizeProjectType(string type)
+    private static string NormalizeProjectType(string? type)
     {
         switch ((type ?? "").Trim().ToLowerInvariant())
         {

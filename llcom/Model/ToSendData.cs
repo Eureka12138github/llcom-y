@@ -9,13 +9,13 @@ namespace llcom.Model;
 
 public class ToSendData : INotifyPropertyChanged
 {
-    public static event EventHandler DataChanged;
-    public event PropertyChangedEventHandler PropertyChanged;
+    public static event EventHandler? DataChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     private int _id;
-    private string _text;
+    private string _text = "";
     private bool _hex;
-    private string _commit;
+    private string _commit = "";
     private string _recvScriptPath = "";
     private string _recvScriptPara = "";
     public int id

@@ -19,9 +19,9 @@ public partial class InputDialogWindow : Window
 {
     private const int WM_NCLBUTTONDBLCLK = 0xA3;
 
-    public string Value { get; set; }
+    public string Value { get; set; } = "";
 
-    public InputDialogWindow(string prompt, string defaultInput = "", string title = null)
+    public InputDialogWindow(string prompt, string? defaultInput = "", string? title = null)
     {
         InitializeComponent();
         this.DataContext = this;
@@ -42,7 +42,7 @@ public partial class InputDialogWindow : Window
     {
         IntPtr handle = new WindowInteropHelper(this).Handle;
         Tools.Win32.HideControlBox(handle);
-        HwndSource.FromHwnd(handle).AddHook(new HwndSourceHook(WndProc));
+        HwndSource.FromHwnd(handle)?.AddHook(new HwndSourceHook(WndProc));
         this.InputText.SelectAll();
     }
 

@@ -29,12 +29,12 @@ public partial class PlotPage : Page
 
     //最多十个图像
     private double[][] Data = new double[10][];
-    private double[] DataX = null;
+    private double[]? DataX = null;
 
     //最大点数量
     private static int MaxPoints = 1000;
 
-    private ScottPlot.Plottable.Crosshair ch = null;
+    private ScottPlot.Plottable.Crosshair? ch = null;
 
     private ScottPlot.Styles.IStyle[] Styles = ScottPlot.Style.GetStyles();
     private int StyleNow = -1;
@@ -117,6 +117,8 @@ public partial class PlotPage : Page
     private void Plot_MouseMove(object sender, MouseEventArgs e)
     {
         var p = Plot.GetMouseCoordinates();
+        if (ch == null)
+            return;
         ch.X = p.x;
         ch.Y = p.y;
         Refresh();

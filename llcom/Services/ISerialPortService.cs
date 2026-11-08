@@ -18,13 +18,13 @@ interface ISerialPortService
     SerialPort serial { get; }
 
     /// <summary>收到数据事件（sender 为 byte[]）</summary>
-    event EventHandler UartDataRecived;
+    event EventHandler? UartDataRecived;
 
     /// <summary>发送数据事件（sender 为 byte[]，Lua 处理后的最终数据）</summary>
-    event EventHandler UartDataSent;
+    event EventHandler? UartDataSent;
 
     /// <summary>发送原始数据事件（sender 为 byte[]，未经 Lua 处理的原始数据）</summary>
-    event EventHandler UartDataRawSent;
+    event EventHandler? UartDataRawSent;
 
     /// <summary>RTS 信号线状态</summary>
     bool Rts { get; set; }
@@ -52,7 +52,7 @@ interface ISerialPortService
     /// </summary>
     /// <param name="data">实际发送的字节</param>
     /// <param name="dataRaw">原始数据（Lua 处理前），用于区分回显；与 data 相同时忽略</param>
-    void SendData(byte[] data, byte[] dataRaw = null);
+    void SendData(byte[] data, byte[]? dataRaw = null);
 
     /// <summary>串口接收事件信号量（用于唤醒接收线程，退出时置位）</summary>
     EventWaitHandle WaitUartReceive { get; }

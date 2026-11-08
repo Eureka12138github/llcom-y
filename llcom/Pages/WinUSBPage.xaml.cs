@@ -35,7 +35,7 @@ namespace llcom.Pages;
 /// </summary>
 public partial class WinUSBPage : Page, INotifyPropertyChanged
 {
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     /// <summary>
     /// 设置属性值，值变化时触发 PropertyChanged（XAML 生成的 g.cs 基类固定为 Page，
@@ -44,7 +44,7 @@ public partial class WinUSBPage : Page, INotifyPropertyChanged
     protected bool SetProperty<T>(
         ref T field,
         T value,
-        [CallerMemberName] string propertyName = null
+        [CallerMemberName] string? propertyName = null
     )
     {
         if (EqualityComparer<T>.Default.Equals(field, value))
@@ -75,7 +75,7 @@ public partial class WinUSBPage : Page, INotifyPropertyChanged
 
     private static bool loaded = false;
 
-    private void ShowData(string title, byte[] data = null, bool send = false)
+    private void ShowData(string title, byte[]? data = null, bool send = false)
     {
         Tools.Logger.ShowDataRaw(
             new Tools.DataShowRaw
@@ -154,7 +154,7 @@ public partial class WinUSBPage : Page, INotifyPropertyChanged
 
     private async Task RefreshUsbList()
     {
-        List<DeviceInfo> r = null;
+        List<DeviceInfo>? r = null;
         await Task.Run(() =>
         {
             try
@@ -414,10 +414,10 @@ public partial class WinUSBPage : Page, INotifyPropertyChanged
 
 class DeviceInfo
 {
-    public string Name { get; set; } = null;
+    public string Name { get; set; } = "";
     public ushort Pid { get; set; }
     public ushort Vid { get; set; }
-    public string SerialNumber { get; set; }
+    public string SerialNumber { get; set; } = "";
     public int Interface { get; set; } = -1;
     public List<(WriteEndpointID, int)> SendEP { get; set; } = new List<(WriteEndpointID, int)>();
     public List<(ReadEndpointID, int)> RecvEP { get; set; } = new List<(ReadEndpointID, int)>();

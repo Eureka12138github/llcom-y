@@ -21,7 +21,7 @@ public partial class UdpLocalViewModel : ObservableObject
     [ObservableProperty]
     private bool _isConnected;
 
-    private UdpClient _server;
+    private UdpClient? _server;
 
     public UdpLocalViewModel(Settings setting)
     {
@@ -46,7 +46,7 @@ public partial class UdpLocalViewModel : ObservableObject
 
         ShowData($"🗑 {NetworkHelper.FormatHostPort(ip, port)}");
 
-        AsyncCallback callback = null;
+        AsyncCallback? callback = null;
         callback = ar =>
         {
             try
@@ -56,7 +56,7 @@ public partial class UdpLocalViewModel : ObservableObject
 
                 byte[] receiveBytes = u.EndReceive(ar, ref e);
                 ShowData(NetworkHelper.FormatHostPort(e.Address.ToString(), e.Port), receiveBytes);
-                _server.BeginReceive(callback, ar.AsyncState);
+                _server?.BeginReceive(callback!, ar.AsyncState);
             }
             catch (Exception ex)
             {
@@ -89,6 +89,6 @@ public partial class UdpLocalViewModel : ObservableObject
         ShowData($"🚫 server closed");
     }
 
-    private void ShowData(string title, byte[] data = null, bool send = false) =>
+    private void ShowData(string title, byte[]? data = null, bool send = false) =>
         NetworkLog.Show("🗑 local udp server: ", title, data, send);
 }

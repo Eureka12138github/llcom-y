@@ -12,7 +12,7 @@ internal static class NdpInfo
     /// <summary>
     /// 获取 .NET Framework 4.x 的最新版本号；未安装则返回 null。
     /// </summary>
-    public static string GetCurrentVersionName()
+    public static string? GetCurrentVersionName()
     {
         // 优先读取权威的 v4\Full\Version；32/64 位视图都尝试
         foreach (var view in new[] { RegistryView.Registry64, RegistryView.Registry32 })
@@ -25,7 +25,7 @@ internal static class NdpInfo
         return null;
     }
 
-    private static string TryRead(RegistryView view, string subKey)
+    private static string? TryRead(RegistryView view, string subKey)
     {
         try
         {

@@ -9,7 +9,7 @@ namespace llcom.LuaEnv
 {
     class LuaApis
     {
-        public static event EventHandler PrintLuaLog;
+        public static event EventHandler? PrintLuaLog;
 
         /// <summary>
         /// 打印日志
@@ -153,7 +153,7 @@ namespace llcom.LuaEnv
             string prompt,
             out string returnValue,
             string defaultInput = "",
-            string title = null
+            string? title = null
         )
         {
             Tuple<bool, string> ret = App.Current.Dispatcher.Invoke(() =>
@@ -164,7 +164,7 @@ namespace llcom.LuaEnv
             return ret.Item1;
         }
 
-        public static event EventHandler<Model.LinePlotPoint> LinePlotAdd;
+        public static event EventHandler<Model.LinePlotPoint>? LinePlotAdd;
 
         /// <summary>
         /// 画点

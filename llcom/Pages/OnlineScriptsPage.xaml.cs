@@ -17,7 +17,7 @@ namespace llcom.Pages;
 /// </summary>
 public partial class OnlineScriptsPage : Page, INotifyPropertyChanged
 {
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     /// <summary>
     /// 设置属性值，值变化时触发 PropertyChanged（XAML 生成的 g.cs 基类固定为 Page，
@@ -26,7 +26,7 @@ public partial class OnlineScriptsPage : Page, INotifyPropertyChanged
     protected bool SetProperty<T>(
         ref T field,
         T value,
-        [CallerMemberName] string propertyName = null
+        [CallerMemberName] string? propertyName = null
     )
     {
         if (EqualityComparer<T>.Default.Equals(field, value))
@@ -144,7 +144,7 @@ public partial class OnlineScriptsPage : Page, INotifyPropertyChanged
     /// </summary>
     /// <param name="show"></param>
     /// <param name="progress"></param>
-    private void Loading(string show = null, int? progress = null)
+    private void Loading(string? show = null, int? progress = null)
     {
         LoadingMsg = show ?? TryFindResource("Loading") as string ?? "?!";
         IsIndeterminate = progress == null;
@@ -169,7 +169,7 @@ public partial class OnlineScriptsPage : Page, INotifyPropertyChanged
         HasListState = false;
         scripts.Clear();
 
-        List<OnlineScript> result = null;
+        List<OnlineScript>? result = null;
         var fetchTask = Task.Run(() =>
         {
             try

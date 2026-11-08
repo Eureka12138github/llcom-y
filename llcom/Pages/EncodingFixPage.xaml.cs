@@ -27,9 +27,9 @@ public partial class EncodingFixPage : Page
 
     class fixedData
     {
-        public string raw { get; set; }
-        public string target { get; set; }
-        public string result { get; set; }
+        public string raw { get; set; } = "";
+        public string target { get; set; } = "";
+        public string result { get; set; } = "";
     }
 
     string[] encodingList = new string[]
@@ -74,7 +74,10 @@ public partial class EncodingFixPage : Page
             if (FixResultList.SelectedItem == null)
                 return;
             //获取单元格内容
-            string copiedData = (FixResultList.SelectedItem as fixedData).result;
+            var item = FixResultList.SelectedItem as fixedData;
+            if (item == null)
+                return;
+            string copiedData = item.result;
             if (string.IsNullOrEmpty(copiedData))
                 return;
             //复制到剪贴板

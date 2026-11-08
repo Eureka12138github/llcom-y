@@ -19,7 +19,7 @@ internal sealed class LuaLogPump
     private readonly object _lock = new object();
 
     /// <summary>一批日志就绪（参数为已拼接好的文本），由 UI 线程处理。</summary>
-    public event Action<string> FlushRequested;
+    public event Action<string>? FlushRequested;
 
     /// <summary>是否允许输出（暂停时为 false：仍计数，但不渲染）。</summary>
     public bool Printable { get; set; } = true;

@@ -15,7 +15,7 @@ internal static class NetworkLog
     /// <param name="title">本条标题</param>
     /// <param name="data">数据（null 视为空）</param>
     /// <param name="send">true 为发送（红），false 为接收（绿）</param>
-    public static void Show(string prefix, string title, byte[] data = null, bool send = false)
+    public static void Show(string prefix, string title, byte[]? data = null, bool send = false)
     {
         Logger.ShowDataRaw(
             new DataShowRaw

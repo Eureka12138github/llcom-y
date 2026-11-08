@@ -20,7 +20,7 @@ namespace llcom.Tools;
 /// </summary>
 class Global
 {
-    public static event EventHandler ProgramClosedEvent;
+    public static event EventHandler? ProgramClosedEvent;
 
     //api接口文档网址
     public static string apiDocumentUrl = "https://github.com/chenxuuu/llcom/blob/master/LuaApi.md";
@@ -46,8 +46,8 @@ class Global
         }
     }
 
-    //给全局使用的设置参数项
-    public static Model.Settings setting;
+    //给全局使用的设置参数项（由 ProfileInitializer 在启动时赋值）
+    public static Model.Settings setting = null!;
     public static Services.ISerialPortService uart = new Services.SerialPortService();
 
     /// <summary>
@@ -68,16 +68,17 @@ class Global
     /// <summary>
     /// 更换软件标题栏文字
     /// </summary>
-    public static event EventHandler<string> ChangeTitleEvent;
+    public static event EventHandler<string>? ChangeTitleEvent;
 
     public static void ChangeTitle(string s) => ChangeTitleEvent?.Invoke(null, s);
 
     /// <summary>
     /// 刷新lua脚本列表
     /// </summary>
-    public static event EventHandler RefreshLuaScriptListEvent;
+    public static event EventHandler? RefreshLuaScriptListEvent;
 
-    public static void RefreshLuaScriptList() => RefreshLuaScriptListEvent?.Invoke(null, null);
+    public static void RefreshLuaScriptList() =>
+        RefreshLuaScriptListEvent?.Invoke(null, EventArgs.Empty);
 
     // ========== 以下为指向各服务的转发成员（保持旧调用点不变） ==========
 
@@ -205,7 +206,7 @@ class Global
     /// </summary>
     /// <param name="callback"></param>
     /// <returns></returns>
-    public static List<OnlineScript> GetOnlineScripts(Action<int, int> callback = null) =>
+    public static List<OnlineScript>? GetOnlineScripts(Action<int, int>? callback = null) =>
         OnlineScriptService.GetOnlineScripts(callback);
 
     /// <summary>
@@ -213,6 +214,6 @@ class Global
     /// </summary>
     public static List<OnlineScript> GetOnlineScripts(
         OnlineScriptSource source,
-        Action<int, int> callback = null
+        Action<int, int>? callback = null
     ) => OnlineScriptService.GetOnlineScripts(source, callback);
 }

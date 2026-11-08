@@ -21,20 +21,20 @@ public class LuaEnv : IDisposable
     public XLua.LuaEnv lua;
 
     //报错的回调
-    public event EventHandler<string> ErrorEvent;
+    public event EventHandler<string>? ErrorEvent;
 
     //打印日志的回调
-    public event EventHandler<string> PrintEvent;
+    public event EventHandler<string>? PrintEvent;
 
     //停止运行的回调
-    public event EventHandler<bool> StopEvent;
+    public event EventHandler<bool>? StopEvent;
 
     private bool stop = false; //是否停止运行
     private ConcurrentDictionary<int, CancellationTokenSource> timerPool =
         new ConcurrentDictionary<int, CancellationTokenSource>(); //timer取消标志池子
     private ConcurrentBag<LuaTaskData> toRun = new ConcurrentBag<LuaTaskData>(); //待运行的池子
     private readonly object taskLock = new object();
-    private XLua.LuaFunction triggerCB = null;
+    private XLua.LuaFunction? triggerCB = null;
 
     /// <summary>
     /// 发出报错信息
@@ -59,7 +59,7 @@ public class LuaEnv : IDisposable
     /// </summary>
     /// <param name="type">触发类型</param>
     /// <param name="data">传递数据</param>
-    public void addTigger(string type, object data) => addTask(-1, type, data);
+    public void addTigger(string type, object? data) => addTask(-1, type, data);
 
     /// <summary>
     /// 添加一个
@@ -67,7 +67,7 @@ public class LuaEnv : IDisposable
     /// <param name="id"></param>
     /// <param name="type"></param>
     /// <param name="data"></param>
-    private void addTask(int id, string type, object data)
+    private void addTask(int id, string type, object? data)
     {
         if (!stop)
         {
@@ -93,9 +93,11 @@ public class LuaEnv : IDisposable
             {
                 try
                 {
-                    LuaTaskData task;
+                    LuaTaskData? task;
                     toRun.TryTake(out task); //取出来一个任务
-                    triggerCB.Call(task.id, task.type, task.data); //跑
+                    if (task == null)
+                        continue;
+                    triggerCB?.Call(task.id, task.type, task.data); //跑
                 }
                 catch (Exception e)
                 {
@@ -143,9 +145,9 @@ public class LuaEnv : IDisposable
         {
             try
             {
-                CancellationTokenSource tc;
+                CancellationTokenSource? tc;
                 timerPool.TryRemove(id, out tc);
-                tc.Cancel();
+                tc?.Cancel();
             }
             catch { /* 忽略：取消定时器失败 */ }
         }
@@ -194,7 +196,7 @@ public class LuaEnv : IDisposable
     /// 初始化，加载全部接口
     /// </summary>
     /// <param name="input">输入值，一般为匿名类</param>
-    public LuaEnv(object input = null)
+    public LuaEnv(object? input = null)
     {
         lua = new XLua.LuaEnv();
         if (input != null)
@@ -272,6 +274,6 @@ package.cpath = package.cpath..
 class LuaTaskData
 {
     public int id { get; set; }
-    public string type { get; set; }
-    public object data { get; set; }
+    public string type { get; set; } = "";
+    public object? data { get; set; }
 }

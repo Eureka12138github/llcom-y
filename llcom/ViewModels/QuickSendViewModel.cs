@@ -283,7 +283,7 @@ public partial class QuickSendViewModel : ObservableObject
         dialog.Filter = Localize("QuickSendLLCOMFile");
         if (dialog.ShowDialog() != System.Windows.Forms.DialogResult.OK)
             return;
-        System.Collections.Generic.List<ToSendData> data;
+        System.Collections.Generic.List<ToSendData>? data;
         try
         {
             data = JsonConvert.DeserializeObject<System.Collections.Generic.List<ToSendData>>(
@@ -293,6 +293,11 @@ public partial class QuickSendViewModel : ObservableObject
         catch (Exception err)
         {
             Tools.MessageBox.Show(err.Message);
+            return;
+        }
+        if (data == null)
+        {
+            Tools.MessageBox.Show(Localize("QuickSendLoadError"));
             return;
         }
         _canSave = false;

@@ -14,7 +14,7 @@ namespace llcom.Pages;
 /// </summary>
 public partial class DataShowPage : Page
 {
-    private DataShowViewModel _vm;
+    private DataShowViewModel _vm = null!;
     private bool loaded = false;
 
     public DataShowPage()

@@ -33,7 +33,7 @@ namespace llcom.Pages;
 /// </summary>
 public partial class MqttTestPage : Page, INotifyPropertyChanged
 {
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     /// <summary>
     /// 设置属性值，值变化时触发 PropertyChanged（XAML 生成的 g.cs 基类固定为 Page，
@@ -42,7 +42,7 @@ public partial class MqttTestPage : Page, INotifyPropertyChanged
     protected bool SetProperty<T>(
         ref T field,
         T value,
-        [CallerMemberName] string propertyName = null
+        [CallerMemberName] string? propertyName = null
     )
     {
         if (EqualityComparer<T>.Default.Equals(field, value))
@@ -163,7 +163,7 @@ public partial class MqttTestPage : Page, INotifyPropertyChanged
     }
 
     /// <summary>统一 MQTT 数据日志（原为 6 处内联 ShowDataRaw）。</summary>
-    private void ShowMqtt(string title, byte[] data = null, bool send = false) =>
+    private void ShowMqtt(string title, byte[]? data = null, bool send = false) =>
         Tools.NetworkLog.Show("", title, data, send);
 
     private void ConnectButton_Click(object sender, RoutedEventArgs e)

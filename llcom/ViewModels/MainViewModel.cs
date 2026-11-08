@@ -88,7 +88,7 @@ public partial class MainViewModel : ObservableObject
     private bool _refreshLock; //端口列表刷新锁
     private bool _skipSearch; //WMI 查询连续失败后跳过
     private int _searchCount;
-    private string _lastPortName; //上次使用的端口名（自动重连/恢复选中用）
+    private string _lastPortName = ""; //上次使用的端口名（自动重连/恢复选中用）
 
     /// <summary>端口下拉列表</summary>
     public ObservableCollection<PortInfo> Ports { get; } = new ObservableCollection<PortInfo>();
@@ -314,7 +314,7 @@ public partial class MainViewModel : ObservableObject
         Model.ToSendData.DataChanged += (_, _) => EnsureTimedSendRunning();
     }
 
-    private static readonly BaudRateItem CustomRateEntry = new BaudRateItem(null, null);
+    private static readonly BaudRateItem CustomRateEntry = new BaudRateItem("", null);
 
     /// <summary>
     /// 取本地化资源字符串（等价于 Window.TryFindResource）
@@ -328,7 +328,7 @@ public partial class MainViewModel : ObservableObject
     /// SerialPort.GetPortNames() 过滤掉已拔掉的设备（WMI 有延迟/缓存）。
     /// </summary>
     /// <param name="lastPort">需要恢复选中的端口名，null 时用上次使用的端口</param>
-    public void RefreshPorts(string lastPort = null)
+    public void RefreshPorts(string? lastPort = null)
     {
         if (_refreshLock)
             return;
@@ -833,7 +833,8 @@ public partial class MainViewModel : ObservableObject
             return;
         if (!value.IsCustom)
         {
-            Tools.Global.setting.baudRate = value.Value.Value;
+            if (value.Value is int baudRateValue)
+                Tools.Global.setting.baudRate = baudRateValue;
         }
         else
         {

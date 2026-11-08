@@ -291,12 +291,14 @@ public partial class MainWindow : Window
 
     private void Uart_UartDataSent(object sender, EventArgs e)
     {
-        Tools.Logger.ShowData(sender as byte[], true);
+        if (sender is byte[] data)
+            Tools.Logger.ShowData(data, true);
     }
 
     private void Uart_UartDataRecived(object sender, EventArgs e)
     {
-        Tools.Logger.ShowData(sender as byte[], false);
+        if (sender is byte[] data)
+            Tools.Logger.ShowData(data, false);
     }
 
     /// <summary>USB 热插拔防抖定时器（WM_DEVICECHANGE 会连续触发多次）</summary>
@@ -714,7 +716,7 @@ public partial class MainWindow : Window
     // ===== 快捷发送每条的“定时”下拉（折叠，和主发送框一样） =====
 
     /// <summary>当前打开“定时”下拉的那一条（± 需要操作它）</summary>
-    private ToSendData _quickTimerItem;
+    private ToSendData? _quickTimerItem;
 
     private void QuickTimerButton_Click(object sender, RoutedEventArgs e)
     {
@@ -771,7 +773,8 @@ public partial class MainWindow : Window
     private void Button_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
         // 恢复原有的双击改名功能
-        ToSendData data = ((Button)sender).Tag as ToSendData;
+        if (sender is not Button button || button.Tag is not ToSendData data)
+            return;
         Tuple<bool, string> ret = Tools.InputDialog.OpenDialog(
             TryFindResource("QuickSendSetButton") as string ?? "?!",
             data.commit,
@@ -779,7 +782,7 @@ public partial class MainWindow : Window
         );
         if (ret.Item1)
         {
-            ((Button)sender).Content = data.commit = ret.Item2;
+            button.Content = data.commit = ret.Item2;
         }
     }
 
@@ -883,7 +886,8 @@ public partial class MainWindow : Window
 
     private void LuaApis_PrintLuaLog(object sender, EventArgs e)
     {
-        _luaLogPump.Enqueue(sender as string);
+        if (sender is string log)
+            _luaLogPump.Enqueue(log);
     }
 
     /// <summary>
@@ -1052,21 +1056,15 @@ public partial class MainWindow : Window
 
     private void MenuItem_Click(object sender, RoutedEventArgs e)
     {
-        Tools.Global.setting.language = ((MenuItem)sender).Tag.ToString();
+        if (sender is MenuItem menuItem && menuItem.Tag is string language)
+            Tools.Global.setting.language = language;
     }
 
     //id序号右击事件
     private void TextBlock_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
     {
-        ToSendData data;
-        try
-        {
-            data = ((TextBlock)sender).Tag as ToSendData;
-        }
-        catch
-        {
-            data = ((Grid)sender).Tag as ToSendData;
-        }
+        if (sender is not FrameworkElement element || element.Tag is not ToSendData data)
+            return;
         Tuple<bool, string> ret = Tools.InputDialog.OpenDialog(
             TryFindResource("QuickSendChangeIdButton") as string ?? "?!",
             data.id.ToString(),
@@ -1161,8 +1159,8 @@ public partial class MainWindow : Window
     private void ScriptIcon_Click(object sender, MouseButtonEventArgs e)
     {
         // 点击📜图标时配置接收脚本
-        TextBlock icon = sender as TextBlock;
-        ToSendData data = icon.Tag as ToSendData;
+        if (sender is not TextBlock icon || icon.Tag is not ToSendData data)
+            return;
         recvScriptCombo.ItemsSource = Directory
             .GetFiles(Global.ProfilePath + "user_script_recv_convert", "*.lua")
             .Select(System.IO.Path.GetFileNameWithoutExtension)
@@ -1189,8 +1187,8 @@ public partial class MainWindow : Window
     private void ScriptIcon_RightClick(object sender, MouseButtonEventArgs e)
     {
         // 右击📜图标时清除接收脚本
-        TextBlock icon = sender as TextBlock;
-        ToSendData data = icon.Tag as ToSendData;
+        if (sender is not TextBlock icon || icon.Tag is not ToSendData data)
+            return;
 
         // 清除接收脚本项
         if (!string.IsNullOrEmpty(data.recvScriptPath))
@@ -1202,11 +1200,11 @@ public partial class MainWindow : Window
 
     private void recvScriptCombo_DropDownClosed(object sender, EventArgs e)
     {
-        ComboBox me = sender as ComboBox;
-        ToSendData data = me.Tag as ToSendData;
-        string newItem = me.SelectedItem as string;
+        if (sender is not ComboBox me || me.Tag is not ToSendData data)
+            return;
+        string? newItem = me.SelectedItem as string;
         if (data.recvScriptPath != newItem)
-            data.recvScriptPath = newItem;
+            data.recvScriptPath = newItem ?? "";
         recvScriptPopup.IsOpen = false;
         me.SelectedItem = null;
     }
@@ -1216,8 +1214,8 @@ public partial class MainWindow : Window
 
     private async void ScriptParaIcon_Click(object sender, MouseButtonEventArgs e)
     {
-        TextBlock icon = sender as TextBlock;
-        ToSendData data = icon.Tag as ToSendData;
+        if (sender is not TextBlock icon || icon.Tag is not ToSendData data)
+            return;
 
         recvScriptParaBox.Tag = data;
         recvScriptParaBox.Text = data.recvScriptPara;
@@ -1227,7 +1225,8 @@ public partial class MainWindow : Window
         await Task.Yield();
         recvScriptParaPopup.IsOpen = true;
         await Task.Yield();
-        var source = (HwndSource)PresentationSource.FromVisual(recvScriptParaPopup.Child);
+        if (PresentationSource.FromVisual(recvScriptParaPopup.Child) is not HwndSource source)
+            return;
         SetFocus(source.Handle);
         await Task.Yield();
         Keyboard.Focus(recvScriptParaBox);
@@ -1235,8 +1234,8 @@ public partial class MainWindow : Window
 
     private void ScriptParaIcon_RightClick(object sender, MouseButtonEventArgs e)
     {
-        TextBlock icon = sender as TextBlock;
-        ToSendData data = icon.Tag as ToSendData;
+        if (sender is not TextBlock icon || icon.Tag is not ToSendData data)
+            return;
 
         if (!string.IsNullOrEmpty(data.recvScriptPara))
         {
@@ -1247,9 +1246,12 @@ public partial class MainWindow : Window
 
     private void ScriptParaConfirm_Click(object sender, MouseButtonEventArgs e)
     {
-        TextBlock icon = sender as TextBlock;
-        TextEditor t = icon.Tag as TextEditor;
-        ToSendData data = t.Tag as ToSendData;
+        if (
+            sender is not TextBlock icon
+            || icon.Tag is not TextEditor t
+            || t.Tag is not ToSendData data
+        )
+            return;
 
         data.recvScriptPara = t.Text;
         //SaveSendList(null, EventArgs.Empty);
