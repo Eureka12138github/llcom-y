@@ -14,7 +14,10 @@
   mc:Ignorable="d"
 >
   <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-    <Grid Style="{StaticResource Tool.Content}">
+    <Grid
+      Grid.IsSharedSizeScope="True"
+      Style="{StaticResource Tool.Content}"
+    >
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto" />
         <RowDefinition Height="Auto" />
@@ -27,9 +30,9 @@
       <!--  表地址 / 前导 FE  -->
       <Grid Grid.Row="0" Margin="0,0,0,6">
         <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="Auto" />
-          <ColumnDefinition Width="Auto" />
-          <ColumnDefinition Width="Auto" />
+          <ColumnDefinition Width="Auto" SharedSizeGroup="Dlt645RowLabel" />
+          <ColumnDefinition Width="Auto" SharedSizeGroup="Dlt645RowInput" />
+          <ColumnDefinition Width="Auto" SharedSizeGroup="Dlt645RowLabel2" />
           <ColumnDefinition Width="Auto" />
           <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
@@ -41,10 +44,12 @@
         <TextBox
           Name="AddressTextBox"
           Grid.Column="1"
-          Width="170"
+          Width="108"
           Height="28"
+          HorizontalAlignment="Left"
           VerticalContentAlignment="Center"
           FontFamily="Consolas"
+          MaxLength="12"
           Text="000000000001"
           TextChanged="Input_Changed"
           ToolTip="{DynamicResource Dlt645AddressTip}"
@@ -78,9 +83,9 @@
       <!--  操作 / DI  -->
       <Grid Grid.Row="1" Margin="0,0,0,6">
         <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="Auto" />
-          <ColumnDefinition Width="Auto" />
-          <ColumnDefinition Width="Auto" />
+          <ColumnDefinition Width="Auto" SharedSizeGroup="Dlt645RowLabel" />
+          <ColumnDefinition Width="Auto" SharedSizeGroup="Dlt645RowInput" />
+          <ColumnDefinition Width="Auto" SharedSizeGroup="Dlt645RowLabel2" />
           <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <TextBlock
@@ -91,7 +96,7 @@
         <ComboBox
           Name="OperationComboBox"
           Grid.Column="1"
-          Width="160"
+          Width="140"
           Height="28"
           SelectionChanged="OperationComboBox_SelectionChanged"
         />
