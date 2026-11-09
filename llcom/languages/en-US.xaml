@@ -323,7 +323,7 @@
     <system:String x:Key="Dlt645ReadAddressHint">Reading the address always uses wildcard AAAAAAAAAAAA</system:String>
     <system:String x:Key="Dlt645Operation">Operation</system:String>
     <system:String x:Key="Dlt645DataIdentifier">Data identifier (DI)</system:String>
-    <system:String x:Key="Dlt645DataIdentifierTip">Select a common DI or enter 4 bytes of hex</system:String>
+    <system:String x:Key="Dlt645DataIdentifierTip">Select a preset, or enter 4 bytes of hex on the right</system:String>
     <system:String x:Key="Dlt645ExtraData">Extra data (HEX)</system:String>
     <system:String x:Key="Dlt645ExtraDataTip">Data after DI for write operations; follow the meter manual</system:String>
     <system:String x:Key="Dlt645Send">Send</system:String>
@@ -365,4 +365,15 @@
     <system:String x:Key="Dlt645Response">Response</system:String>
     <system:String x:Key="Dlt645Request">Request</system:String>
     <system:String x:Key="Dlt645Exception">Exception</system:String>
+    <system:String x:Key="Dlt645OpCustom">Custom</system:String>
+    <system:String x:Key="Dlt645ControlCode">Control code</system:String>
+    <system:String x:Key="Dlt645ControlCodeTip">1 byte of hex, e.g. 11, 13, 14</system:String>
+    <system:String x:Key="Dlt645CustomData">Data (HEX)</system:String>
+    <system:String x:Key="Dlt645DataIdentifierHexTip">4 bytes of hex, up to 8 characters</system:String>
+    <system:String x:Key="Dlt645InvalidControlCode">Control code must be 1 byte of hex</system:String>
+    <system:String x:Key="CopyAllLog">Copy all</system:String>
+    <system:String x:Key="CopySelectedLines">Copy selected lines</system:String>
+    <system:String x:Key="SelectAllLog">Select all</system:String>
+    <system:String x:Key="Dlt645SendConfirm">Send confirmation</system:String>
+    <system:String x:Key="Dlt645CustomConfirmPrompt">About to send a custom control code. Type YES to confirm.</system:String>
 </ResourceDictionary>

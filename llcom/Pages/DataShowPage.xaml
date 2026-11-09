@@ -32,21 +32,36 @@
       ScrollViewer.HorizontalScrollBarVisibility="Auto"
       ScrollViewer.VerticalScrollBarVisibility="Auto"
       TextWrapping="NoWrap"
-    />
+    >
+      <TextBox.ContextMenu>
+        <ContextMenu>
+          <MenuItem Click="CopyAllLog_Click" Header="{DynamicResource CopyAllLog}" />
+        </ContextMenu>
+      </TextBox.ContextMenu>
+    </TextBox>
     <ListBox
       Name="MainList"
       Background="Transparent"
       BorderThickness="0"
       ItemsSource="{Binding Items}"
+      PreviewKeyDown="MainList_PreviewKeyDown"
       ScrollViewer.CanContentScroll="True"
       ScrollViewer.HorizontalScrollBarVisibility="Disabled"
       ScrollViewer.VerticalScrollBarVisibility="Auto"
-      SelectionMode="Single"
+      SelectionMode="Extended"
       VirtualizingStackPanel.CacheLength="1,1"
       VirtualizingStackPanel.IsVirtualizing="True"
       VirtualizingStackPanel.VirtualizationMode="Recycling"
       VirtualizingPanel.ScrollUnit="Pixel"
     >
+      <ListBox.ContextMenu>
+        <ContextMenu>
+          <MenuItem Click="CopySelectedLines_Click" Header="{DynamicResource CopySelectedLines}" />
+          <MenuItem Click="SelectAllLog_Click" Header="{DynamicResource SelectAllLog}" />
+          <Separator />
+          <MenuItem Click="CopyAllList_Click" Header="{DynamicResource CopyAllLog}" />
+        </ContextMenu>
+      </ListBox.ContextMenu>
       <ListBox.ItemContainerStyle>
         <Style TargetType="ListBoxItem">
           <Setter Property="Padding" Value="0" />
@@ -56,9 +71,22 @@
           <Setter Property="Template">
             <Setter.Value>
               <ControlTemplate TargetType="ListBoxItem">
-                <Border Background="Transparent" Padding="{TemplateBinding Padding}">
+                <Border
+                  x:Name="ItemBorder"
+                  Background="Transparent"
+                  Padding="{TemplateBinding Padding}"
+                >
                   <ContentPresenter HorizontalAlignment="Stretch" />
                 </Border>
+                <ControlTemplate.Triggers>
+                  <Trigger Property="IsSelected" Value="True">
+                    <Setter
+                      TargetName="ItemBorder"
+                      Property="Background"
+                      Value="{DynamicResource Brush.Surface.Muted}"
+                    />
+                  </Trigger>
+                </ControlTemplate.Triggers>
               </ControlTemplate>
             </Setter.Value>
           </Setter>
@@ -69,9 +97,11 @@
           <RichTextBox
             Background="Transparent"
             BorderThickness="0"
+            ContextMenu="{x:Null}"
             FontFamily="Consolas,Microsoft YaHei,微软雅黑"
             FontSize="{Binding DataContext.Setting.logFontSize, RelativeSource={RelativeSource AncestorType=ListBox}}"
             IsReadOnly="True"
+            PreviewMouseLeftButtonDown="LogItem_PreviewMouseLeftButtonDown"
           >
             <FlowDocument>
               <Paragraph Margin="0">

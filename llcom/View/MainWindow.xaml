@@ -1126,69 +1126,67 @@
             </Grid>
           </Popup>
           <StackPanel Grid.Row="3">
-            <Grid Margin="0,10,0,0">
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-              </Grid.ColumnDefinitions>
+            <WrapPanel Margin="0,10,0,0" Orientation="Horizontal">
               <Button
                 Name="addSendListButton"
-                Margin="3"
+                Style="{StaticResource IconButton}"
+                Margin="2"
                 Command="{Binding QuickSend.AddCommand}"
-                Content="{DynamicResource QuickSendAdd}"
-              />
+                ToolTip="{DynamicResource QuickSendAdd}"
+              >
+                <fa:FontAwesome Foreground="{DynamicResource Brush.State.Success}" Icon="Plus" />
+              </Button>
               <Button
                 Name="deleteSendListButton"
-                Grid.Column="1"
-                Margin="3"
+                Style="{StaticResource IconButton}"
+                Margin="2"
                 Command="{Binding QuickSend.RemoveLastCommand}"
-                Content="{DynamicResource QuickSendRemoveLast}"
-              />
-            </Grid>
+                ToolTip="{DynamicResource QuickSendRemoveLast}"
+              >
+                <fa:FontAwesome Foreground="{DynamicResource Brush.Icon.Neutral}" Icon="Minus" />
+              </Button>
+              <Button
+                Name="QuickSendImportButton"
+                Style="{StaticResource IconButton}"
+                Margin="2"
+                Command="{Binding QuickSend.ImportCommand}"
+                ToolTip="{DynamicResource QuickSendImport}"
+              >
+                <fa:FontAwesome Foreground="{DynamicResource Brush.Icon.New}" Icon="Upload" />
+              </Button>
+              <Button
+                Name="QuickSendExportButton"
+                Style="{StaticResource IconButton}"
+                Margin="2"
+                Command="{Binding QuickSend.ExportCommand}"
+                ToolTip="{DynamicResource QuickSendExport}"
+              >
+                <fa:FontAwesome Foreground="{DynamicResource Brush.Accent.Teal}" Icon="Download" />
+              </Button>
+              <Button
+                Name="removeAllButton"
+                Style="{StaticResource IconButton}"
+                Margin="2"
+                Command="{Binding QuickSend.RemoveAllCommand}"
+                ToolTip="{DynamicResource QuickSendRemoveAll}"
+              >
+                <fa:FontAwesome Foreground="{DynamicResource Brush.State.Error}" Icon="Trash" />
+              </Button>
+              <Button
+                Name="importSSCOMButton"
+                Style="{StaticResource IconButton}"
+                Margin="2"
+                Command="{Binding QuickSend.ImportSSCOMCommand}"
+                ToolTip="{DynamicResource QuickSendImportSSCOM}"
+              >
+                <fa:FontAwesome Foreground="{DynamicResource Brush.Accent.Brown}" Icon="SignIn" />
+              </Button>
+            </WrapPanel>
             <TextBlock
               FontWeight="Bold"
               Text="{DynamicResource QuickSendTip}"
               TextWrapping="Wrap"
             />
-            <Grid Margin="0,0,0,0">
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-              </Grid.ColumnDefinitions>
-              <Button
-                Name="QuickSendImportButton"
-                Margin="3"
-                Command="{Binding QuickSend.ImportCommand}"
-                Content="{DynamicResource QuickSendImport}"
-              />
-              <Button
-                Name="QuickSendExportButton"
-                Grid.Column="1"
-                Margin="3"
-                Command="{Binding QuickSend.ExportCommand}"
-                Content="{DynamicResource QuickSendExport}"
-              />
-            </Grid>
-            <Grid Margin="0,0,0,0">
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-              </Grid.ColumnDefinitions>
-              <Button
-                Name="removeAllButton"
-                Grid.Column="0"
-                Margin="3"
-                Command="{Binding QuickSend.RemoveAllCommand}"
-                Content="{DynamicResource QuickSendRemoveAll}"
-              />
-              <Button
-                Name="importSSCOMButton"
-                Grid.Column="1"
-                Margin="3"
-                Command="{Binding QuickSend.ImportSSCOMCommand}"
-                Content="{DynamicResource QuickSendImportSSCOM}"
-              />
-            </Grid>
           </StackPanel>
         </Grid>
       </TabItem>

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace llcom.Services.Dlt645;
@@ -325,9 +326,40 @@ public static class Dlt645Codec
         return true;
     }
 
-    /// <summary>6 字节 BCD 地址转 12 位显示值（字节反转）。</summary>
-    public static string FormatAddress(byte[] addressBytes)
+    /// <summary>
+    /// 规范化用户输入的表地址：纯数字不足 12 位时高位补 0；
+    /// 含 AA 通配时只做大写处理。校验失败返回 false，原输入不变。
+    /// </summary>
+    public static bool TryNormalizeAddress(
+        string? text,
+        out string normalized,
+        out string error
+    )
     {
+        normalized = "";
+        error = "";
+
+        var value = (text ?? "").Trim().Replace(" ", "");
+        if (value.Length == 0)
+        {
+            error = "表地址不能为空";
+            return false;
+        }
+
+        if (value.Length < 12 && value.All(c => c >= '0' && c <= '9'))
+            value = value.PadLeft(12, '0');
+        else if (value.Any(c => c == 'A' || c == 'a'))
+            value = value.ToUpperInvariant();
+
+        if (!TryParseAddress(value, out _, out error))
+            return false;
+
+        normalized = value;
+        return true;
+    }
+
+    /// <summary>6 字节 BCD 地址转 12 位显示值（字节反转）。</summary>
+    public static string FormatAddress(byte[] addressBytes)    {
         if (addressBytes == null || addressBytes.Length != AddressLength)
             throw new ArgumentException("地址必须是 6 字节", nameof(addressBytes));
 

@@ -159,6 +159,30 @@ namespace llcom.Tests
         }
 
         [Fact]
+        public void NormalizeAddress_PadsShortNumericInput()
+        {
+            Assert.True(
+                Dlt645Codec.TryNormalizeAddress("1", out var one, out var error1),
+                error1
+            );
+            Assert.Equal("000000000001", one);
+
+            Assert.True(
+                Dlt645Codec.TryNormalizeAddress("123", out var shortAddress, out var error2),
+                error2
+            );
+            Assert.Equal("000000000123", shortAddress);
+
+            Assert.True(
+                Dlt645Codec.TryNormalizeAddress("AAAAAAAAAAAA", out var wildcard, out var error3),
+                error3
+            );
+            Assert.Equal("AAAAAAAAAAAA", wildcard);
+
+            Assert.False(Dlt645Codec.TryNormalizeAddress("ABC", out _, out _));
+        }
+
+        [Fact]
         public void Address_RejectsInvalidInput()
         {
             Assert.False(Dlt645Codec.TryParseAddress("123", out _, out _));

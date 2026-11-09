@@ -1308,8 +1308,8 @@
       "en-US": "Data identifier (DI)"
     },
     "Dlt645DataIdentifierTip": {
-      "zh-CN": "可选择常用 DI，也可直接输入 4 字节 HEX",
-      "en-US": "Select a common DI or enter 4 bytes of hex"
+      "zh-CN": "从常用列表选择，或在右侧输入 4 字节 HEX",
+      "en-US": "Select a preset, or enter 4 bytes of hex on the right"
     },
     "Dlt645ExtraData": {
       "zh-CN": "附加数据（HEX）",
@@ -1474,6 +1474,50 @@
     "Dlt645Exception": {
       "zh-CN": "异常",
       "en-US": "Exception"
+    },
+    "Dlt645OpCustom": {
+      "zh-CN": "自定义",
+      "en-US": "Custom"
+    },
+    "Dlt645ControlCode": {
+      "zh-CN": "控制码",
+      "en-US": "Control code"
+    },
+    "Dlt645ControlCodeTip": {
+      "zh-CN": "1 字节 HEX，例如 11、13、14",
+      "en-US": "1 byte of hex, e.g. 11, 13, 14"
+    },
+    "Dlt645CustomData": {
+      "zh-CN": "数据域（HEX）",
+      "en-US": "Data (HEX)"
+    },
+    "Dlt645DataIdentifierHexTip": {
+      "zh-CN": "4 字节 HEX，最多 8 个字符",
+      "en-US": "4 bytes of hex, up to 8 characters"
+    },
+    "Dlt645InvalidControlCode": {
+      "zh-CN": "控制码必须是 1 字节 HEX",
+      "en-US": "Control code must be 1 byte of hex"
+    },
+    "CopyAllLog": {
+      "zh-CN": "复制全部",
+      "en-US": "Copy all"
+    },
+    "CopySelectedLines": {
+      "zh-CN": "复制选中行",
+      "en-US": "Copy selected lines"
+    },
+    "SelectAllLog": {
+      "zh-CN": "全选",
+      "en-US": "Select all"
+    },
+    "Dlt645SendConfirm": {
+      "zh-CN": "发送确认",
+      "en-US": "Send confirmation"
+    },
+    "Dlt645CustomConfirmPrompt": {
+      "zh-CN": "即将发送自定义控制码，请输入 YES 确认",
+      "en-US": "About to send a custom control code. Type YES to confirm."
     }
   }
 }

@@ -1,9 +1,15 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using System.Windows.Input;
+using llcom.Model;
 using llcom.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
+using Clipboard = System.Windows.Clipboard;
+using RichTextBox = System.Windows.Controls.RichTextBox;
 
 namespace llcom.Pages;
 
@@ -16,6 +22,7 @@ public partial class DataShowPage : Page
 {
     private DataShowViewModel _vm = null!;
     private bool loaded = false;
+    private bool _logRowSelectionActive;
 
     public DataShowPage()
     {
@@ -88,6 +95,106 @@ public partial class DataShowPage : Page
         if (saveFileDialog.ShowDialog() == DialogResult.OK)
         {
             _vm.SaveLog(saveFileDialog.FileName);
+        }
+    }
+
+    /// <summary>Ctrl+C 复制选中的多行；没有选中行时保留 RichTextBox 的原生文本复制。</summary>
+    private void MainList_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+    {
+        if ((Keyboard.Modifiers & ModifierKeys.Control) == 0)
+            return;
+
+        if (e.Key == Key.C && MainList.SelectedItems.Count > 0 && _logRowSelectionActive)
+        {
+            CopySelectedLines();
+            e.Handled = true;
+        }
+    }
+
+    /// <summary>
+    /// Ctrl+左键切换行选中，支持跨行多选；
+    /// 不带修饰键时仍交给 RichTextBox 选择行内文字。
+    /// </summary>
+    private void LogItem_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        if ((Keyboard.Modifiers & ModifierKeys.Control) == 0)
+        {
+            _logRowSelectionActive = false;
+            MainList.SelectedItems.Clear();
+            return;
+        }
+        if (sender is not RichTextBox box)
+            return;
+        if (ItemsControl.ContainerFromElement(MainList, box) is not ListBoxItem item)
+            return;
+
+        item.IsSelected = !item.IsSelected;
+        _logRowSelectionActive = true;
+        MainList.Focus();
+        e.Handled = true;
+    }
+
+    private void CopySelectedLines_Click(object sender, RoutedEventArgs e) => CopySelectedLines();
+
+    private void SelectAllLog_Click(object sender, RoutedEventArgs e)
+    {
+        MainList.SelectAll();
+        _logRowSelectionActive = true;
+    }
+
+    private void CopyAllLog_Click(object sender, RoutedEventArgs e)
+    {
+        if (!string.IsNullOrEmpty(MainTextBox.Text))
+            CopyText(MainTextBox.Text);
+    }
+
+    private void CopyAllList_Click(object sender, RoutedEventArgs e)
+    {
+        CopyLines(MainList.Items.OfType<DataShowItem>().Select(GetItemText));
+    }
+
+    private void CopySelectedLines()
+    {
+        var selected = new HashSet<DataShowItem>();
+        foreach (var item in MainList.SelectedItems)
+        {
+            if (item is DataShowItem data)
+                selected.Add(data);
+        }
+        if (selected.Count == 0)
+            return;
+
+        // 按界面显示顺序复制，而不是按点击顺序
+        CopyLines(
+            MainList
+                .Items.OfType<DataShowItem>()
+                .Where(item => selected.Contains(item))
+                .Select(GetItemText)
+        );
+    }
+
+    private static string GetItemText(DataShowItem item) =>
+        (item.DataText ?? item.RawText ?? "").TrimStart('\r', '\n');
+
+    private static void CopyLines(IEnumerable<string> lines)
+    {
+        var text = string.Join(
+            Environment.NewLine,
+            lines.Where(line => !string.IsNullOrEmpty(line))
+        );
+        if (text.Length > 0)
+            CopyText(text);
+    }
+
+    private static void CopyText(string text)
+    {
+        try
+        {
+            Clipboard.SetText(text);
+        }
+        catch (Exception ex)
+        {
+            Tools.Logger.Swallowed("copy log", ex);
         }
     }
 }

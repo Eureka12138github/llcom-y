@@ -323,7 +323,7 @@
     <system:String x:Key="Dlt645ReadAddressHint">读通信地址固定使用通配地址 AAAAAAAAAAAA</system:String>
     <system:String x:Key="Dlt645Operation">操作</system:String>
     <system:String x:Key="Dlt645DataIdentifier">数据标识 (DI)</system:String>
-    <system:String x:Key="Dlt645DataIdentifierTip">可选择常用 DI，也可直接输入 4 字节 HEX</system:String>
+    <system:String x:Key="Dlt645DataIdentifierTip">从常用列表选择，或在右侧输入 4 字节 HEX</system:String>
     <system:String x:Key="Dlt645ExtraData">附加数据（HEX）</system:String>
     <system:String x:Key="Dlt645ExtraDataTip">写操作时 DI 之后的数据，按表手册填写</system:String>
     <system:String x:Key="Dlt645Send">发送</system:String>
@@ -365,4 +365,15 @@
     <system:String x:Key="Dlt645Response">应答</system:String>
     <system:String x:Key="Dlt645Request">请求</system:String>
     <system:String x:Key="Dlt645Exception">异常</system:String>
+    <system:String x:Key="Dlt645OpCustom">自定义</system:String>
+    <system:String x:Key="Dlt645ControlCode">控制码</system:String>
+    <system:String x:Key="Dlt645ControlCodeTip">1 字节 HEX，例如 11、13、14</system:String>
+    <system:String x:Key="Dlt645CustomData">数据域（HEX）</system:String>
+    <system:String x:Key="Dlt645DataIdentifierHexTip">4 字节 HEX，最多 8 个字符</system:String>
+    <system:String x:Key="Dlt645InvalidControlCode">控制码必须是 1 字节 HEX</system:String>
+    <system:String x:Key="CopyAllLog">复制全部</system:String>
+    <system:String x:Key="CopySelectedLines">复制选中行</system:String>
+    <system:String x:Key="SelectAllLog">全选</system:String>
+    <system:String x:Key="Dlt645SendConfirm">发送确认</system:String>
+    <system:String x:Key="Dlt645CustomConfirmPrompt">即将发送自定义控制码，请输入 YES 确认</system:String>
 </ResourceDictionary>

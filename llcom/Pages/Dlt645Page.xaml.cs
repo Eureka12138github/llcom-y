@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using llcom.Services.Dlt645;
 
@@ -59,6 +61,17 @@ public partial class Dlt645Page : Page
                     )
                 );
             }
+            var customOperation = new Dlt645Operation(
+                "Dlt645OpCustom",
+                "自定义",
+                0x00
+            );
+            OperationComboBox.Items.Add(
+                new ChoiceItem<Dlt645Operation>(
+                    customOperation,
+                    Localize(customOperation.NameKey, customOperation.Name)
+                )
+            );
             OperationComboBox.SelectedIndex = 0;
 
             DiComboBox.Items.Clear();
@@ -73,7 +86,7 @@ public partial class Dlt645Page : Page
             }
             DiComboBox.SelectedIndex = 0;
             if (DiComboBox.SelectedItem is ChoiceItem<Dlt645DataIdentifier> firstIdentifier)
-                DiComboBox.Text = firstIdentifier.Text;
+                DiHexTextBox.Text = firstIdentifier.Value.Hex;
 
             PreambleComboBox.Items.Clear();
             for (var i = 0; i <= 4; i++)
@@ -94,6 +107,51 @@ public partial class Dlt645Page : Page
         RefreshPreview();
     }
 
+    private void AddressTextBox_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key != Key.Enter)
+            return;
+        NormalizeAddress();
+        e.Handled = true;
+    }
+
+    private void AddressTextBox_LostFocus(object sender, RoutedEventArgs e) => NormalizeAddress();
+
+    /// <summary>输入 1 / 123 后补成 12 位；AA 通配只做大写处理，不补零。</summary>
+    private void NormalizeAddress()
+    {
+        if (!AddressTextBox.IsEnabled)
+            return;
+
+        var text = (AddressTextBox.Text ?? "").Trim();
+        if (text.Length == 0)
+            return;
+
+        if (
+            Dlt645Codec.TryNormalizeAddress(text, out var normalized, out _)
+            && !string.Equals(normalized, AddressTextBox.Text, StringComparison.Ordinal)
+        )
+            AddressTextBox.Text = normalized;
+    }
+
+    private void HexTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e) =>
+        e.Handled = !e.Text.All(Uri.IsHexDigit);
+
+    private void HexTextBox_Pasting(object sender, DataObjectPastingEventArgs e)
+    {
+        if (
+            sender is not TextBox box
+            || !e.DataObject.GetDataPresent(DataFormats.Text)
+            || e.DataObject.GetData(DataFormats.Text) is not string text
+            || text.Length == 0
+            || !text.All(Uri.IsHexDigit)
+            || box.Text.Length - box.SelectionLength + text.Length > box.MaxLength
+        )
+        {
+            e.CancelCommand();
+        }
+    }
+
     private void Input_Changed(object sender, TextChangedEventArgs e)
     {
         if (!_initialized || _updatingUi)
@@ -108,17 +166,50 @@ public partial class Dlt645Page : Page
         RefreshPreview();
     }
 
-    private void Input_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+    private void DiComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (!_initialized || _updatingUi)
             return;
+
+        if (DiComboBox.SelectedItem is ChoiceItem<Dlt645DataIdentifier> item)
+        {
+            _updatingUi = true;
+            try
+            {
+                DiHexTextBox.Text = item.Value.Hex;
+            }
+            finally
+            {
+                _updatingUi = false;
+            }
+        }
         RefreshPreview();
     }
 
-    private void Input_LostFocus(object sender, RoutedEventArgs e)
+    private void DiHexTextBox_TextChanged(object sender, TextChangedEventArgs e)
     {
         if (!_initialized || _updatingUi)
             return;
+
+        if (
+            DiComboBox.SelectedItem is ChoiceItem<Dlt645DataIdentifier> item
+            && !string.Equals(
+                DiHexTextBox.Text.Trim(),
+                item.Value.Hex,
+                StringComparison.OrdinalIgnoreCase
+            )
+        )
+        {
+            _updatingUi = true;
+            try
+            {
+                DiComboBox.SelectedIndex = -1;
+            }
+            finally
+            {
+                _updatingUi = false;
+            }
+        }
         RefreshPreview();
     }
 
@@ -127,6 +218,7 @@ public partial class Dlt645Page : Page
     {
         var operation = SelectedOperation;
         var isReadAddress = operation?.Control == Dlt645Codec.ControlReadAddress;
+        var isCustom = operation?.Control == 0x00;
 
         _updatingUi = true;
         try
@@ -158,7 +250,15 @@ public partial class Dlt645Page : Page
             AddressTextBox.IsEnabled = !isReadAddress;
             AddressHint.Visibility = isReadAddress ? Visibility.Visible : Visibility.Collapsed;
             DiComboBox.IsEnabled = operation?.RequiresDataIdentifier == true;
-            ExtraDataTextBox.IsEnabled = operation?.IsWrite == true;
+            DiHexTextBox.IsEnabled = operation?.RequiresDataIdentifier == true;
+            ExtraDataTextBox.IsEnabled = operation?.IsWrite == true || isCustom;
+            ExtraDataLabel.Text = isCustom
+                ? Localize("Dlt645CustomData", "数据域（HEX）")
+                : Localize("Dlt645ExtraData", "附加数据（HEX）");
+            ControlCodeLabel.Visibility = isCustom ? Visibility.Visible : Visibility.Collapsed;
+            ControlCodeTextBox.Visibility = isCustom ? Visibility.Visible : Visibility.Collapsed;
+            if (isCustom && string.IsNullOrWhiteSpace(ControlCodeTextBox.Text))
+                ControlCodeTextBox.Text = "11";
         }
         finally
         {
@@ -223,35 +323,46 @@ public partial class Dlt645Page : Page
 
         var address = AddressTextBox.Text.Trim();
         var data = Array.Empty<byte>();
+        var control = operation.Control;
 
-        switch (operation.Control)
+        if (control == 0x00)
         {
-            case Dlt645Codec.ControlReadAddress:
-                address = Dlt645Codec.WildcardAddress;
-                break;
-
-            case Dlt645Codec.ControlReadData:
-                if (!TryGetDataIdentifier(out var readDi, out error))
-                    return false;
-                data = readDi;
-                break;
-
-            case Dlt645Codec.ControlWriteData:
-                if (!TryGetDataIdentifier(out var writeDi, out error))
-                    return false;
-                if (!TryGetExtraData(out var extraData, out error))
-                    return false;
-                data = Concat(writeDi, extraData);
-                break;
-
-            default:
-                error = Localize("Dlt645UnsupportedOperation", "当前操作暂未实现");
+            if (!TryGetCustomControl(out control, out error))
                 return false;
+            if (!TryGetExtraData(out data, out error))
+                return false;
+        }
+        else
+        {
+            switch (control)
+            {
+                case Dlt645Codec.ControlReadAddress:
+                    address = Dlt645Codec.WildcardAddress;
+                    break;
+
+                case Dlt645Codec.ControlReadData:
+                    if (!TryGetDataIdentifier(out var readDi, out error))
+                        return false;
+                    data = readDi;
+                    break;
+
+                case Dlt645Codec.ControlWriteData:
+                    if (!TryGetDataIdentifier(out var writeDi, out error))
+                        return false;
+                    if (!TryGetExtraData(out var extraData, out error))
+                        return false;
+                    data = Concat(writeDi, extraData);
+                    break;
+
+                default:
+                    error = Localize("Dlt645UnsupportedOperation", "当前操作暂未实现");
+                    return false;
+            }
         }
 
         try
         {
-            frame = Dlt645Codec.BuildFrame(address, operation.Control, data, PreambleCount);
+            frame = Dlt645Codec.BuildFrame(address, control, data, PreambleCount);
             return true;
         }
         catch (Exception ex)
@@ -261,23 +372,31 @@ public partial class Dlt645Page : Page
         }
     }
 
+    private bool TryGetCustomControl(out byte control, out string error)
+    {
+        control = 0;
+        error = "";
+
+        if (
+            !Dlt645Codec.TryParseHex(ControlCodeTextBox.Text, out var parsed, out _)
+            || parsed.Length != 1
+        )
+        {
+            error = Localize("Dlt645InvalidControlCode", "控制码必须是 1 字节 HEX");
+            return false;
+        }
+
+        control = parsed[0];
+        return true;
+    }
+
     private bool TryGetDataIdentifier(out byte[] dataIdentifier, out string error)
     {
         dataIdentifier = Array.Empty<byte>();
         error = "";
 
-        var selectedText = (DiComboBox.SelectedItem as ChoiceItem<Dlt645DataIdentifier>)?.Text;
         if (
-            DiComboBox.SelectedItem is ChoiceItem<Dlt645DataIdentifier> item
-            && string.Equals(DiComboBox.Text, selectedText, StringComparison.Ordinal)
-        )
-        {
-            dataIdentifier = item.Value.Bytes;
-            return true;
-        }
-
-        if (
-            !Dlt645Codec.TryParseHex(DiComboBox.Text, out var parsed, out _)
+            !Dlt645Codec.TryParseHex(DiHexTextBox.Text, out var parsed, out _)
             || parsed.Length != 4
         )
         {
@@ -316,15 +435,28 @@ public partial class Dlt645Page : Page
             return;
         }
 
-        if (operation != null && (operation.IsWrite || operation.NeedsConfirmation))
+        if (
+            operation != null
+            && (
+                operation.Control == 0x00
+                || operation.IsWrite
+                || operation.NeedsConfirmation
+            )
+        )
         {
+            var isCustom = operation.Control == 0x00;
             var confirm = Tools.InputDialog.OpenDialog(
-                Localize(
-                    "Dlt645WriteConfirmPrompt",
-                    "即将发送写命令，请输入 YES 确认"
-                ),
+                isCustom
+                    ? Localize(
+                        "Dlt645CustomConfirmPrompt",
+                        "即将发送自定义控制码，请输入 YES 确认"
+                    )
+                    : Localize(
+                        "Dlt645WriteConfirmPrompt",
+                        "即将发送写命令，请输入 YES 确认"
+                    ),
                 "NO",
-                Localize("Dlt645WriteConfirm", "写操作确认")
+                Localize("Dlt645SendConfirm", "发送确认")
             );
             if (
                 !confirm.Item1

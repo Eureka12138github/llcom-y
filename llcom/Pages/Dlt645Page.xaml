@@ -49,6 +49,8 @@
           HorizontalAlignment="Left"
           VerticalContentAlignment="Center"
           FontFamily="Consolas"
+          KeyDown="AddressTextBox_KeyDown"
+          LostFocus="AddressTextBox_LostFocus"
           MaxLength="12"
           Text="000000000001"
           TextChanged="Input_Changed"
@@ -87,6 +89,7 @@
           <ColumnDefinition Width="Auto" SharedSizeGroup="Dlt645RowInput" />
           <ColumnDefinition Width="Auto" SharedSizeGroup="Dlt645RowLabel2" />
           <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <TextBlock
           Margin="0,0,6,0"
@@ -110,21 +113,35 @@
           Name="DiComboBox"
           Grid.Column="3"
           Height="28"
-          IsEditable="True"
-          KeyUp="Input_KeyUp"
-          LostFocus="Input_LostFocus"
-          SelectionChanged="Input_SelectionChanged"
+          SelectionChanged="DiComboBox_SelectionChanged"
           ToolTip="{DynamicResource Dlt645DataIdentifierTip}"
+        />
+        <TextBox
+          Name="DiHexTextBox"
+          Grid.Column="4"
+          Width="92"
+          Height="28"
+          Margin="6,0,0,0"
+          VerticalContentAlignment="Center"
+          DataObject.Pasting="HexTextBox_Pasting"
+          FontFamily="Consolas"
+          MaxLength="8"
+          PreviewTextInput="HexTextBox_PreviewTextInput"
+          TextChanged="DiHexTextBox_TextChanged"
+          ToolTip="{DynamicResource Dlt645DataIdentifierHexTip}"
         />
       </Grid>
 
-      <!--  写操作附加数据  -->
+      <!--  写操作附加数据 / 自定义操作的数据域与控制码  -->
       <Grid Grid.Row="2" Margin="0,0,0,6">
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="Auto" />
           <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" />
+          <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <TextBlock
+          Name="ExtraDataLabel"
           Margin="0,0,6,0"
           Style="{StaticResource Tool.SectionLabel}"
           Text="{DynamicResource Dlt645ExtraData}"
@@ -137,6 +154,28 @@
           FontFamily="Consolas"
           TextChanged="Input_Changed"
           ToolTip="{DynamicResource Dlt645ExtraDataTip}"
+        />
+        <TextBlock
+          Name="ControlCodeLabel"
+          Grid.Column="2"
+          Margin="12,0,6,0"
+          Style="{StaticResource Tool.SectionLabel}"
+          Text="{DynamicResource Dlt645ControlCode}"
+          Visibility="Collapsed"
+        />
+        <TextBox
+          Name="ControlCodeTextBox"
+          Grid.Column="3"
+          Width="58"
+          Height="28"
+          VerticalContentAlignment="Center"
+          DataObject.Pasting="HexTextBox_Pasting"
+          FontFamily="Consolas"
+          MaxLength="2"
+          PreviewTextInput="HexTextBox_PreviewTextInput"
+          TextChanged="Input_Changed"
+          ToolTip="{DynamicResource Dlt645ControlCodeTip}"
+          Visibility="Collapsed"
         />
       </Grid>
 
