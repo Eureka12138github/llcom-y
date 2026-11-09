@@ -4,6 +4,7 @@
 > 本轮根据确认结果更新：主发送框已确认；投稿自动导入采用维护者 `/import`；i18n 推荐 JSON 单一源；脚本分类采用 sidecar JSON；645 首版只做 2007；多脚本方案先归档；Ctrl+C/终端模式行为暂缓。
 > #18 已用真实 Discussion/PR 验证通过，测试用 `import-smoke-test.lua` 已清理；Build 已对脚本/文档变更跳过，Validate 增加 Lua 语法检查。
 > #20 已建立 `i18n/messages.json` 单一源与生成/校验脚本；#25 已完成搜索、分类、收藏、置顶和 sidecar 元数据。
+> 日常使用产生的改进建议见 [docs/improvements](improvements/README.md)，评估结果与实施批次见 [17-improvements-plan.md](17-improvements-plan.md)。
 
 ## 结论：推荐顺序
 
