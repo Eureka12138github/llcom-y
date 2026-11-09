@@ -41,23 +41,47 @@ public sealed class Dlt645Operation
 /// <summary>常用数据标识（DI）。</summary>
 public sealed class Dlt645DataIdentifier
 {
-    public Dlt645DataIdentifier(string nameKey, string fallbackName, params byte[] bytes)
+    public Dlt645DataIdentifier(
+        string nameKey,
+        string fallbackName,
+        byte[] bytes,
+        string category = "",
+        string unit = "",
+        int? decimals = null,
+        string note = "",
+        bool isBuiltIn = true
+    )
     {
         if (bytes == null || bytes.Length != 4)
             throw new ArgumentException("DI 必须是 4 字节", nameof(bytes));
         NameKey = nameKey;
         Name = fallbackName;
         Bytes = (byte[])bytes.Clone();
+        Category = category;
+        Unit = unit;
+        Decimals = decimals;
+        Note = note;
+        IsBuiltIn = isBuiltIn;
     }
 
-    /// <summary>本地化资源键。</summary>
+    /// <summary>本地化资源键；用户自定义项为空。</summary>
     public string NameKey { get; }
 
-    /// <summary>资源缺失时的回退名称。</summary>
+    /// <summary>资源缺失时的回退名称；用户自定义项直接使用该名称。</summary>
     public string Name { get; }
 
     /// <summary>按帧内传输顺序保存的 4 字节 DI。</summary>
     public byte[] Bytes { get; }
+
+    public string Category { get; }
+
+    public string Unit { get; }
+
+    public int? Decimals { get; }
+
+    public string Note { get; }
+
+    public bool IsBuiltIn { get; }
 
     public string Hex => Dlt645Codec.ToHex(Bytes, "");
 }
@@ -99,39 +123,41 @@ public static class Dlt645Catalog
     public static IReadOnlyList<Dlt645DataIdentifier> DataIdentifiers { get; } =
         new[]
         {
-            new Dlt645DataIdentifier("Dlt645DiVoltageA", "A 相电压", 0x02, 0x01, 0x01, 0x00),
-            new Dlt645DataIdentifier("Dlt645DiCurrentA", "A 相电流", 0x02, 0x02, 0x01, 0x00),
+            new Dlt645DataIdentifier(
+                "Dlt645DiVoltageA",
+                "A 相电压",
+                new byte[] { 0x02, 0x01, 0x01, 0x00 },
+                "电压"
+            ),
+            new Dlt645DataIdentifier(
+                "Dlt645DiCurrentA",
+                "A 相电流",
+                new byte[] { 0x02, 0x02, 0x01, 0x00 },
+                "电流"
+            ),
             new Dlt645DataIdentifier(
                 "Dlt645DiActivePower",
                 "瞬时有功功率",
-                0x02,
-                0x03,
-                0x00,
-                0x00
+                new byte[] { 0x02, 0x03, 0x00, 0x00 },
+                "功率"
             ),
             new Dlt645DataIdentifier(
                 "Dlt645DiPowerFactor",
                 "功率因数",
-                0x02,
-                0x06,
-                0x00,
-                0x00
+                new byte[] { 0x02, 0x06, 0x00, 0x00 },
+                "功率"
             ),
             new Dlt645DataIdentifier(
                 "Dlt645DiEnergyForward",
                 "正向有功总电能",
-                0x00,
-                0x01,
-                0x00,
-                0x00
+                new byte[] { 0x00, 0x01, 0x00, 0x00 },
+                "电能"
             ),
             new Dlt645DataIdentifier(
                 "Dlt645DiEnergyCombined",
                 "组合有功总电能",
-                0x00,
-                0x00,
-                0x00,
-                0x00
+                new byte[] { 0x00, 0x00, 0x00, 0x00 },
+                "电能"
             ),
         };
 }

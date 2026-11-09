@@ -372,4 +372,24 @@
     <system:String x:Key="CopyAllLog">Copy all</system:String>
     <system:String x:Key="CopySelectedLines">Copy selected lines</system:String>
     <system:String x:Key="SelectAllLog">Select all</system:String>
+    <system:String x:Key="Dlt645ReadAddressButton">Read meter address</system:String>
+    <system:String x:Key="Dlt645ReadingAddress">Reading meter address…</system:String>
+    <system:String x:Key="Dlt645ReadAddressNoResponse">Read failed: no valid response</system:String>
+    <system:String x:Key="Dlt645MultipleAddresses">Multiple meter addresses received; select one</system:String>
+    <system:String x:Key="Dlt645SelectAddress">Select meter address</system:String>
+    <system:String x:Key="Dlt645Connected">Connected</system:String>
+    <system:String x:Key="Dlt645ReadAddressCancelled">Read cancelled</system:String>
+    <system:String x:Key="Dlt645LiveLog">645 communication log</system:String>
+    <system:String x:Key="Dlt645DecodeData33">Decode data field (-33H)</system:String>
+    <system:String x:Key="Dlt645DecodeData33Tip">Show data with 33H removed in this log; the main log stays raw</system:String>
+    <system:String x:Key="Dlt645ClearLog">Clear log</system:String>
+    <system:String x:Key="Dlt645DecodedData33">Data (-33H)</system:String>
+    <system:String x:Key="Dlt645DiFilter">DI filter</system:String>
+    <system:String x:Key="Dlt645DiSearchTip">Search by name, DI, or category</system:String>
+    <system:String x:Key="Dlt645DiAllCategories">All categories</system:String>
+    <system:String x:Key="Dlt645ImportDi">Import DI</system:String>
+    <system:String x:Key="Dlt645ExportDi">Export DI</system:String>
+    <system:String x:Key="Dlt645ImportDiDone">Imported {0} DI entries</system:String>
+    <system:String x:Key="Dlt645ImportDiEmpty">No valid DI entries to import</system:String>
+    <system:String x:Key="Dlt645ExportDiDone">DI exported</system:String>
 </ResourceDictionary>

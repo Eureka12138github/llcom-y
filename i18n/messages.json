@@ -1502,6 +1502,86 @@
     "SelectAllLog": {
       "zh-CN": "全选",
       "en-US": "Select all"
+    },
+    "Dlt645ReadAddressButton": {
+      "zh-CN": "读取表地址",
+      "en-US": "Read meter address"
+    },
+    "Dlt645ReadingAddress": {
+      "zh-CN": "正在读取表地址…",
+      "en-US": "Reading meter address…"
+    },
+    "Dlt645ReadAddressNoResponse": {
+      "zh-CN": "读取失败：没有收到有效应答",
+      "en-US": "Read failed: no valid response"
+    },
+    "Dlt645MultipleAddresses": {
+      "zh-CN": "总线上收到多个表地址，请选择",
+      "en-US": "Multiple meter addresses received; select one"
+    },
+    "Dlt645SelectAddress": {
+      "zh-CN": "选择表地址",
+      "en-US": "Select meter address"
+    },
+    "Dlt645Connected": {
+      "zh-CN": "已连接",
+      "en-US": "Connected"
+    },
+    "Dlt645ReadAddressCancelled": {
+      "zh-CN": "已取消读取",
+      "en-US": "Read cancelled"
+    },
+    "Dlt645LiveLog": {
+      "zh-CN": "645 通讯日志",
+      "en-US": "645 communication log"
+    },
+    "Dlt645DecodeData33": {
+      "zh-CN": "接收数据域减 33H",
+      "en-US": "Decode data field (-33H)"
+    },
+    "Dlt645DecodeData33Tip": {
+      "zh-CN": "勾选后本工具日志显示减 33H 的数据；主日志仍保持原始数据",
+      "en-US": "Show data with 33H removed in this log; the main log stays raw"
+    },
+    "Dlt645ClearLog": {
+      "zh-CN": "清空日志",
+      "en-US": "Clear log"
+    },
+    "Dlt645DecodedData33": {
+      "zh-CN": "数据（减 33H）",
+      "en-US": "Data (-33H)"
+    },
+    "Dlt645DiFilter": {
+      "zh-CN": "DI 筛选",
+      "en-US": "DI filter"
+    },
+    "Dlt645DiSearchTip": {
+      "zh-CN": "按名称、DI 或分类搜索",
+      "en-US": "Search by name, DI, or category"
+    },
+    "Dlt645DiAllCategories": {
+      "zh-CN": "全部分类",
+      "en-US": "All categories"
+    },
+    "Dlt645ImportDi": {
+      "zh-CN": "导入 DI",
+      "en-US": "Import DI"
+    },
+    "Dlt645ExportDi": {
+      "zh-CN": "导出 DI",
+      "en-US": "Export DI"
+    },
+    "Dlt645ImportDiDone": {
+      "zh-CN": "已导入 {0} 条 DI",
+      "en-US": "Imported {0} DI entries"
+    },
+    "Dlt645ImportDiEmpty": {
+      "zh-CN": "没有可导入的有效 DI",
+      "en-US": "No valid DI entries to import"
+    },
+    "Dlt645ExportDiDone": {
+      "zh-CN": "DI 已导出",
+      "en-US": "DI exported"
     }
   }
 }

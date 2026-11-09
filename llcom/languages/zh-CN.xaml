@@ -372,4 +372,24 @@
     <system:String x:Key="CopyAllLog">复制全部</system:String>
     <system:String x:Key="CopySelectedLines">复制选中行</system:String>
     <system:String x:Key="SelectAllLog">全选</system:String>
+    <system:String x:Key="Dlt645ReadAddressButton">读取表地址</system:String>
+    <system:String x:Key="Dlt645ReadingAddress">正在读取表地址…</system:String>
+    <system:String x:Key="Dlt645ReadAddressNoResponse">读取失败：没有收到有效应答</system:String>
+    <system:String x:Key="Dlt645MultipleAddresses">总线上收到多个表地址，请选择</system:String>
+    <system:String x:Key="Dlt645SelectAddress">选择表地址</system:String>
+    <system:String x:Key="Dlt645Connected">已连接</system:String>
+    <system:String x:Key="Dlt645ReadAddressCancelled">已取消读取</system:String>
+    <system:String x:Key="Dlt645LiveLog">645 通讯日志</system:String>
+    <system:String x:Key="Dlt645DecodeData33">接收数据域减 33H</system:String>
+    <system:String x:Key="Dlt645DecodeData33Tip">勾选后本工具日志显示减 33H 的数据；主日志仍保持原始数据</system:String>
+    <system:String x:Key="Dlt645ClearLog">清空日志</system:String>
+    <system:String x:Key="Dlt645DecodedData33">数据（减 33H）</system:String>
+    <system:String x:Key="Dlt645DiFilter">DI 筛选</system:String>
+    <system:String x:Key="Dlt645DiSearchTip">按名称、DI 或分类搜索</system:String>
+    <system:String x:Key="Dlt645DiAllCategories">全部分类</system:String>
+    <system:String x:Key="Dlt645ImportDi">导入 DI</system:String>
+    <system:String x:Key="Dlt645ExportDi">导出 DI</system:String>
+    <system:String x:Key="Dlt645ImportDiDone">已导入 {0} 条 DI</system:String>
+    <system:String x:Key="Dlt645ImportDiEmpty">没有可导入的有效 DI</system:String>
+    <system:String x:Key="Dlt645ExportDiDone">DI 已导出</system:String>
 </ResourceDictionary>

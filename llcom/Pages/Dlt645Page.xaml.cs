@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using llcom.Services.Dlt645;
+using Microsoft.Win32;
 
 namespace llcom.Pages;
 
@@ -22,6 +23,8 @@ public partial class Dlt645Page : Page
     private bool _updatingUi;
     private string _lastManualAddress = DefaultAddress;
     private string? _lastParsedAddress;
+    private Dlt645Session? _session;
+    private List<Dlt645DataIdentifier> _allIdentifiers = new List<Dlt645DataIdentifier>();
 
     public Dlt645Page()
     {
@@ -40,10 +43,34 @@ public partial class Dlt645Page : Page
         {
             PopulateChoices();
             _initialized = true;
+            LoadIdentifiers();
+            SetAddressState(
+                "Brush.Surface.Muted",
+                Localize("Dlt645ReadAddressButton", "读取表地址")
+            );
         }
 
+        StartSession();
         UpdateOperationState();
         RefreshPreview();
+    }
+
+    private void Page_Unloaded(object sender, RoutedEventArgs e)
+    {
+        if (_session == null)
+            return;
+        _session.FrameReceived -= OnFrameReceived;
+        _session.Dispose();
+        _session = null;
+    }
+
+    private void StartSession()
+    {
+        if (_session != null)
+            return;
+        _session = new Dlt645Session();
+        _session.FrameReceived += OnFrameReceived;
+        _session.Start();
     }
 
     private void PopulateChoices()
@@ -74,20 +101,6 @@ public partial class Dlt645Page : Page
             );
             OperationComboBox.SelectedIndex = 0;
 
-            DiComboBox.Items.Clear();
-            foreach (var identifier in Dlt645Catalog.DataIdentifiers)
-            {
-                DiComboBox.Items.Add(
-                    new ChoiceItem<Dlt645DataIdentifier>(
-                        identifier,
-                        $"{Localize(identifier.NameKey, identifier.Name)} ({identifier.Hex})"
-                    )
-                );
-            }
-            DiComboBox.SelectedIndex = 0;
-            if (DiComboBox.SelectedItem is ChoiceItem<Dlt645DataIdentifier> firstIdentifier)
-                DiHexTextBox.Text = firstIdentifier.Value.Hex;
-
             PreambleComboBox.Items.Clear();
             for (var i = 0; i <= 4; i++)
                 PreambleComboBox.Items.Add(i.ToString());
@@ -105,6 +118,183 @@ public partial class Dlt645Page : Page
             return;
         UpdateOperationState();
         RefreshPreview();
+    }
+
+    private void LoadIdentifiers()
+    {
+        var currentHex = DiHexTextBox.Text.Trim();
+        _allIdentifiers = Dlt645IdentifierStore.LoadMerged();
+        RefreshDiCategories();
+        RefreshDiChoices(currentHex);
+    }
+
+    private void RefreshDiCategories()
+    {
+        var current = (DiCategoryComboBox.SelectedItem as ChoiceItem<string>)?.Value ?? "";
+
+        _updatingUi = true;
+        try
+        {
+            DiCategoryComboBox.Items.Clear();
+            DiCategoryComboBox.Items.Add(
+                new ChoiceItem<string>("", Localize("Dlt645DiAllCategories", "全部分类"))
+            );
+            foreach (
+                var category in _allIdentifiers
+                    .Select(item => item.Category)
+                    .Where(category => !string.IsNullOrWhiteSpace(category))
+                    .Distinct(StringComparer.CurrentCultureIgnoreCase)
+                    .OrderBy(category => category, StringComparer.CurrentCultureIgnoreCase)
+            )
+            {
+                DiCategoryComboBox.Items.Add(new ChoiceItem<string>(category, category));
+            }
+
+            DiCategoryComboBox.SelectedItem =
+                DiCategoryComboBox
+                    .Items.OfType<ChoiceItem<string>>()
+                    .FirstOrDefault(item =>
+                        string.Equals(item.Value, current, StringComparison.OrdinalIgnoreCase)
+                    ) ?? DiCategoryComboBox.Items[0];
+        }
+        finally
+        {
+            _updatingUi = false;
+        }
+    }
+
+    private void RefreshDiChoices(string? preferredHex = null)
+    {
+        var search = (DiSearchTextBox.Text ?? "").Trim();
+        var category = (DiCategoryComboBox.SelectedItem as ChoiceItem<string>)?.Value ?? "";
+        var selectedHex =
+            preferredHex
+            ?? (DiComboBox.SelectedItem as ChoiceItem<Dlt645DataIdentifier>)?.Value.Hex
+            ?? DiHexTextBox.Text.Trim();
+
+        var filtered = _allIdentifiers
+            .Where(item =>
+                (category.Length == 0
+                    || string.Equals(item.Category, category, StringComparison.OrdinalIgnoreCase))
+                && (
+                    search.Length == 0
+                    || item.Name.IndexOf(search, StringComparison.CurrentCultureIgnoreCase) >= 0
+                    || item.Hex.IndexOf(search, StringComparison.OrdinalIgnoreCase) >= 0
+                    || (item.Category ?? "").IndexOf(
+                            search,
+                            StringComparison.CurrentCultureIgnoreCase
+                        )
+                        >= 0
+                )
+            )
+            .ToList();
+
+        _updatingUi = true;
+        try
+        {
+            DiComboBox.Items.Clear();
+            foreach (var identifier in filtered)
+            {
+                DiComboBox.Items.Add(
+                    new ChoiceItem<Dlt645DataIdentifier>(
+                        identifier,
+                        $"{Localize(identifier.NameKey, identifier.Name)} ({identifier.Hex})"
+                    )
+                );
+            }
+
+            var match = DiComboBox
+                .Items.OfType<ChoiceItem<Dlt645DataIdentifier>>()
+                .FirstOrDefault(item =>
+                    string.Equals(item.Value.Hex, selectedHex, StringComparison.OrdinalIgnoreCase)
+                );
+            if (match != null)
+            {
+                DiComboBox.SelectedItem = match;
+            }
+            else if (
+                string.IsNullOrWhiteSpace(selectedHex)
+                && DiComboBox.Items.Count > 0
+            )
+            {
+                DiComboBox.SelectedIndex = 0;
+                if (DiComboBox.SelectedItem is ChoiceItem<Dlt645DataIdentifier> first)
+                    DiHexTextBox.Text = first.Value.Hex;
+            }
+        }
+        finally
+        {
+            _updatingUi = false;
+        }
+    }
+
+    private void DiFilter_Changed(object sender, RoutedEventArgs e)
+    {
+        if (!_initialized || _updatingUi)
+            return;
+        RefreshDiChoices();
+    }
+
+    private void ImportDiButton_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new OpenFileDialog
+        {
+            Filter = "JSON|*.json|All files|*.*",
+            Title = Localize("Dlt645ImportDi", "导入 DI"),
+        };
+        if (dialog.ShowDialog() != true)
+            return;
+
+        try
+        {
+            var count = Dlt645IdentifierStore.Import(dialog.FileName);
+            if (count == 0)
+            {
+                SetStatus(
+                    StatusText,
+                    Localize("Dlt645ImportDiEmpty", "没有可导入的有效 DI"),
+                    true
+                );
+                return;
+            }
+
+            LoadIdentifiers();
+            SetStatus(
+                StatusText,
+                string.Format(Localize("Dlt645ImportDiDone", "已导入 {0} 条 DI"), count),
+                false
+            );
+        }
+        catch (Exception ex)
+        {
+            SetStatus(StatusText, ex.Message, true);
+        }
+    }
+
+    private void ExportDiButton_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new SaveFileDialog
+        {
+            Filter = "JSON|*.json|All files|*.*",
+            FileName = "dlt645-di.json",
+            Title = Localize("Dlt645ExportDi", "导出 DI"),
+        };
+        if (dialog.ShowDialog() != true)
+            return;
+
+        try
+        {
+            Dlt645IdentifierStore.Export(dialog.FileName);
+            SetStatus(
+                StatusText,
+                Localize("Dlt645ExportDiDone", "DI 已导出"),
+                false
+            );
+        }
+        catch (Exception ex)
+        {
+            SetStatus(StatusText, ex.Message, true);
+        }
     }
 
     private void AddressTextBox_KeyDown(object sender, KeyEventArgs e)
@@ -425,6 +615,148 @@ public partial class Dlt645Page : Page
 
         extraData = parsed;
         return true;
+    }
+
+    private async void ReadAddressButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (_session == null)
+            return;
+
+        if (!Tools.Global.uart.IsOpen())
+        {
+            SetAddressState(
+                "Brush.State.Error",
+                Localize("ErrorPortNotOpen", "请先打开串口！")
+            );
+            return;
+        }
+
+        ReadAddressButton.IsEnabled = false;
+        SetAddressState(
+            "Brush.State.Info",
+            Localize("Dlt645ReadingAddress", "正在读取表地址…")
+        );
+
+        try
+        {
+            var responses = await _session.RequestAsync(
+                Dlt645Codec.BuildReadAddressRequest(PreambleCount),
+                frame =>
+                    frame.FunctionCode == Dlt645Codec.ControlReadAddress
+                    && frame.IsResponse
+                    && !frame.IsException
+                    && frame.Data.Length == Dlt645Codec.AddressLength,
+                1500
+            );
+
+            var addresses = new List<string>();
+            foreach (var frame in responses)
+            {
+                if (
+                    Dlt645Codec.TryGetReadAddress(frame, out var address, out _)
+                    && !addresses.Contains(address, StringComparer.OrdinalIgnoreCase)
+                )
+                    addresses.Add(address);
+            }
+
+            if (addresses.Count == 0)
+            {
+                SetAddressState(
+                    "Brush.State.Error",
+                    Localize("Dlt645ReadAddressNoResponse", "读取失败：没有收到有效应答")
+                );
+                return;
+            }
+
+            var chosen = addresses[0];
+            if (addresses.Count > 1)
+            {
+                var pick = Tools.InputDialog.OpenDialog(
+                    Localize(
+                        "Dlt645MultipleAddresses",
+                        "总线上收到多个表地址，请选择"
+                    ),
+                    addresses[0],
+                    Localize("Dlt645SelectAddress", "选择表地址"),
+                    addresses
+                );
+                if (!pick.Item1)
+                {
+                    SetAddressState(
+                        "Brush.Surface.Muted",
+                        Localize("Dlt645ReadAddressCancelled", "已取消读取")
+                    );
+                    return;
+                }
+
+                if (
+                    !Dlt645Codec.TryNormalizeAddress(
+                        pick.Item2,
+                        out var normalized,
+                        out var addressError
+                    )
+                )
+                {
+                    SetAddressState("Brush.State.Error", addressError);
+                    return;
+                }
+                chosen = normalized;
+            }
+
+            _lastManualAddress = chosen;
+            if (SelectedOperation?.Control != Dlt645Codec.ControlReadAddress)
+                AddressTextBox.Text = chosen;
+
+            SetAddressState(
+                "Brush.State.Success",
+                $"{Localize("Dlt645Connected", "已连接")}: {chosen}"
+            );
+        }
+        catch (Exception ex)
+        {
+            SetAddressState("Brush.State.Error", ex.Message);
+        }
+        finally
+        {
+            ReadAddressButton.IsEnabled = true;
+        }
+    }
+
+    private void OnFrameReceived(Dlt645Frame frame)
+    {
+        if (!IsLoaded)
+            return;
+        Dispatcher.BeginInvoke(new Action(() => AppendLiveLog(frame)));
+    }
+
+    private void AppendLiveLog(Dlt645Frame frame)
+    {
+        var decode = DecodeDataCheckBox.IsChecked == true;
+        var data = decode ? frame.Data : frame.EncodedData;
+        var label = decode
+            ? Localize("Dlt645DecodedData33", "数据（减 33H）")
+            : Localize("Dlt645EncodedData", "传输数据域");
+
+        var line =
+            $"[{DateTime.Now:yyyy/MM/dd HH:mm:ss.fff}] ← {frame.Address}"
+            + $" | C=0x{frame.Control:X2} {ControlDescription(frame)}"
+            + $" | {label}: {Dlt645Codec.ToHex(data)}"
+            + Environment.NewLine;
+        LiveLogTextBox.AppendText(line);
+
+        if (LiveLogTextBox.Text.Length > 200000)
+            LiveLogTextBox.Text = LiveLogTextBox.Text.Substring(100000);
+        LiveLogTextBox.ScrollToEnd();
+    }
+
+    private void ClearLiveLogButton_Click(object sender, RoutedEventArgs e) =>
+        LiveLogTextBox.Clear();
+
+    private void SetAddressState(string brushKey, string tooltip)
+    {
+        ReadAddressButton.Background =
+            TryFindResource(brushKey) as Brush ?? Brushes.Gray;
+        ReadAddressButton.ToolTip = tooltip;
     }
 
     private void SendButton_Click(object sender, RoutedEventArgs e)
