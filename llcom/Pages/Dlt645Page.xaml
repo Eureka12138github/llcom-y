@@ -64,11 +64,7 @@
     <StackPanel Margin="8">
 
       <!--  参数区  -->
-      <Border
-        MaxWidth="520"
-        HorizontalAlignment="Left"
-        Style="{StaticResource Dlt645Card}"
-      >
+      <Border Style="{StaticResource Dlt645Card}">
         <StackPanel>
           <Grid>
             <Grid.ColumnDefinitions>
