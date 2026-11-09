@@ -125,6 +125,7 @@ public partial class MainWindow : Window
                         //接收到、发送数据成功回调
                         Tools.Global.uart.UartDataRecived += Uart_UartDataRecived;
                         Tools.Global.uart.UartDataSent += Uart_UartDataSent;
+                        Tools.Global.SendToMainSendBoxRequested += SendToMainSendBoxRequested;
 
                         //初始化已在 MainWindow 构造函数中完成（需早于 ViewModel 构造）
 
@@ -320,6 +321,20 @@ public partial class MainWindow : Window
 
         // 645 解码需要缓冲/切帧，放到 UI 线程统一处理；主日志仍由 Logger 输出。
         Dispatcher.BeginInvoke(new Action(() => ProcessReceivedData(data)));
+    }
+
+    private void SendToMainSendBoxRequested(string text)
+    {
+        if (Dispatcher.HasShutdownStarted)
+            return;
+
+        // 645 帧是二进制 HEX，必须使用 Hex 发送且不能追加换行。
+        Tools.Global.setting.hexSend = true;
+        Tools.Global.setting.appendNewline = 0;
+        toSendDataTextBox.Text = text;
+        toSendDataTextBox.Focus();
+        toSendDataTextBox.CaretIndex = toSendDataTextBox.Text.Length;
+        toSendDataTextBox.ScrollToEnd();
     }
 
     private void ProcessReceivedData(byte[] data)

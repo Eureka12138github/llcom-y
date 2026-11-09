@@ -406,4 +406,6 @@
     <system:String x:Key="Dlt645DiNewName">新 DI</system:String>
     <system:String x:Key="Dlt645DiInvalidRow">存在无效 DI：名称不能为空，DI 必须是 4 字节 HEX。请检查：{0}</system:String>
     <system:String x:Key="Dlt645DiDuplicateCode">DI 重复：{0}</system:String>
+    <system:String x:Key="Dlt645SendToMainBox">发送到主发送框</system:String>
+    <system:String x:Key="Dlt645SentToMainBox">已填入主发送框</system:String>
 </ResourceDictionary>

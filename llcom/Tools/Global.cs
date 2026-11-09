@@ -22,6 +22,12 @@ class Global
 {
     public static event EventHandler? ProgramClosedEvent;
 
+    /// <summary>请求把一段文本填入主发送框（645 工具等使用）。</summary>
+    public static event Action<string>? SendToMainSendBoxRequested;
+
+    public static void SendToMainSendBox(string text) =>
+        SendToMainSendBoxRequested?.Invoke(text);
+
     //api接口文档网址
     public static string apiDocumentUrl =
         "https://github.com/Eureka12138github/llcom-y/blob/master/LuaApi.md";

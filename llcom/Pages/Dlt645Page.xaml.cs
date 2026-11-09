@@ -724,6 +724,22 @@ public partial class Dlt645Page : Page
         }
     }
 
+    private void SendToMainBoxButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (!TryBuildFrame(out var frame, out _, out var error))
+        {
+            SetStatus(StatusText, error, true);
+            return;
+        }
+
+        Tools.Global.SendToMainSendBox(Dlt645Codec.ToHex(frame));
+        SetStatus(
+            StatusText,
+            Localize("Dlt645SentToMainBox", "已填入主发送框"),
+            false
+        );
+    }
+
     private void CopyButton_Click(object sender, RoutedEventArgs e)
     {
         if (string.IsNullOrWhiteSpace(FramePreviewTextBox.Text))

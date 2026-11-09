@@ -406,4 +406,6 @@
     <system:String x:Key="Dlt645DiNewName">New DI</system:String>
     <system:String x:Key="Dlt645DiInvalidRow">Invalid DI: name is required and DI must be 4 bytes of hex. Check: {0}</system:String>
     <system:String x:Key="Dlt645DiDuplicateCode">Duplicate DI: {0}</system:String>
+    <system:String x:Key="Dlt645SendToMainBox">Send to main send box</system:String>
+    <system:String x:Key="Dlt645SentToMainBox">Copied to main send box</system:String>
 </ResourceDictionary>

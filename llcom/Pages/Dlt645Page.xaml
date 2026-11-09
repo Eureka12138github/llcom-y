@@ -338,6 +338,15 @@
             >
               <fa:FontAwesome Icon="Copy" />
             </Button>
+            <Button
+              Name="SendToMainBoxButton"
+              Margin="6,0,0,0"
+              Click="SendToMainBoxButton_Click"
+              Style="{StaticResource IconButton}"
+              ToolTip="{DynamicResource Dlt645SendToMainBox}"
+            >
+              <fa:FontAwesome Icon="ArrowUp" />
+            </Button>
             <TextBlock
               Name="StatusText"
               Margin="10,0,0,0"

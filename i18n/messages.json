@@ -1638,6 +1638,14 @@
     "Dlt645DiDuplicateCode": {
       "zh-CN": "DI 重复：{0}",
       "en-US": "Duplicate DI: {0}"
+    },
+    "Dlt645SendToMainBox": {
+      "zh-CN": "发送到主发送框",
+      "en-US": "Send to main send box"
+    },
+    "Dlt645SentToMainBox": {
+      "zh-CN": "已填入主发送框",
+      "en-US": "Copied to main send box"
     }
   }
 }
