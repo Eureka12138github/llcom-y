@@ -11,7 +11,7 @@
   xmlns:view="clr-namespace:llcom.View"
   Title="{DynamicResource SettingTitle}"
   Width="450"
-  Height="490"
+  Height="560"
   adonisExtensions:RippleExtension.FadeInDuration="0"
   adonisExtensions:RippleExtension.FadeOutDuration="0"
   Loaded="Window_Loaded"
@@ -126,6 +126,35 @@
               IsChecked="{Binding terminal}"
               ToolTip="{DynamicResource SettingTerminalTip}"
             />
+            <Separator Margin="8,12,8,4" />
+            <TextBlock
+              Margin="8,0,8,4"
+              FontWeight="Bold"
+              Text="{DynamicResource SettingConfigBackup}"
+            />
+            <TextBlock
+              Margin="8,0,8,6"
+              Foreground="{DynamicResource Brush.Foreground.Muted}"
+              Text="{DynamicResource SettingConfigBackupTip}"
+              TextWrapping="Wrap"
+            />
+            <WrapPanel Margin="8,0,8,8">
+              <Button
+                Name="ExportConfigButton"
+                MinWidth="90"
+                Click="ExportConfigButton_Click"
+                Content="{DynamicResource SettingExportConfig}"
+                ToolTip="{DynamicResource SettingExportConfigTip}"
+              />
+              <Button
+                Name="ImportConfigButton"
+                MinWidth="90"
+                Margin="8,0,0,0"
+                Click="ImportConfigButton_Click"
+                Content="{DynamicResource SettingImportConfig}"
+                ToolTip="{DynamicResource SettingImportConfigTip}"
+              />
+            </WrapPanel>
           </StackPanel>
         </ScrollViewer>
       </TabItem>

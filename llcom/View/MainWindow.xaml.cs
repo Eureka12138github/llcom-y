@@ -51,6 +51,18 @@ namespace llcom;
 /// </summary>
 public partial class MainWindow : Window
 {
+    /// <summary>快捷键：聚焦发送框（Ctrl+L）。</summary>
+    public static readonly RoutedUICommand FocusSendBoxCommand =
+        new("聚焦发送框", nameof(FocusSendBoxCommand), typeof(MainWindow));
+
+    /// <summary>快捷键：清空日志（Ctrl+K），与日志区垃圾桶按钮相同。</summary>
+    public static readonly RoutedUICommand ClearLogCommand =
+        new("清空日志", nameof(ClearLogCommand), typeof(MainWindow));
+
+    /// <summary>快捷键：打开“更多设置”窗口（Ctrl+,）。</summary>
+    public static readonly RoutedUICommand OpenSettingsCommand =
+        new("打开设置", nameof(OpenSettingsCommand), typeof(MainWindow));
+
     /// <summary>串口控制区 ViewModel（Step 5 MVVM 化）</summary>
     private readonly MainViewModel _vm;
 
@@ -418,12 +430,33 @@ public partial class MainWindow : Window
 
     Window settingPage = new SettingWindow();
 
-    private void MoreSettingButton_Click(object sender, RoutedEventArgs e)
+    private void MoreSettingButton_Click(object sender, RoutedEventArgs e) =>
+        ShowSettingsWindow();
+
+    /// <summary>打开“更多设置”窗口（按钮与 Ctrl+, 快捷键共用）。</summary>
+    private void ShowSettingsWindow()
     {
         //让“更多设置”成为主窗口的子窗口：始终显示在主窗口之上，避免切换置顶时被压到后面
         settingPage.Owner = this;
         settingPage.Show();
+        settingPage.Activate();
     }
+
+    /// <summary>Ctrl+L：把焦点移到发送框，光标停在末尾。</summary>
+    private void FocusSendBox_Executed(object sender, ExecutedRoutedEventArgs e)
+    {
+        toSendDataTextBox.Focus();
+        toSendDataTextBox.CaretIndex = toSendDataTextBox.Text.Length;
+        toSendDataTextBox.ScrollToEnd();
+    }
+
+    /// <summary>Ctrl+K：清空日志（与日志区垃圾桶按钮一致）。</summary>
+    private void ClearLog_Executed(object sender, ExecutedRoutedEventArgs e) =>
+        Tools.Logger.ClearData();
+
+    /// <summary>Ctrl+,：打开“更多设置”窗口。</summary>
+    private void OpenSettings_Executed(object sender, ExecutedRoutedEventArgs e) =>
+        ShowSettingsWindow();
 
     /// <summary>
     /// 响应其他代码传来的窗口置顶事件

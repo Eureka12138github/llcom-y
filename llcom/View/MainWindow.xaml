@@ -24,8 +24,44 @@
     <Style BasedOn="{StaticResource {x:Type Window}}" TargetType="Window" />
   </Window.Style>
   
+  <Window.CommandBindings>
+    <CommandBinding
+      Command="{x:Static local:MainWindow.FocusSendBoxCommand}"
+      Executed="FocusSendBox_Executed"
+    />
+    <CommandBinding
+      Command="{x:Static local:MainWindow.ClearLogCommand}"
+      Executed="ClearLog_Executed"
+    />
+    <CommandBinding
+      Command="{x:Static local:MainWindow.OpenSettingsCommand}"
+      Executed="OpenSettings_Executed"
+    />
+  </Window.CommandBindings>
+
   <Window.InputBindings>
     <KeyBinding Key="Return" Command="{Binding SendCommand}" Gesture="Ctrl+Return" />
+    <!--  固定快捷键：Ctrl+O 开关串口 / Ctrl+L 聚焦发送框 / Ctrl+K 清空日志 / Ctrl+Shift+S 打开设置  -->
+    <KeyBinding
+      Key="O"
+      Command="{Binding OpenClosePortCommand}"
+      Modifiers="Control"
+    />
+    <KeyBinding
+      Key="L"
+      Command="{x:Static local:MainWindow.FocusSendBoxCommand}"
+      Modifiers="Control"
+    />
+    <KeyBinding
+      Key="K"
+      Command="{x:Static local:MainWindow.ClearLogCommand}"
+      Modifiers="Control"
+    />
+    <KeyBinding
+      Key="S"
+      Command="{x:Static local:MainWindow.OpenSettingsCommand}"
+      Modifiers="Control+Shift"
+    />
   </Window.InputBindings>
   <Grid Name="MainGrid" IsEnabled="False">
     <Grid.RowDefinitions>

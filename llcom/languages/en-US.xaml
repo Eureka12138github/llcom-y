@@ -140,6 +140,16 @@
     <system:String x:Key="SettingStreamMaxCharsTip">Max characters kept in stream mode (pack timeout &lt; 0); oldest text is dropped. Range 100000~10000000</system:String>
     <system:String x:Key="SettingTerminal">Terminal mode (type directly in the log area)</system:String>
     <system:String x:Key="SettingTerminalTip">When enabled, click the log area and type: characters are sent to the serial port immediately. Ctrl+C sends 0x03, which conflicts with copying.</system:String>
+    <system:String x:Key="SettingConfigBackup">Config backup</system:String>
+    <system:String x:Key="SettingConfigBackupTip">Export / import the whole settings.json (serial, UI, quick send, MQTT, etc.).</system:String>
+    <system:String x:Key="SettingExportConfig">Export config</system:String>
+    <system:String x:Key="SettingExportConfigTip">Save current settings to a JSON file, e.g. to copy to another PC.</system:String>
+    <system:String x:Key="SettingExportConfigDone">Config exported:&#10;{0}</system:String>
+    <system:String x:Key="SettingImportConfig">Import config</system:String>
+    <system:String x:Key="SettingImportConfigTip">Restore settings from a JSON file. The current config is backed up first; restart to apply.</system:String>
+    <system:String x:Key="SettingImportConfigInvalid">Not a valid config file: {0}</system:String>
+    <system:String x:Key="SettingImportConfigConfirm">Import this config?&#10;&#10;The current config will be backed up as {0}; restart the app to apply.</system:String>
+    <system:String x:Key="SettingImportConfigDone">Config imported. Restart the app to apply.</system:String>
     <system:String x:Key="EnterTerminalMode">Forced entry into terminal mode</system:String>
     <system:String x:Key="SettingMaxPack">Max length per packet</system:String>
     <system:String x:Key="SettingMaxShowPack">Max log print pack length</system:String>

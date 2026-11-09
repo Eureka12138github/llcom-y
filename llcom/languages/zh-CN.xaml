@@ -140,6 +140,16 @@
     <system:String x:Key="SettingStreamMaxCharsTip">流式模式（分包数据超时设为负数）最多保留多少字符，超过后自动丢弃最早的文本；范围 100000~10000000</system:String>
     <system:String x:Key="SettingTerminal">终端模式（在日志区直接键盘发送）</system:String>
     <system:String x:Key="SettingTerminalTip">开启后，点击日志区并敲键盘，字符会直接发送到串口。终端模式下 Ctrl+C 会发送 0x03，与复制快捷键冲突；复制日志前建议先关闭。</system:String>
+    <system:String x:Key="SettingConfigBackup">配置备份</system:String>
+    <system:String x:Key="SettingConfigBackupTip">导出 / 导入整份 settings.json（串口、界面、快捷发送、MQTT 等全部设置）。</system:String>
+    <system:String x:Key="SettingExportConfig">导出配置</system:String>
+    <system:String x:Key="SettingExportConfigTip">把当前设置保存为 JSON 文件，可复制到其它电脑使用。</system:String>
+    <system:String x:Key="SettingExportConfigDone">配置已导出：&#10;{0}</system:String>
+    <system:String x:Key="SettingImportConfig">导入配置</system:String>
+    <system:String x:Key="SettingImportConfigTip">从 JSON 文件恢复设置；会先备份当前配置，导入后需重启软件。</system:String>
+    <system:String x:Key="SettingImportConfigInvalid">不是有效的配置文件：{0}</system:String>
+    <system:String x:Key="SettingImportConfigConfirm">确定导入该配置吗？&#10;&#10;当前配置会备份为 {0}；导入后需要重启软件才会生效。</system:String>
+    <system:String x:Key="SettingImportConfigDone">配置已导入，重启软件后生效。</system:String>
     <system:String x:Key="EnterTerminalMode">强制进入终端模式</system:String>
     <system:String x:Key="SettingMaxPack">串口数据每包最大</system:String>
     <system:String x:Key="SettingMaxShowPack">日志打印每最大显示长度限制</system:String>

@@ -554,6 +554,46 @@
       "zh-CN": "开启后，点击日志区并敲键盘，字符会直接发送到串口。终端模式下 Ctrl+C 会发送 0x03，与复制快捷键冲突；复制日志前建议先关闭。",
       "en-US": "When enabled, click the log area and type: characters are sent to the serial port immediately. Ctrl+C sends 0x03, which conflicts with copying."
     },
+    "SettingConfigBackup": {
+      "zh-CN": "配置备份",
+      "en-US": "Config backup"
+    },
+    "SettingConfigBackupTip": {
+      "zh-CN": "导出 / 导入整份 settings.json（串口、界面、快捷发送、MQTT 等全部设置）。",
+      "en-US": "Export / import the whole settings.json (serial, UI, quick send, MQTT, etc.)."
+    },
+    "SettingExportConfig": {
+      "zh-CN": "导出配置",
+      "en-US": "Export config"
+    },
+    "SettingExportConfigTip": {
+      "zh-CN": "把当前设置保存为 JSON 文件，可复制到其它电脑使用。",
+      "en-US": "Save current settings to a JSON file, e.g. to copy to another PC."
+    },
+    "SettingExportConfigDone": {
+      "zh-CN": "配置已导出：\n{0}",
+      "en-US": "Config exported:\n{0}"
+    },
+    "SettingImportConfig": {
+      "zh-CN": "导入配置",
+      "en-US": "Import config"
+    },
+    "SettingImportConfigTip": {
+      "zh-CN": "从 JSON 文件恢复设置；会先备份当前配置，导入后需重启软件。",
+      "en-US": "Restore settings from a JSON file. The current config is backed up first; restart to apply."
+    },
+    "SettingImportConfigInvalid": {
+      "zh-CN": "不是有效的配置文件：{0}",
+      "en-US": "Not a valid config file: {0}"
+    },
+    "SettingImportConfigConfirm": {
+      "zh-CN": "确定导入该配置吗？\n\n当前配置会备份为 {0}；导入后需要重启软件才会生效。",
+      "en-US": "Import this config?\n\nThe current config will be backed up as {0}; restart the app to apply."
+    },
+    "SettingImportConfigDone": {
+      "zh-CN": "配置已导入，重启软件后生效。",
+      "en-US": "Config imported. Restart the app to apply."
+    },
     "EnterTerminalMode": {
       "zh-CN": "强制进入终端模式",
       "en-US": "Forced entry into terminal mode"

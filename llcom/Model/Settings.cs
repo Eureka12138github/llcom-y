@@ -151,6 +151,12 @@ public partial class Settings : ObservableObject
     }
 
     /// <summary>
+    /// 导入了外部配置、等待重启生效。
+    /// 期间禁止把内存里的旧配置写回 settings.json，否则退出时会覆盖刚导入的文件。
+    /// </summary>
+    internal static bool ImportPendingRestart { get; set; }
+
+    /// <summary>
     /// 立即写盘。正常退出（窗口关闭）时必须调用，确保防抖队列中的修改不丢失。
     /// 线程安全：可被防抖定时器与退出流程重复调用。
     /// </summary>
@@ -161,6 +167,8 @@ public partial class Settings : ObservableObject
             saveTimer?.Dispose();
             saveTimer = null;
         }
+        if (ImportPendingRestart)
+            return;
         try
         {
             File.WriteAllText(

@@ -19,7 +19,9 @@ using FontAwesome.WPF;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Search;
+using llcom.Services;
 using llcom.ViewModels;
+using Microsoft.Win32;
 
 namespace llcom;
 
@@ -101,6 +103,121 @@ public partial class SettingWindow : Window
         setting.streamMaxChars = value;
         streamMaxCharsBox.Text = setting.streamMaxChars.ToString();
     }
+
+    // ===== 配置导出 / 导入（整份 settings.json） =====
+
+    /// <summary>导出当前配置到用户选择的 JSON 文件。</summary>
+    private void ExportConfigButton_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new SaveFileDialog
+        {
+            Filter = "JSON|*.json|All files|*.*",
+            FileName = SettingsTransfer.DefaultFileName,
+            Title = Localize("SettingExportConfig", "导出配置"),
+        };
+        if (dialog.ShowDialog() != true)
+            return;
+
+        try
+        {
+            SettingsTransfer.Export(dialog.FileName);
+            System.Windows.MessageBox.Show(
+                string.Format(
+                    Localize("SettingExportConfigDone", "配置已导出：\n{0}"),
+                    dialog.FileName
+                ),
+                Localize("SettingExportConfig", "导出配置")
+            );
+        }
+        catch (Exception ex)
+        {
+            System.Windows.MessageBox.Show(
+                ex.Message,
+                Localize("SettingExportConfig", "导出配置"),
+                MessageBoxButton.OK,
+                MessageBoxImage.Error
+            );
+        }
+    }
+
+    /// <summary>导入配置文件：校验、确认、备份旧配置、整体替换，重启后生效。</summary>
+    private void ImportConfigButton_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new OpenFileDialog
+        {
+            Filter = "JSON|*.json|All files|*.*",
+            Title = Localize("SettingImportConfig", "导入配置"),
+        };
+        if (dialog.ShowDialog() != true)
+            return;
+
+        string text;
+        try
+        {
+            text = File.ReadAllText(dialog.FileName);
+        }
+        catch (Exception ex)
+        {
+            System.Windows.MessageBox.Show(
+                ex.Message,
+                Localize("SettingImportConfig", "导入配置"),
+                MessageBoxButton.OK,
+                MessageBoxImage.Error
+            );
+            return;
+        }
+
+        if (!SettingsTransfer.TryValidate(text, out var error))
+        {
+            System.Windows.MessageBox.Show(
+                string.Format(
+                    Localize("SettingImportConfigInvalid", "不是有效的配置文件：{0}"),
+                    error
+                ),
+                Localize("SettingImportConfig", "导入配置"),
+                MessageBoxButton.OK,
+                MessageBoxImage.Error
+            );
+            return;
+        }
+
+        var confirm = System.Windows.MessageBox.Show(
+            string.Format(
+                Localize(
+                    "SettingImportConfigConfirm",
+                    "确定导入该配置吗？\n\n当前配置会备份为 {0}；导入后需要重启软件才会生效。"
+                ),
+                SettingsTransfer.BackupFileName
+            ),
+            Localize("SettingImportConfig", "导入配置"),
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning
+        );
+        if (confirm != MessageBoxResult.Yes)
+            return;
+
+        try
+        {
+            SettingsTransfer.Import(dialog.FileName);
+            System.Windows.MessageBox.Show(
+                Localize("SettingImportConfigDone", "配置已导入，重启软件后生效。"),
+                Localize("SettingImportConfig", "导入配置")
+            );
+        }
+        catch (Exception ex)
+        {
+            System.Windows.MessageBox.Show(
+                ex.Message,
+                Localize("SettingImportConfig", "导入配置"),
+                MessageBoxButton.OK,
+                MessageBoxImage.Error
+            );
+        }
+    }
+
+    /// <summary>取语言资源，缺失时回退到内置中文。</summary>
+    private string Localize(string key, string fallback) =>
+        TryFindResource(key) as string ?? fallback;
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
