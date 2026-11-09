@@ -1407,10 +1407,6 @@
       "zh-CN": "附加数据不是合法 HEX",
       "en-US": "Extra data is not valid hex"
     },
-    "Dlt645WriteConfirm": {
-      "zh-CN": "写操作确认",
-      "en-US": "Write confirmation"
-    },
     "Dlt645WriteConfirmPrompt": {
       "zh-CN": "即将发送写命令，请输入 YES 确认",
       "en-US": "About to send a write command. Type YES to confirm."
@@ -1514,10 +1510,6 @@
     "Dlt645SendConfirm": {
       "zh-CN": "发送确认",
       "en-US": "Send confirmation"
-    },
-    "Dlt645CustomConfirmPrompt": {
-      "zh-CN": "即将发送自定义控制码，请输入 YES 确认",
-      "en-US": "About to send a custom control code. Type YES to confirm."
     }
   }
 }

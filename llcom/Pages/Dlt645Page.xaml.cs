@@ -437,24 +437,14 @@ public partial class Dlt645Page : Page
 
         if (
             operation != null
-            && (
-                operation.Control == 0x00
-                || operation.IsWrite
-                || operation.NeedsConfirmation
-            )
+            && (operation.IsWrite || operation.NeedsConfirmation)
         )
         {
-            var isCustom = operation.Control == 0x00;
             var confirm = Tools.InputDialog.OpenDialog(
-                isCustom
-                    ? Localize(
-                        "Dlt645CustomConfirmPrompt",
-                        "即将发送自定义控制码，请输入 YES 确认"
-                    )
-                    : Localize(
-                        "Dlt645WriteConfirmPrompt",
-                        "即将发送写命令，请输入 YES 确认"
-                    ),
+                Localize(
+                    "Dlt645WriteConfirmPrompt",
+                    "即将发送写命令，请输入 YES 确认"
+                ),
                 "NO",
                 Localize("Dlt645SendConfirm", "发送确认")
             );

@@ -348,7 +348,6 @@
     <system:String x:Key="Dlt645UnsupportedOperation">当前操作暂未实现</system:String>
     <system:String x:Key="Dlt645InvalidDi">DI 必须是 4 字节 HEX</system:String>
     <system:String x:Key="Dlt645InvalidExtraData">附加数据不是合法 HEX</system:String>
-    <system:String x:Key="Dlt645WriteConfirm">写操作确认</system:String>
     <system:String x:Key="Dlt645WriteConfirmPrompt">即将发送写命令，请输入 YES 确认</system:String>
     <system:String x:Key="Dlt645Sent">已发送</system:String>
     <system:String x:Key="Dlt645Copied">帧已复制</system:String>
@@ -375,5 +374,4 @@
     <system:String x:Key="CopySelectedLines">复制选中行</system:String>
     <system:String x:Key="SelectAllLog">全选</system:String>
     <system:String x:Key="Dlt645SendConfirm">发送确认</system:String>
-    <system:String x:Key="Dlt645CustomConfirmPrompt">即将发送自定义控制码，请输入 YES 确认</system:String>
 </ResourceDictionary>

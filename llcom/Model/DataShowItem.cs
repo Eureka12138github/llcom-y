@@ -45,6 +45,19 @@ public class DataShowItem : INotifyPropertyChanged
     /// <summary>原始负载字节数（日志缓冲按字节预算裁剪时统计用）</summary>
     public int PayloadLength => _data.Length;
 
+    /// <summary>复制/导出用文本：时间 + 方向箭头 + 数据（或通用通道标题/内容）。</summary>
+    public string ToLogText()
+    {
+        var text = string.Concat(
+            TimeText,
+            ArrowText,
+            DataText ?? "",
+            RawTitle ?? "",
+            RawText ?? ""
+        );
+        return text.TrimStart('\r', '\n');
+    }
+
     public event PropertyChangedEventHandler? PropertyChanged;
 
     private void OnPropertyChanged([CallerMemberName] string? name = null) =>

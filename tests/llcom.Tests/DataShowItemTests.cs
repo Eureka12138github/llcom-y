@@ -60,6 +60,27 @@ namespace llcom.Tests
         }
 
         [Fact]
+        public void ToLogText_IncludesTimestampAndArrow()
+        {
+            var old = Global.setting.hexSend;
+            try
+            {
+                Global.setting.hexSend = true;
+                var time = new DateTime(2026, 11, 9, 19, 22, 13, 800);
+                var item = new DataShowItem(new byte[] { 0xFE, 0xFE }, time, true);
+
+                var text = item.ToLogText();
+
+                Assert.StartsWith("[2026/11/09 19:22:13.800] → ", text);
+                Assert.EndsWith("FE FE", text);
+            }
+            finally
+            {
+                Global.setting.hexSend = old;
+            }
+        }
+
+        [Fact]
         public void GenericChannel_UsesHexInRawText()
         {
             var item = new DataShowItem("MQTT", new byte[] { 0x0A, 0x0B }, DateTime.Now, null);

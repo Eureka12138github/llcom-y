@@ -173,8 +173,7 @@ public partial class DataShowPage : Page
         );
     }
 
-    private static string GetItemText(DataShowItem item) =>
-        (item.DataText ?? item.RawText ?? "").TrimStart('\r', '\n');
+    private static string GetItemText(DataShowItem item) => item.ToLogText();
 
     private static void CopyLines(IEnumerable<string> lines)
     {
