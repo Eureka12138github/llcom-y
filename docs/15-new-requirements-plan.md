@@ -321,7 +321,7 @@
 
 ### 已完成（第一阶段）
 
-- `i18n/messages.json`：389 个 key（含脚本管理、645 页面和界面新增），JSON 为唯一翻译源；
+- `i18n/messages.json`：403 个 key（含脚本管理、645 页面和界面新增），JSON 为唯一翻译源；
 - `scripts/generate-i18n.ps1`：生成 `llcom/languages/*.xaml`，固定 UTF-8 无 BOM、CRLF、4 空格缩进；`-Check` 供 CI 校验；
 - `scripts/export-i18n-csv.ps1`：可选导出 `i18n/messages.csv` 供表格审校；
 - `.github/workflows/validate-i18n.yml`：校验 JSON 结构与生成文件同步，并对英文残留中文给出 warning；

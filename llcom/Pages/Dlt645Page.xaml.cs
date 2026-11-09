@@ -7,7 +7,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using llcom.Services.Dlt645;
-using Microsoft.Win32;
 
 namespace llcom.Pages;
 
@@ -29,6 +28,7 @@ public partial class Dlt645Page : Page
     public Dlt645Page()
     {
         InitializeComponent();
+        IsVisibleChanged += (_, _) => Dlt645ReceiveOptions.IsToolActive = IsVisible;
     }
 
     private Dlt645Operation? SelectedOperation =>
@@ -50,6 +50,8 @@ public partial class Dlt645Page : Page
             );
         }
 
+        Dlt645ReceiveOptions.IsToolActive = IsVisible;
+        DecodeDataCheckBox.IsChecked = Dlt645ReceiveOptions.DecodeData;
         StartSession();
         UpdateOperationState();
         RefreshPreview();
@@ -57,10 +59,8 @@ public partial class Dlt645Page : Page
 
     private void Page_Unloaded(object sender, RoutedEventArgs e)
     {
-        if (_session == null)
-            return;
-        _session.FrameReceived -= OnFrameReceived;
-        _session.Dispose();
+        Dlt645ReceiveOptions.IsToolActive = false;
+        _session?.Dispose();
         _session = null;
     }
 
@@ -69,7 +69,6 @@ public partial class Dlt645Page : Page
         if (_session != null)
             return;
         _session = new Dlt645Session();
-        _session.FrameReceived += OnFrameReceived;
         _session.Start();
     }
 
@@ -123,7 +122,7 @@ public partial class Dlt645Page : Page
     private void LoadIdentifiers()
     {
         var currentHex = DiHexTextBox.Text.Trim();
-        _allIdentifiers = Dlt645IdentifierStore.LoadMerged();
+        _allIdentifiers = Dlt645IdentifierStore.LoadAll();
         RefreshDiCategories();
         RefreshDiChoices(currentHex);
     }
@@ -235,67 +234,53 @@ public partial class Dlt645Page : Page
         RefreshDiChoices();
     }
 
-    private void ImportDiButton_Click(object sender, RoutedEventArgs e)
+    private void ManageDiButton_Click(object sender, RoutedEventArgs e)
     {
-        var dialog = new OpenFileDialog
+        var window = new View.Dlt645IdentifierManagerWindow
         {
-            Filter = "JSON|*.json|All files|*.*",
-            Title = Localize("Dlt645ImportDi", "导入 DI"),
+            Owner = Window.GetWindow(this),
         };
-        if (dialog.ShowDialog() != true)
-            return;
-
-        try
-        {
-            var count = Dlt645IdentifierStore.Import(dialog.FileName);
-            if (count == 0)
-            {
-                SetStatus(
-                    StatusText,
-                    Localize("Dlt645ImportDiEmpty", "没有可导入的有效 DI"),
-                    true
-                );
-                return;
-            }
-
+        if (window.ShowDialog() == true)
             LoadIdentifiers();
-            SetStatus(
-                StatusText,
-                string.Format(Localize("Dlt645ImportDiDone", "已导入 {0} 条 DI"), count),
-                false
-            );
-        }
-        catch (Exception ex)
-        {
-            SetStatus(StatusText, ex.Message, true);
-        }
     }
 
-    private void ExportDiButton_Click(object sender, RoutedEventArgs e)
+    private void DeleteSelectedDi_Click(object sender, RoutedEventArgs e)
     {
-        var dialog = new SaveFileDialog
-        {
-            Filter = "JSON|*.json|All files|*.*",
-            FileName = "dlt645-di.json",
-            Title = Localize("Dlt645ExportDi", "导出 DI"),
-        };
-        if (dialog.ShowDialog() != true)
+        var code =
+            (DiComboBox.SelectedItem as ChoiceItem<Dlt645DataIdentifier>)?.Value.Hex
+            ?? DiHexTextBox.Text.Trim();
+        if (string.IsNullOrWhiteSpace(code))
             return;
 
-        try
+        var result = System.Windows.MessageBox.Show(
+            string.Format(
+                Localize("Dlt645DeleteDiConfirm", "确定删除 DI {0} 吗？"),
+                code
+            ),
+            Localize("Dlt645DeleteDi", "删除 DI"),
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning
+        );
+        if (result != MessageBoxResult.Yes)
+            return;
+
+        if (!Dlt645IdentifierStore.Delete(code))
         {
-            Dlt645IdentifierStore.Export(dialog.FileName);
             SetStatus(
                 StatusText,
-                Localize("Dlt645ExportDiDone", "DI 已导出"),
-                false
+                Localize("Dlt645DiNotFound", "没有找到要删除的 DI"),
+                true
             );
+            return;
         }
-        catch (Exception ex)
-        {
-            SetStatus(StatusText, ex.Message, true);
-        }
+
+        DiHexTextBox.Text = "";
+        LoadIdentifiers();
+        SetStatus(StatusText, Localize("Dlt645DiDeleted", "DI 已删除"), false);
     }
+
+    private void DecodeDataCheckBox_Changed(object sender, RoutedEventArgs e) =>
+        Dlt645ReceiveOptions.DecodeData = DecodeDataCheckBox.IsChecked == true;
 
     private void AddressTextBox_KeyDown(object sender, KeyEventArgs e)
     {
@@ -669,39 +654,13 @@ public partial class Dlt645Page : Page
             }
 
             var chosen = addresses[0];
-            if (addresses.Count > 1)
-            {
-                var pick = Tools.InputDialog.OpenDialog(
-                    Localize(
-                        "Dlt645MultipleAddresses",
-                        "总线上收到多个表地址，请选择"
-                    ),
-                    addresses[0],
-                    Localize("Dlt645SelectAddress", "选择表地址"),
-                    addresses
-                );
-                if (!pick.Item1)
-                {
-                    SetAddressState(
-                        "Brush.Surface.Muted",
-                        Localize("Dlt645ReadAddressCancelled", "已取消读取")
-                    );
-                    return;
-                }
-
-                if (
-                    !Dlt645Codec.TryNormalizeAddress(
-                        pick.Item2,
-                        out var normalized,
-                        out var addressError
+            var multiple =
+                addresses.Count > 1
+                    ? Localize(
+                        "Dlt645MultipleAddressesShort",
+                        "（收到多个地址，使用第一个）"
                     )
-                )
-                {
-                    SetAddressState("Brush.State.Error", addressError);
-                    return;
-                }
-                chosen = normalized;
-            }
+                    : "";
 
             _lastManualAddress = chosen;
             if (SelectedOperation?.Control != Dlt645Codec.ControlReadAddress)
@@ -709,7 +668,7 @@ public partial class Dlt645Page : Page
 
             SetAddressState(
                 "Brush.State.Success",
-                $"{Localize("Dlt645Connected", "已连接")}: {chosen}"
+                $"{Localize("Dlt645Connected", "已连接")}: {chosen}{multiple}"
             );
         }
         catch (Exception ex)
@@ -721,36 +680,6 @@ public partial class Dlt645Page : Page
             ReadAddressButton.IsEnabled = true;
         }
     }
-
-    private void OnFrameReceived(Dlt645Frame frame)
-    {
-        if (!IsLoaded)
-            return;
-        Dispatcher.BeginInvoke(new Action(() => AppendLiveLog(frame)));
-    }
-
-    private void AppendLiveLog(Dlt645Frame frame)
-    {
-        var decode = DecodeDataCheckBox.IsChecked == true;
-        var data = decode ? frame.Data : frame.EncodedData;
-        var label = decode
-            ? Localize("Dlt645DecodedData33", "数据（减 33H）")
-            : Localize("Dlt645EncodedData", "传输数据域");
-
-        var line =
-            $"[{DateTime.Now:yyyy/MM/dd HH:mm:ss.fff}] ← {frame.Address}"
-            + $" | C=0x{frame.Control:X2} {ControlDescription(frame)}"
-            + $" | {label}: {Dlt645Codec.ToHex(data)}"
-            + Environment.NewLine;
-        LiveLogTextBox.AppendText(line);
-
-        if (LiveLogTextBox.Text.Length > 200000)
-            LiveLogTextBox.Text = LiveLogTextBox.Text.Substring(100000);
-        LiveLogTextBox.ScrollToEnd();
-    }
-
-    private void ClearLiveLogButton_Click(object sender, RoutedEventArgs e) =>
-        LiveLogTextBox.Clear();
 
     private void SetAddressState(string brushKey, string tooltip)
     {

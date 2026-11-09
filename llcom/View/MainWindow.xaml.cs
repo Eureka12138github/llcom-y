@@ -35,6 +35,7 @@ using ICSharpCode.AvalonEdit.Search;
 using llcom.LuaEnv;
 using llcom.Model;
 using llcom.Services;
+using llcom.Services.Dlt645;
 using llcom.Tools;
 using llcom.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
@@ -68,11 +69,20 @@ public partial class MainWindow : Window
     private readonly StringBuilder _luaLogPending = new StringBuilder();
     private bool _luaLogFlushQueued;
 
+    private readonly object _dlt645LogLock = new object();
+    private readonly Dlt645LogDecoder _dlt645LogDecoder = new Dlt645LogDecoder();
+    private readonly System.Windows.Threading.DispatcherTimer _dlt645FlushTimer =
+        new System.Windows.Threading.DispatcherTimer
+        {
+            Interval = TimeSpan.FromMilliseconds(150),
+        };
+
     public MainWindow(MainViewModel vm)
     {
         InitializeComponent();
         _vm = vm;
         DataContext = _vm;
+        _dlt645FlushTimer.Tick += (_, _) => FlushDlt645Log();
         if (
             Tools.Global.setting.windowHeight != 0
             && Tools.Global.setting.windowWidth != 0
@@ -302,8 +312,51 @@ public partial class MainWindow : Window
 
     private void Uart_UartDataRecived(object sender, EventArgs e)
     {
-        if (sender is byte[] data)
-            Tools.Logger.ShowData(data, false);
+        if (sender is not byte[] data)
+            return;
+
+        if (Dispatcher.HasShutdownStarted)
+            return;
+
+        // 645 解码需要缓冲/切帧，放到 UI 线程统一处理；主日志仍由 Logger 输出。
+        Dispatcher.BeginInvoke(new Action(() => ProcessReceivedData(data)));
+    }
+
+    private void ProcessReceivedData(byte[] data)
+    {
+        if (Dlt645ReceiveOptions.Enabled)
+        {
+            List<Dlt645LogEntry> entries;
+            lock (_dlt645LogLock)
+                entries = new List<Dlt645LogEntry>(_dlt645LogDecoder.Append(data));
+
+            foreach (var entry in entries)
+                Tools.Logger.ShowData(entry.Data, false);
+
+            if (_dlt645LogDecoder.HasPending)
+            {
+                _dlt645FlushTimer.Stop();
+                _dlt645FlushTimer.Start();
+            }
+            else
+            {
+                _dlt645FlushTimer.Stop();
+            }
+            return;
+        }
+
+        FlushDlt645Log();
+        Tools.Logger.ShowData(data, false);
+    }
+
+    private void FlushDlt645Log()
+    {
+        _dlt645FlushTimer.Stop();
+        List<Dlt645LogEntry> entries;
+        lock (_dlt645LogLock)
+            entries = new List<Dlt645LogEntry>(_dlt645LogDecoder.Flush());
+        foreach (var entry in entries)
+            Tools.Logger.ShowData(entry.Data, false);
     }
 
     /// <summary>USB 热插拔防抖定时器（WM_DEVICECHANGE 会连续触发多次）</summary>

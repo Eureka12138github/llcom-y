@@ -64,7 +64,6 @@
         <RowDefinition Height="Auto" />
         <RowDefinition Height="Auto" />
         <RowDefinition Height="Auto" />
-        <RowDefinition Height="Auto" />
       </Grid.RowDefinitions>
 
       <!--  表地址 / 前导 FE  -->
@@ -120,6 +119,17 @@
           Height="28"
           SelectionChanged="Input_SelectionChanged"
         />
+        <CheckBox
+          Name="DecodeDataCheckBox"
+          Grid.Column="5"
+          Margin="16,0,0,0"
+          VerticalAlignment="Center"
+          Checked="DecodeDataCheckBox_Changed"
+          Content="{DynamicResource Dlt645DecodeData33}"
+          IsChecked="False"
+          ToolTip="{DynamicResource Dlt645DecodeData33Tip}"
+          Unchecked="DecodeDataCheckBox_Changed"
+        />
       </Grid>
 
       <TextBlock
@@ -166,7 +176,16 @@
           Height="28"
           SelectionChanged="DiComboBox_SelectionChanged"
           ToolTip="{DynamicResource Dlt645DataIdentifierTip}"
-        />
+        >
+          <ComboBox.ContextMenu>
+            <ContextMenu>
+              <MenuItem
+                Click="DeleteSelectedDi_Click"
+                Header="{DynamicResource Dlt645DeleteDi}"
+              />
+            </ContextMenu>
+          </ComboBox.ContextMenu>
+        </ComboBox>
         <TextBox
           Name="DiHexTextBox"
           Grid.Column="4"
@@ -190,7 +209,6 @@
           <ColumnDefinition Width="Auto" />
           <ColumnDefinition Width="Auto" />
           <ColumnDefinition Width="*" />
-          <ColumnDefinition Width="Auto" />
           <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <TextBlock
@@ -216,22 +234,13 @@
           SelectionChanged="DiFilter_Changed"
         />
         <Button
-          Name="ImportDiButton"
+          Name="ManageDiButton"
           Grid.Column="4"
-          MinWidth="80"
+          MinWidth="90"
           Height="28"
           Margin="6,0,0,0"
-          Click="ImportDiButton_Click"
-          Content="{DynamicResource Dlt645ImportDi}"
-        />
-        <Button
-          Name="ExportDiButton"
-          Grid.Column="5"
-          MinWidth="80"
-          Height="28"
-          Margin="6,0,0,0"
-          Click="ExportDiButton_Click"
-          Content="{DynamicResource Dlt645ExportDi}"
+          Click="ManageDiButton_Click"
+          Content="{DynamicResource Dlt645ManageDi}"
         />
       </Grid>
 
@@ -397,55 +406,6 @@
           <TextBox
             Name="ParseResultTextBox"
             MinHeight="120"
-            Margin="0,6,0,0"
-            AcceptsReturn="True"
-            FontFamily="Consolas"
-            IsReadOnly="True"
-            TextWrapping="Wrap"
-            VerticalScrollBarVisibility="Auto"
-          />
-        </StackPanel>
-      </Border>
-
-      <!--  645 实时通讯日志：仅本工具显示，主日志仍保持原始数据  -->
-      <Border
-        Grid.Row="7"
-        Margin="0,8,0,0"
-        Padding="8"
-        Background="{DynamicResource Brush.Surface.Subtle}"
-        BorderBrush="{DynamicResource Brush.Border.Subtle}"
-        BorderThickness="1"
-        CornerRadius="4"
-      >
-        <StackPanel>
-          <DockPanel>
-            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-              <CheckBox
-                Name="DecodeDataCheckBox"
-                Margin="0,0,12,0"
-                VerticalAlignment="Center"
-                Content="{DynamicResource Dlt645DecodeData33}"
-                IsChecked="True"
-                ToolTip="{DynamicResource Dlt645DecodeData33Tip}"
-              />
-              <Button
-                Name="ClearLiveLogButton"
-                MinWidth="64"
-                Height="28"
-                Click="ClearLiveLogButton_Click"
-                Content="{DynamicResource Dlt645ClearLog}"
-              />
-            </StackPanel>
-            <TextBlock
-              VerticalAlignment="Center"
-              FontWeight="Bold"
-              Text="{DynamicResource Dlt645LiveLog}"
-            />
-          </DockPanel>
-          <TextBox
-            Name="LiveLogTextBox"
-            MinHeight="110"
-            MaxHeight="180"
             Margin="0,6,0,0"
             AcceptsReturn="True"
             FontFamily="Consolas"

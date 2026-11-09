@@ -1515,41 +1515,17 @@
       "zh-CN": "读取失败：没有收到有效应答",
       "en-US": "Read failed: no valid response"
     },
-    "Dlt645MultipleAddresses": {
-      "zh-CN": "总线上收到多个表地址，请选择",
-      "en-US": "Multiple meter addresses received; select one"
-    },
-    "Dlt645SelectAddress": {
-      "zh-CN": "选择表地址",
-      "en-US": "Select meter address"
-    },
     "Dlt645Connected": {
       "zh-CN": "已连接",
       "en-US": "Connected"
     },
-    "Dlt645ReadAddressCancelled": {
-      "zh-CN": "已取消读取",
-      "en-US": "Read cancelled"
-    },
-    "Dlt645LiveLog": {
-      "zh-CN": "645 通讯日志",
-      "en-US": "645 communication log"
-    },
     "Dlt645DecodeData33": {
-      "zh-CN": "接收数据域减 33H",
-      "en-US": "Decode data field (-33H)"
+      "zh-CN": "接收数据域减 33H（主日志）",
+      "en-US": "Decode receive data (-33H, main log)"
     },
     "Dlt645DecodeData33Tip": {
-      "zh-CN": "勾选后本工具日志显示减 33H 的数据；主日志仍保持原始数据",
-      "en-US": "Show data with 33H removed in this log; the main log stays raw"
-    },
-    "Dlt645ClearLog": {
-      "zh-CN": "清空日志",
-      "en-US": "Clear log"
-    },
-    "Dlt645DecodedData33": {
-      "zh-CN": "数据（减 33H）",
-      "en-US": "Data (-33H)"
+      "zh-CN": "仅在 645 工具页勾选时生效；完整帧会减 33H 并重算校验和，无法解析的数据原样输出",
+      "en-US": "Only active on the 645 tool page; complete frames get -33H and a recomputed checksum, unparsable data stays raw"
     },
     "Dlt645DiFilter": {
       "zh-CN": "DI 筛选",
@@ -1571,17 +1547,97 @@
       "zh-CN": "导出 DI",
       "en-US": "Export DI"
     },
-    "Dlt645ImportDiDone": {
-      "zh-CN": "已导入 {0} 条 DI",
-      "en-US": "Imported {0} DI entries"
-    },
-    "Dlt645ImportDiEmpty": {
-      "zh-CN": "没有可导入的有效 DI",
-      "en-US": "No valid DI entries to import"
-    },
     "Dlt645ExportDiDone": {
       "zh-CN": "DI 已导出",
       "en-US": "DI exported"
+    },
+    "Dlt645ManageDi": {
+      "zh-CN": "管理 DI",
+      "en-US": "Manage DI"
+    },
+    "Dlt645DeleteDi": {
+      "zh-CN": "删除 DI",
+      "en-US": "Delete DI"
+    },
+    "Dlt645DeleteDiConfirm": {
+      "zh-CN": "确定删除 DI {0} 吗？",
+      "en-US": "Delete DI {0}?"
+    },
+    "Dlt645DiDeleted": {
+      "zh-CN": "DI 已删除",
+      "en-US": "DI deleted"
+    },
+    "Dlt645DiNotFound": {
+      "zh-CN": "没有找到要删除的 DI",
+      "en-US": "DI not found"
+    },
+    "Dlt645MultipleAddressesShort": {
+      "zh-CN": "（收到多个地址，使用第一个）",
+      "en-US": " (multiple addresses received; using the first)"
+    },
+    "Dlt645ManageDiTitle": {
+      "zh-CN": "管理数据标识",
+      "en-US": "Manage data identifiers"
+    },
+    "Dlt645DiName": {
+      "zh-CN": "名称",
+      "en-US": "Name"
+    },
+    "Dlt645DiCode": {
+      "zh-CN": "DI",
+      "en-US": "DI"
+    },
+    "Dlt645DiCategory": {
+      "zh-CN": "分类",
+      "en-US": "Category"
+    },
+    "Dlt645DiUnit": {
+      "zh-CN": "单位",
+      "en-US": "Unit"
+    },
+    "Dlt645DiDecimals": {
+      "zh-CN": "小数位",
+      "en-US": "Decimals"
+    },
+    "Dlt645DiNote": {
+      "zh-CN": "备注",
+      "en-US": "Note"
+    },
+    "Dlt645DiAdd": {
+      "zh-CN": "添加",
+      "en-US": "Add"
+    },
+    "Dlt645DiDelete": {
+      "zh-CN": "删除选中",
+      "en-US": "Delete selected"
+    },
+    "Dlt645DiRestoreDefaults": {
+      "zh-CN": "恢复默认",
+      "en-US": "Restore defaults"
+    },
+    "Dlt645DiRestoreConfirm": {
+      "zh-CN": "确定恢复默认 DI 吗？当前所有 DI 配置将被覆盖。",
+      "en-US": "Restore default DIs? All current DI settings will be overwritten."
+    },
+    "Dlt645DiSave": {
+      "zh-CN": "保存",
+      "en-US": "Save"
+    },
+    "Dlt645DiCancel": {
+      "zh-CN": "取消",
+      "en-US": "Cancel"
+    },
+    "Dlt645DiNewName": {
+      "zh-CN": "新 DI",
+      "en-US": "New DI"
+    },
+    "Dlt645DiInvalidRow": {
+      "zh-CN": "存在无效 DI：名称不能为空，DI 必须是 4 字节 HEX。请检查：{0}",
+      "en-US": "Invalid DI: name is required and DI must be 4 bytes of hex. Check: {0}"
+    },
+    "Dlt645DiDuplicateCode": {
+      "zh-CN": "DI 重复：{0}",
+      "en-US": "Duplicate DI: {0}"
     }
   }
 }
