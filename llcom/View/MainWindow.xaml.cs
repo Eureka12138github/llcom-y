@@ -454,9 +454,44 @@ public partial class MainWindow : Window
     private void ClearLog_Executed(object sender, ExecutedRoutedEventArgs e) =>
         Tools.Logger.ClearData();
 
-    /// <summary>Ctrl+,：打开“更多设置”窗口。</summary>
+    /// <summary>Ctrl+Shift+S：打开“更多设置”窗口。</summary>
     private void OpenSettings_Executed(object sender, ExecutedRoutedEventArgs e) =>
         ShowSettingsWindow();
+
+    /// <summary>
+    /// 主窗口快捷键（预览阶段处理，焦点在输入框里也能生效）：
+    /// Ctrl+↑/↓ 切换串口，Ctrl+←/→ 切换常用波特率。
+    /// 运行脚本页的代码编辑器保留 Ctrl+←/→ 的按词移动光标。
+    /// </summary>
+    private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        if (Keyboard.Modifiers != ModifierKeys.Control)
+            return;
+
+        switch (e.Key)
+        {
+            case Key.Up:
+                _vm.SelectPreviousPort();
+                e.Handled = true;
+                break;
+            case Key.Down:
+                _vm.SelectNextPort();
+                e.Handled = true;
+                break;
+            case Key.Left:
+                if (textEditor.TextArea.IsKeyboardFocusWithin)
+                    return;
+                _vm.SelectPreviousBaudRate();
+                e.Handled = true;
+                break;
+            case Key.Right:
+                if (textEditor.TextArea.IsKeyboardFocusWithin)
+                    return;
+                _vm.SelectNextBaudRate();
+                e.Handled = true;
+                break;
+        }
+    }
 
     /// <summary>
     /// 响应其他代码传来的窗口置顶事件

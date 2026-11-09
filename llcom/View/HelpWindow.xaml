@@ -53,9 +53,11 @@
       <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+O：打开 / 关闭串口。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+L：把焦点移到发送框（光标停在末尾）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+K：清空日志（与日志区垃圾桶按钮效果相同）。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+↑ / Ctrl+↓：切换上一个 / 下一个串口（串口已打开时列表锁定，不能切换）。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+← / Ctrl+→：在常用波特率之间切换：1200 / 2400 / 4800 / 9600 / 19200 / 38400 / 57600 / 115200。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+Shift+S：打开「更多设置」窗口。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+Enter：发送发送框内容（可在「发送选项」里改为 Enter 发送）。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="说明：快捷键只在主窗口获得焦点时生效；打开使用说明 / 更多设置等弹窗时不起作用。终端模式开启且焦点在日志区时，Ctrl+A~Z 会优先作为控制字符发送（例如 Ctrl+O 发送 0x0F），此时请先关闭终端模式再使用快捷键。" />
+      <TextBlock Style="{StaticResource HelpP}" Text="说明：快捷键只在主窗口获得焦点时生效；打开使用说明 / 更多设置等弹窗时不起作用。终端模式开启且焦点在日志区时，Ctrl+A~Z 会优先作为控制字符发送（例如 Ctrl+O 发送 0x0F），此时请先关闭终端模式再使用快捷键。运行脚本页的代码编辑器里，Ctrl+←/→ 仍用于按词移动光标。" />
 
       <TextBlock Style="{StaticResource HelpH}" Text="三、串口设置（右侧第一个标签）" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 刷新串口：重新扫描可用串口列表。" />

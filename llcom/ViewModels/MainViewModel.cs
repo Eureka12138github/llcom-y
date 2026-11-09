@@ -864,4 +864,82 @@ public partial class MainViewModel : ObservableObject
             }
         }
     }
+
+    // ===== 快捷键：切换串口 / 波特率 =====
+
+    /// <summary>
+    /// 快捷键切换用的常用波特率档位。
+    /// 完整列表太长，循环切换只在这些常用档位之间走。
+    /// </summary>
+    private static readonly int[] ShortcutBaudRates =
+    {
+        1200,
+        2400,
+        4800,
+        9600,
+        19200,
+        38400,
+        57600,
+        115200,
+    };
+
+    /// <summary>快捷键 Ctrl+↑：切换到上一个串口。</summary>
+    public void SelectPreviousPort() => SelectAdjacentPort(-1);
+
+    /// <summary>快捷键 Ctrl+↓：切换到下一个串口。</summary>
+    public void SelectNextPort() => SelectAdjacentPort(1);
+
+    /// <summary>
+    /// 在串口列表里前后切换（循环）。串口已打开时列表被禁用，直接忽略。
+    /// </summary>
+    private void SelectAdjacentPort(int delta)
+    {
+        if (!IsPortComboEnabled || Ports.Count == 0)
+            return;
+
+        var index = SelectedPort == null ? 0 : Ports.IndexOf(SelectedPort);
+        if (index < 0)
+            index = 0;
+        else
+            index = (index + delta + Ports.Count) % Ports.Count;
+        SelectedPort = Ports[index];
+    }
+
+    /// <summary>快捷键 Ctrl+←：切换到上一个常用波特率。</summary>
+    public void SelectPreviousBaudRate() => SelectAdjacentBaudRate(-1);
+
+    /// <summary>快捷键 Ctrl+→：切换到下一个常用波特率。</summary>
+    public void SelectNextBaudRate() => SelectAdjacentBaudRate(1);
+
+    /// <summary>
+    /// 在常用波特率之间循环切换。
+    /// 当前值不在常用档位时（如自定义 256000），沿切换方向落到最近的一档。
+    /// </summary>
+    private void SelectAdjacentBaudRate(int delta)
+    {
+        if (delta == 0)
+            return;
+
+        var step = Math.Sign(delta);
+        var current = Tools.Global.setting.baudRate;
+        var index = Array.IndexOf(ShortcutBaudRates, current);
+        if (index < 0)
+        {
+            index =
+                step > 0
+                    ? Array.FindIndex(ShortcutBaudRates, rate => rate > current)
+                    : Array.FindLastIndex(ShortcutBaudRates, rate => rate < current);
+            if (index < 0)
+                index = step > 0 ? 0 : ShortcutBaudRates.Length - 1;
+        }
+        else
+        {
+            index = (index + step + ShortcutBaudRates.Length) % ShortcutBaudRates.Length;
+        }
+
+        var target = ShortcutBaudRates[index];
+        var item = BaudRates.FirstOrDefault(x => x.Value == target);
+        if (item != null)
+            SelectedBaudRate = item;
+    }
 }
