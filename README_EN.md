@@ -18,8 +18,9 @@ A serial port debugger with Lua scripting (personal refactor).
 
 - Personal learning / personal-use project: the main goal was refactoring and everyday usability.
 - **Not** an official upstream branch, and behavior may differ from the original.
-- **Verified**: x64/x86 builds, 44 unit tests, serial send/receive and log display, send history, quick-send/timers, serial settings.
+- **Verified**: x64/x86 builds, 108 unit tests, serial send/receive and log display, send history, quick-send/timers, serial settings, keyboard shortcuts, config export/import.
 - **Not fully regression-tested**: TCP/UDP/MQTT, WinUSB, serial monitor, plot, online scripts, terminal mode. Most of these are inherited from upstream and were only refactored/deduplicated here, so regressions are possible.
+- **DL/T 645-2007 tool**: framing, sending, address read, DI management and response parsing are implemented, but it has **not been tested against a real meter yet** (auto address read, exception responses, main-log -33H, etc.).
 - **Not recommended for production or critical work.** Back up your settings; verify important operations against the original version.
 - Maintenance is best-effort; issues are welcome but response time is not guaranteed.
 
@@ -29,6 +30,10 @@ A serial port debugger with Lua scripting (personal refactor).
 - Virtualized log list; log retention limit (50k entries / 32 MB payload by default; 2M chars in stream mode)
 - Send history (limit 5~200, keyboard input, one-click clear)
 - Quick-send panel (10 pages, per-item timer)
+- **DL/T 645-2007 meter tool**: frame builder, address read, write data, custom control code, DI management with import/export, main-log -33H, and "send to main send box"
+- **Keyboard shortcuts**: toggle port, focus send box, clear log, switch port, cycle common baud rates, open settings
+- **Config export / import**: back up or migrate the whole `settings.json`
+- **Multi-line log copy**: multi-select in packet mode + copy via `Ctrl+C` / context menu (with time and direction)
 - Dedicated serial-settings tab (port / baud / data bits / parity / stop bits / encoding / auto-reconnect / RTS / DTR / open-close)
 - Lua scripting via XLua (send/receive processing and standalone scripts; see [LuaApi.md](LuaApi.md))
 - Community scripts: switch between upstream (chenxuuu) and this project (Eureka12138github); project scripts are saved to the right folder (no category labels in the UI) and can be submitted via Discussions
