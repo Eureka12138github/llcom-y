@@ -429,30 +429,10 @@ public partial class Dlt645Page : Page
 
     private void SendButton_Click(object sender, RoutedEventArgs e)
     {
-        if (!TryBuildFrame(out var frame, out var operation, out var error))
+        if (!TryBuildFrame(out var frame, out _, out var error))
         {
             SetStatus(StatusText, error, true);
             return;
-        }
-
-        if (
-            operation != null
-            && (operation.IsWrite || operation.NeedsConfirmation)
-        )
-        {
-            var confirm = Tools.InputDialog.OpenDialog(
-                Localize(
-                    "Dlt645WriteConfirmPrompt",
-                    "即将发送写命令，请输入 YES 确认"
-                ),
-                "NO",
-                Localize("Dlt645SendConfirm", "发送确认")
-            );
-            if (
-                !confirm.Item1
-                || !string.Equals(confirm.Item2.Trim(), "YES", StringComparison.OrdinalIgnoreCase)
-            )
-                return;
         }
 
         if (!Tools.Global.uart.IsOpen())

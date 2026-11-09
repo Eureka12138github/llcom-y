@@ -348,7 +348,6 @@
     <system:String x:Key="Dlt645UnsupportedOperation">This operation is not implemented yet</system:String>
     <system:String x:Key="Dlt645InvalidDi">DI must be 4 bytes of hex</system:String>
     <system:String x:Key="Dlt645InvalidExtraData">Extra data is not valid hex</system:String>
-    <system:String x:Key="Dlt645WriteConfirmPrompt">About to send a write command. Type YES to confirm.</system:String>
     <system:String x:Key="Dlt645Sent">Sent</system:String>
     <system:String x:Key="Dlt645Copied">Frame copied</system:String>
     <system:String x:Key="Dlt645PreambleCount">Preamble FE</system:String>
@@ -373,5 +372,4 @@
     <system:String x:Key="CopyAllLog">Copy all</system:String>
     <system:String x:Key="CopySelectedLines">Copy selected lines</system:String>
     <system:String x:Key="SelectAllLog">Select all</system:String>
-    <system:String x:Key="Dlt645SendConfirm">Send confirmation</system:String>
 </ResourceDictionary>
