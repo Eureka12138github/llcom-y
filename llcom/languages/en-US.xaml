@@ -376,7 +376,7 @@
     <system:String x:Key="Dlt645ReadingAddress">Reading meter address…</system:String>
     <system:String x:Key="Dlt645ReadAddressNoResponse">Read failed: no valid response</system:String>
     <system:String x:Key="Dlt645Connected">Connected</system:String>
-    <system:String x:Key="Dlt645DecodeData33">Decode receive data (-33H, main log)</system:String>
+    <system:String x:Key="Dlt645DecodeData33">Main log -33H</system:String>
     <system:String x:Key="Dlt645DecodeData33Tip">Only active on the 645 tool page; complete frames get -33H and a recomputed checksum, unparsable data stays raw</system:String>
     <system:String x:Key="Dlt645DiFilter">DI filter</system:String>
     <system:String x:Key="Dlt645DiSearchTip">Search by name, DI, or category</system:String>

@@ -1520,8 +1520,8 @@
       "en-US": "Connected"
     },
     "Dlt645DecodeData33": {
-      "zh-CN": "接收数据域减 33H（主日志）",
-      "en-US": "Decode receive data (-33H, main log)"
+      "zh-CN": "主日志减 33H",
+      "en-US": "Main log -33H"
     },
     "Dlt645DecodeData33Tip": {
       "zh-CN": "仅在 645 工具页勾选时生效；完整帧会减 33H 并重算校验和，无法解析的数据原样输出",

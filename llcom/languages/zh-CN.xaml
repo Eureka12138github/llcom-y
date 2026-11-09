@@ -376,7 +376,7 @@
     <system:String x:Key="Dlt645ReadingAddress">正在读取表地址…</system:String>
     <system:String x:Key="Dlt645ReadAddressNoResponse">读取失败：没有收到有效应答</system:String>
     <system:String x:Key="Dlt645Connected">已连接</system:String>
-    <system:String x:Key="Dlt645DecodeData33">接收数据域减 33H（主日志）</system:String>
+    <system:String x:Key="Dlt645DecodeData33">主日志减 33H</system:String>
     <system:String x:Key="Dlt645DecodeData33Tip">仅在 645 工具页勾选时生效；完整帧会减 33H 并重算校验和，无法解析的数据原样输出</system:String>
     <system:String x:Key="Dlt645DiFilter">DI 筛选</system:String>
     <system:String x:Key="Dlt645DiSearchTip">按名称、DI 或分类搜索</system:String>

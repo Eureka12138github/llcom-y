@@ -197,7 +197,7 @@ public partial class Dlt645Page : Page
                 DiComboBox.Items.Add(
                     new ChoiceItem<Dlt645DataIdentifier>(
                         identifier,
-                        $"{Localize(identifier.NameKey, identifier.Name)} ({identifier.Hex})"
+                        Localize(identifier.NameKey, identifier.Name)
                     )
                 );
             }
@@ -426,7 +426,10 @@ public partial class Dlt645Page : Page
             AddressHint.Visibility = isReadAddress ? Visibility.Visible : Visibility.Collapsed;
             DiComboBox.IsEnabled = operation?.RequiresDataIdentifier == true;
             DiHexTextBox.IsEnabled = operation?.RequiresDataIdentifier == true;
-            ExtraDataTextBox.IsEnabled = operation?.IsWrite == true || isCustom;
+            var showExtra = operation?.IsWrite == true || isCustom;
+            ExtraDataLabel.Visibility = showExtra ? Visibility.Visible : Visibility.Collapsed;
+            ExtraDataTextBox.Visibility = showExtra ? Visibility.Visible : Visibility.Collapsed;
+            ExtraDataTextBox.IsEnabled = showExtra;
             ExtraDataLabel.Text = isCustom
                 ? Localize("Dlt645CustomData", "数据域（HEX）")
                 : Localize("Dlt645ExtraData", "附加数据（HEX）");
