@@ -67,15 +67,7 @@
       </Grid.RowDefinitions>
 
       <!--  表地址 / 前导 FE  -->
-      <Grid Grid.Row="0" Margin="0,0,0,6">
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="Auto" SharedSizeGroup="Dlt645RowLabel" />
-          <ColumnDefinition Width="Auto" SharedSizeGroup="Dlt645RowInput" />
-          <ColumnDefinition Width="Auto" />
-          <ColumnDefinition Width="Auto" SharedSizeGroup="Dlt645RowLabel2" />
-          <ColumnDefinition Width="Auto" />
-          <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
+      <WrapPanel Grid.Row="0" Margin="0,0,0,6" Orientation="Horizontal">
         <TextBlock
           Margin="0,0,6,0"
           Style="{StaticResource Tool.SectionLabel}"
@@ -83,10 +75,8 @@
         />
         <TextBox
           Name="AddressTextBox"
-          Grid.Column="1"
           Width="108"
           Height="28"
-          HorizontalAlignment="Left"
           VerticalContentAlignment="Center"
           FontFamily="Consolas"
           KeyDown="AddressTextBox_KeyDown"
@@ -98,7 +88,6 @@
         />
         <Button
           Name="ReadAddressButton"
-          Grid.Column="2"
           Margin="6,0,0,0"
           Click="ReadAddressButton_Click"
           Style="{StaticResource RoundStatusButton}"
@@ -107,21 +96,18 @@
           <fa:FontAwesome FontSize="13" Icon="Search" />
         </Button>
         <TextBlock
-          Grid.Column="3"
           Margin="16,0,6,0"
           Style="{StaticResource Tool.SectionLabel}"
           Text="{DynamicResource Dlt645Preamble}"
         />
         <ComboBox
           Name="PreambleComboBox"
-          Grid.Column="4"
           Width="60"
           Height="28"
           SelectionChanged="Input_SelectionChanged"
         />
         <CheckBox
           Name="DecodeDataCheckBox"
-          Grid.Column="5"
           Margin="16,0,0,0"
           VerticalAlignment="Center"
           Checked="DecodeDataCheckBox_Changed"
@@ -130,12 +116,11 @@
           ToolTip="{DynamicResource Dlt645DecodeData33Tip}"
           Unchecked="DecodeDataCheckBox_Changed"
         />
-      </Grid>
+      </WrapPanel>
 
       <TextBlock
         Name="AddressHint"
         Grid.Row="0"
-        Grid.ColumnSpan="6"
         Margin="0,34,0,0"
         Foreground="{DynamicResource Brush.Foreground.Muted}"
         Text="{DynamicResource Dlt645ReadAddressHint}"
@@ -144,14 +129,7 @@
       />
 
       <!--  操作 / DI  -->
-      <Grid Grid.Row="1" Margin="0,0,0,6">
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="Auto" SharedSizeGroup="Dlt645RowLabel" />
-          <ColumnDefinition Width="Auto" SharedSizeGroup="Dlt645RowInput" />
-          <ColumnDefinition Width="Auto" SharedSizeGroup="Dlt645RowLabel2" />
-          <ColumnDefinition Width="*" />
-          <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
+      <WrapPanel Grid.Row="1" Margin="0,0,0,6" Orientation="Horizontal">
         <TextBlock
           Margin="0,0,6,0"
           Style="{StaticResource Tool.SectionLabel}"
@@ -159,20 +137,18 @@
         />
         <ComboBox
           Name="OperationComboBox"
-          Grid.Column="1"
-          Width="140"
+          Width="130"
           Height="28"
           SelectionChanged="OperationComboBox_SelectionChanged"
         />
         <TextBlock
-          Grid.Column="2"
           Margin="16,0,6,0"
           Style="{StaticResource Tool.SectionLabel}"
           Text="{DynamicResource Dlt645DataIdentifier}"
         />
         <ComboBox
           Name="DiComboBox"
-          Grid.Column="3"
+          Width="220"
           Height="28"
           SelectionChanged="DiComboBox_SelectionChanged"
           ToolTip="{DynamicResource Dlt645DataIdentifierTip}"
@@ -188,8 +164,7 @@
         </ComboBox>
         <TextBox
           Name="DiHexTextBox"
-          Grid.Column="4"
-          Width="92"
+          Width="84"
           Height="28"
           Margin="6,0,0,0"
           VerticalContentAlignment="Center"
@@ -200,7 +175,7 @@
           TextChanged="DiHexTextBox_TextChanged"
           ToolTip="{DynamicResource Dlt645DataIdentifierHexTip}"
         />
-      </Grid>
+      </WrapPanel>
 
       <!--  DI 筛选与管理  -->
       <Grid Grid.Row="2" Margin="0,0,0,6">
@@ -219,7 +194,7 @@
         <TextBox
           Name="DiSearchTextBox"
           Grid.Column="1"
-          Width="150"
+          Width="120"
           Height="28"
           VerticalContentAlignment="Center"
           TextChanged="DiFilter_Changed"
@@ -228,7 +203,7 @@
         <ComboBox
           Name="DiCategoryComboBox"
           Grid.Column="2"
-          Width="110"
+          Width="90"
           Height="28"
           Margin="6,0,0,0"
           SelectionChanged="DiFilter_Changed"
@@ -236,7 +211,7 @@
         <Button
           Name="ManageDiButton"
           Grid.Column="4"
-          MinWidth="90"
+          MinWidth="86"
           Height="28"
           Margin="6,0,0,0"
           Click="ManageDiButton_Click"
