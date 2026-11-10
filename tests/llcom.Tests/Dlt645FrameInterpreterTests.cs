@@ -49,6 +49,22 @@ namespace llcom.Tests
         }
 
         [Fact]
+        public void CatalogOperations_AllHaveFunctionNames()
+        {
+            foreach (var operation in Dlt645Catalog.Operations)
+            {
+                Assert.True(
+                    Dlt645FrameInterpreter.TryGetFunctionName(
+                        operation.Control,
+                        out _,
+                        out _
+                    ),
+                    $"缺少功能码名称：0x{operation.Control:X2}"
+                );
+            }
+        }
+
+        [Fact]
         public void ExceptionWord_IsDecodedBitByBit()
         {
             var interpretation = Dlt645FrameInterpreter.Interpret(Build(0xD4, 0x46));

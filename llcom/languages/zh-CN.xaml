@@ -462,4 +462,15 @@
     <system:String x:Key="Dlt645OpMaxDemandReset">最大需量清零</system:String>
     <system:String x:Key="Dlt645OpMeterReset">电表清零</system:String>
     <system:String x:Key="Dlt645OpEventReset">事件清零</system:String>
+    <system:String x:Key="Dlt645WriteAddressHint">写通信地址：帧地址使用 AAAAAAAAAAAA，新地址填在数据域</system:String>
+    <system:String x:Key="Dlt645BroadcastTimeHint">广播校时：帧地址使用广播地址 999999999999</system:String>
+    <system:String x:Key="Dlt645ExtraBroadcastTime">校时数据（HEX：ss mm hh DD MM YY）</system:String>
+    <system:String x:Key="Dlt645ExtraWriteAddress">新通信地址（HEX，6 字节）</system:String>
+    <system:String x:Key="Dlt645ExtraFreeze">冻结时间（HEX：mm hh DD MM）</system:String>
+    <system:String x:Key="Dlt645ExtraRate">速率特征字（HEX）</system:String>
+    <system:String x:Key="Dlt645ExtraChangePassword">原密码+新密码（HEX，8 字节）</system:String>
+    <system:String x:Key="Dlt645ExtraReset">密码+操作者代码（HEX，8 字节）</system:String>
+    <system:String x:Key="Dlt645ExtraEventReset">密码+操作者代码+事件DI（HEX，12 字节）</system:String>
+    <system:String x:Key="Dlt645RawDataTip">按帧内顺序（低位在前）输入，组帧时不做翻转</system:String>
+    <system:String x:Key="Dlt645ExpectedDataLength">数据长度应为 {0} 字节（当前 {1}）</system:String>
 </ResourceDictionary>

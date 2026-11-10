@@ -84,8 +84,17 @@ public static class Dlt645Codec
     public const byte ControlReadData = 0x11;
     public const byte ControlReadAddress = 0x13;
     public const byte ControlWriteData = 0x14;
+    public const byte ControlBroadcastTime = 0x08;
+    public const byte ControlWriteAddress = 0x15;
+    public const byte ControlFreeze = 0x16;
+    public const byte ControlChangeBaud = 0x17;
+    public const byte ControlChangePassword = 0x18;
+    public const byte ControlMaxDemandReset = 0x19;
+    public const byte ControlMeterReset = 0x1A;
+    public const byte ControlEventReset = 0x1B;
 
     public const string WildcardAddress = "AAAAAAAAAAAA";
+    public const string BroadcastAddress = "999999999999";
 
     /// <summary>组帧：[FE...] 68 A0..A5 68 C L DATA CS 16。</summary>
     /// <param name="address">12 位表地址；支持 AA 通配（如 AAAAAAAAAAAA）。</param>

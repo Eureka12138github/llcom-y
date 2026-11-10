@@ -500,29 +500,52 @@ public partial class Dlt645Page : Page
     private void UpdateOperationState()
     {
         var operation = SelectedOperation;
-        var isReadAddress = operation?.Control == Dlt645Codec.ControlReadAddress;
-        var isCustom = operation?.Control == 0x00;
+        var control = operation?.Control ?? 0;
+        var isReadAddress = control == Dlt645Codec.ControlReadAddress;
+        var isCustom = control == 0x00;
+        var requiresDi = operation?.RequiresDataIdentifier == true;
+
+        var fixedAddress = control switch
+        {
+            Dlt645Codec.ControlReadAddress => Dlt645Codec.WildcardAddress,
+            Dlt645Codec.ControlWriteAddress => Dlt645Codec.WildcardAddress,
+            Dlt645Codec.ControlBroadcastTime => Dlt645Codec.BroadcastAddress,
+            _ => null,
+        };
 
         _updatingUi = true;
         try
         {
-            if (isReadAddress)
+            var currentAddress = (AddressTextBox.Text ?? "").Trim();
+            if (fixedAddress != null)
             {
                 if (
                     !string.Equals(
-                        AddressTextBox.Text,
+                        currentAddress,
                         Dlt645Codec.WildcardAddress,
                         StringComparison.OrdinalIgnoreCase
                     )
+                    && !string.Equals(
+                        currentAddress,
+                        Dlt645Codec.BroadcastAddress,
+                        StringComparison.Ordinal
+                    )
                 )
-                    _lastManualAddress = AddressTextBox.Text;
-                AddressTextBox.Text = Dlt645Codec.WildcardAddress;
+                    _lastManualAddress = currentAddress;
+                AddressTextBox.Text = fixedAddress;
             }
             else if (
-                string.Equals(
-                    AddressTextBox.Text,
-                    Dlt645Codec.WildcardAddress,
-                    StringComparison.OrdinalIgnoreCase
+                (
+                    string.Equals(
+                        currentAddress,
+                        Dlt645Codec.WildcardAddress,
+                        StringComparison.OrdinalIgnoreCase
+                    )
+                    || string.Equals(
+                        currentAddress,
+                        Dlt645Codec.BroadcastAddress,
+                        StringComparison.Ordinal
+                    )
                 )
                 && !string.IsNullOrEmpty(_lastManualAddress)
             )
@@ -530,17 +553,90 @@ public partial class Dlt645Page : Page
                 AddressTextBox.Text = _lastManualAddress;
             }
 
-            AddressTextBox.IsEnabled = !isReadAddress;
-            AddressHint.Visibility = isReadAddress ? Visibility.Visible : Visibility.Collapsed;
-            DiComboBox.IsEnabled = operation?.RequiresDataIdentifier == true;
-            DiHexTextBox.IsEnabled = operation?.RequiresDataIdentifier == true;
-            var showExtra = operation?.IsWrite == true || isCustom;
+            AddressTextBox.IsEnabled = fixedAddress == null;
+
+            var addressHint = control switch
+            {
+                Dlt645Codec.ControlReadAddress => Localize(
+                    "Dlt645ReadAddressHint",
+                    "将发送 AAAAAAAAAAAA 读取表地址"
+                ),
+                Dlt645Codec.ControlWriteAddress => Localize(
+                    "Dlt645WriteAddressHint",
+                    "写通信地址：帧地址使用 AAAAAAAAAAAA，新地址填在数据域"
+                ),
+                Dlt645Codec.ControlBroadcastTime => Localize(
+                    "Dlt645BroadcastTimeHint",
+                    "广播校时：帧地址使用广播地址 999999999999"
+                ),
+                _ => "",
+            };
+            AddressHint.Text = addressHint;
+            AddressHint.Visibility =
+                addressHint.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
+
+            DiComboBox.IsEnabled = requiresDi;
+            DiHexTextBox.IsEnabled = requiresDi;
+
+            var rawExtra =
+                control
+                    is Dlt645Codec.ControlBroadcastTime
+                        or Dlt645Codec.ControlWriteAddress
+                        or Dlt645Codec.ControlFreeze
+                        or Dlt645Codec.ControlChangeBaud
+                        or Dlt645Codec.ControlChangePassword
+                        or Dlt645Codec.ControlMaxDemandReset
+                        or Dlt645Codec.ControlMeterReset
+                        or Dlt645Codec.ControlEventReset;
+            var showExtra = operation?.IsWrite == true || isCustom || rawExtra;
             ExtraDataLabel.Visibility = showExtra ? Visibility.Visible : Visibility.Collapsed;
             ExtraDataTextBox.Visibility = showExtra ? Visibility.Visible : Visibility.Collapsed;
             ExtraDataTextBox.IsEnabled = showExtra;
-            ExtraDataLabel.Text = isCustom
-                ? Localize("Dlt645CustomData", "数据域（HEX）")
-                : Localize("Dlt645ExtraData", "附加数据（HEX）");
+            ExtraDataLabel.Text = control switch
+            {
+                0x00 => Localize("Dlt645CustomData", "数据域（HEX）"),
+                Dlt645Codec.ControlBroadcastTime => Localize(
+                    "Dlt645ExtraBroadcastTime",
+                    "校时数据（HEX：ss mm hh DD MM YY）"
+                ),
+                Dlt645Codec.ControlWriteAddress => Localize(
+                    "Dlt645ExtraWriteAddress",
+                    "新通信地址（HEX，6 字节）"
+                ),
+                Dlt645Codec.ControlFreeze => Localize(
+                    "Dlt645ExtraFreeze",
+                    "冻结时间（HEX：mm hh DD MM）"
+                ),
+                Dlt645Codec.ControlChangeBaud => Localize(
+                    "Dlt645ExtraRate",
+                    "速率特征字（HEX）"
+                ),
+                Dlt645Codec.ControlChangePassword => Localize(
+                    "Dlt645ExtraChangePassword",
+                    "原密码+新密码（HEX，8 字节）"
+                ),
+                Dlt645Codec.ControlMaxDemandReset
+                or Dlt645Codec.ControlMeterReset => Localize(
+                    "Dlt645ExtraReset",
+                    "密码+操作者代码（HEX，8 字节）"
+                ),
+                Dlt645Codec.ControlEventReset => Localize(
+                    "Dlt645ExtraEventReset",
+                    "密码+操作者代码+事件DI（HEX，12 字节）"
+                ),
+                _ => Localize("Dlt645ExtraData", "附加数据（HEX）"),
+            };
+            ExtraDataTextBox.ToolTip =
+                operation?.IsWrite == true
+                    ? Localize(
+                        "Dlt645ExtraDataTip",
+                        "写数据时 DI 之后的数据；按正序输入，组帧时自动整段翻转为低位先行"
+                    )
+                    : Localize(
+                        "Dlt645RawDataTip",
+                        "按帧内顺序（低位在前）输入，组帧时不做翻转"
+                    );
+
             ControlCodeLabel.Visibility = isCustom ? Visibility.Visible : Visibility.Collapsed;
             ControlCodeTextBox.Visibility = isCustom ? Visibility.Visible : Visibility.Collapsed;
             if (isCustom && string.IsNullOrWhiteSpace(ControlCodeTextBox.Text))
@@ -633,6 +729,52 @@ public partial class Dlt645Page : Page
             {
                 case Dlt645Codec.ControlReadAddress:
                     address = Dlt645Codec.WildcardAddress;
+                    break;
+
+                case Dlt645Codec.ControlBroadcastTime:
+                    address = Dlt645Codec.BroadcastAddress;
+                    if (!TryGetRawData(6, out data, out error))
+                        return false;
+                    break;
+
+                case Dlt645Codec.ControlWriteAddress:
+                    address = Dlt645Codec.WildcardAddress;
+                    if (!TryGetRawData(6, out data, out error))
+                        return false;
+                    break;
+
+                case Dlt645Codec.ControlFreeze:
+                    if (!TryGetRawData(4, out data, out error))
+                        return false;
+                    break;
+
+                case Dlt645Codec.ControlChangeBaud:
+                    if (!TryGetRawData(1, out data, out error))
+                        return false;
+                    break;
+
+                case Dlt645Codec.ControlChangePassword:
+                {
+                    if (!TryGetDataIdentifier(out var passwordDi, out error))
+                        return false;
+                    if (!TryGetRawData(8, out var passwordData, out error))
+                        return false;
+                    data = Dlt645Codec
+                        .ToLittleEndian(passwordDi)
+                        .Concat(passwordData)
+                        .ToArray();
+                    break;
+                }
+
+                case Dlt645Codec.ControlMaxDemandReset:
+                case Dlt645Codec.ControlMeterReset:
+                    if (!TryGetRawData(8, out data, out error))
+                        return false;
+                    break;
+
+                case Dlt645Codec.ControlEventReset:
+                    if (!TryGetRawData(12, out data, out error))
+                        return false;
                     break;
 
                 case Dlt645Codec.ControlReadData:
@@ -737,6 +879,30 @@ public partial class Dlt645Page : Page
         }
 
         extraData = parsed;
+        return true;
+    }
+
+    /// <summary>读取固定长度的原始数据域（按帧内顺序，不做翻转）。</summary>
+    private bool TryGetRawData(int expectedLength, out byte[] data, out string error)
+    {
+        data = Array.Empty<byte>();
+        if (!TryGetExtraData(out var parsed, out error))
+            return false;
+
+        if (parsed.Length != expectedLength)
+        {
+            error = string.Format(
+                Localize(
+                    "Dlt645ExpectedDataLength",
+                    "数据长度应为 {0} 字节（当前 {1}）"
+                ),
+                expectedLength,
+                parsed.Length
+            );
+            return false;
+        }
+
+        data = parsed;
         return true;
     }
 

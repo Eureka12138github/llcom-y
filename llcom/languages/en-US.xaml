@@ -462,4 +462,15 @@
     <system:String x:Key="Dlt645OpMaxDemandReset">Reset max demand</system:String>
     <system:String x:Key="Dlt645OpMeterReset">Reset meter</system:String>
     <system:String x:Key="Dlt645OpEventReset">Reset events</system:String>
+    <system:String x:Key="Dlt645WriteAddressHint">Write address: the frame uses AAAAAAAAAAAA; put the new address in the data field.</system:String>
+    <system:String x:Key="Dlt645BroadcastTimeHint">Broadcast time sync uses the broadcast address 999999999999.</system:String>
+    <system:String x:Key="Dlt645ExtraBroadcastTime">Time sync data (hex: ss mm hh DD MM YY)</system:String>
+    <system:String x:Key="Dlt645ExtraWriteAddress">New communication address (6-byte hex)</system:String>
+    <system:String x:Key="Dlt645ExtraFreeze">Freeze time (hex: mm hh DD MM)</system:String>
+    <system:String x:Key="Dlt645ExtraRate">Baud rate code (hex)</system:String>
+    <system:String x:Key="Dlt645ExtraChangePassword">Old + new password (8-byte hex)</system:String>
+    <system:String x:Key="Dlt645ExtraReset">Password + operator code (8-byte hex)</system:String>
+    <system:String x:Key="Dlt645ExtraEventReset">Password + operator code + event DI (12-byte hex)</system:String>
+    <system:String x:Key="Dlt645RawDataTip">Enter bytes in frame order (low byte first); no reversal is applied.</system:String>
+    <system:String x:Key="Dlt645ExpectedDataLength">Data length should be {0} bytes (currently {1}).</system:String>
 </ResourceDictionary>

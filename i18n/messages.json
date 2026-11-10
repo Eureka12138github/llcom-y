@@ -1862,6 +1862,50 @@
     "Dlt645OpEventReset": {
       "zh-CN": "事件清零",
       "en-US": "Reset events"
+    },
+    "Dlt645WriteAddressHint": {
+      "zh-CN": "写通信地址：帧地址使用 AAAAAAAAAAAA，新地址填在数据域",
+      "en-US": "Write address: the frame uses AAAAAAAAAAAA; put the new address in the data field."
+    },
+    "Dlt645BroadcastTimeHint": {
+      "zh-CN": "广播校时：帧地址使用广播地址 999999999999",
+      "en-US": "Broadcast time sync uses the broadcast address 999999999999."
+    },
+    "Dlt645ExtraBroadcastTime": {
+      "zh-CN": "校时数据（HEX：ss mm hh DD MM YY）",
+      "en-US": "Time sync data (hex: ss mm hh DD MM YY)"
+    },
+    "Dlt645ExtraWriteAddress": {
+      "zh-CN": "新通信地址（HEX，6 字节）",
+      "en-US": "New communication address (6-byte hex)"
+    },
+    "Dlt645ExtraFreeze": {
+      "zh-CN": "冻结时间（HEX：mm hh DD MM）",
+      "en-US": "Freeze time (hex: mm hh DD MM)"
+    },
+    "Dlt645ExtraRate": {
+      "zh-CN": "速率特征字（HEX）",
+      "en-US": "Baud rate code (hex)"
+    },
+    "Dlt645ExtraChangePassword": {
+      "zh-CN": "原密码+新密码（HEX，8 字节）",
+      "en-US": "Old + new password (8-byte hex)"
+    },
+    "Dlt645ExtraReset": {
+      "zh-CN": "密码+操作者代码（HEX，8 字节）",
+      "en-US": "Password + operator code (8-byte hex)"
+    },
+    "Dlt645ExtraEventReset": {
+      "zh-CN": "密码+操作者代码+事件DI（HEX，12 字节）",
+      "en-US": "Password + operator code + event DI (12-byte hex)"
+    },
+    "Dlt645RawDataTip": {
+      "zh-CN": "按帧内顺序（低位在前）输入，组帧时不做翻转",
+      "en-US": "Enter bytes in frame order (low byte first); no reversal is applied."
+    },
+    "Dlt645ExpectedDataLength": {
+      "zh-CN": "数据长度应为 {0} 字节（当前 {1}）",
+      "en-US": "Data length should be {0} bytes (currently {1})."
     }
   }
 }
