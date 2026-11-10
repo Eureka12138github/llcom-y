@@ -340,7 +340,7 @@
               Unchecked="AutoWriteInfo_Changed"
               Visibility="Collapsed"
             />
-            <WrapPanel
+            <Grid
               Name="WriteParamsPanel"
               Grid.Row="8"
               Grid.Column="1"
@@ -348,45 +348,60 @@
               Margin="0,0,0,6"
               Visibility="Collapsed"
             >
-              <StackPanel Margin="0,0,10,0" Orientation="Horizontal">
-                <TextBlock
-                  Margin="0,0,4,0"
-                  VerticalAlignment="Center"
-                  Text="{DynamicResource Dlt645Password}"
-                />
-                <TextBox
-                  Name="PasswordTextBox"
-                  Width="74"
-                  Height="28"
-                  VerticalContentAlignment="Center"
-                  DataObject.Pasting="HexTextBox_Pasting"
-                  FontFamily="Consolas"
-                  MaxLength="8"
-                  PreviewTextInput="HexTextBox_PreviewTextInput"
-                  TextChanged="WriteInfoText_Changed"
-                  ToolTip="{DynamicResource Dlt645PasswordTip}"
-                />
-              </StackPanel>
-              <StackPanel Orientation="Horizontal">
-                <TextBlock
-                  Margin="0,0,4,0"
-                  VerticalAlignment="Center"
-                  Text="{DynamicResource Dlt645OperatorCode}"
-                />
-                <TextBox
-                  Name="OperatorTextBox"
-                  Width="74"
-                  Height="28"
-                  VerticalContentAlignment="Center"
-                  DataObject.Pasting="HexTextBox_Pasting"
-                  FontFamily="Consolas"
-                  MaxLength="8"
-                  PreviewTextInput="HexTextBox_PreviewTextInput"
-                  TextChanged="WriteInfoText_Changed"
-                  ToolTip="{DynamicResource Dlt645OperatorCodeTip}"
-                />
-              </StackPanel>
-            </WrapPanel>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" MinWidth="70" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+              </Grid.RowDefinitions>
+
+              <TextBlock
+                Grid.Row="0"
+                Grid.Column="0"
+                Margin="0,0,6,6"
+                VerticalAlignment="Center"
+                Text="{DynamicResource Dlt645Password}"
+              />
+              <TextBox
+                Name="PasswordTextBox"
+                Grid.Row="0"
+                Grid.Column="1"
+                Width="74"
+                Height="28"
+                Margin="0,0,0,6"
+                VerticalContentAlignment="Center"
+                DataObject.Pasting="HexTextBox_Pasting"
+                FontFamily="Consolas"
+                MaxLength="8"
+                PreviewTextInput="HexTextBox_PreviewTextInput"
+                TextChanged="WriteInfoText_Changed"
+                ToolTip="{DynamicResource Dlt645PasswordTip}"
+              />
+
+              <TextBlock
+                Grid.Row="1"
+                Grid.Column="0"
+                Margin="0,0,6,0"
+                VerticalAlignment="Center"
+                Text="{DynamicResource Dlt645OperatorCode}"
+              />
+              <TextBox
+                Name="OperatorTextBox"
+                Grid.Row="1"
+                Grid.Column="1"
+                Width="74"
+                Height="28"
+                VerticalContentAlignment="Center"
+                DataObject.Pasting="HexTextBox_Pasting"
+                FontFamily="Consolas"
+                MaxLength="8"
+                PreviewTextInput="HexTextBox_PreviewTextInput"
+                TextChanged="WriteInfoText_Changed"
+                ToolTip="{DynamicResource Dlt645OperatorCodeTip}"
+              />
+            </Grid>
           </Grid>
 
           <TextBlock
