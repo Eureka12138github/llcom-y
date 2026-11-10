@@ -137,7 +137,7 @@ public static class Dlt645Codec
     public static byte[] BuildReadAddressRequest(int preambleFe = 3) =>
         BuildFrame(WildcardAddress, ControlReadAddress, Array.Empty<byte>(), preambleFe);
 
-    /// <summary>读数据请求（地址 + 0x11 + 4 字节 DI）。</summary>
+    /// <summary>读数据请求（地址 + 0x11 + 4 字节 DI）；DI 按显示顺序传入，组帧时转低位先行。</summary>
     public static byte[] BuildReadDataRequest(
         string address,
         byte[] dataIdentifier,
@@ -146,7 +146,12 @@ public static class Dlt645Codec
     {
         if (dataIdentifier == null || dataIdentifier.Length != 4)
             throw new ArgumentException("DI 必须是 4 字节", nameof(dataIdentifier));
-        return BuildFrame(address, ControlReadData, dataIdentifier, preambleFe);
+        return BuildFrame(
+            address,
+            ControlReadData,
+            ToLittleEndian(dataIdentifier),
+            preambleFe
+        );
     }
 
     /// <summary>解析单帧；失败时给出具体原因。</summary>
@@ -375,6 +380,17 @@ public static class Dlt645Codec
         var result = new byte[data.Length];
         for (var i = 0; i < data.Length; i++)
             result[i] = unchecked((byte)(data[i] + DataOffset));
+        return result;
+    }
+
+    /// <summary>
+    /// 645 数据域中的多字节量按低位先行传输。
+    /// 输入/显示按高位在先（如 DI 02010100），组帧前用本方法反转成线上顺序（00 01 01 02）。
+    /// </summary>
+    public static byte[] ToLittleEndian(byte[] value)
+    {
+        var result = (byte[])value.Clone();
+        Array.Reverse(result);
         return result;
     }
 

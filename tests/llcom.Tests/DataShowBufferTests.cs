@@ -42,6 +42,12 @@ namespace llcom.Tests
                 remove { }
             }
 
+            public event EventHandler UartStateChanged
+            {
+                add { }
+                remove { }
+            }
+
             public bool Rts { get; set; }
             public bool Dtr { get; set; }
 

@@ -25,6 +25,7 @@ class SerialPortService : ISerialPortService
     public event EventHandler? UartDataRecived;
     public event EventHandler? UartDataSent;
     public event EventHandler? UartDataRawSent;
+    public event EventHandler? UartStateChanged;
     private Stream? lastPortBaseStream = null;
     private bool _rts = false;
     private bool _dtr = false;
@@ -140,6 +141,7 @@ class SerialPortService : ISerialPortService
         serial.PortName = temp;
         serial.Open();
         lastPortBaseStream = serial.BaseStream;
+        UartStateChanged?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
@@ -149,6 +151,7 @@ class SerialPortService : ISerialPortService
     {
         refreshSerialDevice();
         serial.Close();
+        UartStateChanged?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>

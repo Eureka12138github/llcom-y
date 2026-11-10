@@ -32,9 +32,38 @@ namespace llcom.Tests
                 3
             );
 
+            // DI 显示为 02010100，线上低位先行：00 01 01 02，+0x33 后为 33 34 34 35
             Assert.Equal(
-                "FE FE FE 68 01 00 00 00 00 00 68 11 04 35 34 34 33 B6 16",
+                "FE FE FE 68 01 00 00 00 00 00 68 11 04 33 34 34 35 B6 16",
                 Dlt645Codec.ToHex(frame)
+            );
+        }
+
+        [Fact]
+        public void BuildReadDataRequest_MatchesRealMeterFrame_ForPhaseAVoltage()
+        {
+            var frame = Dlt645Codec.BuildReadDataRequest(
+                "000000000002",
+                Hex("02 01 01 00"),
+                3
+            );
+
+            Assert.Equal(
+                "FE FE FE 68 02 00 00 00 00 00 68 11 04 33 34 34 35 B7 16",
+                Dlt645Codec.ToHex(frame)
+            );
+        }
+
+        [Fact]
+        public void ToLittleEndian_ReversesMultiByteValue()
+        {
+            Assert.Equal(
+                new byte[] { 0x00, 0x01, 0x01, 0x02 },
+                Dlt645Codec.ToLittleEndian(Hex("02 01 01 00"))
+            );
+            Assert.Equal(
+                new byte[] { 0x02, 0x10, 0x11, 0x26 },
+                Dlt645Codec.ToLittleEndian(Hex("26 11 10 02"))
             );
         }
 

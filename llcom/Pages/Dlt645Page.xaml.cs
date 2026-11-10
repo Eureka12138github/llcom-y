@@ -52,6 +52,13 @@ public partial class Dlt645Page : Page
 
         Dlt645ReceiveOptions.IsToolActive = IsVisible;
         DecodeDataCheckBox.IsChecked = Dlt645ReceiveOptions.DecodeData;
+        Tools.Global.uart.UartStateChanged -= UartStateChanged;
+        Tools.Global.uart.UartStateChanged += UartStateChanged;
+        if (!Tools.Global.uart.IsOpen())
+            SetAddressState(
+                "Brush.Surface.Muted",
+                Localize("Dlt645ReadAddressButton", "读取表地址")
+            );
         StartSession();
         UpdateOperationState();
         RefreshPreview();
@@ -60,8 +67,19 @@ public partial class Dlt645Page : Page
     private void Page_Unloaded(object sender, RoutedEventArgs e)
     {
         Dlt645ReceiveOptions.IsToolActive = false;
+        Tools.Global.uart.UartStateChanged -= UartStateChanged;
         _session?.Dispose();
         _session = null;
+    }
+
+    /// <summary>串口关闭后把读地址按钮恢复为灰色，避免“已连接”状态残留。</summary>
+    private void UartStateChanged(object? sender, EventArgs e)
+    {
+        if (!Tools.Global.uart.IsOpen())
+            SetAddressState(
+                "Brush.Surface.Muted",
+                Localize("Dlt645ReadAddressButton", "读取表地址")
+            );
     }
 
     private void StartSession()
@@ -232,6 +250,35 @@ public partial class Dlt645Page : Page
         if (!_initialized || _updatingUi)
             return;
         RefreshDiChoices();
+
+        // 切换分类后自动展开 DI 下拉，直接挑选该类数据标识
+        if (ReferenceEquals(sender, DiCategoryComboBox))
+            OpenDiDropDown();
+    }
+
+    /// <summary>DI 筛选框按回车后再展开下拉，避免输入到一半被抢焦点。</summary>
+    private void DiSearchTextBox_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key != Key.Enter)
+            return;
+        OpenDiDropDown();
+        e.Handled = true;
+    }
+
+    /// <summary>展开 DI 下拉（内容为空时忽略）。</summary>
+    private void OpenDiDropDown()
+    {
+        // 等当前输入/选择事件处理完再展开，避免和分类下拉的关闭动作打架
+        Dispatcher.BeginInvoke(
+            new Action(() =>
+            {
+                if (DiComboBox.Items.Count == 0)
+                    return;
+                DiComboBox.Focus();
+                DiComboBox.IsDropDownOpen = true;
+            }),
+            System.Windows.Threading.DispatcherPriority.Input
+        );
     }
 
     private void ManageDiButton_Click(object sender, RoutedEventArgs e)
@@ -366,13 +413,71 @@ public partial class Dlt645Page : Page
         if (!_initialized || _updatingUi)
             return;
 
+        SyncDiSelectionFromHex();
+        RefreshPreview();
+    }
+
+    /// <summary>
+    /// 手动输入完整 8 位 DI 时自动匹配下拉项；匹配不到则清空下拉选中。
+    /// </summary>
+    private void SyncDiSelectionFromHex()
+    {
+        var text = (DiHexTextBox.Text ?? "").Trim();
+        var current = DiComboBox.SelectedItem as ChoiceItem<Dlt645DataIdentifier>;
+
+        if (text.Length == 8)
+        {
+            var match = DiComboBox
+                .Items.OfType<ChoiceItem<Dlt645DataIdentifier>>()
+                .FirstOrDefault(item =>
+                    string.Equals(item.Value.Hex, text, StringComparison.OrdinalIgnoreCase)
+                );
+
+            if (match == null)
+            {
+                var identifier = _allIdentifiers.FirstOrDefault(item =>
+                    string.Equals(item.Hex, text, StringComparison.OrdinalIgnoreCase)
+                );
+                if (identifier != null)
+                {
+                    match = new ChoiceItem<Dlt645DataIdentifier>(
+                        identifier,
+                        Localize(identifier.NameKey, identifier.Name)
+                    );
+                    _updatingUi = true;
+                    try
+                    {
+                        // 当前搜索/分类可能把它过滤掉了，临时插到最前面保证能选中
+                        DiComboBox.Items.Insert(0, match);
+                    }
+                    finally
+                    {
+                        _updatingUi = false;
+                    }
+                }
+            }
+
+            if (match != null)
+            {
+                if (!ReferenceEquals(current, match))
+                {
+                    _updatingUi = true;
+                    try
+                    {
+                        DiComboBox.SelectedItem = match;
+                    }
+                    finally
+                    {
+                        _updatingUi = false;
+                    }
+                }
+                return;
+            }
+        }
+
         if (
-            DiComboBox.SelectedItem is ChoiceItem<Dlt645DataIdentifier> item
-            && !string.Equals(
-                DiHexTextBox.Text.Trim(),
-                item.Value.Hex,
-                StringComparison.OrdinalIgnoreCase
-            )
+            current != null
+            && !string.Equals(text, current.Value.Hex, StringComparison.OrdinalIgnoreCase)
         )
         {
             _updatingUi = true;
@@ -385,7 +490,6 @@ public partial class Dlt645Page : Page
                 _updatingUi = false;
             }
         }
-        RefreshPreview();
     }
 
     /// <summary>切换操作时同步地址/DI/附加数据的可用状态。</summary>
@@ -521,7 +625,8 @@ public partial class Dlt645Page : Page
                 case Dlt645Codec.ControlReadData:
                     if (!TryGetDataIdentifier(out var readDi, out error))
                         return false;
-                    data = readDi;
+                    // DI 显示为高位在先（02010100），线上按低位先行（00 01 01 02）
+                    data = Dlt645Codec.ToLittleEndian(readDi);
                     break;
 
                 case Dlt645Codec.ControlWriteData:
@@ -529,7 +634,7 @@ public partial class Dlt645Page : Page
                         return false;
                     if (!TryGetExtraData(out var extraData, out error))
                         return false;
-                    data = Concat(writeDi, extraData);
+                    data = Concat(Dlt645Codec.ToLittleEndian(writeDi), extraData);
                     break;
 
                 default:

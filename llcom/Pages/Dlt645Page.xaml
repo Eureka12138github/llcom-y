@@ -167,10 +167,68 @@
               Margin="0,0,6,6"
               VerticalAlignment="Center"
               Style="{StaticResource Tool.SectionLabel}"
-              Text="{DynamicResource Dlt645DataIdentifier}"
+              Text="{DynamicResource Dlt645DiFilter}"
             />
             <Grid
               Grid.Row="3"
+              Grid.Column="1"
+              Grid.ColumnSpan="2"
+              Margin="0,0,0,6"
+            >
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <Grid>
+                <TextBox
+                  Name="DiSearchTextBox"
+                  Height="28"
+                  Padding="26,0,4,0"
+                  VerticalContentAlignment="Center"
+                  KeyDown="DiSearchTextBox_KeyDown"
+                  TextChanged="DiFilter_Changed"
+                  ToolTip="{DynamicResource Dlt645DiSearchTip}"
+                />
+                <fa:FontAwesome
+                  Margin="7,0,0,0"
+                  HorizontalAlignment="Left"
+                  VerticalAlignment="Center"
+                  FontSize="12"
+                  Foreground="{DynamicResource Brush.Foreground.Muted}"
+                  Icon="Search"
+                  IsHitTestVisible="False"
+                />
+              </Grid>
+              <ComboBox
+                Name="DiCategoryComboBox"
+                Grid.Column="1"
+                Width="90"
+                Height="28"
+                Margin="6,0,0,0"
+                SelectionChanged="DiFilter_Changed"
+              />
+              <Button
+                Name="ManageDiButton"
+                Grid.Column="2"
+                Margin="6,0,0,0"
+                Click="ManageDiButton_Click"
+                Style="{StaticResource IconButton}"
+                ToolTip="{DynamicResource Dlt645ManageDi}"
+              >
+                <fa:FontAwesome FontSize="14" Icon="Cog" />
+              </Button>
+            </Grid>
+
+            <TextBlock
+              Grid.Row="4"
+              Margin="0,0,6,6"
+              VerticalAlignment="Center"
+              Style="{StaticResource Tool.SectionLabel}"
+              Text="{DynamicResource Dlt645DataIdentifier}"
+            />
+            <Grid
+              Grid.Row="4"
               Grid.Column="1"
               Grid.ColumnSpan="2"
               Margin="0,0,0,6"
@@ -182,6 +240,7 @@
               <ComboBox
                 Name="DiComboBox"
                 Height="28"
+                MaxDropDownHeight="240"
                 SelectionChanged="DiComboBox_SelectionChanged"
                 ToolTip="{DynamicResource Dlt645DataIdentifierTip}"
               >
@@ -208,51 +267,6 @@
                 TextChanged="DiHexTextBox_TextChanged"
                 ToolTip="{DynamicResource Dlt645DataIdentifierHexTip}"
               />
-            </Grid>
-
-            <TextBlock
-              Grid.Row="4"
-              Margin="0,0,6,6"
-              VerticalAlignment="Center"
-              Style="{StaticResource Tool.SectionLabel}"
-              Text="{DynamicResource Dlt645DiFilter}"
-            />
-            <Grid
-              Grid.Row="4"
-              Grid.Column="1"
-              Grid.ColumnSpan="2"
-              Margin="0,0,0,6"
-            >
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-              </Grid.ColumnDefinitions>
-              <TextBox
-                Name="DiSearchTextBox"
-                Height="28"
-                VerticalContentAlignment="Center"
-                TextChanged="DiFilter_Changed"
-                ToolTip="{DynamicResource Dlt645DiSearchTip}"
-              />
-              <ComboBox
-                Name="DiCategoryComboBox"
-                Grid.Column="1"
-                Width="90"
-                Height="28"
-                Margin="6,0,0,0"
-                SelectionChanged="DiFilter_Changed"
-              />
-              <Button
-                Name="ManageDiButton"
-                Grid.Column="2"
-                Margin="6,0,0,0"
-                Click="ManageDiButton_Click"
-                Style="{StaticResource IconButton}"
-                ToolTip="{DynamicResource Dlt645ManageDi}"
-              >
-                <fa:FontAwesome FontSize="14" Icon="Cog" />
-              </Button>
             </Grid>
 
             <TextBlock

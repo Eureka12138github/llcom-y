@@ -26,6 +26,9 @@ interface ISerialPortService
     /// <summary>发送原始数据事件（sender 为 byte[]，未经 Lua 处理的原始数据）</summary>
     event EventHandler? UartDataRawSent;
 
+    /// <summary>串口打开 / 关闭状态变化事件（打开成功、关闭后触发）</summary>
+    event EventHandler? UartStateChanged;
+
     /// <summary>RTS 信号线状态</summary>
     bool Rts { get; set; }
 
