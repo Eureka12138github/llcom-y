@@ -81,6 +81,7 @@
               <RowDefinition Height="Auto" />
               <RowDefinition Height="Auto" />
               <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <TextBlock
@@ -326,57 +327,65 @@
               Text="{DynamicResource Dlt645WriteParams}"
               Visibility="Collapsed"
             />
+            <CheckBox
+              Name="AutoWriteInfoCheckBox"
+              Grid.Row="7"
+              Grid.Column="1"
+              Grid.ColumnSpan="2"
+              Margin="0,0,0,6"
+              VerticalAlignment="Center"
+              Checked="AutoWriteInfo_Changed"
+              Content="{DynamicResource Dlt645AutoWriteInfo}"
+              ToolTip="{DynamicResource Dlt645AutoWriteInfoTip}"
+              Unchecked="AutoWriteInfo_Changed"
+              Visibility="Collapsed"
+            />
             <WrapPanel
               Name="WriteParamsPanel"
-              Grid.Row="7"
+              Grid.Row="8"
               Grid.Column="1"
               Grid.ColumnSpan="2"
               Margin="0,0,0,6"
               Visibility="Collapsed"
             >
-              <CheckBox
-                Name="AutoWriteInfoCheckBox"
-                Margin="0,0,10,0"
-                VerticalAlignment="Center"
-                Checked="AutoWriteInfo_Changed"
-                Content="{DynamicResource Dlt645AutoWriteInfo}"
-                ToolTip="{DynamicResource Dlt645AutoWriteInfoTip}"
-                Unchecked="AutoWriteInfo_Changed"
-              />
-              <TextBlock
-                Margin="0,0,4,0"
-                VerticalAlignment="Center"
-                Text="{DynamicResource Dlt645Password}"
-              />
-              <TextBox
-                Name="PasswordTextBox"
-                Width="74"
-                Height="28"
-                VerticalContentAlignment="Center"
-                DataObject.Pasting="HexTextBox_Pasting"
-                FontFamily="Consolas"
-                MaxLength="8"
-                PreviewTextInput="HexTextBox_PreviewTextInput"
-                TextChanged="WriteInfoText_Changed"
-                ToolTip="{DynamicResource Dlt645PasswordTip}"
-              />
-              <TextBlock
-                Margin="10,0,4,0"
-                VerticalAlignment="Center"
-                Text="{DynamicResource Dlt645OperatorCode}"
-              />
-              <TextBox
-                Name="OperatorTextBox"
-                Width="74"
-                Height="28"
-                VerticalContentAlignment="Center"
-                DataObject.Pasting="HexTextBox_Pasting"
-                FontFamily="Consolas"
-                MaxLength="8"
-                PreviewTextInput="HexTextBox_PreviewTextInput"
-                TextChanged="WriteInfoText_Changed"
-                ToolTip="{DynamicResource Dlt645OperatorCodeTip}"
-              />
+              <StackPanel Margin="0,0,10,0" Orientation="Horizontal">
+                <TextBlock
+                  Margin="0,0,4,0"
+                  VerticalAlignment="Center"
+                  Text="{DynamicResource Dlt645Password}"
+                />
+                <TextBox
+                  Name="PasswordTextBox"
+                  Width="74"
+                  Height="28"
+                  VerticalContentAlignment="Center"
+                  DataObject.Pasting="HexTextBox_Pasting"
+                  FontFamily="Consolas"
+                  MaxLength="8"
+                  PreviewTextInput="HexTextBox_PreviewTextInput"
+                  TextChanged="WriteInfoText_Changed"
+                  ToolTip="{DynamicResource Dlt645PasswordTip}"
+                />
+              </StackPanel>
+              <StackPanel Orientation="Horizontal">
+                <TextBlock
+                  Margin="0,0,4,0"
+                  VerticalAlignment="Center"
+                  Text="{DynamicResource Dlt645OperatorCode}"
+                />
+                <TextBox
+                  Name="OperatorTextBox"
+                  Width="74"
+                  Height="28"
+                  VerticalContentAlignment="Center"
+                  DataObject.Pasting="HexTextBox_Pasting"
+                  FontFamily="Consolas"
+                  MaxLength="8"
+                  PreviewTextInput="HexTextBox_PreviewTextInput"
+                  TextChanged="WriteInfoText_Changed"
+                  ToolTip="{DynamicResource Dlt645OperatorCodeTip}"
+                />
+              </StackPanel>
             </WrapPanel>
           </Grid>
 

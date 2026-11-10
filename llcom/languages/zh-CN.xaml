@@ -340,10 +340,10 @@
     <system:String x:Key="Dlt645AutoWriteInfo">自动添加密码/操作者代码</system:String>
     <system:String x:Key="Dlt645AutoWriteInfoTip">勾选后按 645 标准在 DI 后插入密码和操作者代码；取消则只发 DI + 附加数据</system:String>
     <system:String x:Key="Dlt645Password">密码</system:String>
-    <system:String x:Key="Dlt645PasswordTip">4 字节 HEX（高位在前），组帧时自动低位先行</system:String>
+    <system:String x:Key="Dlt645PasswordTip">4 字节 HEX：PA 密码权限 + P0P1P2 密码（高位在前），组帧时低位先行；密码由厂家/供电局设定，需按现场表填写</system:String>
     <system:String x:Key="Dlt645OperatorCode">操作者代码</system:String>
     <system:String x:Key="Dlt645OperatorCodeTip">4 字节 HEX（高位在前），组帧时自动低位先行</system:String>
-    <system:String x:Key="Dlt645InvalidPassword">密码必须是 4 字节 HEX</system:String>
+    <system:String x:Key="Dlt645InvalidPassword">密码未填写或不是 4 字节 HEX；请填写密码，或取消勾选「自动添加密码/操作者代码」</system:String>
     <system:String x:Key="Dlt645InvalidOperator">操作者代码必须是 4 字节 HEX</system:String>
     <system:String x:Key="Dlt645Send">发送</system:String>
     <system:String x:Key="Dlt645Copy">复制</system:String>

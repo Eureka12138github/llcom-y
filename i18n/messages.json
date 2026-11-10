@@ -1376,8 +1376,8 @@
       "en-US": "Password"
     },
     "Dlt645PasswordTip": {
-      "zh-CN": "4 字节 HEX（高位在前），组帧时自动低位先行",
-      "en-US": "4-byte hex (high byte first); reversed to low-byte-first when framing."
+      "zh-CN": "4 字节 HEX：PA 密码权限 + P0P1P2 密码（高位在前），组帧时低位先行；密码由厂家/供电局设定，需按现场表填写",
+      "en-US": "4-byte hex: PA permission + P0P1P2 password (high byte first), reversed when framing. The password is set by the meter vendor/utility; fill in the value for your meter."
     },
     "Dlt645OperatorCode": {
       "zh-CN": "操作者代码",
@@ -1388,8 +1388,8 @@
       "en-US": "4-byte hex (high byte first); reversed to low-byte-first when framing."
     },
     "Dlt645InvalidPassword": {
-      "zh-CN": "密码必须是 4 字节 HEX",
-      "en-US": "Password must be 4 bytes of hex."
+      "zh-CN": "密码未填写或不是 4 字节 HEX；请填写密码，或取消勾选「自动添加密码/操作者代码」",
+      "en-US": "Password is empty or not 4 bytes of hex. Enter the password, or uncheck \"Auto-add password & operator code\"."
     },
     "Dlt645InvalidOperator": {
       "zh-CN": "操作者代码必须是 4 字节 HEX",

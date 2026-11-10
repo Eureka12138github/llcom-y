@@ -550,6 +550,8 @@ public partial class Dlt645Page : Page
             var showWriteParams = operation?.IsWrite == true;
             WriteParamsLabel.Visibility =
                 showWriteParams ? Visibility.Visible : Visibility.Collapsed;
+            AutoWriteInfoCheckBox.Visibility =
+                showWriteParams ? Visibility.Visible : Visibility.Collapsed;
             WriteParamsPanel.Visibility =
                 showWriteParams ? Visibility.Visible : Visibility.Collapsed;
         }
