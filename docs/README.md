@@ -21,6 +21,7 @@
 | [15-new-requirements-plan.md](15-new-requirements-plan.md) | 新需求 #18–#26 的难度评估、推荐顺序、实现方案与待确认项（部分已实现） | 规划下一批改动时 |
 | [16-dlt645-tool-design.md](16-dlt645-tool-design.md) | DL/T 645-2007 组帧工具设计：向导/高级、自动读表地址、应答解析、协议与分支计划（**Phase 0–1 已实现**） | 后续做 645 组帧时 |
 | [17-improvements-plan.md](17-improvements-plan.md) | 2026-11-09 新增 14 条改进建议的可行性、优先级、依赖与批次计划 | 评估/排期改进项时 |
+| [18-dlt645-frame-parser.md](18-dlt645-frame-parser.md) | DL/T 645-2007 帧解析基础：帧结构、控制码、ERR、常用功能数据域与 80% 实现范围 | 做 645 帧解析前先读 |
 | [improvements/](improvements/README.md) | 使用过程中的需求、体验问题与优化方向记录（持续收集） | 记录/评估改进建议 |
 
 ## 分支说明
