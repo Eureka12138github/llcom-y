@@ -1356,8 +1356,44 @@
       "en-US": "Extra data (HEX)"
     },
     "Dlt645ExtraDataTip": {
-      "zh-CN": "写操作时 DI 之后的数据，按表手册填写",
-      "en-US": "Data after DI for write operations; follow the meter manual"
+      "zh-CN": "写数据时 DI 之后的数据；按正序输入，组帧时自动整段翻转为低位先行",
+      "en-US": "Data after the DI when writing. Enter it high-byte-first; it is reversed to low-byte-first when framing."
+    },
+    "Dlt645WriteParams": {
+      "zh-CN": "写参数",
+      "en-US": "Write options"
+    },
+    "Dlt645AutoWriteInfo": {
+      "zh-CN": "自动添加密码/操作者代码",
+      "en-US": "Auto-add password & operator code"
+    },
+    "Dlt645AutoWriteInfoTip": {
+      "zh-CN": "勾选后按 645 标准在 DI 后插入密码和操作者代码；取消则只发 DI + 附加数据",
+      "en-US": "When checked, insert the password and operator code after the DI (per DL/T 645); when unchecked, send only DI + extra data."
+    },
+    "Dlt645Password": {
+      "zh-CN": "密码",
+      "en-US": "Password"
+    },
+    "Dlt645PasswordTip": {
+      "zh-CN": "4 字节 HEX（高位在前），组帧时自动低位先行",
+      "en-US": "4-byte hex (high byte first); reversed to low-byte-first when framing."
+    },
+    "Dlt645OperatorCode": {
+      "zh-CN": "操作者代码",
+      "en-US": "Operator code"
+    },
+    "Dlt645OperatorCodeTip": {
+      "zh-CN": "4 字节 HEX（高位在前），组帧时自动低位先行",
+      "en-US": "4-byte hex (high byte first); reversed to low-byte-first when framing."
+    },
+    "Dlt645InvalidPassword": {
+      "zh-CN": "密码必须是 4 字节 HEX",
+      "en-US": "Password must be 4 bytes of hex."
+    },
+    "Dlt645InvalidOperator": {
+      "zh-CN": "操作者代码必须是 4 字节 HEX",
+      "en-US": "Operator code must be 4 bytes of hex."
     },
     "Dlt645Send": {
       "zh-CN": "发送",

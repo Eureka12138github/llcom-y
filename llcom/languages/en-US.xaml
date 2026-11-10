@@ -335,7 +335,16 @@
     <system:String x:Key="Dlt645DataIdentifier">Data identifier (DI)</system:String>
     <system:String x:Key="Dlt645DataIdentifierTip">Select a preset, or enter 4 bytes of hex on the right</system:String>
     <system:String x:Key="Dlt645ExtraData">Extra data (HEX)</system:String>
-    <system:String x:Key="Dlt645ExtraDataTip">Data after DI for write operations; follow the meter manual</system:String>
+    <system:String x:Key="Dlt645ExtraDataTip">Data after the DI when writing. Enter it high-byte-first; it is reversed to low-byte-first when framing.</system:String>
+    <system:String x:Key="Dlt645WriteParams">Write options</system:String>
+    <system:String x:Key="Dlt645AutoWriteInfo">Auto-add password &amp; operator code</system:String>
+    <system:String x:Key="Dlt645AutoWriteInfoTip">When checked, insert the password and operator code after the DI (per DL/T 645); when unchecked, send only DI + extra data.</system:String>
+    <system:String x:Key="Dlt645Password">Password</system:String>
+    <system:String x:Key="Dlt645PasswordTip">4-byte hex (high byte first); reversed to low-byte-first when framing.</system:String>
+    <system:String x:Key="Dlt645OperatorCode">Operator code</system:String>
+    <system:String x:Key="Dlt645OperatorCodeTip">4-byte hex (high byte first); reversed to low-byte-first when framing.</system:String>
+    <system:String x:Key="Dlt645InvalidPassword">Password must be 4 bytes of hex.</system:String>
+    <system:String x:Key="Dlt645InvalidOperator">Operator code must be 4 bytes of hex.</system:String>
     <system:String x:Key="Dlt645Send">Send</system:String>
     <system:String x:Key="Dlt645Copy">Copy</system:String>
     <system:String x:Key="Dlt645FramePreview">Frame preview</system:String>

@@ -68,6 +68,49 @@ namespace llcom.Tests
         }
 
         [Fact]
+        public void BuildWriteDataDomain_ReversesDiPasswordOperatorAndData()
+        {
+            var data = Dlt645Codec.BuildWriteDataDomain(
+                Hex("02 01 01 00"),
+                Hex("00 00 00 02"),
+                Hex("12 34 56 78"),
+                Hex("30 01")
+            );
+
+            // DI、密码、操作者代码、附加数据都按低位先行
+            Assert.Equal("00 01 01 02 02 00 00 00 78 56 34 12 01 30", Dlt645Codec.ToHex(data));
+        }
+
+        [Fact]
+        public void BuildWriteDataDomain_WithoutInfo_KeepsOnlyDiAndData()
+        {
+            var data = Dlt645Codec.BuildWriteDataDomain(
+                Hex("02 01 01 00"),
+                null,
+                null,
+                Hex("26 11 10 02")
+            );
+
+            Assert.Equal("00 01 01 02 02 10 11 26", Dlt645Codec.ToHex(data));
+        }
+
+        [Fact]
+        public void BuildWriteDataDomain_RejectsHalfPasswordPair()
+        {
+            Assert.Throws<ArgumentException>(() =>
+                Dlt645Codec.BuildWriteDataDomain(Hex("02 01 01 00"), Hex("00 00 00 02"))
+            );
+            Assert.Throws<ArgumentException>(() =>
+                Dlt645Codec.BuildWriteDataDomain(
+                    Hex("02 01 01 00"),
+                    Hex("00 00 00 02"),
+                    null,
+                    null
+                )
+            );
+        }
+
+        [Fact]
         public void ParseReadAddressResponse_ReturnsActualAddress()
         {
             var frame = Dlt645Codec.Parse(

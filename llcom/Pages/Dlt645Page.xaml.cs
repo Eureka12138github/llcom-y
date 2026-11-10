@@ -42,6 +42,10 @@ public partial class Dlt645Page : Page
         if (!_initialized)
         {
             PopulateChoices();
+            // 写参数回填（在 _initialized 置位前完成，避免触发保存/预览）
+            AutoWriteInfoCheckBox.IsChecked = Tools.Global.setting.dlt645WriteAutoInfo;
+            PasswordTextBox.Text = Tools.Global.setting.dlt645WritePassword;
+            OperatorTextBox.Text = Tools.Global.setting.dlt645WriteOperator;
             _initialized = true;
             LoadIdentifiers();
             SetAddressState(
@@ -541,6 +545,13 @@ public partial class Dlt645Page : Page
             ControlCodeTextBox.Visibility = isCustom ? Visibility.Visible : Visibility.Collapsed;
             if (isCustom && string.IsNullOrWhiteSpace(ControlCodeTextBox.Text))
                 ControlCodeTextBox.Text = "11";
+
+            // 密码/操作者代码只对写数据（0x14）生效；自定义操作保持完全自由
+            var showWriteParams = operation?.IsWrite == true;
+            WriteParamsLabel.Visibility =
+                showWriteParams ? Visibility.Visible : Visibility.Collapsed;
+            WriteParamsPanel.Visibility =
+                showWriteParams ? Visibility.Visible : Visibility.Collapsed;
         }
         finally
         {
@@ -630,12 +641,29 @@ public partial class Dlt645Page : Page
                     break;
 
                 case Dlt645Codec.ControlWriteData:
+                {
                     if (!TryGetDataIdentifier(out var writeDi, out error))
                         return false;
                     if (!TryGetExtraData(out var extraData, out error))
                         return false;
-                    data = Concat(Dlt645Codec.ToLittleEndian(writeDi), extraData);
+
+                    byte[]? password = null;
+                    byte[]? operatorCode = null;
+                    if (AutoWriteInfoCheckBox.IsChecked == true)
+                    {
+                        if (!TryGetWriteInfo(out var pw, out var op, out error))
+                            return false;
+                        password = pw;
+                        operatorCode = op;
+                    }
+                    data = Dlt645Codec.BuildWriteDataDomain(
+                        writeDi,
+                        password,
+                        operatorCode,
+                        extraData
+                    );
                     break;
+                }
 
                 default:
                     error = Localize("Dlt645UnsupportedOperation", "当前操作暂未实现");
@@ -709,6 +737,59 @@ public partial class Dlt645Page : Page
         extraData = parsed;
         return true;
     }
+
+    /// <summary>读取写数据的密码 / 操作者代码（4 字节 HEX，高位在前）。</summary>
+    private bool TryGetWriteInfo(
+        out byte[] password,
+        out byte[] operatorCode,
+        out string error
+    )
+    {
+        password = Array.Empty<byte>();
+        operatorCode = Array.Empty<byte>();
+        error = "";
+
+        if (
+            !Dlt645Codec.TryParseHex(PasswordTextBox.Text, out var passwordBytes, out _)
+            || passwordBytes.Length != 4
+        )
+        {
+            error = Localize("Dlt645InvalidPassword", "密码必须是 4 字节 HEX");
+            return false;
+        }
+
+        if (
+            !Dlt645Codec.TryParseHex(OperatorTextBox.Text, out var operatorBytes, out _)
+            || operatorBytes.Length != 4
+        )
+        {
+            error = Localize("Dlt645InvalidOperator", "操作者代码必须是 4 字节 HEX");
+            return false;
+        }
+
+        password = passwordBytes;
+        operatorCode = operatorBytes;
+        return true;
+    }
+
+    /// <summary>写参数变化：写回设置并刷新预览。</summary>
+    private void PersistWriteInfo()
+    {
+        if (!_initialized)
+            return;
+
+        var setting = Tools.Global.setting;
+        setting.dlt645WriteAutoInfo = AutoWriteInfoCheckBox.IsChecked == true;
+        setting.dlt645WritePassword = (PasswordTextBox.Text ?? "").Trim();
+        setting.dlt645WriteOperator = (OperatorTextBox.Text ?? "").Trim();
+        RefreshPreview();
+    }
+
+    private void AutoWriteInfo_Changed(object sender, RoutedEventArgs e) =>
+        PersistWriteInfo();
+
+    private void WriteInfoText_Changed(object sender, TextChangedEventArgs e) =>
+        PersistWriteInfo();
 
     private async void ReadAddressButton_Click(object sender, RoutedEventArgs e)
     {
@@ -966,14 +1047,6 @@ public partial class Dlt645Page : Page
 
     private string Localize(string key, string fallback) =>
         TryFindResource(key) as string ?? fallback;
-
-    private static byte[] Concat(byte[] first, byte[] second)
-    {
-        var result = new byte[first.Length + second.Length];
-        Array.Copy(first, 0, result, 0, first.Length);
-        Array.Copy(second, 0, result, first.Length, second.Length);
-        return result;
-    }
 
     private void SetStatus(TextBlock target, string text, bool isError)
     {

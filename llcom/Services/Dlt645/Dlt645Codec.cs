@@ -394,6 +394,42 @@ public static class Dlt645Codec
         return result;
     }
 
+    /// <summary>
+    /// 组装写数据（0x14）的数据域：DI + [密码 + 操作者代码] + 附加数据。
+    /// 入参均按界面显示顺序（高位在先），返回线上顺序（各段低位先行）。
+    /// </summary>
+    /// <param name="dataIdentifier">4 字节 DI（显示顺序）</param>
+    /// <param name="password">4 字节密码；为 null 表示不添加</param>
+    /// <param name="operatorCode">4 字节操作者代码；与密码同时提供或同时为 null</param>
+    /// <param name="extraData">附加数据（显示顺序，整段反转）；为空表示不添加</param>
+    public static byte[] BuildWriteDataDomain(
+        byte[] dataIdentifier,
+        byte[]? password = null,
+        byte[]? operatorCode = null,
+        byte[]? extraData = null
+    )
+    {
+        if (dataIdentifier == null || dataIdentifier.Length != 4)
+            throw new ArgumentException("DI 必须是 4 字节", nameof(dataIdentifier));
+        if ((password == null) != (operatorCode == null))
+            throw new ArgumentException("密码与操作者代码必须同时提供", nameof(password));
+        if (password != null && password.Length != 4)
+            throw new ArgumentException("密码必须是 4 字节", nameof(password));
+        if (operatorCode != null && operatorCode.Length != 4)
+            throw new ArgumentException("操作者代码必须是 4 字节", nameof(operatorCode));
+
+        var result = new List<byte>(dataIdentifier.Length + 8 + (extraData?.Length ?? 0));
+        result.AddRange(ToLittleEndian(dataIdentifier));
+        if (password != null && operatorCode != null)
+        {
+            result.AddRange(ToLittleEndian(password));
+            result.AddRange(ToLittleEndian(operatorCode));
+        }
+        if (extraData != null && extraData.Length > 0)
+            result.AddRange(ToLittleEndian(extraData));
+        return result.ToArray();
+    }
+
     /// <summary>数据域逐字节 -0x33（模 256）。</summary>
     public static byte[] DecodeData(byte[] data)
     {
