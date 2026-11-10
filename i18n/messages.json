@@ -1722,6 +1722,146 @@
     "Dlt645SentToMainBox": {
       "zh-CN": "已填入主发送框",
       "en-US": "Copied to main send box"
+    },
+    "Dlt645RawFrame": {
+      "zh-CN": "原始帧",
+      "en-US": "Raw frame"
+    },
+    "Dlt645UnknownFunction": {
+      "zh-CN": "未知功能",
+      "en-US": "Unknown function"
+    },
+    "Dlt645AddressWildcard": {
+      "zh-CN": "（AA 通配）",
+      "en-US": " (AA wildcard)"
+    },
+    "Dlt645AddressBroadcast": {
+      "zh-CN": "（广播地址）",
+      "en-US": " (broadcast address)"
+    },
+    "Dlt645ErrorWord": {
+      "zh-CN": "错误信息字",
+      "en-US": "Error word"
+    },
+    "Dlt645ErrorBits": {
+      "zh-CN": "错误",
+      "en-US": "Error"
+    },
+    "Dlt645Warning": {
+      "zh-CN": "警告",
+      "en-US": "Warning"
+    },
+    "Dlt645ErrOther": {
+      "zh-CN": "其他错误",
+      "en-US": "Other error"
+    },
+    "Dlt645ErrNoData": {
+      "zh-CN": "无请求数据",
+      "en-US": "No requested data"
+    },
+    "Dlt645ErrPassword": {
+      "zh-CN": "密码错 / 未授权",
+      "en-US": "Wrong password / unauthorized"
+    },
+    "Dlt645ErrBaud": {
+      "zh-CN": "通信速率不能更改",
+      "en-US": "Baud rate cannot be changed"
+    },
+    "Dlt645ErrYearZones": {
+      "zh-CN": "年时区数超",
+      "en-US": "Too many year time zones"
+    },
+    "Dlt645ErrDayPeriods": {
+      "zh-CN": "日时段数超",
+      "en-US": "Too many day periods"
+    },
+    "Dlt645ErrRateCount": {
+      "zh-CN": "费率数超",
+      "en-US": "Too many rate counts"
+    },
+    "Dlt645WarnReadLength": {
+      "zh-CN": "读数据长度超过 200 字节",
+      "en-US": "Read data length exceeds 200 bytes"
+    },
+    "Dlt645WarnWriteLength": {
+      "zh-CN": "写数据长度超过 50 字节",
+      "en-US": "Write data length exceeds 50 bytes"
+    },
+    "Dlt645WarnExceptionLength": {
+      "zh-CN": "异常应答的数据域应为 1 字节 ERR",
+      "en-US": "Exception response data should be a 1-byte ERR"
+    },
+    "Dlt645WarnFieldTooShort": {
+      "zh-CN": "数据域长度不足，无法拆分字段",
+      "en-US": "Data field is too short to split"
+    },
+    "Dlt645Data": {
+      "zh-CN": "数据",
+      "en-US": "Data"
+    },
+    "Dlt645PasswordPermission": {
+      "zh-CN": "密码权限",
+      "en-US": "Password permission"
+    },
+    "Dlt645NewAddress": {
+      "zh-CN": "新通信地址",
+      "en-US": "New communication address"
+    },
+    "Dlt645Time": {
+      "zh-CN": "校时时间",
+      "en-US": "Time sync value"
+    },
+    "Dlt645FreezeTime": {
+      "zh-CN": "冻结时间",
+      "en-US": "Freeze time"
+    },
+    "Dlt645RateChar": {
+      "zh-CN": "速率特征字",
+      "en-US": "Baud rate code"
+    },
+    "Dlt645OldPassword": {
+      "zh-CN": "原密码",
+      "en-US": "Old password"
+    },
+    "Dlt645NewPassword": {
+      "zh-CN": "新密码",
+      "en-US": "New password"
+    },
+    "Dlt645EventDi": {
+      "zh-CN": "事件数据标识",
+      "en-US": "Event data identifier"
+    },
+    "Dlt645OpBroadcastTime": {
+      "zh-CN": "广播校时",
+      "en-US": "Broadcast time sync"
+    },
+    "Dlt645OpWriteAddress": {
+      "zh-CN": "写通信地址",
+      "en-US": "Write communication address"
+    },
+    "Dlt645OpFreeze": {
+      "zh-CN": "冻结命令",
+      "en-US": "Freeze command"
+    },
+    "Dlt645OpChangeBaud": {
+      "zh-CN": "更改通信速率",
+      "en-US": "Change baud rate"
+    },
+    "Dlt645OpChangePassword": {
+      "zh-CN": "修改密码",
+      "en-US": "Change password"
+    },
+    "Dlt645OpMaxDemandReset": {
+      "zh-CN": "最大需量清零",
+      "en-US": "Reset max demand"
+    },
+    "Dlt645OpMeterReset": {
+      "zh-CN": "电表清零",
+      "en-US": "Reset meter"
+    },
+    "Dlt645OpEventReset": {
+      "zh-CN": "事件清零",
+      "en-US": "Reset events"
     }
   }
 }

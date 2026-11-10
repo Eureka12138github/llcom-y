@@ -966,13 +966,25 @@ public partial class Dlt645Page : Page
             return;
         }
 
+        var interpretation = Dlt645FrameInterpreter.Interpret(frame);
+        var functionName = interpretation.IsKnownFunction
+            ? Localize(interpretation.FunctionNameKey, interpretation.FunctionNameFallback)
+            : Localize("Dlt645UnknownFunction", "未知功能");
+
         var builder = new StringBuilder();
+        builder.AppendLine(
+            $"{Localize("Dlt645RawFrame", "原始帧")}: {Dlt645Codec.ToHex(frame.Raw)}"
+        );
         builder.AppendLine($"{Localize("Dlt645PreambleCount", "前导 FE")}: {frame.PreambleCount}");
-        builder.AppendLine($"{Localize("Dlt645Address", "地址")}: {frame.Address}");
+        builder.AppendLine(
+            $"{Localize("Dlt645Address", "地址")}: {frame.Address}{AddressSuffix(frame.Address)}"
+        );
         builder.AppendLine(
             $"{Localize("Dlt645Control", "控制码")}: 0x{frame.Control:X2} ({ControlDescription(frame)})"
         );
-        builder.AppendLine($"{Localize("Dlt645FunctionCode", "功能码")}: 0x{frame.FunctionCode:X2}");
+        builder.AppendLine(
+            $"{Localize("Dlt645FunctionCode", "功能码")}: 0x{frame.FunctionCode:X2} {functionName}"
+        );
         builder.AppendLine($"{Localize("Dlt645Length", "数据长度")}: {frame.Data.Length}");
         builder.AppendLine(
             $"{Localize("Dlt645DataDomain", "数据域")}: {Dlt645Codec.ToHex(frame.Data)}"
@@ -983,6 +995,29 @@ public partial class Dlt645Page : Page
         builder.AppendLine(
             $"{Localize("Dlt645Checksum", "校验和")}: 0x{frame.Checksum:X2} ({Localize("Dlt645ChecksumOk", "校验通过")})"
         );
+
+        if (interpretation.ErrorWord is byte errorWord)
+            builder.AppendLine(
+                $"{Localize("Dlt645ErrorWord", "错误信息字")}: 0x{errorWord:X2}"
+            );
+        foreach (var bit in interpretation.ErrorBits)
+            builder.AppendLine(
+                $"{Localize("Dlt645ErrorBits", "错误")}: {Localize(bit.Key, bit.Fallback)}"
+            );
+
+        foreach (var field in interpretation.Fields)
+        {
+            var value =
+                field.NameKey == "Dlt645DataIdentifier"
+                    ? DescribeDi(field.Value)
+                    : field.Value;
+            builder.AppendLine($"{Localize(field.NameKey, field.NameFallback)}: {value}");
+        }
+
+        foreach (var warning in interpretation.Warnings)
+            builder.AppendLine(
+                $"{Localize("Dlt645Warning", "警告")}: {Localize(warning.Key, warning.Fallback)}"
+            );
 
         if (frame.FunctionCode == Dlt645Codec.ControlReadAddress && frame.IsResponse && !frame.IsException)
         {
@@ -1028,13 +1063,13 @@ public partial class Dlt645Page : Page
 
     private string ControlDescription(Dlt645Frame frame)
     {
-        var function = frame.FunctionCode switch
-        {
-            Dlt645Codec.ControlReadData => Localize("Dlt645OpReadData", "读数据"),
-            Dlt645Codec.ControlReadAddress => Localize("Dlt645OpReadAddress", "读通信地址"),
-            Dlt645Codec.ControlWriteData => Localize("Dlt645OpWriteData", "写数据"),
-            _ => $"0x{frame.FunctionCode:X2}",
-        };
+        var function = Dlt645FrameInterpreter.TryGetFunctionName(
+            frame.FunctionCode,
+            out var nameKey,
+            out var fallback
+        )
+            ? Localize(nameKey, fallback)
+            : Localize("Dlt645UnknownFunction", "未知功能");
         var direction = frame.IsResponse
             ? Localize("Dlt645Response", "应答")
             : Localize("Dlt645Request", "请求");
@@ -1042,6 +1077,27 @@ public partial class Dlt645Page : Page
             ? $" / {Localize("Dlt645Exception", "异常")}"
             : "";
         return $"{function} / {direction}{exception}";
+    }
+
+    /// <summary>地址是广播地址或含 AA 通配时，附加说明。</summary>
+    private string AddressSuffix(string address)
+    {
+        if (string.Equals(address, "999999999999", StringComparison.Ordinal))
+            return Localize("Dlt645AddressBroadcast", "（广播地址）");
+        if (address.IndexOf("AA", StringComparison.OrdinalIgnoreCase) >= 0)
+            return Localize("Dlt645AddressWildcard", "（AA 通配）");
+        return "";
+    }
+
+    /// <summary>DI 显示值后追加目录中的名称（找不到则只显示 HEX）。</summary>
+    private string DescribeDi(string displayHex)
+    {
+        var match = _allIdentifiers.FirstOrDefault(item =>
+            string.Equals(item.Hex, displayHex, StringComparison.OrdinalIgnoreCase)
+        );
+        return match == null
+            ? displayHex
+            : $"{displayHex}（{Localize(match.NameKey, match.Name)}）";
     }
 
     private string OperationName(Dlt645Operation? operation) =>

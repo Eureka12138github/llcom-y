@@ -146,7 +146,7 @@
       <TextBlock Style="{StaticResource HelpLi}" Text="    - 数据标识按低位先行组帧：界面按 02010100 输入和显示，帧里对应 33 34 34 35（减 33H 前的原始顺序为 00 01 01 02）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="    - 勾选「主日志减 33H」后，仅在 645 工具页处于激活状态时生效：完整 645 帧的数据域减 33H 并重算 CS 后，作为一条记录写入左侧主日志；非 645 数据、半帧、坏帧原样显示。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="    - 帧预览下方三个操作：发送（直接从 645 页发送）、复制（复制帧文本）、发送到主发送框（把帧填入底部发送框，复用发送记录与定时发送；会自动切到 Hex 发送且不追加换行）。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="    - 「应答解析」：粘贴完整应答帧解析地址 / 控制码 / 数据域 / 校验和；读地址应答解析后可一键把地址填回表地址。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="    - 「应答解析」：粘贴完整帧后显示原始帧、地址（AA 通配/广播标注）、控制码方向、功能码名称、长度、数据域、校验和；异常应答按位解释错误信息字 ERR；常用功能会拆分字段（读数据 DI+数据、写数据 DI+密码权限+密码+操作者代码+数据、读/写地址、广播校时、冻结、改速率/改密码/清零），DI 会附带目录中的名称；读地址应答解析后可一键把地址填回表地址。" />
 
       <TextBlock Style="{StaticResource HelpH}" Text="十、更多设置（点日志区右下角 ☰ 直接打开，鼠标移入才显示）" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 分三个页签：「更多串口设置」（打开日志文件夹、显示发送、数据字号、窗口置顶、串口超时（分包）、按空行分包、终端模式、日志保留上限、流式保留字符数）、「发送脚本」、「接收脚本」。" />
