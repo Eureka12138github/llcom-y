@@ -31,7 +31,7 @@ A serial port debugger with Lua scripting (personal refactor).
 - Send history (limit 5~200, keyboard input, one-click clear)
 - Quick-send panel (10 pages, per-item timer)
 - **DL/T 645-2007 meter tool**: frame builder, address read, write data, custom control code, DI management with import/export, main-log -33H, and "send to main send box"
-- **Keyboard shortcuts**: toggle port, focus send box, clear log, switch port, cycle common baud rates, open settings
+- **Keyboard shortcuts**: toggle port, focus send box, clear log, switch port, cycle common baud rates, open settings, `Alt+M` minimize, `F11` maximize/restore
 - **Config export / import**: back up or migrate the whole `settings.json`
 - **Multi-line log copy**: multi-select in packet mode + copy via `Ctrl+C` / context menu (with time and direction)
 - **Dark mode**: OpenCode-style dark palette, switch instantly with the 🌙/☀ icon at the bottom-right of the log area
@@ -50,9 +50,9 @@ A serial port debugger with Lua scripting (personal refactor).
 
 ## Download
 
-- **Latest version**: `v2.0.0.4` (2026-11-10, includes the auto-update extraction fix)
+- **Latest version**: `v2.0.0.5` (2026-11-11, adds dark mode and fixes 645, serial and layout issues)
 - **Portable exe**: [GitHub Releases](https://github.com/Eureka12138github/llcom-y/releases) (`llcom-y-x64.zip` / `llcom-y-x86.zip`)
-- **Auto-update**: x64 uses `autoUpdate.xml`, x86 uses `autoUpdate-x86.xml`; versions `2.0.0.3` and older require a one-time manual update to `2.0.0.4`, after which auto-update works normally
+- **Auto-update**: x64 uses `autoUpdate.xml`, x86 uses `autoUpdate-x86.xml`; versions `2.0.0.3` and older require a one-time manual update to `2.0.0.4` or newer, after which auto-update works normally
 - **CI snapshot**: [GitHub Actions](https://github.com/Eureka12138github/llcom-y/actions)
 - **Upstream official version**: [chenxuuu/llcom](https://github.com/chenxuuu/llcom)
 
