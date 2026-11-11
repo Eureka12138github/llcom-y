@@ -36,6 +36,7 @@ using llcom.LuaEnv;
 using llcom.Model;
 using llcom.Services;
 using llcom.Services.Dlt645;
+using llcom.Services.Tooling;
 using llcom.Tools;
 using llcom.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
@@ -66,6 +67,17 @@ public partial class MainWindow : Window
     /// <summary>串口控制区 ViewModel（Step 5 MVVM 化）</summary>
     private readonly MainViewModel _vm;
 
+    /// <summary>工具页：注册表定义 → 启动时创建的 Frame（保持原来的“全部 Navigate + 切可见性”行为）。</summary>
+    private readonly List<(ToolDefinition Definition, Frame Frame)> _toolPages = new();
+
+    /// <summary>工具下拉的置顶/上次选中状态。</summary>
+    private readonly ToolIndexStore _toolIndexStore;
+
+    private ToolIndex _toolIndex = new();
+
+    /// <summary>重建工具下拉时抑制 SelectionChanged 写盘。</summary>
+    private bool _suppressToolSelectionSave;
+
     /// <summary>Lua 编辑器折叠刷新定时器（原为后台线程 + 忙等，改 UI 定时器）</summary>
     private readonly System.Windows.Threading.DispatcherTimer _foldingTimer =
         new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
@@ -94,6 +106,8 @@ public partial class MainWindow : Window
         InitializeComponent();
         _vm = vm;
         DataContext = _vm;
+        _toolIndexStore = ToolIndexStore.CreateDefault();
+        InitializeToolSelector();
         _dlt645FlushTimer.Tick += (_, _) => FlushDlt645Log();
         if (
             Tools.Global.setting.windowHeight != 0
@@ -251,56 +265,8 @@ public partial class MainWindow : Window
                         //关于页面
                         aboutFrame.Navigate(new Uri("Pages/AboutPage.xaml", UriKind.Relative));
 
-                        //tcp测试页面
-                        tcpTestFrame.Navigate(new Uri("Pages/tcpTest.xaml", UriKind.Relative));
-
-                        //tcp客户端页面
-                        tcpClientFrame.Navigate(
-                            new Uri("Pages/SocketClientPage.xaml", UriKind.Relative)
-                        );
-
-                        //本地tcp服务器
-                        tcpLocalTestFrame.Navigate(
-                            new Uri("Pages/TcpLocalPage.xaml", UriKind.Relative)
-                        );
-
-                        //本地udp服务器
-                        udpLocalTestFrame.Navigate(
-                            new Uri("Pages/UdpLocalPage.xaml", UriKind.Relative)
-                        );
-
-                        //mqtt测试页面
-                        MqttTestFrame.Navigate(
-                            new Uri("Pages/MqttTestPage.xaml", UriKind.Relative)
-                        );
-
-                        //编码转换工具页面
-                        EncodingToolsFrame.Navigate(
-                            new Uri("Pages/ConvertPage.xaml", UriKind.Relative)
-                        );
-
-                        //乱码修复
-                        EncodingFixFrame.Navigate(
-                            new Uri("Pages/EncodingFixPage.xaml", UriKind.Relative)
-                        );
-
-                        //串口监听
-                        SerialMonitorFrame.Navigate(
-                            new Uri("Pages/SerialMonitorPage.xaml", UriKind.Relative)
-                        );
-
-                        //绘制曲线
-                        PlotFrame.Navigate(new Uri("Pages/PlotPage.xaml", UriKind.Relative));
-
-                        //WinUSB
-                        WinUSBFrame.Navigate(new Uri("Pages/WinUSBPage.xaml", UriKind.Relative));
-
-                        //DL/T 645-2007
-                        Dlt645ToolFrame.Navigate(
-                            new Uri("Pages/Dlt645Page.xaml", UriKind.Relative)
-                        );
-                        //工具选择器默认选中第一个（触发一次可见性切换）
-                        ToolSelector.SelectedIndex = 0;
+                        //小工具页面：按 ToolCatalog 统一导航（保持原来的“启动时全部 Navigate”行为）
+                        NavigateToolPages();
 
                         this.Title +=
                             $" - {System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString()}";
@@ -572,28 +538,128 @@ public partial class MainWindow : Window
         helpWindow.Activate();
     }
 
-    /// <summary>工具选择器：切换到对应工具页（各页在 Window_Loaded 已 Navigate 一次，这里只切可见性）。</summary>
-    private void ToolSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    /// <summary>初始化工具注册表：创建页面 Frame、构建下拉项、恢复上次选中。</summary>
+    private void InitializeToolSelector()
     {
-        if (tcpTestFrame == null)
-            return; // 初始化早期可能尚未就绪
-        var frames = new[]
+        _toolIndex = _toolIndexStore.Load();
+
+        foreach (var tool in ToolCatalog.Tools)
         {
-            tcpTestFrame,
-            tcpLocalTestFrame,
-            udpLocalTestFrame,
-            tcpClientFrame,
-            EncodingToolsFrame,
-            MqttTestFrame,
-            EncodingFixFrame,
-            SerialMonitorFrame,
-            PlotFrame,
-            WinUSBFrame,
-            Dlt645ToolFrame,
-        };
-        int index = ToolSelector.SelectedIndex;
-        for (int i = 0; i < frames.Length; i++)
-            frames[i].Visibility = i == index ? Visibility.Visible : Visibility.Collapsed;
+            var frame = new Frame
+            {
+                NavigationUIVisibility = NavigationUIVisibility.Hidden,
+                Visibility = Visibility.Collapsed,
+            };
+            ToolPageHost.Children.Add(frame);
+            _toolPages.Add((tool, frame));
+        }
+
+        RebuildToolSelector(_toolIndex.LastSelected);
+    }
+
+    /// <summary>启动时一次性导航所有工具页（保持原有生命周期，避免懒加载改变页面行为）。</summary>
+    private void NavigateToolPages()
+    {
+        foreach (var (tool, frame) in _toolPages)
+        {
+            if (frame.Content == null)
+                frame.Navigate(new Uri(tool.PageUri, UriKind.Relative));
+        }
+    }
+
+    /// <summary>当前下拉选中的工具。</summary>
+    private ToolDefinition? CurrentTool =>
+        (ToolSelector.SelectedItem as ComboBoxItem)?.Tag as ToolDefinition;
+
+    /// <summary>置顶优先，其余保持注册表顺序（OrderBy 是稳定排序）。</summary>
+    private IEnumerable<ToolDefinition> OrderedTools() =>
+        ToolCatalog.Tools.OrderBy(tool =>
+            _toolIndex.Favorites.Any(id =>
+                string.Equals(id, tool.Id, StringComparison.OrdinalIgnoreCase)
+            )
+                ? 0
+                : 1
+        );
+
+    /// <summary>按当前置顶状态重建下拉，并恢复选中项（重建期间不写 lastSelected）。</summary>
+    private void RebuildToolSelector(string? selectId = null)
+    {
+        var targetId = selectId ?? CurrentTool?.Id ?? _toolIndex.LastSelected;
+        _suppressToolSelectionSave = true;
+        try
+        {
+            ToolSelector.Items.Clear();
+            foreach (var tool in OrderedTools())
+            {
+                var item = new ComboBoxItem { Tag = tool };
+                if (!string.IsNullOrEmpty(tool.TitleKey))
+                    item.SetResourceReference(ContentControl.ContentProperty, tool.TitleKey);
+                else
+                    item.Content = tool.FallbackTitle;
+                ToolSelector.Items.Add(item);
+                if (string.Equals(tool.Id, targetId, StringComparison.OrdinalIgnoreCase))
+                    ToolSelector.SelectedItem = item;
+            }
+            if (ToolSelector.SelectedItem == null && ToolSelector.Items.Count > 0)
+                ToolSelector.SelectedIndex = 0;
+        }
+        finally
+        {
+            _suppressToolSelectionSave = false;
+        }
+        ApplyToolSelection();
+    }
+
+    /// <summary>工具选择器：切换到对应工具页（各页在 Window_Loaded 已 Navigate 一次，这里只切可见性）。</summary>
+    private void ToolSelector_SelectionChanged(object sender, SelectionChangedEventArgs e) =>
+        ApplyToolSelection();
+
+    private void ApplyToolSelection()
+    {
+        var selected = CurrentTool;
+        foreach (var (tool, frame) in _toolPages)
+        {
+            frame.Visibility = ReferenceEquals(tool, selected)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+
+        UpdatePinButton(selected);
+
+        if (_suppressToolSelectionSave || selected == null)
+            return;
+        if (!string.Equals(_toolIndex.LastSelected, selected.Id, StringComparison.OrdinalIgnoreCase))
+        {
+            _toolIndex.LastSelected = selected.Id;
+            _toolIndexStore.Save(_toolIndex);
+        }
+    }
+
+    private void UpdatePinButton(ToolDefinition? tool)
+    {
+        var pinned =
+            tool != null
+            && _toolIndex.Favorites.Any(id =>
+                string.Equals(id, tool.Id, StringComparison.OrdinalIgnoreCase)
+            );
+        PinToolButton.IsChecked = pinned;
+        PinToolButton.IsEnabled = tool != null;
+    }
+
+    private void PinToolButton_Click(object sender, RoutedEventArgs e)
+    {
+        var tool = CurrentTool;
+        if (tool == null)
+            return;
+
+        var removed = _toolIndex.Favorites.RemoveAll(id =>
+            string.Equals(id, tool.Id, StringComparison.OrdinalIgnoreCase)
+        );
+        if (removed == 0)
+            _toolIndex.Favorites.Add(tool.Id);
+
+        _toolIndexStore.Save(_toolIndex);
+        RebuildToolSelector(tool.Id);
     }
 
     private void ApiDocumentButton_Click(object sender, RoutedEventArgs e)

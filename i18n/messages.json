@@ -886,6 +886,14 @@
       "zh-CN": "小工具",
       "en-US": "Tools"
     },
+    "ToolPin": {
+      "zh-CN": "置顶当前工具",
+      "en-US": "Pin current tool"
+    },
+    "ToolUnpin": {
+      "zh-CN": "取消置顶",
+      "en-US": "Unpin current tool"
+    },
     "EncodingToolsTab": {
       "zh-CN": "编码转换工具",
       "en-US": "Encoding Converter"

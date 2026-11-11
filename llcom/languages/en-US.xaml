@@ -223,6 +223,8 @@
     <system:String x:Key="ShowSymbolIconTip">Replace invisible characters (UTF-8 only)</system:String>
     <system:String x:Key="DisableLogIconTip">Stop / resume log printing</system:String>
     <system:String x:Key="ToolsTab">Tools</system:String>
+    <system:String x:Key="ToolPin">Pin current tool</system:String>
+    <system:String x:Key="ToolUnpin">Unpin current tool</system:String>
     <system:String x:Key="EncodingToolsTab">Encoding Converter</system:String>
     <system:String x:Key="EncodingToolsJobs">Jobs</system:String>
     <system:String x:Key="EncodingToolsAddJob">Add a job</system:String>

@@ -223,6 +223,8 @@
     <system:String x:Key="ShowSymbolIconTip">替换不可见字符（仅支持 UTF-8 编码）</system:String>
     <system:String x:Key="DisableLogIconTip">停止打印 / 继续打印日志</system:String>
     <system:String x:Key="ToolsTab">小工具</system:String>
+    <system:String x:Key="ToolPin">置顶当前工具</system:String>
+    <system:String x:Key="ToolUnpin">取消置顶</system:String>
     <system:String x:Key="EncodingToolsTab">编码转换工具</system:String>
     <system:String x:Key="EncodingToolsJobs">转换任务</system:String>
     <system:String x:Key="EncodingToolsAddJob">添加任务</system:String>
