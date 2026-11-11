@@ -220,7 +220,12 @@ public static class Dlt645FrameInterpreter
             FormatDi(0, data)
         );
         if (data.Length > 4)
-            AddField(result, "Dlt645Data", "数据", HexSlice(data, 4, data.Length - 4));
+            AddField(
+                result,
+                "Dlt645Data",
+                "数据",
+                HexSliceReversed(data, 4, data.Length - 4)
+            );
     }
 
     private static void InterpretWriteData(byte[] data, Dlt645FrameInterpretation result)
@@ -406,6 +411,14 @@ public static class Dlt645FrameInterpreter
         var buffer = new byte[length];
         Array.Copy(data, start, buffer, 0, length);
         return buffer;
+    }
+
+    /// <summary>取一段字节并按高位在前输出（645 数据域为低字节在前，便于阅读时翻转）。</summary>
+    private static string HexSliceReversed(byte[] data, int start, int length)
+    {
+        var buffer = HexSliceBytes(data, start, length);
+        Array.Reverse(buffer);
+        return Dlt645Codec.ToHex(buffer);
     }
 
     /// <summary>广播校时：数据域 ss mm hh DD MM YY（低字节在前）。</summary>

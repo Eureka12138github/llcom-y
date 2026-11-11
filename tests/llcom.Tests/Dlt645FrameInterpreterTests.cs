@@ -106,7 +106,7 @@ namespace llcom.Tests
             );
             Assert.Contains(
                 interpretation.Fields,
-                field => field.NameKey == "Dlt645Data" && field.Value == "34 12"
+                field => field.NameKey == "Dlt645Data" && field.Value == "12 34"
             );
         }
 
@@ -135,7 +135,7 @@ namespace llcom.Tests
             Assert.Contains(
                 interpretation.Fields,
                 field =>
-                    field.NameKey == "Dlt645Data" && field.Value == "03 11 11 26"
+                    field.NameKey == "Dlt645Data" && field.Value == "26 11 11 03"
             );
         }
 
