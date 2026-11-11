@@ -456,15 +456,33 @@ public partial class MainWindow : Window
 
     /// <summary>
     /// 主窗口快捷键（预览阶段处理，焦点在输入框里也能生效）：
+    /// Alt+M 最小化；F11 最大化 / 还原；
     /// Ctrl+↑/↓ 切换串口，Ctrl+←/→ 切换常用波特率。
     /// 运行脚本页的代码编辑器保留 Ctrl+←/→ 的按词移动光标。
     /// </summary>
     private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
     {
+        // Alt+字母在 WPF 里 e.Key 是 Key.System，真实按键在 SystemKey
+        var key = e.Key == Key.System ? e.SystemKey : e.Key;
+
+        if (key == Key.F11)
+        {
+            ToggleMaximizeRestore();
+            e.Handled = true;
+            return;
+        }
+
+        if (key == Key.M && Keyboard.Modifiers == ModifierKeys.Alt)
+        {
+            WindowState = WindowState.Minimized;
+            e.Handled = true;
+            return;
+        }
+
         if (Keyboard.Modifiers != ModifierKeys.Control)
             return;
 
-        switch (e.Key)
+        switch (key)
         {
             case Key.Up:
                 _vm.SelectPreviousPort();
@@ -487,6 +505,13 @@ public partial class MainWindow : Window
                 e.Handled = true;
                 break;
         }
+    }
+
+    /// <summary>F11：在最大化和还原之间切换（“全屏显示”）。</summary>
+    private void ToggleMaximizeRestore()
+    {
+        WindowState =
+            WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
     }
 
     /// <summary>
@@ -694,24 +719,10 @@ public partial class MainWindow : Window
         _vm.LuaEditor.OnAutoSave();
     }
 
-    /// <summary>窗口切换后台自动保存；点击程序外部时自动最小化。</summary>
+    /// <summary>窗口切换后台自动保存</summary>
     private void Window_Deactivated(object sender, EventArgs e)
     {
         _vm.LuaEditor.OnAutoSave();
-
-        // 本程序自己的对话框（设置、帮助、文件选择、消息框）获得焦点时不最小化，
-        // 只有焦点真正到了其他进程才最小化。
-        Dispatcher.BeginInvoke(
-            new Action(() =>
-            {
-                if (WindowState == WindowState.Minimized)
-                    return;
-                if (Tools.Win32.IsForegroundWindowInCurrentProcess())
-                    return;
-                WindowState = WindowState.Minimized;
-            }),
-            System.Windows.Threading.DispatcherPriority.Background
-        );
     }
 
     /// <summary>刷新窗口标题里的语言（版本号保留）。</summary>

@@ -45,7 +45,7 @@
 
   <Window.InputBindings>
     <KeyBinding Key="Return" Command="{Binding SendCommand}" Gesture="Ctrl+Return" />
-    <!--  固定快捷键：Ctrl+O 开关串口 / Ctrl+L 聚焦发送框 / Ctrl+K 清空日志 / Ctrl+Shift+S 打开设置 / Ctrl+↑↓ 切换串口 / Ctrl+←→ 切换波特率  -->
+    <!--  固定快捷键：Ctrl+O 开关串口 / Ctrl+L 聚焦发送框 / Ctrl+K 清空日志 / Ctrl+Shift+S 打开设置 / Ctrl+↑↓ 切换串口 / Ctrl+←→ 切换波特率 / Alt+M 最小化 / F11 最大化还原  -->
     <KeyBinding
       Key="O"
       Command="{Binding OpenClosePortCommand}"

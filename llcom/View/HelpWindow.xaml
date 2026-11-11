@@ -57,6 +57,8 @@
       <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+↑ / Ctrl+↓：切换上一个 / 下一个串口（串口已打开时列表锁定，不能切换）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+← / Ctrl+→：在常用波特率之间切换：1200 / 2400 / 4800 / 9600 / 19200 / 38400 / 57600 / 115200。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+Shift+S：打开「更多设置」窗口。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· Alt+M：最小化窗口。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· F11：最大化 / 还原窗口（全屏显示）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+Enter：发送发送框内容（可在「发送选项」里改为 Enter 发送）。" />
       <TextBlock Style="{StaticResource HelpP}" Text="说明：快捷键只在主窗口获得焦点时生效；打开使用说明 / 更多设置等弹窗时不起作用。终端模式开启且焦点在日志区时，Ctrl+A~Z 会优先作为控制字符发送（例如 Ctrl+O 发送 0x0F），此时请先关闭终端模式再使用快捷键。运行脚本页的代码编辑器里，Ctrl+←/→ 仍用于按词移动光标。" />
 
@@ -193,6 +195,8 @@
         <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+Up / Ctrl+Down: previous / next serial port (locked while the port is open)." />
         <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+Left / Ctrl+Right: cycle common baud rates: 1200 / 2400 / 4800 / 9600 / 19200 / 38400 / 57600 / 115200." />
         <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+Shift+S: open More settings." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Alt+M: minimize the window." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· F11: maximize / restore the window (fullscreen)." />
         <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+Enter: send the send-box content (can be changed to Enter in Send options)." />
         <TextBlock Style="{StaticResource HelpP}" Text="Shortcuts work only while the main window is focused. When terminal mode is on and the log area has focus, Ctrl+A..Z are sent as control characters first." />
 
