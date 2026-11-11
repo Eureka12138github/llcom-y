@@ -1126,7 +1126,14 @@ public partial class Dlt645Page : Page
             return;
         }
 
-        if (!Dlt645Codec.TryParse(bytes, out var frame, out var parseError) || frame == null)
+        // 帧解析的换算方式跟随「主日志减 33H」选项：
+        // 勾选时主日志里的帧已经减过 33H，这里不再重复减；未勾选时按标准 +33H 编码换算。
+        var decodeData = !Dlt645ReceiveOptions.DecodeData;
+
+        if (
+            !Dlt645Codec.TryParse(bytes, out var frame, out var parseError, decodeData)
+            || frame == null
+        )
         {
             SetStatus(ParseStatusText, parseError, true);
             return;
@@ -1152,6 +1159,14 @@ public partial class Dlt645Page : Page
             $"{Localize("Dlt645FunctionCode", "功能码")}: 0x{frame.FunctionCode:X2} {functionName}"
         );
         builder.AppendLine($"{Localize("Dlt645Length", "数据长度")}: {frame.Data.Length}");
+        builder.AppendLine(
+            $"{Localize("Dlt645ParseDataMode", "数据换算")}: "
+                + (
+                    decodeData
+                        ? Localize("Dlt645ParseModeEncoded", "输入未减 33H，已按 +33H 换算")
+                        : Localize("Dlt645ParseModeDecoded", "输入已减 33H，不再重复换算")
+                )
+        );
         builder.AppendLine(
             $"{Localize("Dlt645DataDomain", "数据域")}: {Dlt645Codec.ToHex(frame.Data)}"
         );

@@ -512,6 +512,7 @@
               Height="30"
               Click="ParseButton_Click"
               Content="{DynamicResource Dlt645Parse}"
+              ToolTip="{DynamicResource Dlt645ParseDecodeTip}"
             />
             <Button
               Name="UseAddressButton"

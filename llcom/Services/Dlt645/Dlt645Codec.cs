@@ -164,7 +164,19 @@ public static class Dlt645Codec
     }
 
     /// <summary>解析单帧；失败时给出具体原因。</summary>
-    public static bool TryParse(byte[]? frame, out Dlt645Frame? result, out string error)
+    /// <param name="frame">完整帧字节（含 FE 前导）。</param>
+    /// <param name="result">解析结果。</param>
+    /// <param name="error">失败原因。</param>
+    /// <param name="decodeData">
+    /// true = 数据域按标准 +33H 编码处理，<see cref="Dlt645Frame.Data"/> 返回减 33H 后的值；
+    /// false = 输入数据已经是减 33H 后的值（例如页面勾选「主日志减 33H」后复制出来的帧），不再重复换算。
+    /// </param>
+    public static bool TryParse(
+        byte[]? frame,
+        out Dlt645Frame? result,
+        out string error,
+        bool decodeData = true
+    )
     {
         result = null;
         error = "";
@@ -248,7 +260,7 @@ public static class Dlt645Codec
             addressBytes,
             frame[controlIndex],
             encodedData,
-            DecodeData(encodedData),
+            decodeData ? DecodeData(encodedData) : (byte[])encodedData.Clone(),
             frame[checksumIndex]
         );
         return true;

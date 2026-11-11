@@ -1419,6 +1419,22 @@
       "zh-CN": "解析",
       "en-US": "Parse"
     },
+    "Dlt645ParseDataMode": {
+      "zh-CN": "数据换算",
+      "en-US": "Data conversion"
+    },
+    "Dlt645ParseModeEncoded": {
+      "zh-CN": "输入未减 33H，已按 +33H 换算",
+      "en-US": "Input was not reduced by 33H; converted as +33H"
+    },
+    "Dlt645ParseModeDecoded": {
+      "zh-CN": "输入已减 33H，不再重复换算",
+      "en-US": "Input already has 33H removed; no further conversion"
+    },
+    "Dlt645ParseDecodeTip": {
+      "zh-CN": "解析换算跟随「主日志减 33H」选项：\n勾选时，粘贴的帧应已减 33H，这里不再重复换算；\n若粘贴的是未减 33H 的原始帧，请先取消勾选再解析。",
+      "en-US": "Conversion follows the 'Main log -33H' option:\nwhen checked, pasted frames are expected to already have 33H removed;\nuncheck it before parsing raw frames that still carry the +33H offset."
+    },
     "Dlt645UseParsedAddress": {
       "zh-CN": "填入表地址",
       "en-US": "Use parsed address"

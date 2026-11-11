@@ -351,6 +351,10 @@
     <system:String x:Key="Dlt645ParseResponse">Response parsing</system:String>
     <system:String x:Key="Dlt645PasteFrame">Paste a full frame (HEX)</system:String>
     <system:String x:Key="Dlt645Parse">Parse</system:String>
+    <system:String x:Key="Dlt645ParseDataMode">Data conversion</system:String>
+    <system:String x:Key="Dlt645ParseModeEncoded">Input was not reduced by 33H; converted as +33H</system:String>
+    <system:String x:Key="Dlt645ParseModeDecoded">Input already has 33H removed; no further conversion</system:String>
+    <system:String x:Key="Dlt645ParseDecodeTip">Conversion follows the 'Main log -33H' option:&#10;when checked, pasted frames are expected to already have 33H removed;&#10;uncheck it before parsing raw frames that still carry the +33H offset.</system:String>
     <system:String x:Key="Dlt645UseParsedAddress">Use parsed address</system:String>
     <system:String x:Key="Dlt645OpReadData">Read data</system:String>
     <system:String x:Key="Dlt645OpReadAddress">Read address</system:String>

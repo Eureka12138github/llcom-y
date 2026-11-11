@@ -11,6 +11,12 @@ namespace llcom.Tests
                 Dlt645Codec.BuildFrame("000000000001", control, data, 0)
             );
 
+        private static byte[] Hex(string text)
+        {
+            Assert.True(Dlt645Codec.TryParseHex(text, out var bytes, out var error), error);
+            return bytes;
+        }
+
         [Theory]
         [InlineData(0x08, "Dlt645OpBroadcastTime", "广播校时")]
         [InlineData(0x11, "Dlt645OpReadData", "读数据")]
@@ -101,6 +107,35 @@ namespace llcom.Tests
             Assert.Contains(
                 interpretation.Fields,
                 field => field.NameKey == "Dlt645Data" && field.Value == "34 12"
+            );
+        }
+
+        [Fact]
+        public void ParseWithoutDecode_KeepsAlreadyReducedData()
+        {
+            // 主日志勾选「减33H」后复制出来的帧：数据域已经是减 33H 的结果，
+            // 解析时不应再减一次（否则 DI 会变成 D1CDCECE）。
+            var raw = Hex(
+                "FE FE FE FE 68 02 00 00 00 00 00 68 91 08 01 01 00 04 03 11 11 26 BC 16"
+            );
+
+            Assert.True(
+                Dlt645Codec.TryParse(raw, out var frame, out var error, decodeData: false),
+                error
+            );
+            Assert.NotNull(frame);
+            Assert.Equal("01 01 00 04 03 11 11 26", Dlt645Codec.ToHex(frame!.Data));
+
+            var interpretation = Dlt645FrameInterpreter.Interpret(frame);
+            Assert.Contains(
+                interpretation.Fields,
+                field =>
+                    field.NameKey == "Dlt645DataIdentifier" && field.Value == "04000101"
+            );
+            Assert.Contains(
+                interpretation.Fields,
+                field =>
+                    field.NameKey == "Dlt645Data" && field.Value == "03 11 11 26"
             );
         }
 

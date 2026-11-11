@@ -351,6 +351,10 @@
     <system:String x:Key="Dlt645ParseResponse">应答解析</system:String>
     <system:String x:Key="Dlt645PasteFrame">粘贴完整帧（HEX）</system:String>
     <system:String x:Key="Dlt645Parse">解析</system:String>
+    <system:String x:Key="Dlt645ParseDataMode">数据换算</system:String>
+    <system:String x:Key="Dlt645ParseModeEncoded">输入未减 33H，已按 +33H 换算</system:String>
+    <system:String x:Key="Dlt645ParseModeDecoded">输入已减 33H，不再重复换算</system:String>
+    <system:String x:Key="Dlt645ParseDecodeTip">解析换算跟随「主日志减 33H」选项：&#10;勾选时，粘贴的帧应已减 33H，这里不再重复换算；&#10;若粘贴的是未减 33H 的原始帧，请先取消勾选再解析。</system:String>
     <system:String x:Key="Dlt645UseParsedAddress">填入表地址</system:String>
     <system:String x:Key="Dlt645OpReadData">读数据</system:String>
     <system:String x:Key="Dlt645OpReadAddress">读通信地址</system:String>
