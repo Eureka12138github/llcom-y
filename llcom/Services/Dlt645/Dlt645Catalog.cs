@@ -114,6 +114,47 @@ public static class Dlt645Catalog
                 isWrite: true,
                 needsConfirmation: true
             ),
+            new Dlt645Operation(
+                "Dlt645OpBroadcastTime",
+                "广播校时",
+                Dlt645Codec.ControlBroadcastTime
+            ),
+            new Dlt645Operation(
+                "Dlt645OpWriteAddress",
+                "写通信地址",
+                Dlt645Codec.ControlWriteAddress
+            ),
+            new Dlt645Operation(
+                "Dlt645OpFreeze",
+                "冻结命令",
+                Dlt645Codec.ControlFreeze
+            ),
+            new Dlt645Operation(
+                "Dlt645OpChangeBaud",
+                "更改通信速率",
+                Dlt645Codec.ControlChangeBaud
+            ),
+            new Dlt645Operation(
+                "Dlt645OpChangePassword",
+                "修改密码",
+                Dlt645Codec.ControlChangePassword,
+                requiresDataIdentifier: true
+            ),
+            new Dlt645Operation(
+                "Dlt645OpMaxDemandReset",
+                "最大需量清零",
+                Dlt645Codec.ControlMaxDemandReset
+            ),
+            new Dlt645Operation(
+                "Dlt645OpMeterReset",
+                "电表清零",
+                Dlt645Codec.ControlMeterReset
+            ),
+            new Dlt645Operation(
+                "Dlt645OpEventReset",
+                "事件清零",
+                Dlt645Codec.ControlEventReset
+            ),
         };
 
     /// <summary>

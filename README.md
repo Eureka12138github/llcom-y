@@ -49,8 +49,9 @@
 
 ## 下载
 
+- **最新版本**：`v2.0.0.4`（2026-11-10，含自动更新解压修复）
 - **exe 便携版**：从 [GitHub Releases](https://github.com/Eureka12138github/llcom-y/releases) 下载（`llcom-y-x64.zip` / `llcom-y-x86.zip`）
-- **自动更新**：x64 读取 `autoUpdate.xml`，x86 读取 `autoUpdate-x86.xml`
+- **自动更新**：x64 读取 `autoUpdate.xml`，x86 读取 `autoUpdate-x86.xml`；`2.0.0.3` 及更早版本需手动更新一次到 `2.0.0.4`，之后自动更新正常
 - **CI 快照**：[GitHub Actions](https://github.com/Eureka12138github/llcom-y/actions)
 - **上游官方版本（原作者）**：[chenxuuu/llcom](https://github.com/chenxuuu/llcom)
 

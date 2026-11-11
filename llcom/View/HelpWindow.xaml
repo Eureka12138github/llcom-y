@@ -138,12 +138,15 @@
       <TextBlock Style="{StaticResource HelpLi}" Text="· 绘图：接收 Lua 通过接口上报的数据点并绘制曲线；可查看全图 / 清空图表 / 切换主题。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· WinUSB：选择 USB 设备、读/写端点，连接后收发（可 Hex）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· DL/T 645-2007：电表报文工具（开发者向，组帧后直接发送，写数据和自定义控制码不做二次确认）。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="    - 表地址：输入 1 / 123 后回车或失焦，自动补 0 成 12 位；地址右侧放大镜按钮可自动读取表地址，成功后按钮变绿，鼠标悬停显示地址。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="    - 操作：读数据 / 读通信地址 / 写数据 / 自定义控制码；写数据和自定义控制码才显示「附加数据」行。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="    - 数据标识：常用下拉 + 4 字节 HEX 输入框；支持按名称/HEX 搜索、按分类筛选、右键删除当前 DI；齿轮按钮打开管理窗口（添加 / 删除 / 恢复默认 / 导入 / 导出）。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="    - 表地址：输入 1 / 123 后回车或失焦，自动补 0 成 12 位；地址右侧放大镜按钮可自动读取表地址，成功后按钮变绿，鼠标悬停显示地址；关闭串口后按钮恢复灰色。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="    - 操作：读数据 / 读通信地址 / 写数据 / 广播校时 / 写通信地址 / 冻结命令 / 更改通信速率 / 修改密码 / 最大需量清零 / 电表清零 / 事件清零 / 自定义控制码；写数据和自定义控制码才显示「附加数据」行，其它功能按需显示对应数据域输入框；新功能的数据域按帧内顺序（低位在前）输入，组帧时不做翻转。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="    - 写数据：默认勾选「自动添加密码/操作者代码」，可按 645 标准在 DI 后插入密码和操作者代码（密码默认留空，由厂家/供电局设定，需按现场表填写；操作者代码默认 12345678 仅为示例，可修改；两项都保存在配置里）；附加数据、密码、操作者代码都按正序输入，组帧时自动翻转为低位先行；取消勾选则只发 DI + 附加数据。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="    - 自定义控制码：控制码和数据域完全按用户输入原样发送，软件不做任何翻转或改写。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="    - 数据标识：上方为「DI 筛选」（搜索框带放大镜，输入即时过滤，按回车弹出下拉；切换分类后自动展开，列表超高可滚动），下方为常用下拉 + 4 字节 HEX 输入框；手动输入已有 DI 会自动选中对应项；支持右键删除当前 DI，齿轮按钮打开管理窗口（添加 / 删除 / 恢复默认 / 导入 / 导出）。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="    - 数据标识按低位先行组帧：界面按 02010100 输入和显示，帧里对应 33 34 34 35（减 33H 前的原始顺序为 00 01 01 02）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="    - 勾选「主日志减 33H」后，仅在 645 工具页处于激活状态时生效：完整 645 帧的数据域减 33H 并重算 CS 后，作为一条记录写入左侧主日志；非 645 数据、半帧、坏帧原样显示。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="    - 帧预览下方三个操作：发送（直接从 645 页发送）、复制（复制帧文本）、发送到主发送框（把帧填入底部发送框，复用发送记录与定时发送；会自动切到 Hex 发送且不追加换行）。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="    - 「应答解析」：粘贴完整应答帧解析地址 / 控制码 / 数据域 / 校验和；读地址应答解析后可一键把地址填回表地址。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="    - 「应答解析」：粘贴完整帧后显示原始帧、地址（AA 通配/广播标注）、控制码方向、功能码名称、长度、数据域、校验和；异常应答按位解释错误信息字 ERR；常用功能会拆分字段（读数据 DI+数据、写数据 DI+密码权限+密码+操作者代码+数据、读/写地址、广播校时、冻结、改速率/改密码/清零），DI 会附带目录中的名称；读地址应答解析后可一键把地址填回表地址。" />
 
       <TextBlock Style="{StaticResource HelpH}" Text="十、更多设置（点日志区右下角 ☰ 直接打开，鼠标移入才显示）" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 分三个页签：「更多串口设置」（打开日志文件夹、显示发送、数据字号、窗口置顶、串口超时（分包）、按空行分包、终端模式、日志保留上限、流式保留字符数）、「发送脚本」、「接收脚本」。" />

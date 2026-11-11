@@ -32,9 +32,81 @@ namespace llcom.Tests
                 3
             );
 
+            // DI 显示为 02010100，线上低位先行：00 01 01 02，+0x33 后为 33 34 34 35
             Assert.Equal(
-                "FE FE FE 68 01 00 00 00 00 00 68 11 04 35 34 34 33 B6 16",
+                "FE FE FE 68 01 00 00 00 00 00 68 11 04 33 34 34 35 B6 16",
                 Dlt645Codec.ToHex(frame)
+            );
+        }
+
+        [Fact]
+        public void BuildReadDataRequest_MatchesRealMeterFrame_ForPhaseAVoltage()
+        {
+            var frame = Dlt645Codec.BuildReadDataRequest(
+                "000000000002",
+                Hex("02 01 01 00"),
+                3
+            );
+
+            Assert.Equal(
+                "FE FE FE 68 02 00 00 00 00 00 68 11 04 33 34 34 35 B7 16",
+                Dlt645Codec.ToHex(frame)
+            );
+        }
+
+        [Fact]
+        public void ToLittleEndian_ReversesMultiByteValue()
+        {
+            Assert.Equal(
+                new byte[] { 0x00, 0x01, 0x01, 0x02 },
+                Dlt645Codec.ToLittleEndian(Hex("02 01 01 00"))
+            );
+            Assert.Equal(
+                new byte[] { 0x02, 0x10, 0x11, 0x26 },
+                Dlt645Codec.ToLittleEndian(Hex("26 11 10 02"))
+            );
+        }
+
+        [Fact]
+        public void BuildWriteDataDomain_ReversesDiPasswordOperatorAndData()
+        {
+            var data = Dlt645Codec.BuildWriteDataDomain(
+                Hex("02 01 01 00"),
+                Hex("00 00 00 02"),
+                Hex("12 34 56 78"),
+                Hex("30 01")
+            );
+
+            // DI、密码、操作者代码、附加数据都按低位先行
+            Assert.Equal("00 01 01 02 02 00 00 00 78 56 34 12 01 30", Dlt645Codec.ToHex(data));
+        }
+
+        [Fact]
+        public void BuildWriteDataDomain_WithoutInfo_KeepsOnlyDiAndData()
+        {
+            var data = Dlt645Codec.BuildWriteDataDomain(
+                Hex("02 01 01 00"),
+                null,
+                null,
+                Hex("26 11 10 02")
+            );
+
+            Assert.Equal("00 01 01 02 02 10 11 26", Dlt645Codec.ToHex(data));
+        }
+
+        [Fact]
+        public void BuildWriteDataDomain_RejectsHalfPasswordPair()
+        {
+            Assert.Throws<ArgumentException>(() =>
+                Dlt645Codec.BuildWriteDataDomain(Hex("02 01 01 00"), Hex("00 00 00 02"))
+            );
+            Assert.Throws<ArgumentException>(() =>
+                Dlt645Codec.BuildWriteDataDomain(
+                    Hex("02 01 01 00"),
+                    Hex("00 00 00 02"),
+                    null,
+                    null
+                )
             );
         }
 

@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Windows.Threading;
 using AutoUpdaterDotNET;
 
@@ -34,8 +35,14 @@ internal static class AppUpdateService
         if (!manual && !Tools.Global.setting.autoUpdate)
             return;
 
-        // 便携版：zip 解压到 exe 所在目录
-        AutoUpdater.InstallationPath = AppDomain.CurrentDomain.BaseDirectory;
+        // 便携版：zip 解压到 exe 所在目录。
+        // 注意：Autoupdater.NET 1.7.0 在 InstallationPath 以 "\" 结尾时，
+        // 传给 ZipExtractor 的参数会被 `\"` 转义，参数合并后长度不足，解压窗口会一直停在 Extracting。
+        // 默认值本身就是 exe 所在目录（不带尾部反斜杠），这里显式去掉尾部反斜杠。
+        AutoUpdater.InstallationPath = AppDomain.CurrentDomain.BaseDirectory.TrimEnd(
+            Path.DirectorySeparatorChar,
+            Path.AltDirectorySeparatorChar
+        );
 
         AutoUpdater.CheckForUpdateEventHandler? handler = null;
         handler = args =>

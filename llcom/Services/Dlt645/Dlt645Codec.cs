@@ -84,8 +84,17 @@ public static class Dlt645Codec
     public const byte ControlReadData = 0x11;
     public const byte ControlReadAddress = 0x13;
     public const byte ControlWriteData = 0x14;
+    public const byte ControlBroadcastTime = 0x08;
+    public const byte ControlWriteAddress = 0x15;
+    public const byte ControlFreeze = 0x16;
+    public const byte ControlChangeBaud = 0x17;
+    public const byte ControlChangePassword = 0x18;
+    public const byte ControlMaxDemandReset = 0x19;
+    public const byte ControlMeterReset = 0x1A;
+    public const byte ControlEventReset = 0x1B;
 
     public const string WildcardAddress = "AAAAAAAAAAAA";
+    public const string BroadcastAddress = "999999999999";
 
     /// <summary>组帧：[FE...] 68 A0..A5 68 C L DATA CS 16。</summary>
     /// <param name="address">12 位表地址；支持 AA 通配（如 AAAAAAAAAAAA）。</param>
@@ -137,7 +146,7 @@ public static class Dlt645Codec
     public static byte[] BuildReadAddressRequest(int preambleFe = 3) =>
         BuildFrame(WildcardAddress, ControlReadAddress, Array.Empty<byte>(), preambleFe);
 
-    /// <summary>读数据请求（地址 + 0x11 + 4 字节 DI）。</summary>
+    /// <summary>读数据请求（地址 + 0x11 + 4 字节 DI）；DI 按显示顺序传入，组帧时转低位先行。</summary>
     public static byte[] BuildReadDataRequest(
         string address,
         byte[] dataIdentifier,
@@ -146,7 +155,12 @@ public static class Dlt645Codec
     {
         if (dataIdentifier == null || dataIdentifier.Length != 4)
             throw new ArgumentException("DI 必须是 4 字节", nameof(dataIdentifier));
-        return BuildFrame(address, ControlReadData, dataIdentifier, preambleFe);
+        return BuildFrame(
+            address,
+            ControlReadData,
+            ToLittleEndian(dataIdentifier),
+            preambleFe
+        );
     }
 
     /// <summary>解析单帧；失败时给出具体原因。</summary>
@@ -376,6 +390,53 @@ public static class Dlt645Codec
         for (var i = 0; i < data.Length; i++)
             result[i] = unchecked((byte)(data[i] + DataOffset));
         return result;
+    }
+
+    /// <summary>
+    /// 645 数据域中的多字节量按低位先行传输。
+    /// 输入/显示按高位在先（如 DI 02010100），组帧前用本方法反转成线上顺序（00 01 01 02）。
+    /// </summary>
+    public static byte[] ToLittleEndian(byte[] value)
+    {
+        var result = (byte[])value.Clone();
+        Array.Reverse(result);
+        return result;
+    }
+
+    /// <summary>
+    /// 组装写数据（0x14）的数据域：DI + [密码 + 操作者代码] + 附加数据。
+    /// 入参均按界面显示顺序（高位在先），返回线上顺序（各段低位先行）。
+    /// </summary>
+    /// <param name="dataIdentifier">4 字节 DI（显示顺序）</param>
+    /// <param name="password">4 字节密码；为 null 表示不添加</param>
+    /// <param name="operatorCode">4 字节操作者代码；与密码同时提供或同时为 null</param>
+    /// <param name="extraData">附加数据（显示顺序，整段反转）；为空表示不添加</param>
+    public static byte[] BuildWriteDataDomain(
+        byte[] dataIdentifier,
+        byte[]? password = null,
+        byte[]? operatorCode = null,
+        byte[]? extraData = null
+    )
+    {
+        if (dataIdentifier == null || dataIdentifier.Length != 4)
+            throw new ArgumentException("DI 必须是 4 字节", nameof(dataIdentifier));
+        if ((password == null) != (operatorCode == null))
+            throw new ArgumentException("密码与操作者代码必须同时提供", nameof(password));
+        if (password != null && password.Length != 4)
+            throw new ArgumentException("密码必须是 4 字节", nameof(password));
+        if (operatorCode != null && operatorCode.Length != 4)
+            throw new ArgumentException("操作者代码必须是 4 字节", nameof(operatorCode));
+
+        var result = new List<byte>(dataIdentifier.Length + 8 + (extraData?.Length ?? 0));
+        result.AddRange(ToLittleEndian(dataIdentifier));
+        if (password != null && operatorCode != null)
+        {
+            result.AddRange(ToLittleEndian(password));
+            result.AddRange(ToLittleEndian(operatorCode));
+        }
+        if (extraData != null && extraData.Length > 0)
+            result.AddRange(ToLittleEndian(extraData));
+        return result.ToArray();
     }
 
     /// <summary>数据域逐字节 -0x33（模 256）。</summary>
