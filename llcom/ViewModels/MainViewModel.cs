@@ -88,7 +88,6 @@ public partial class MainViewModel : ObservableObject
     private bool _refreshLock; //端口列表刷新锁
     private bool _skipSearch; //WMI 查询连续失败后跳过
     private int _searchCount;
-    private string _lastPortName = ""; //上次使用的端口名（自动重连/恢复选中用）
 
     //打开状态下刷新端口列表时，发现当前端口从列表消失（例如拔掉设备）。
     //等它重新出现再自动重连；端口仍在列表里时不要重复 Open()，
@@ -522,7 +521,6 @@ public partial class MainViewModel : ObservableObject
         {
             _forcusClosePort = true; //不再自动重连
             _portLostWhileOpen = false;
-            _lastPortName = _uart.GetName();
             _uart.Close();
         }
         catch
@@ -532,7 +530,9 @@ public partial class MainViewModel : ObservableObject
         OpenCloseButtonText = Localize("OpenPort_open");
         IsPortComboEnabled = true;
         StatusText = Localize("OpenPort_close");
-        RefreshPorts(_lastPortName);
+        // 关闭串口不改变系统里的端口集合，无需重新枚举。
+        // 以前这里调用 RefreshPorts：它会先 Ports.Clear()，状态栏绑定 SelectedPort.PortName
+        // 立刻变成空白，等 WMI 枚举约 1 秒后才恢复，看起来像“关闭很慢”。
     }
 
     /// <summary>
