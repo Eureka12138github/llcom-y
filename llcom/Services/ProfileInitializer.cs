@@ -52,6 +52,7 @@ internal static class ProfileInitializer
                 Tools.Global.setting.SentCount = 0;
                 Tools.Global.setting.ReceivedCount = 0;
                 Tools.Global.setting.DisableLog = false;
+                MigrateSettings();
             }
             catch
             {
@@ -78,9 +79,29 @@ internal static class ProfileInitializer
                 if (!r.Item1)
                     Environment.Exit(1);
             }
-            Tools.Global.setting = new Model.Settings();
+            Tools.Global.setting = new Model.Settings
+            {
+                settingsVersion = Model.Settings.CurrentSettingsVersion,
+            };
         }
         LocalizationService.LoadLanguageFile(Tools.Global.setting.language);
+    }
+
+    /// <summary>
+    /// 旧配置一次性迁移。
+    /// 新版「终端模式」默认关闭：旧版 settings.json 没有 settingsVersion 字段
+    /// （反序列化后为 0），这里把 terminal 关掉并写入新版本号；
+    /// 用户之后在设置里手动开启仍会照常保存。
+    /// </summary>
+    private static void MigrateSettings()
+    {
+        var setting = Tools.Global.setting;
+        if (setting.settingsVersion >= Model.Settings.CurrentSettingsVersion)
+            return;
+
+        setting.terminal = false;
+        setting.settingsVersion = Model.Settings.CurrentSettingsVersion;
+        setting.Flush();
     }
 
     /// <summary>

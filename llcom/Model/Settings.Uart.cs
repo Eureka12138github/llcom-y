@@ -265,7 +265,7 @@ private int _parity = 0;
         }
     }
 
-    private bool _terminal = true;
+    private bool _terminal = false;
     public bool terminal
     {
         get => _terminal;

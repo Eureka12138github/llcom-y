@@ -78,5 +78,12 @@ namespace llcom.Tests
             s.streamMaxChars = 999999999;
             Assert.Equal(Settings.StreamMaxCharsMax, s.streamMaxChars);
         }
+
+        /// <summary>终端模式默认关闭，避免复制日志时 Ctrl+C 被当成 0x03 发送。</summary>
+        [Fact]
+        public void TerminalMode_IsOffByDefault()
+        {
+            Assert.False(new Settings().terminal);
+        }
     }
 }
