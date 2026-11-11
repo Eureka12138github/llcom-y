@@ -72,27 +72,35 @@ class SerialPortService : ISerialPortService
     /// </summary>
     private void refreshSerialDevice()
     {
+        // 必须在切换前把旧对象/旧流捕获到局部变量：
+        // Task.Run 里的 lambda 如果直接访问字段，真正执行时 serial 可能已经指向刚创建的新对象，
+        // 会把新串口 Dispose 掉——表现为 UI 显示“已打开”，但 serial.IsOpen 已经是 false，
+        // 发送时又提示“请先打开串口”。这个竞态是偶发的，取决于后台线程的调度时机。
+        var oldSerial = serial;
+        var oldStream = lastPortBaseStream;
+        lastPortBaseStream = null;
+
         //以下 Dispose 可能卡住/崩溃，全部扔到后台线程执行
         Task.Run(() =>
         {
             try
             {
-                lastPortBaseStream?.Dispose();
+                oldStream?.Dispose();
             }
             catch { /* 忽略：释放旧串口资源失败不影响主流程 */ }
             try
             {
-                serial.BaseStream.Dispose();
+                oldSerial.BaseStream.Dispose();
             }
             catch { /* 忽略：释放旧串口资源失败不影响主流程 */ }
             try
             {
-                serial.Dispose();
+                oldSerial.Dispose();
             }
             catch { /* 忽略：释放旧串口资源失败不影响主流程 */ }
         });
         lock (useless) //存起来
-            useless.Add(serial);
+            useless.Add(oldSerial);
         serial = new SerialPort();
         //声明接收到事件
         serial.DataReceived += Serial_DataReceived;

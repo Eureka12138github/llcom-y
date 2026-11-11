@@ -79,7 +79,7 @@ public partial class MainViewModel : ObservableObject
     private DateTime _continuousNextDue;
 
     //串口控制状态
-    private bool _isOpeningPort; //打开串口进行中
+    private volatile bool _isOpeningPort; //打开串口进行中
 
     //初始为 true：禁止启动时自动重连（serial.PortName 默认 "COM1"，
     //若本机恰有 COM1 设备，启动刷新会误判为上次端口而自动打开）；
@@ -89,6 +89,11 @@ public partial class MainViewModel : ObservableObject
     private bool _skipSearch; //WMI 查询连续失败后跳过
     private int _searchCount;
     private string _lastPortName = ""; //上次使用的端口名（自动重连/恢复选中用）
+
+    //打开状态下刷新端口列表时，发现当前端口从列表消失（例如拔掉设备）。
+    //等它重新出现再自动重连；端口仍在列表里时不要重复 Open()，
+    //否则会把好端端的串口先拆掉再开，容易和后台释放旧句柄的线程抢时序。
+    private bool _portLostWhileOpen;
 
     /// <summary>端口下拉列表</summary>
     public ObservableCollection<PortInfo> Ports { get; } = new ObservableCollection<PortInfo>();
@@ -432,14 +437,28 @@ public partial class MainViewModel : ObservableObject
                 //恢复选中：优先上次端口，否则第一个
                 var target = Ports.FirstOrDefault(p => p.PortName == lastPort);
                 SelectedPort = target ?? Ports.FirstOrDefault();
-                if (target != null)
+                if (target == null)
                 {
-                    //自动重连：非主动关闭且开启自动重连时尝试重新打开
-                    if (!_forcusClosePort && Tools.Global.setting.autoReconnect && !_isOpeningPort)
+                    // 打开状态下当前端口从列表消失（拔掉），等重新插回再自动重连
+                    if (_uart.IsOpen())
+                        _portLostWhileOpen = true;
+                }
+                else
+                {
+                    //自动重连：非主动关闭且开启自动重连时尝试重新打开。
+                    //端口本来就在、串口也还开着时不要重复 Open()——重开需要先释放旧句柄，
+                    //和后台 Dispose 抢时序会偶发“UI 已打开但 IsOpen 为 false”。
+                    if (
+                        !_forcusClosePort
+                        && Tools.Global.setting.autoReconnect
+                        && !_isOpeningPort
+                        && (!_uart.IsOpen() || _portLostWhileOpen)
+                    )
                     {
+                        _portLostWhileOpen = false;
+                        _isOpeningPort = true;
                         Task.Run(() =>
                         {
-                            _isOpeningPort = true;
                             try
                             {
                                 _uart.Open();
@@ -454,7 +473,10 @@ public partial class MainViewModel : ObservableObject
                             {
                                 //MessageBox.Show("串口打开失败！");
                             }
-                            _isOpeningPort = false;
+                            finally
+                            {
+                                _isOpeningPort = false;
+                            }
                         });
                     }
                 }
@@ -499,6 +521,7 @@ public partial class MainViewModel : ObservableObject
         try
         {
             _forcusClosePort = true; //不再自动重连
+            _portLostWhileOpen = false;
             _lastPortName = _uart.GetName();
             _uart.Close();
         }
@@ -549,9 +572,10 @@ public partial class MainViewModel : ObservableObject
         if (port == "")
             return;
 
+        // 先在 UI 线程置位，避免连续点击或自动重连在后台任务启动前再次进入 Open()
+        _isOpeningPort = true;
         Task.Run(() =>
         {
-            _isOpeningPort = true;
             try
             {
                 _forcusClosePort = false; //不再强制关闭串口
@@ -559,6 +583,7 @@ public partial class MainViewModel : ObservableObject
                 _uart.Open();
                 Application.Current.Dispatcher.Invoke(() =>
                 {
+                    _portLostWhileOpen = false;
                     OpenCloseButtonText = Localize("OpenPort_close");
                     IsPortComboEnabled = false;
                     StatusText = Localize("OpenPort_open");
@@ -569,7 +594,10 @@ public partial class MainViewModel : ObservableObject
                 //串口打开失败！
                 Tools.MessageBox.Show(Localize("ErrorOpenPort"));
             }
-            _isOpeningPort = false;
+            finally
+            {
+                _isOpeningPort = false;
+            }
         });
     }
 
