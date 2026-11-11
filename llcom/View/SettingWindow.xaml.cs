@@ -226,9 +226,6 @@ public partial class SettingWindow : Window
         //重写关闭响应代码
         this.Closing += SettingWindow_Closing;
 
-        //置顶显示以免被挡住
-        this.Topmost = true;
-
         //数字输入框初值（OneWay 绑定之外的兜底同步）
         logMaxItemsBox.Text = Tools.Global.setting.logMaxItems.ToString();
         streamMaxCharsBox.Text = Tools.Global.setting.streamMaxChars.ToString();

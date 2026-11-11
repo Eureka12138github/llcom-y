@@ -556,6 +556,7 @@ public partial class MainWindow : Window
         if (helpWindow == null)
         {
             helpWindow = new HelpWindow();
+            helpWindow.Owner = this;
             helpWindow.Closed += (_, _) => helpWindow = null;
         }
         helpWindow.Show();

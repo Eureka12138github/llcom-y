@@ -89,9 +89,10 @@ internal static class ProfileInitializer
 
     /// <summary>
     /// 旧配置一次性迁移。
-    /// 新版「终端模式」默认关闭：旧版 settings.json 没有 settingsVersion 字段
-    /// （反序列化后为 0），这里把 terminal 关掉并写入新版本号；
-    /// 用户之后在设置里手动开启仍会照常保存。
+    /// v1：新版「终端模式」默认关闭，旧配置没有 settingsVersion 字段（反序列化后为 0），
+    ///     这里把 terminal 关掉并写入新版本号；用户之后在设置里手动开启仍会照常保存。
+    /// v2：旧版本可能把「窗口保持置顶」保存成了 true，升级时关闭一次，
+    ///     避免主窗口一直压在其他软件上面；需要置顶的用户可再手动勾选。
     /// </summary>
     private static void MigrateSettings()
     {
@@ -99,7 +100,11 @@ internal static class ProfileInitializer
         if (setting.settingsVersion >= Model.Settings.CurrentSettingsVersion)
             return;
 
-        setting.terminal = false;
+        if (setting.settingsVersion < 1)
+            setting.terminal = false;
+        if (setting.settingsVersion < 2)
+            setting.topmost = false;
+
         setting.settingsVersion = Model.Settings.CurrentSettingsVersion;
         setting.Flush();
     }

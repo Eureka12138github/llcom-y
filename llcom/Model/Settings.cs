@@ -24,7 +24,7 @@ public partial class Settings : ObservableObject
     public event EventHandler? MainWindowTop;
 
     /// <summary>当前 settings.json 结构版本；用于升级时一次性迁移默认值。</summary>
-    internal const int CurrentSettingsVersion = 1;
+    internal const int CurrentSettingsVersion = 2;
 
     /// <summary>配置文件结构版本；0 表示旧版配置（缺少该字段）。</summary>
     private int _settingsVersion = 0;
