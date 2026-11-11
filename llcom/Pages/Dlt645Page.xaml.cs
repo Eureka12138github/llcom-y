@@ -1171,7 +1171,7 @@ public partial class Dlt645Page : Page
             $"{Localize("Dlt645DataDomain", "数据域")}: {Dlt645Codec.ToHex(frame.Data)}"
         );
         builder.AppendLine(
-            $"{Localize("Dlt645EncodedData", "传输数据域")}: {Dlt645Codec.ToHex(frame.EncodedData)}"
+            $"{Localize("Dlt645EncodedData", "传输数据域")}: {Dlt645Codec.ToHex(Dlt645Codec.EncodeData(frame.Data))}"
         );
         builder.AppendLine(
             $"{Localize("Dlt645Checksum", "校验和")}: 0x{frame.Checksum:X2} ({Localize("Dlt645ChecksumOk", "校验通过")})"
