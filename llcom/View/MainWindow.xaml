@@ -13,6 +13,8 @@
   Title="{DynamicResource AppTitle}"
   Width="900"
   Height="500"
+  MinWidth="760"
+  MinHeight="440"
   adonisExtensions:RippleExtension.FadeInDuration="0"
   adonisExtensions:RippleExtension.FadeOutDuration="0"
   Activated="Window_Activated"
@@ -72,9 +74,11 @@
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="12*" MinWidth="240" />
+      <!--  左：主日志（占用剩余宽度，窗口变宽时优先给日志）  -->
+      <ColumnDefinition Width="*" MinWidth="240" />
       <ColumnDefinition Width="auto" />
-      <ColumnDefinition Width="8*" MinWidth="240" />
+      <!--  右：脚本/快捷发送（固定像素宽，避免和 GridSplitter 的星号权重互相干扰）  -->
+      <ColumnDefinition Width="360" MinWidth="240" />
     </Grid.ColumnDefinitions>
 
     <!--  收发数据显示  -->
