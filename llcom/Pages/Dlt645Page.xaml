@@ -28,7 +28,8 @@
       <Setter Property="Width" Value="30" />
       <Setter Property="Height" Value="30" />
       <Setter Property="Padding" Value="0" />
-      <Setter Property="Background" Value="{DynamicResource Brush.Surface.Muted}" />
+      <Setter Property="Background" Value="{DynamicResource Brush.Surface.Subtle}" />
+      <Setter Property="Foreground" Value="{DynamicResource Brush.Foreground}" />
       <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border.Subtle}" />
       <Setter Property="BorderThickness" Value="1" />
       <Setter Property="Template">
@@ -61,7 +62,7 @@
   </Page.Resources>
 
   <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-    <StackPanel Margin="8">
+    <StackPanel Margin="8" TextElement.Foreground="{DynamicResource Brush.Foreground}">
 
       <!--  参数区  -->
       <Border Style="{StaticResource Dlt645Card}">

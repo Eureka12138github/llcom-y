@@ -15,7 +15,7 @@
   mc:Ignorable="d"
 >
   
-  <Grid Name="MainGrid">
+  <Grid Name="MainGrid" TextElement.Foreground="{DynamicResource Brush.Foreground}">
     <Grid.RowDefinitions>
       <RowDefinition Height="auto" />
       <RowDefinition Height="35" />

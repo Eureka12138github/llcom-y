@@ -13,7 +13,10 @@
 >
   
 
-  <Grid Style="{StaticResource Tool.Content}">
+  <Grid
+    Style="{StaticResource Tool.Content}"
+    TextElement.Foreground="{DynamicResource Brush.Foreground}"
+  >
     <TabControl>
       <TabItem Header="{DynamicResource MQTTHeardr1}">
         <Grid>

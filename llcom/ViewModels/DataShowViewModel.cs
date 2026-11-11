@@ -78,6 +78,11 @@ public partial class DataShowViewModel : ObservableObject
         _uart = uart;
         Tools.Logger.DataShowTask += Logger_DataShowTask;
         Tools.Logger.DataClearEvent += (_, _) => Clear();
+        Services.ThemeService.ThemeChanged += (_, _) =>
+        {
+            foreach (var item in Items)
+                item.RefreshTheme();
+        };
         //显示格式切换（HEX/字符串/不可见字符/编码）时刷新已有条目：
         //只失效缓存并通知绑定，真正的字符串转换推迟到条目可见时
         setting.PropertyChanged += (_, e) =>

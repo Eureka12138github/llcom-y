@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Media;
+using llcom.Services;
 
 namespace llcom.Model;
 
@@ -97,7 +98,22 @@ public class DataShowItem : INotifyPropertyChanged
 
         TimeText = time.ToString("[yyyy/MM/dd HH:mm:ss.fff]");
         ArrowText = sent ? " → " : " ← ";
-        DataTextColor = sent ? Brushes.DarkRed : Brushes.DarkGreen;
+        DataTextColor = ThemeService.GetBrush(
+            sent ? "Brush.Data.Sent" : "Brush.Data.Received",
+            sent ? Colors.DarkRed : Colors.DarkGreen
+        );
+    }
+
+    /// <summary>主题切换后刷新收发颜色（已有日志条目）。</summary>
+    public void RefreshTheme()
+    {
+        if (_generic)
+            return;
+        DataTextColor = ThemeService.GetBrush(
+            _sent ? "Brush.Data.Sent" : "Brush.Data.Received",
+            _sent ? Colors.DarkRed : Colors.DarkGreen
+        );
+        OnPropertyChanged(nameof(DataTextColor));
     }
 
     /// <summary>

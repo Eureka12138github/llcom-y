@@ -74,17 +74,17 @@ public partial class SerialMonitorPage : Page
         byte[] b = new byte[d.DataSize];
         for (int i = 0; i < d.DataSize; i++)
             b[i] = d.Data[i];
-        var c = Brushes.Black;
+        var c = Services.ThemeService.GetBrush("Brush.Foreground", Colors.Black);
         string show = "unknow";
         switch (d.CommState)
         {
             case (byte)State.Send:
                 show = "→";
-                c = Brushes.DarkRed;
+                c = Services.ThemeService.GetBrush("Brush.Data.Sent", Colors.DarkRed);
                 break;
             case (byte)State.Receive:
                 show = "←";
-                c = Brushes.DarkGreen;
+                c = Services.ThemeService.GetBrush("Brush.Data.Received", Colors.DarkGreen);
                 break;
             case (byte)State.Disconnect:
                 show = "❌";

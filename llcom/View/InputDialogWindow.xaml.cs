@@ -59,6 +59,7 @@ public partial class InputDialogWindow : Window
     {
         IntPtr handle = new WindowInteropHelper(this).Handle;
         Tools.Win32.HideControlBox(handle);
+        llcom.Services.ThemeService.ApplyWindowChrome(this);
         HwndSource.FromHwnd(handle)?.AddHook(new HwndSourceHook(WndProc));
         if (InputCombo.Visibility == Visibility.Visible)
         {

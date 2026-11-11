@@ -219,10 +219,17 @@ public partial class SettingWindow : Window
     private string Localize(string key, string fallback) =>
         TryFindResource(key) as string ?? fallback;
 
+    protected override void OnSourceInitialized(EventArgs e)
+    {
+        base.OnSourceInitialized(e);
+        llcom.Services.ThemeService.ApplyWindowChrome(this);
+        llcom.Services.ThemeService.ThemeChanged += (_, _) =>
+            llcom.Services.ThemeService.ApplyWindowChrome(this);
+    }
+
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
         this.DataContext = Tools.Global.setting;
-
         //重写关闭响应代码
         this.Closing += SettingWindow_Closing;
 

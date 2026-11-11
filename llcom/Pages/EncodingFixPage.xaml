@@ -11,7 +11,7 @@
   Title="EncodingFixPage"
 >
   <ScrollViewer HorizontalScrollBarVisibility="Auto">
-    <StackPanel>
+    <StackPanel TextElement.Foreground="{DynamicResource Brush.Foreground}">
       <TextBlock Text="{DynamicResource GarbledCodeData}" />
       <TextBox
         Name="RawTextBox"

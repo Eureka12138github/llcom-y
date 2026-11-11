@@ -534,6 +534,10 @@
       "zh-CN": "窗口保持置顶显示",
       "en-US": "Keep Window on top"
     },
+    "ThemeSwitch": {
+      "zh-CN": "主题切换",
+      "en-US": "Switch theme"
+    },
     "SettingUartTimeout": {
       "zh-CN": "分包数据超时时间：",
       "en-US": "Data pack time:"

@@ -15,7 +15,10 @@
   mc:Ignorable="d"
 >
   
-  <Grid Style="{StaticResource Tool.Content}">
+  <Grid
+    Style="{StaticResource Tool.Content}"
+    TextElement.Foreground="{DynamicResource Brush.Foreground}"
+  >
     <Grid.RowDefinitions>
       <RowDefinition Height="auto" />
       <RowDefinition Height="auto" />

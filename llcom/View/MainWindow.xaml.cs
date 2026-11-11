@@ -156,6 +156,13 @@ public partial class MainWindow : Window
         SidebarColumn.MaxWidth = Math.Max(SidebarColumn.MinWidth, available);
     }
 
+    protected override void OnSourceInitialized(EventArgs e)
+    {
+        base.OnSourceInitialized(e);
+        ThemeService.ApplyWindowChrome(this);
+        ThemeService.ThemeChanged += (_, _) => ThemeService.ApplyWindowChrome(this);
+    }
+
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
         ClampSidebarWidth();
@@ -633,6 +640,22 @@ public partial class MainWindow : Window
             _suppressToolSelectionSave = false;
         }
         ApplyToolSelection();
+    }
+
+    /// <summary>右侧栏 Tab 切换：快捷发送页的便签图标仅在选中时显示黄色，未选中与文字同色。</summary>
+    private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (!ReferenceEquals(e.OriginalSource, mainTabControl))
+            return;
+        UpdateQuickSendNoteIcon();
+    }
+
+    private void UpdateQuickSendNoteIcon()
+    {
+        if (QuickSendNoteIcon == null)
+            return;
+        // 未选中只显示同色的空心便签；选中时才显示黄色填充
+        QuickSendNoteIcon.Opacity = mainTabControl.SelectedIndex == 1 ? 1 : 0;
     }
 
     /// <summary>工具选择器：切换到对应工具页（各页在 Window_Loaded 已 Navigate 一次，这里只切可见性）。</summary>
@@ -1373,7 +1396,10 @@ public partial class MainWindow : Window
     private void uartDataFlowDocument_GotFocus(object sender, RoutedEventArgs e)
     {
         if (Tools.Global.setting.terminal)
-            dataShowFrame.BorderBrush = new SolidColorBrush(Color.FromRgb(0, 148, 0));
+            dataShowFrame.BorderBrush = ThemeService.GetBrush(
+            "Brush.State.Success",
+            Color.FromRgb(0, 148, 0)
+        );
     }
 
     private void uartDataFlowDocument_LostFocus(object sender, RoutedEventArgs e)

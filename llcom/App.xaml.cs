@@ -22,6 +22,7 @@ namespace llcom
             //否则其内部的 LuaEditorViewModel 会扫描尚未创建的 user_script_run 目录而抛异常），
             //再从容器解析 MainWindow（MainViewModel 经构造注入）。
             Tools.Global.LoadSetting();
+            llcom.Services.ThemeService.Apply(Tools.Global.setting.darkMode);
             Tools.Global.Initial();
             var window = Tools.AppHost.Services.GetRequiredService<MainWindow>();
             MainWindow = window;

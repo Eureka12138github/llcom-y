@@ -49,7 +49,7 @@ public partial class Dlt645Page : Page
             _initialized = true;
             LoadIdentifiers();
             SetAddressState(
-                "Brush.Surface.Muted",
+                "Brush.Surface.Subtle",
                 Localize("Dlt645ReadAddressButton", "读取表地址")
             );
         }
@@ -60,7 +60,7 @@ public partial class Dlt645Page : Page
         Tools.Global.uart.UartStateChanged += UartStateChanged;
         if (!Tools.Global.uart.IsOpen())
             SetAddressState(
-                "Brush.Surface.Muted",
+                "Brush.Surface.Subtle",
                 Localize("Dlt645ReadAddressButton", "读取表地址")
             );
         StartSession();
@@ -81,7 +81,7 @@ public partial class Dlt645Page : Page
     {
         if (!Tools.Global.uart.IsOpen())
             SetAddressState(
-                "Brush.Surface.Muted",
+                "Brush.Surface.Subtle",
                 Localize("Dlt645ReadAddressButton", "读取表地址")
             );
     }
@@ -681,8 +681,10 @@ public partial class Dlt645Page : Page
         }
 
         FramePreviewTextBox.Text = Dlt645Codec.ToHex(frame);
-        FrameSummaryText.Foreground =
-            TryFindResource("Brush.Foreground.Muted") as Brush ?? Brushes.Gray;
+        FrameSummaryText.SetResourceReference(
+            TextBlock.ForegroundProperty,
+            "Brush.Foreground.Muted"
+        );
         FrameSummaryText.Text =
             $"{Localize("Dlt645Address", "Address")}: {parsed.Address}"
             + $" | C=0x{parsed.Control:X2} {OperationName(operation)}"
@@ -1040,8 +1042,8 @@ public partial class Dlt645Page : Page
 
     private void SetAddressState(string brushKey, string tooltip)
     {
-        ReadAddressButton.Background =
-            TryFindResource(brushKey) as Brush ?? Brushes.Gray;
+        // 用动态资源引用，主题切换后按钮背景会跟着变（直接赋值会停留在旧主题颜色）
+        ReadAddressButton.SetResourceReference(Control.BackgroundProperty, brushKey);
         ReadAddressButton.ToolTip = tooltip;
     }
 
@@ -1299,9 +1301,10 @@ public partial class Dlt645Page : Page
     private void SetStatus(TextBlock target, string text, bool isError)
     {
         target.Text = text;
-        target.Foreground =
-            TryFindResource(isError ? "Brush.State.Error" : "Brush.Foreground.Muted") as Brush
-            ?? Brushes.Gray;
+        target.SetResourceReference(
+            TextBlock.ForegroundProperty,
+            isError ? "Brush.State.Error" : "Brush.Foreground.Muted"
+        );
     }
 
     /// <summary>下拉框显示项：保证可编辑 ComboBox 的 Text 是友好的显示文本。</summary>

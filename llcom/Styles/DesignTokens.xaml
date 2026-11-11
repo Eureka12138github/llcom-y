@@ -55,7 +55,7 @@
   <SolidColorBrush x:Key="Brush.Icon.New" Color="#FF87CEFA" />
   <SolidColorBrush x:Key="Brush.Icon.Run" Color="#FF006400" />
   <SolidColorBrush x:Key="Brush.Icon.Folder" Color="#FFFFFF00" />
-  <SolidColorBrush x:Key="Brush.Icon.NoteBack" Color="#FFFFFFE0" />
+  <SolidColorBrush x:Key="Brush.Icon.NoteBack" Color="#FFFFC107" />
   <SolidColorBrush x:Key="Brush.Icon.Send" Color="#FFADD8E6" />
   <SolidColorBrush x:Key="Brush.Icon.Outline" Color="#FF000000" />
   <SolidColorBrush x:Key="Brush.Icon.Pause" Color="#FF228B22" />
@@ -118,7 +118,7 @@
     <Setter Property="Margin" Value="8" />
   </Style>
   <!-- 发送输入框：等宽、多行、可换行、自动滚动条 -->
-  <Style x:Key="Tool.SendBox" TargetType="{x:Type TextBox}">
+  <Style x:Key="Tool.SendBox" TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
     <Setter Property="FontFamily" Value="Consolas" />
     <Setter Property="AcceptsReturn" Value="True" />
     <Setter Property="TextWrapping" Value="Wrap" />
@@ -356,5 +356,43 @@
         <Setter Property="ToolTip" Value="{DynamicResource RecvModeHexTip}" />
       </Trigger>
     </Style.Triggers>
+  </Style>
+
+  <!--  右侧栏 Tab：扁平样式，选中项用底部强调线，避免深色下出现突兀的方块/白框  -->
+  <Style x:Key="FlatTabItem" TargetType="{x:Type TabItem}">
+    <Setter Property="Foreground" Value="{DynamicResource Brush.Foreground}" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="Padding" Value="12,6" />
+    <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type TabItem}">
+          <Border
+            x:Name="Bd"
+            Padding="{TemplateBinding Padding}"
+            Background="{TemplateBinding Background}"
+            BorderBrush="{TemplateBinding BorderBrush}"
+            BorderThickness="0,0,0,2"
+            SnapsToDevicePixels="True"
+          >
+            <ContentPresenter
+              HorizontalAlignment="Center"
+              VerticalAlignment="Center"
+              ContentSource="Header"
+            />
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsSelected" Value="True">
+              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Brush.Surface}" />
+              <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource Brush.Accent.Teal}" />
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Brush.Surface.Subtle}" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
   </Style>
 </ResourceDictionary>

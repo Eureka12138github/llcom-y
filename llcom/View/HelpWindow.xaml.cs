@@ -18,4 +18,12 @@ public partial class HelpWindow : Window
         HelpContentZh.Visibility = english ? Visibility.Collapsed : Visibility.Visible;
         HelpContentEn.Visibility = english ? Visibility.Visible : Visibility.Collapsed;
     }
+
+    protected override void OnSourceInitialized(EventArgs e)
+    {
+        base.OnSourceInitialized(e);
+        llcom.Services.ThemeService.ApplyWindowChrome(this);
+        llcom.Services.ThemeService.ThemeChanged += (_, _) =>
+            llcom.Services.ThemeService.ApplyWindowChrome(this);
+    }
 }

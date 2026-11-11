@@ -67,6 +67,8 @@ public partial class PlotPage : Page
 
         ch.Color = System.Drawing.Color.LightGray;
         ch.LineWidth = 2;
+        ApplyTheme();
+        llcom.Services.ThemeService.ThemeChanged += (_, _) => ApplyTheme();
 
         //定时刷吧，要不然卡（改为 UI 定时器，避免后台线程 + Dispatcher.Invoke 忙等）
         _refreshTimer.Tick += (_, _) =>
@@ -84,6 +86,25 @@ public partial class PlotPage : Page
         Unloaded += (_, _) => _refreshTimer.Stop();
 
         LuaEnv.LuaApis.LinePlotAdd += (s, e) => AddPoint(e.N, e.Line);
+    }
+
+    /// <summary>让 ScottPlot 跟随应用主题（深色用 Black 风格）。</summary>
+    private void ApplyTheme()
+    {
+        var dark = llcom.Services.ThemeService.IsDark;
+        Plot.Plot.Style(dark ? ScottPlot.Style.Black : ScottPlot.Style.Default);
+        if (ch != null)
+            ch.Color = dark
+                ? System.Drawing.Color.FromArgb(140, 230, 237, 243)
+                : System.Drawing.Color.LightGray;
+        try
+        {
+            Plot.Render();
+        }
+        catch (System.Exception ex)
+        {
+            Tools.Logger.Swallowed("plot theme", ex);
+        }
     }
 
     private void ClearButton_Click(object sender, RoutedEventArgs e)

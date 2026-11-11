@@ -11,7 +11,7 @@
   Title="SerialMonitorPage"
   Loaded="Page_Loaded"
 >
-  <StackPanel Margin="5">
+  <StackPanel Margin="5" TextElement.Foreground="{DynamicResource Brush.Foreground}">
     <Button
       Name="RefreshButton"
       Content="{DynamicResource SerialMonitorRefresh}"

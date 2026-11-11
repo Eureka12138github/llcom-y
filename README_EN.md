@@ -34,6 +34,7 @@ A serial port debugger with Lua scripting (personal refactor).
 - **Keyboard shortcuts**: toggle port, focus send box, clear log, switch port, cycle common baud rates, open settings
 - **Config export / import**: back up or migrate the whole `settings.json`
 - **Multi-line log copy**: multi-select in packet mode + copy via `Ctrl+C` / context menu (with time and direction)
+- **Dark mode**: OpenCode-style dark palette, switch instantly with the 🌙/☀ icon at the bottom-right of the log area
 - Dedicated serial-settings tab (port / baud / data bits / parity / stop bits / encoding / auto-reconnect / RTS / DTR / open-close)
 - Lua scripting via XLua (send/receive processing and standalone scripts; see [LuaApi.md](LuaApi.md))
 - Community scripts: switch between upstream (chenxuuu) and this project (Eureka12138github); project scripts are saved to the right folder (no category labels in the UI) and can be submitted via Discussions

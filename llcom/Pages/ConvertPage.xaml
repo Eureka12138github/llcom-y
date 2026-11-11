@@ -14,7 +14,7 @@
   Title="ConvertPage"
   Loaded="Page_Loaded"
 >
-  <Grid>
+  <Grid TextElement.Foreground="{DynamicResource Brush.Foreground}">
     <Grid.RowDefinitions>
       <RowDefinition Height="auto" />
       <RowDefinition Height="*" />
@@ -34,7 +34,11 @@
     />
     <ComboBox Name="ConvertNamesComBox" Grid.Row="0" Grid.Column="1" />
     <Border Grid.Row="1" Grid.RowSpan="2" Margin="2" BorderBrush="{DynamicResource Brush.Border.Subtle}" BorderThickness="1">
-      <ListBox Name="ConvertJobsListBox" ScrollViewer.CanContentScroll="True" Background="{DynamicResource Brush.Surface}">
+      <ListBox
+      Name="ConvertJobsListBox"
+      ScrollViewer.CanContentScroll="True"
+      Background="{DynamicResource Brush.Surface.Subtle}"
+    >
         <ItemsControl.ItemTemplate>
           <DataTemplate>
             <TextBlock Text="{Binding}" />

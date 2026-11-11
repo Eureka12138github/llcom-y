@@ -8,6 +8,21 @@ namespace llcom.Model;
 /// </summary>
 partial class Settings
 {
+    /// <summary>深色模式（OpenCode 风格深色调色板 + AdonisUI Dark）。</summary>
+    private bool _darkMode;
+    public bool darkMode
+    {
+        get => _darkMode;
+        set
+        {
+            if (SetProperty(ref _darkMode, value))
+            {
+                llcom.Services.ThemeService.Apply(value);
+                Save();
+            }
+        }
+    }
+
     /// <summary>收发数据区字号下限</summary>
     public const int LogFontSizeMin = 10;
 

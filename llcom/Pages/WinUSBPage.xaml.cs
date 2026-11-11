@@ -82,7 +82,9 @@ public partial class WinUSBPage : Page, INotifyPropertyChanged
             {
                 title = $"🔌 WinUSB: {title}",
                 data = data ?? new byte[0],
-                color = send ? Brushes.DarkRed : Brushes.DarkGreen,
+                color = send
+                    ? llcom.Services.ThemeService.GetBrush("Brush.Data.Sent", Colors.DarkRed)
+                    : llcom.Services.ThemeService.GetBrush("Brush.Data.Received", Colors.DarkGreen),
             }
         );
     }

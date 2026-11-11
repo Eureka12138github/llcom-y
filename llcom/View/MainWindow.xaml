@@ -134,6 +134,64 @@
         >
           <fa:FontAwesome Foreground="{DynamicResource Brush.Accent.Teal}" Icon="Question" />
         </Button>
+        <!--  深色 / 浅色主题切换（图标 + Tooltip；状态绑定 Setting.darkMode）  -->
+        <ToggleButton
+          Name="ThemeToggleButton"
+          Margin="4,0,0,0"
+          AutomationProperties.Name="{DynamicResource ThemeSwitch}"
+          IsChecked="{Binding Setting.darkMode}"
+        >
+          <ToggleButton.Style>
+            <Style TargetType="ToggleButton">
+              <Setter Property="Width" Value="32" />
+              <Setter Property="Height" Value="32" />
+              <Setter Property="Margin" Value="4,0,0,0" />
+              <Setter Property="Background" Value="Transparent" />
+              <Setter Property="BorderBrush" Value="Transparent" />
+              <Setter Property="BorderThickness" Value="1" />
+              <Setter Property="ToolTip" Value="{DynamicResource ThemeSwitch}" />
+              <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+              <Setter Property="Template">
+                <Setter.Value>
+                  <ControlTemplate TargetType="ToggleButton">
+                    <Border
+                      x:Name="Bd"
+                      Background="{TemplateBinding Background}"
+                      BorderBrush="{TemplateBinding BorderBrush}"
+                      BorderThickness="{TemplateBinding BorderThickness}"
+                      SnapsToDevicePixels="True"
+                    >
+                      <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                      <Trigger Property="IsMouseOver" Value="True">
+                        <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Brush.Surface.Muted}" />
+                        <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource Brush.Border.Subtle}" />
+                      </Trigger>
+                      <Trigger Property="IsPressed" Value="True">
+                        <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Brush.Border.Subtle}" />
+                      </Trigger>
+                    </ControlTemplate.Triggers>
+                  </ControlTemplate>
+                </Setter.Value>
+              </Setter>
+            </Style>
+          </ToggleButton.Style>
+          <fa:FontAwesome FontSize="14">
+            <fa:FontAwesome.Style>
+              <Style TargetType="fa:FontAwesome">
+                <Setter Property="Icon" Value="SunOutline" />
+                <Setter Property="Foreground" Value="#FFD97706" />
+                <Style.Triggers>
+                  <DataTrigger Binding="{Binding IsChecked, ElementName=ThemeToggleButton}" Value="True">
+                    <Setter Property="Icon" Value="MoonOutline" />
+                    <Setter Property="Foreground" Value="{DynamicResource Brush.Accent.Blue}" />
+                  </DataTrigger>
+                </Style.Triggers>
+              </Style>
+            </fa:FontAwesome.Style>
+          </fa:FontAwesome>
+        </ToggleButton>
         <!--  直接打开“更多设置”  -->
         <Button
           Name="MoreSettingButton"
@@ -432,6 +490,7 @@
       <Border
         Width="340"
         Background="{DynamicResource Brush.Surface}"
+        TextElement.Foreground="{DynamicResource Brush.Foreground}"
         BorderBrush="{DynamicResource Brush.Border}"
         BorderThickness="1"
         SnapsToDevicePixels="True"
@@ -454,6 +513,7 @@
               MinHeight="36"
               MaxHeight="240"
               Background="Transparent"
+              Foreground="{DynamicResource Brush.Foreground}"
               BorderThickness="0"
               ItemsSource="{Binding SendHistory}"
               PreviewMouseLeftButtonUp="SendHistoryList_PreviewMouseLeftButtonUp"
@@ -465,6 +525,7 @@
             >
               <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">
+                  <Setter Property="Foreground" Value="{DynamicResource Brush.Foreground}" />
                   <Setter Property="Padding" Value="4,3" />
                   <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                   <Setter Property="Focusable" Value="False" />
@@ -510,7 +571,7 @@
                 <ColumnDefinition Width="Auto" />
               </Grid.ColumnDefinitions>
               <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-                <TextBlock VerticalAlignment="Center" Text="{DynamicResource SendHistoryLimit}" />
+                <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource Brush.Foreground}" Text="{DynamicResource SendHistoryLimit}" />
                 <TextBox
                   Name="historyLimitBox"
                   Width="52"
@@ -636,6 +697,8 @@
       Grid.Column="2"
       Margin="0,6,0,0"
       Background="{DynamicResource Brush.Surface}"
+      ItemContainerStyle="{StaticResource FlatTabItem}"
+      SelectionChanged="MainTabControl_SelectionChanged"
     >
       <!--  串口设置（原顶栏串口控制移入此页，置于最左）  -->
       <TabItem Header="{DynamicResource SerialSettingsCard}">
@@ -838,8 +901,16 @@
               >
                 <MenuItem.Header>
                   <Grid>
-                    <fa:FontAwesome Foreground="{DynamicResource Brush.Icon.NoteBack}" Icon="StickyNote" />
-                    <fa:FontAwesome Foreground="{DynamicResource Brush.Foreground}" Icon="StickyNoteOutline" />
+                    <fa:FontAwesome
+                      x:Name="QuickSendNoteIcon"
+                      Foreground="{DynamicResource Brush.Icon.NoteBack}"
+                      Icon="StickyNote"
+                      Opacity="0"
+                    />
+                    <fa:FontAwesome
+                      Foreground="{DynamicResource Brush.Foreground}"
+                      Icon="StickyNoteOutline"
+                    />
                   </Grid>
                 </MenuItem.Header>
                 <!-- 页面切换：动态绑定 10 页（QuickSendViewModel.Pages），点击直接切换 -->
@@ -892,6 +963,7 @@
                         Cursor="Cross"
                         MouseRightButtonDown="TextBlock_MouseRightButtonDown"
                         Tag="{Binding}"
+                        Foreground="{DynamicResource Brush.Foreground}"
                         Text="{Binding id}"
                         ToolTip="{DynamicResource QuickSendIdTip}"
                       />
@@ -1064,6 +1136,7 @@
             Name="QuickListNameStackPanel"
             HorizontalAlignment="Left"
             Background="{DynamicResource Brush.Surface.Subtle}"
+            TextElement.Foreground="{DynamicResource Brush.Foreground}"
             Cursor="Cross"
             MouseRightButtonDown="QuickListNameStackPanel_MouseRightButtonDown"
             Orientation="Horizontal"
@@ -1137,6 +1210,9 @@
                   Margin="3"
                   Width="250"
                   Height="100"
+                  Background="{DynamicResource Brush.Surface}"
+                  Foreground="{DynamicResource Brush.Foreground}"
+                  LineNumbersForeground="{DynamicResource Brush.Foreground.Muted}"
                   WordWrap="True"
                   HorizontalContentAlignment="Left"
                   VerticalContentAlignment="Top"
@@ -1354,6 +1430,9 @@
               xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
               Name="textEditor"
               Grid.Row="2"
+              Background="{DynamicResource Brush.Surface}"
+              Foreground="{DynamicResource Brush.Foreground}"
+              LineNumbersForeground="{DynamicResource Brush.Foreground.Muted}"
               FontFamily="Consolas"
               FontSize="10pt"
               LostFocus="TextEditor_LostFocus"

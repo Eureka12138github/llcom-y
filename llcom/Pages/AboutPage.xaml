@@ -15,7 +15,7 @@
   Loaded="Page_Loaded"
 >
   <ScrollViewer Name="aboutScrollViewer">
-    <StackPanel>
+    <StackPanel TextElement.Foreground="{DynamicResource Brush.Foreground}">
       <Image
         Source="pack://application:,,,/llcom.ico"
         Width="80"

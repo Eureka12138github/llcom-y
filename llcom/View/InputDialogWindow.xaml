@@ -7,6 +7,8 @@
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
   Name="WindowInputDialog"
   Title=""
+  Background="{DynamicResource Brush.Surface}"
+  Foreground="{DynamicResource Brush.Foreground}"
   MinWidth="250"
   MinHeight="100"
   SizeToContent="WidthAndHeight"
@@ -15,7 +17,11 @@
   WindowStartupLocation="CenterScreen"
   mc:Ignorable="d"
 >
-  <DockPanel LastChildFill="True">
+  <DockPanel
+    LastChildFill="True"
+    Background="{DynamicResource Brush.Surface}"
+    TextElement.Foreground="{DynamicResource Brush.Foreground}"
+  >
     <DockPanel DockPanel.Dock="Top">
       <TextBlock x:Name="PromptLabel" Margin="5" DockPanel.Dock="Top" TextWrapping="Wrap" />
     </DockPanel>

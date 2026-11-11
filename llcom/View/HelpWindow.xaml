@@ -71,7 +71,7 @@
       <TextBlock Style="{StaticResource HelpLi}" Text="· 自动重连：串口被拔出后自动恢复连接（只重连上次手动打开过的端口）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· RTS / DTR：串口两根硬件控制信号线的电平（详见文末「RTS / DTR 详解」）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 打开串口 / 关闭串口：打开成功后按钮变绿，状态栏显示 COM 与波特率。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 日志底栏右端（与「清空日志」同一行、靠右对齐）：鼠标移入该角落才显示 ? 使用说明、☰ 更多设置、🌐 切换语言；移开自动隐藏。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 日志底栏右端（与「清空日志」同一行、靠右对齐）：鼠标移入该角落才显示 ? 使用说明、🌙/☀ 切换主题、☰ 更多设置、🌐 切换语言；移开自动隐藏。" />
 
       <TextBlock Style="{StaticResource HelpH}" Text="四、收发数据显示区（左侧）" />
       <TextBlock Style="{StaticResource HelpP}" Text="每行显示：时间 + 方向（→ 发送 / ← 接收）+ 数据（十六进制或文本，单行）。" />
@@ -167,6 +167,7 @@
 
       <TextBlock Style="{StaticResource HelpH}" Text="十二、其他" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 语言：日志区右下角 🌐 切换中/英（与 ? 使用说明、☰ 更多设置同一行的右端，鼠标移入才显示）。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 外观：日志区右下角 🌙/☀ 图标切换深色 / 浅色主题（鼠标移入才显示；切换立即生效并保存）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 日志文件：程序目录 logs/（串口日志与崩溃日志 fatal.log）与 user_script_run/logs/（Lua 日志）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 配置与脚本均保存在程序目录。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 程序遇到错误时会弹出一个只有「关闭程序」按钮的窗口，并把错误详情写入 logs/fatal.log。" />
@@ -209,7 +210,7 @@
         <TextBlock Style="{StaticResource HelpLi}" Text="· Auto reconnect: reconnect automatically after the serial cable is unplugged (only the port last opened manually)." />
         <TextBlock Style="{StaticResource HelpLi}" Text="· RTS / DTR: levels of the two hardware control lines (see RTS / DTR details at the end)." />
         <TextBlock Style="{StaticResource HelpLi}" Text="· Open port / Close port: after a successful open the button turns green; the status bar shows the COM port and baud rate." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Bottom-right end of the log (same row as Clear log, right-aligned): hover over that corner to show ? Help, ☰ More settings, 🌐 Change language; they hide when the mouse leaves." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Bottom-right end of the log (same row as Clear log, right-aligned): hover over that corner to show ? Help, 🌙/☀ Theme, ☰ More settings, 🌐 Change language; they hide when the mouse leaves." />
 
         <TextBlock Style="{StaticResource HelpH}" Text="4. Send/receive data area (left side)" />
         <TextBlock Style="{StaticResource HelpP}" Text="Each row shows: time + direction (→ send / ← receive) + data (hex or text, one line)." />
@@ -305,6 +306,7 @@
 
         <TextBlock Style="{StaticResource HelpH}" Text="12. Other" />
         <TextBlock Style="{StaticResource HelpLi}" Text="· Language: use the 🌐 icon at the bottom-right of the log area to switch Chinese/English (same right-aligned row as ? Help and ☰ More settings; shown on hover)." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Appearance: use the 🌙/☀ icon at the bottom-right of the log area to switch dark / light theme (shown on hover; applied immediately and saved)." />
         <TextBlock Style="{StaticResource HelpLi}" Text="· Log files: logs/ in the program folder (serial log and fatal.log) and user_script_run/logs/ (Lua log)." />
         <TextBlock Style="{StaticResource HelpLi}" Text="· Configuration and scripts are stored in the program folder." />
         <TextBlock Style="{StaticResource HelpLi}" Text="· On a fatal error LLCOM opens a window with only a Close program button and writes details to logs/fatal.log." />

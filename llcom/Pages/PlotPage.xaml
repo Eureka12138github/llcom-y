@@ -11,7 +11,7 @@
   Title="PlotPage"
   Loaded="Page_Loaded"
 >
-  <Grid>
+  <Grid TextElement.Foreground="{DynamicResource Brush.Foreground}">
     <Grid.RowDefinitions>
       <RowDefinition Height="auto" />
       <RowDefinition Height="*" />

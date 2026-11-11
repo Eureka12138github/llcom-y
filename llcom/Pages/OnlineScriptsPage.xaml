@@ -56,7 +56,7 @@
     </Style>
   </Page.Resources>
 
-  <Grid>
+  <Grid TextElement.Foreground="{DynamicResource Brush.Foreground}">
     <Grid>
       <Grid Visibility="{Binding IsInList, Converter={StaticResource boolVisibeConverter}}">
         <Grid.RowDefinitions>
@@ -234,6 +234,7 @@
             <TextBlock
               Name="StatusTextBlock"
               HorizontalAlignment="Center"
+              Foreground="{DynamicResource Brush.Foreground}"
               FontSize="30"
               Text="{Binding LoadingMsg}"
             />
