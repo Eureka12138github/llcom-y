@@ -22,6 +22,14 @@
       "zh-CN": "串口",
       "en-US": "Port"
     },
+    "OpenPortTip": {
+      "zh-CN": "打开串口",
+      "en-US": "Open port"
+    },
+    "ClosePortTip": {
+      "zh-CN": "关闭串口",
+      "en-US": "Close port"
+    },
     "ErrorOpenPort": {
       "zh-CN": "串口打开失败！",
       "en-US": "Serial port open failed!"
@@ -233,6 +241,10 @@
     "QuickSendListNameChangeTip": {
       "zh-CN": "更改当前快捷发送列表名称",
       "en-US": "change this quick send list name"
+    },
+    "QuickSendUnnamedPage": {
+      "zh-CN": "未命名{0}",
+      "en-US": "Unnamed {0}"
     },
     "QuickSendButton": {
       "zh-CN": "发送",
@@ -453,6 +465,10 @@
     "AboutThanksProjects": {
       "zh-CN": "感谢以下项目：",
       "en-US": "Thanks these projects:"
+    },
+    "AboutThanksLLCOM": {
+      "zh-CN": "LLCOM（原作者 chenxuuu）",
+      "en-US": "LLCOM (original author chenxuuu)"
     },
     "AboutVersion": {
       "zh-CN": "软件版本",

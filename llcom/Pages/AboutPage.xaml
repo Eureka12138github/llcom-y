@@ -128,7 +128,7 @@
                             <LineBreak />
                             Costura.Fody
                             <LineBreak />
-                            LLCOM（原作者 chenxuuu）
+                            <Run Text="{DynamicResource AboutThanksLLCOM}" />
                             <LineBreak />
         <LineBreak />
       </TextBlock>

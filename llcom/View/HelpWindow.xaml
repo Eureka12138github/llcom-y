@@ -41,6 +41,7 @@
 
   <ScrollViewer Padding="20,16,20,20" VerticalScrollBarVisibility="Auto">
     <StackPanel>
+      <StackPanel x:Name="HelpContentZh">
       <TextBlock Style="{StaticResource HelpTitle}" Text="LLCOM 使用说明" />
 
       <TextBlock Style="{StaticResource HelpH}" Text="一、快速上手" />
@@ -174,6 +175,79 @@
       <TextBlock Style="{StaticResource HelpLi}" Text="· DTR（Data Terminal Ready，数据终端就绪）：勾选=拉高，取消=拉低。原本表示「本机已就绪」；最常见的用法是让开发板（Arduino、ESP 等）复位或进入下载/Bootloader 模式——很多下载电路正是靠 DTR/RTS 的电平组合去拉复位脚与 BOOT 脚。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 生效时机：只有在串口已打开时才会真正作用到硬件；打开串口时会按当前勾选状态设置一次。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 注意：不同设备对这两根线的定义不同，随意改动电平可能误触发设备复位或进入下载模式；不确定时保持默认（RTS 不勾选、DTR 勾选）即可。" />
+      </StackPanel>
+
+      <StackPanel x:Name="HelpContentEn" Visibility="Collapsed">
+        <TextBlock Style="{StaticResource HelpTitle}" Text="LLCOM Help" />
+
+        <TextBlock Style="{StaticResource HelpH}" Text="1. Quick start" />
+        <TextBlock Style="{StaticResource HelpP}" Text="1. In the Serial Port tab on the right: choose a port, choose a baud rate, then click Open port." />
+        <TextBlock Style="{StaticResource HelpP}" Text="2. The left area is the log. Type in the box at the bottom, then click Send or press Ctrl+Enter." />
+        <TextBlock Style="{StaticResource HelpP}" Text="3. Right-side tabs: Serial Port / Quick send / Run script / Online scripts / Tools / About." />
+        <TextBlock Style="{StaticResource HelpP}" Text="Tip: sending while the port is closed does not auto-open it; LLCOM asks you to open the port first." />
+
+        <TextBlock Style="{StaticResource HelpH}" Text="2. Shortcuts (main window only)" />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+O: open / close the serial port." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+L: focus the send box (caret at the end)." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+K: clear the log." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+Up / Ctrl+Down: previous / next serial port (locked while the port is open)." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+Left / Ctrl+Right: cycle common baud rates: 1200 / 2400 / 4800 / 9600 / 19200 / 38400 / 57600 / 115200." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+Shift+S: open More settings." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+Enter: send the send-box content (can be changed to Enter in Send options)." />
+        <TextBlock Style="{StaticResource HelpP}" Text="Shortcuts work only while the main window is focused. When terminal mode is on and the log area has focus, Ctrl+A..Z are sent as control characters first." />
+
+        <TextBlock Style="{StaticResource HelpH}" Text="3. Serial settings" />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Refresh: rescan available serial ports." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Port / baud rate: the last baud-rate item is Custom, where you can type any value." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Data bits / parity / stop bits / encoding: serial parameters and text encoding." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Mark / Space parity are fixed 1 / 0 parity levels for 9-bit multi-drop protocols; use None for normal devices." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Auto reconnect: reopen the last manually opened port after it is unplugged and plugged back in." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· RTS / DTR: levels of the two hardware control lines. They take effect only when the port is open." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Open port / Close port: the button turns green when open; the status bar shows the COM port and baud rate." />
+
+        <TextBlock Style="{StaticResource HelpH}" Text="4. Log area and terminal mode" />
+        <TextBlock Style="{StaticResource HelpP}" Text="Each row shows time + direction (→ send / ← receive) + data." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Abc/Hex (send) and Abc/Hex (receive): switch between text and hexadecimal display." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Eye: show invisible characters as visible placeholders." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Pause / resume log printing; lock auto-scroll; clear the log; save the log to a file." />
+        <TextBlock Style="{StaticResource HelpP}" Text="In Packet mode, Ctrl+click to select multiple rows, then Ctrl+C or right-click Copy selected lines. In Stream mode, right-click Copy all." />
+        <TextBlock Style="{StaticResource HelpP}" Text="Terminal mode (enable in More settings): click the log area and type; characters are sent to the serial port immediately. Ctrl+A..Z send ASCII control codes (Ctrl+C = 0x03). It is not a full terminal and is off by default." />
+
+        <TextBlock Style="{StaticResource HelpH}" Text="5. Send area" />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Click Send or press Ctrl+Enter. The plug icon opens / closes the port (green = closed, red = open)." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Buttons left of the plug: clear send box, send history, appended newline (none / \n / \r / \n\r / \r\n)." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· The dropdown right of Send is Send options: continuous send, delay, repeat count, and Enter / Ctrl+Enter behavior." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Repeat count means extra repeats after the first send: 3 = 4 sends total, 0 = one send, -1 = repeat until stopped." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· HEX send is controlled by the Abc/Hex (send) button under the log." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· A send script can transform data before sending (More settings)." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Drag the horizontal splitter above the send area to resize it (40–240 px)." />
+
+        <TextBlock Style="{StaticResource HelpH}" Text="6. Quick send" />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· 10 pages; use the sticky-note icon to switch pages; right-click a page name to rename it. Pin frequently used tools in the Tools tab." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Each row: ID, content, send button, Hex flag, receive script, timer. Right-click the ID to move a row." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Bottom buttons: add, remove last, import, export, clear page, import from SSCOM." />
+
+        <TextBlock Style="{StaticResource HelpH}" Text="7. Scripts" />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Run script: choose or create a script, then Run. Use Stop / pause as needed; the bottom box runs one line of Lua." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Online scripts: browse community scripts and download them to user_script_run/." />
+
+        <TextBlock Style="{StaticResource HelpH}" Text="8. Tools" />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· TCP test / local TCP / local UDP / TCP client / encoding converter / MQTT / mojibake fix / serial monitor / plot / WinUSB / DL/T 645-2007." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Serial monitor: start monitoring before the target opens the port; 64-bit targets only; antivirus may require running as administrator." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· DL/T 645-2007: meter frame tool. Address is padded to 12 digits and can be read from the meter; DI can be filtered and managed; write data can add password/operator code; custom control codes are sent exactly as entered. Write and custom commands are sent without confirmation." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Response parsing shows the raw frame, address, control/function code, length, data, encoded data and checksum, and splits common fields." />
+
+        <TextBlock Style="{StaticResource HelpH}" Text="9. More settings / backup" />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Open with the ☰ button at the bottom-right corner of the log area (shown on hover)." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Tabs: serial settings, send script, receive script. Log limits, topmost window, terminal mode and font size are here." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Export / import configuration backs up the whole settings.json. A restart is required after import." />
+
+        <TextBlock Style="{StaticResource HelpH}" Text="10. Notes" />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Language: use the globe icon at the bottom-right corner of the log area." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Logs: logs/ (serial and fatal.log) and user_script_run/logs/ (Lua)." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Configuration and scripts are stored in the program folder." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· A fatal error opens a window with only Close program and writes details to logs/fatal.log." />
+      </StackPanel>
     </StackPanel>
   </ScrollViewer>
 </Window>

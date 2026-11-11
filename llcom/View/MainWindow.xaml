@@ -282,10 +282,18 @@
             />
           </Grid>
           <Button.ToolTip>
-            <StackPanel Orientation="Horizontal">
-              <TextBlock Text="{Binding OpenCloseButtonText}" />
-              <TextBlock Text="{DynamicResource OpenPort_port}" />
-            </StackPanel>
+            <TextBlock>
+              <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                  <Setter Property="Text" Value="{DynamicResource OpenPortTip}" />
+                  <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsPortOpen}" Value="True">
+                      <Setter Property="Text" Value="{DynamicResource ClosePortTip}" />
+                    </DataTrigger>
+                  </Style.Triggers>
+                </Style>
+              </TextBlock.Style>
+            </TextBlock>
           </Button.ToolTip>
         </Button>
         <Button
@@ -802,8 +810,18 @@
               Style="{StaticResource PortToggleButton}"
             >
               <WrapPanel>
-                <TextBlock Text="{Binding OpenCloseButtonText}" />
-                <TextBlock Text="{DynamicResource OpenPort_port}" />
+                <TextBlock>
+                  <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                      <Setter Property="Text" Value="{DynamicResource OpenPortTip}" />
+                      <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsPortOpen}" Value="True">
+                          <Setter Property="Text" Value="{DynamicResource ClosePortTip}" />
+                        </DataTrigger>
+                      </Style.Triggers>
+                    </Style>
+                  </TextBlock.Style>
+                </TextBlock>
               </WrapPanel>
             </Button>
           </StackPanel>

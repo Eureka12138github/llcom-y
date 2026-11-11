@@ -104,7 +104,37 @@ public partial class QuickSendViewModel : ObservableObject
     {
         Pages.Clear();
         for (int i = 0; i < 10; i++)
-            Pages.Add(new QuickSendPage(i, _setting.GetQuickListNameByIndex(i)));
+            Pages.Add(new QuickSendPage(i, DisplayPageName(_setting.GetQuickListNameByIndex(i), i)));
+    }
+
+    /// <summary>语言切换后刷新页名与菜单里的“未命名 N”。</summary>
+    public void RefreshLocalization()
+    {
+        RefreshPages();
+        CurrentPageName = DisplayPageName(
+            _setting.GetQuickListNameNow(),
+            _setting.quickSendSelect
+        );
+    }
+
+    /// <summary>
+    /// 数据库里仍然是旧的中文默认名（未命名0~9），显示时按当前语言换成 Unnamed N。
+    /// 用户自定义的名字保持原样。
+    /// </summary>
+    private static string DisplayPageName(string name, int index)
+    {
+        var fallback = string.Format(Localize("QuickSendUnnamedPage"), index);
+        if (string.IsNullOrWhiteSpace(name))
+            return fallback;
+
+        var trimmed = name.Trim();
+        if (
+            trimmed == $"未命名{index}"
+            || trimmed == $"未命名 {index}"
+            || trimmed == $"Unnamed {index}"
+        )
+            return fallback;
+        return name;
     }
 
     /// <summary>
@@ -164,7 +194,10 @@ public partial class QuickSendViewModel : ObservableObject
             Items.Add(i);
         }
         CheckIds();
-        CurrentPageName = _setting.GetQuickListNameNow();
+        CurrentPageName = DisplayPageName(
+            _setting.GetQuickListNameNow(),
+            _setting.quickSendSelect
+        );
     }
 
     /// <summary>
@@ -264,13 +297,13 @@ public partial class QuickSendViewModel : ObservableObject
     {
         var ret = Tools.InputDialog.OpenDialog(
             "↓↓↓↓↓↓",
-            _setting.GetQuickListNameNow(),
+            CurrentPageName,
             Localize("QuickSendListNameChangeTip")
         );
         if (!ret.Item1)
             return;
         _setting.SetQuickListNameNow(ret.Item2);
-        CurrentPageName = ret.Item2;
+        CurrentPageName = DisplayPageName(ret.Item2, _setting.quickSendSelect);
         RefreshPages();
     }
 

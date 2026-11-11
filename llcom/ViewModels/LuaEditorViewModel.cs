@@ -128,6 +128,14 @@ public partial class LuaEditorViewModel : ObservableObject
     private static string AllCategoriesLabel =>
         (Application.Current?.TryFindResource("ScriptCategoryAll") as string) ?? "All";
 
+    /// <summary>语言切换后重建分类下拉的本地化文本（“全部分类”“未分类”）。</summary>
+    public void RefreshLocalization()
+    {
+        RefreshCategoriesCore();
+        OnPropertyChanged(nameof(SelectedCategoryDisplay));
+        OnPropertyChanged(nameof(AllCategoriesLabel));
+    }
+
     /// <summary>当前脚本的分类（只读，供设置分类对话框显示默认值）</summary>
     public string SelectedCategoryValue => GetSelectedMetadata()?.Category ?? "";
 

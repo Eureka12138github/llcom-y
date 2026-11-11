@@ -268,8 +268,7 @@ public partial class MainWindow : Window
                         //小工具页面：按 ToolCatalog 统一导航（保持原来的“启动时全部 Navigate”行为）
                         NavigateToolPages();
 
-                        this.Title +=
-                            $" - {System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString()}";
+                        UpdateWindowTitle();
 
                         _luaLogPump.Start();
 
@@ -695,10 +694,46 @@ public partial class MainWindow : Window
         _vm.LuaEditor.OnAutoSave();
     }
 
-    /// <summary>窗口切换后台自动保存</summary>
+    /// <summary>窗口切换后台自动保存；点击程序外部时自动最小化。</summary>
     private void Window_Deactivated(object sender, EventArgs e)
     {
         _vm.LuaEditor.OnAutoSave();
+
+        // 本程序自己的对话框（设置、帮助、文件选择、消息框）获得焦点时不最小化，
+        // 只有焦点真正到了其他进程才最小化。
+        Dispatcher.BeginInvoke(
+            new Action(() =>
+            {
+                if (WindowState == WindowState.Minimized)
+                    return;
+                if (Tools.Win32.IsForegroundWindowInCurrentProcess())
+                    return;
+                WindowState = WindowState.Minimized;
+            }),
+            System.Windows.Threading.DispatcherPriority.Background
+        );
+    }
+
+    /// <summary>刷新窗口标题里的语言（版本号保留）。</summary>
+    private void UpdateWindowTitle()
+    {
+        var appTitle = TryFindResource("AppTitle") as string ?? "LLCOM-Y";
+        var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        Title = $"{appTitle} - {version}";
+    }
+
+    /// <summary>切换语言后刷新 ViewModel 里缓存的本地化文本。</summary>
+    private void RefreshWindowLocalization()
+    {
+        UpdateWindowTitle();
+        _vm.RefreshLocalization();
+        _vm.QuickSend.RefreshLocalization();
+        _vm.LuaEditor.RefreshLocalization();
+        foreach (var (_, frame) in _toolPages)
+        {
+            if (frame.Content is llcom.Pages.Dlt645Page dlt645)
+                dlt645.RefreshLocalization();
+        }
     }
 
     /// <summary>窗口激活时检测外部修改（其他编辑器改过则重新加载）</summary>
@@ -1259,7 +1294,10 @@ public partial class MainWindow : Window
     private void MenuItem_Click(object sender, RoutedEventArgs e)
     {
         if (sender is MenuItem menuItem && menuItem.Tag is string language)
+        {
             Tools.Global.setting.language = language;
+            RefreshWindowLocalization();
+        }
     }
 
     //id序号右击事件

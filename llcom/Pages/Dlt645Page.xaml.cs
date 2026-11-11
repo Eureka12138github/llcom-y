@@ -1114,6 +1114,15 @@ public partial class Dlt645Page : Page
         }
     }
 
+    /// <summary>语言切换后刷新预览与解析结果里的本地化文本。</summary>
+    internal void RefreshLocalization()
+    {
+        if (!string.IsNullOrWhiteSpace(FramePreviewTextBox.Text))
+            RefreshPreview();
+        if (!string.IsNullOrWhiteSpace(ParseResultTextBox.Text))
+            ParseButton_Click(this, new RoutedEventArgs());
+    }
+
     private void ParseButton_Click(object sender, RoutedEventArgs e)
     {
         _lastParsedAddress = null;

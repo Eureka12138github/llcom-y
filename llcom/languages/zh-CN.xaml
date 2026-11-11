@@ -7,6 +7,8 @@
     <system:String x:Key="OpenPort_open">打开</system:String>
     <system:String x:Key="OpenPort_close">关闭</system:String>
     <system:String x:Key="OpenPort_port">串口</system:String>
+    <system:String x:Key="OpenPortTip">打开串口</system:String>
+    <system:String x:Key="ClosePortTip">关闭串口</system:String>
     <system:String x:Key="ErrorOpenPort">串口打开失败！</system:String>
     <system:String x:Key="ErrorClosePort">串口关闭失败！</system:String>
     <system:String x:Key="ErrorSendFail">串口数据发送失败！请检查连接！</system:String>
@@ -60,6 +62,7 @@
     <system:String x:Key="QuickSendIdTip">右击序号，可更改改条目位置。</system:String>
     <system:String x:Key="QuickSendListNameTip">右击名称，可更改当前快捷发送列表名称。</system:String>
     <system:String x:Key="QuickSendListNameChangeTip">更改当前快捷发送列表名称</system:String>
+    <system:String x:Key="QuickSendUnnamedPage">未命名{0}</system:String>
     <system:String x:Key="QuickSendButton">发送</system:String>
     <system:String x:Key="QuickSendRecvScriptNil">无接收脚本&#10;左击选择脚本</system:String>
     <system:String x:Key="QuickSendRecvScriptShow">当前接收脚本为：[{0}]&#10;右击清除脚本</system:String>
@@ -115,6 +118,7 @@
     <system:String x:Key="AboutFeedBack">遇到问题或有建议，请到本项目提 Issue</system:String>
     <system:String x:Key="AboutFeedBackButton">提交 Issue</system:String>
     <system:String x:Key="AboutThanksProjects">感谢以下项目：</system:String>
+    <system:String x:Key="AboutThanksLLCOM">LLCOM（原作者 chenxuuu）</system:String>
     <system:String x:Key="AboutVersion">软件版本</system:String>
     <system:String x:Key="InputDialogConfirm">确定</system:String>
     <system:String x:Key="InputDialogCancel">取消</system:String>

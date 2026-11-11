@@ -327,6 +327,15 @@ public partial class MainViewModel : ObservableObject
         Application.Current?.TryFindResource(key) as string ?? "?!";
 
     /// <summary>
+    /// 语言切换后刷新 ViewModel 缓存的本地化文本（状态栏、开关串口按钮等）。
+    /// </summary>
+    internal void RefreshLocalization()
+    {
+        OpenCloseButtonText = Localize(IsPortOpen ? "OpenPort_close" : "OpenPort_open");
+        StatusText = Localize(IsPortOpen ? "OpenPort_open" : "OpenPort_close");
+    }
+
+    /// <summary>
     /// 刷新串口设备列表。
     /// 列表来源：Win32_PnPEntity WMI 查询（含设备描述名），并用注册表权威
     /// SerialPort.GetPortNames() 过滤掉已拔掉的设备（WMI 有延迟/缓存）。
