@@ -29,7 +29,8 @@ class MessageBox
     {
         try
         {
-            InputDialog.OpenDialog(s);
+            // 纯提示：不显示输入框（defaultInput 传 null 时 InputDialogWindow 会隐藏输入区）
+            InputDialog.OpenDialog(s, null);
         }
         catch
         {
