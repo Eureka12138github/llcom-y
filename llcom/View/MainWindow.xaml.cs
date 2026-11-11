@@ -113,8 +113,39 @@ public partial class MainWindow : Window
         }
     }
 
+    /// <summary>
+    /// 限制右侧栏最大宽度：始终给主日志留出 MinWidth，避免右栏被拖得过宽后
+    /// 整个 Grid 溢出，把跨列的发送区按钮推到窗口外。
+    /// </summary>
+    private void MainGrid_SizeChanged(object sender, SizeChangedEventArgs e) =>
+        ClampSidebarWidth();
+
+    private void Window_SizeChanged(object sender, SizeChangedEventArgs e) =>
+        ClampSidebarWidth();
+
+    //窗口非客户区宽度（边框），用于在 Grid 被撑溢出时仍能算出可用客户区宽度
+    private double _windowChromeWidth = -1;
+
+    private void ClampSidebarWidth()
+    {
+        if (WindowState == WindowState.Minimized || MainGrid.ActualWidth <= 0)
+            return;
+
+        //MainGrid 正常时用实际差值更新边框宽度；被右栏撑溢出时不采用异常值
+        var diff = ActualWidth - MainGrid.ActualWidth;
+        if (diff >= 0 && diff < 200)
+            _windowChromeWidth = diff;
+
+        var clientWidth =
+            _windowChromeWidth >= 0 ? ActualWidth - _windowChromeWidth : MainGrid.ActualWidth;
+        var available = clientWidth - LogColumn.MinWidth - SplitterColumn.ActualWidth;
+        SidebarColumn.MaxWidth = Math.Max(SidebarColumn.MinWidth, available);
+    }
+
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
+        ClampSidebarWidth();
+
         //初始化“串口设置”页的下拉参数
         mainDataBitsComboBox.SelectedIndex = Tools.Global.setting.dataBits - 5;
         mainStopBitComboBox.SelectedIndex = Tools.Global.setting.stopBit - 1;
