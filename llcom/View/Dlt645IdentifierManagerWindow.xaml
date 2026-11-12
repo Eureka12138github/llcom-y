@@ -10,13 +10,15 @@
   Height="480"
   MinWidth="600"
   MinHeight="360"
+  Background="{DynamicResource Brush.Surface}"
+  Foreground="{DynamicResource Brush.Foreground}"
   adonisExtensions:RippleExtension.FadeInDuration="0"
   adonisExtensions:RippleExtension.FadeOutDuration="0"
   ShowInTaskbar="False"
   WindowStartupLocation="CenterOwner"
   mc:Ignorable="d"
 >
-  <Grid Margin="8">
+  <Grid Margin="8" TextElement.Foreground="{DynamicResource Brush.Foreground}">
     <Grid.RowDefinitions>
       <RowDefinition Height="*" />
       <RowDefinition Height="Auto" />

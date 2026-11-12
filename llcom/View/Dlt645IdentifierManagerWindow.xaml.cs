@@ -21,6 +21,22 @@ public partial class Dlt645IdentifierManagerWindow : Window
         LoadEntries();
     }
 
+    protected override void OnSourceInitialized(System.EventArgs e)
+    {
+        base.OnSourceInitialized(e);
+        llcom.Services.ThemeService.ApplyWindowChrome(this);
+        llcom.Services.ThemeService.ThemeChanged += OnThemeChanged;
+    }
+
+    protected override void OnClosed(System.EventArgs e)
+    {
+        llcom.Services.ThemeService.ThemeChanged -= OnThemeChanged;
+        base.OnClosed(e);
+    }
+
+    private void OnThemeChanged(object sender, System.EventArgs e) =>
+        llcom.Services.ThemeService.ApplyWindowChrome(this);
+
     private void LoadEntries()
     {
         _entries.Clear();

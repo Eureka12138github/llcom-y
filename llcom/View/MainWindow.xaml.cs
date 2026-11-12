@@ -101,6 +101,12 @@ public partial class MainWindow : Window
             Interval = TimeSpan.FromMilliseconds(150),
         };
 
+    /// <summary>Alt+M 在被最小化时注册的全局热键 ID。</summary>
+    private const int MinimizeHotKeyId = 0x4D21;
+
+    /// <summary>Alt+M 恢复用全局热键是否已注册（只在最小化期间注册，避免长期占用）。</summary>
+    private bool _minimizeHotKeyRegistered;
+
     public MainWindow(MainViewModel vm)
     {
         InitializeComponent();
@@ -108,6 +114,7 @@ public partial class MainWindow : Window
         DataContext = _vm;
         _toolIndexStore = ToolIndexStore.CreateDefault();
         InitializeToolSelector();
+        StateChanged += (_, _) => UpdateMinimizeHotKey();
         _dlt645FlushTimer.Tick += (_, _) => FlushDlt645Log();
         if (
             Tools.Global.setting.windowHeight != 0
@@ -395,6 +402,14 @@ public partial class MainWindow : Window
 
     private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
+        // Alt+M 恢复热键：窗口最小化时才能收到（正常状态由 PreviewKeyDown 处理）
+        if (msg == Win32.WmHotKey && wParam.ToInt32() == MinimizeHotKeyId)
+        {
+            RestoreFromMinimized();
+            handled = true;
+            return IntPtr.Zero;
+        }
+
         if (msg == 0x219 && !Tools.Global.uart.IsOpen()) // 监听USB设备插拔消息
         {
             //防抖：每次事件都重置定时器，停止触发 800ms 后再刷新端口列表（含自动重连）
@@ -420,6 +435,13 @@ public partial class MainWindow : Window
         _vm.LuaEditor.OnAutoSave();
         _foldingTimer.Stop();
         _usbDebounceTimer.Stop();
+        if (_minimizeHotKeyRegistered)
+        {
+            var handle = new WindowInteropHelper(this).Handle;
+            if (handle != IntPtr.Zero)
+                Win32.UnregisterMinimizeHotKey(handle, MinimizeHotKeyId);
+            _minimizeHotKeyRegistered = false;
+        }
         Tools.Global.isMainWindowsClosed = true;
         foreach (Window win in App.Current.Windows)
         {
@@ -481,7 +503,7 @@ public partial class MainWindow : Window
 
         if (key == Key.M && Keyboard.Modifiers == ModifierKeys.Alt)
         {
-            WindowState = WindowState.Minimized;
+            ToggleMinimizeRestore();
             e.Handled = true;
             return;
         }
@@ -519,6 +541,43 @@ public partial class MainWindow : Window
     {
         WindowState =
             WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+    }
+
+    /// <summary>Alt+M：最小化 / 从最小化恢复（切换）。</summary>
+    private void ToggleMinimizeRestore()
+    {
+        if (WindowState == WindowState.Minimized)
+            RestoreFromMinimized();
+        else
+            WindowState = WindowState.Minimized;
+    }
+
+    private void RestoreFromMinimized()
+    {
+        WindowState = WindowState.Normal;
+        Activate();
+    }
+
+    /// <summary>
+    /// 最小化期间注册 Alt+M 全局热键，恢复后立刻注销。
+    /// 窗口最小化后收不到键盘事件，只有全局热键才能再次触发恢复。
+    /// </summary>
+    private void UpdateMinimizeHotKey()
+    {
+        var handle = new WindowInteropHelper(this).Handle;
+        if (handle == IntPtr.Zero)
+            return;
+
+        if (WindowState == WindowState.Minimized)
+        {
+            if (!_minimizeHotKeyRegistered)
+                _minimizeHotKeyRegistered = Win32.RegisterAltM(handle, MinimizeHotKeyId);
+        }
+        else if (_minimizeHotKeyRegistered)
+        {
+            Win32.UnregisterMinimizeHotKey(handle, MinimizeHotKeyId);
+            _minimizeHotKeyRegistered = false;
+        }
     }
 
     /// <summary>
