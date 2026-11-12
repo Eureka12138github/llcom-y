@@ -429,7 +429,8 @@
 - 优先级：中
 - 状态：已实现（2026-11-12，待验证）
 - 实现（标题栏）：切换主题后主动调用 `SetWindowPos(SWP_FRAMECHANGED)` + `RedrawWindow(RDW_FRAME)`，并模拟一次 `WM_NCACTIVATE`，让 Win10 的活动窗口标题栏立即重绘，不再依赖切走/切回焦点。
-- 实现（便签图标）：灰色底块来自 AdonisUI 顶层 `Menu` 的 `Layer0BorderBrush`，主题切换后 `MenuItem` 的透明触发器失效。现在把该 `Menu`/`MenuItem` 背景固定为 `Transparent`、边框为 0，深浅切换后都保持与 Header 融合。
+- 实现（便签图标）：灰色底块来自 AdonisUI 顶层 `Menu` 的 `Layer0BorderBrush`，主题切换后 `MenuItem` 的透明触发器失效。现在把该 `Menu` 背景固定为 `Transparent`，`MenuItem` 背景按 Tab 状态切换：未选中用 AdonisUI `Layer0`、选中用 `Brush.Surface`；既保证 Header 与 Tab 背景融合，也避免下拉弹层因 `TemplateBinding` 变透明。
+- 修正（2026-11-12）：最初把 `MenuItem` 背景设为 `Transparent` 导致下拉菜单透明；随后固定为 `Brush.Surface` 又在深色未选中时偏暗。最终按 Tab 的选中状态动态切换，并实测两种主题下背景色与 Tab 头部一致。
 - 实现（收藏星标）：该按钮实际是工具置顶星标（不是查询表地址放大镜）。新增 `ToolPinToggle` 样式，选中态只改变星标颜色，不再把背景改成灰色、边框改成深灰；浅色、深色下背景和边框都与相邻按钮一致。
 
 ---
