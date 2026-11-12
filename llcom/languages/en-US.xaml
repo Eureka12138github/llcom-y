@@ -484,4 +484,26 @@
     <system:String x:Key="Dlt645ExtraEventReset">Password + operator code + event DI (12-byte hex)</system:String>
     <system:String x:Key="Dlt645RawDataTip">Enter bytes in frame order (low byte first); no reversal is applied.</system:String>
     <system:String x:Key="Dlt645ExpectedDataLength">Data length should be {0} bytes (currently {1}).</system:String>
+    <system:String x:Key="CalculatorTitle">Calculator</system:String>
+    <system:String x:Key="CalculatorWidth">Width</system:String>
+    <system:String x:Key="CalculatorBits8">8 bit</system:String>
+    <system:String x:Key="CalculatorBits16">16 bit</system:String>
+    <system:String x:Key="CalculatorBits32">32 bit</system:String>
+    <system:String x:Key="CalculatorBits64">64 bit</system:String>
+    <system:String x:Key="CalculatorFloat">Floating point</system:String>
+    <system:String x:Key="CalculatorBigEndian">Big-endian</system:String>
+    <system:String x:Key="CalculatorLittleEndian">Little-endian</system:String>
+    <system:String x:Key="CalculatorEndianHint">FLOAT32 accepts up to 8 hex digits, FLOAT64 up to 16 (0-9 / A-F); big-endian means the high byte comes first.</system:String>
+    <system:String x:Key="CalculatorInput">Input (all bases update live)</system:String>
+    <system:String x:Key="CalculatorInvalid">Invalid input</system:String>
+    <system:String x:Key="CalculatorInvalidOperand">Invalid operand</system:String>
+    <system:String x:Key="CalculatorBitOps">Bitwise operations</system:String>
+    <system:String x:Key="CalculatorOperand">Operand</system:String>
+    <system:String x:Key="CalculatorBitOpsHint">The operand uses the current input base; the result is masked to the selected width.</system:String>
+    <system:String x:Key="CalculatorArithmetic">Arithmetic</system:String>
+    <system:String x:Key="CalculatorResult">Result</system:String>
+    <system:String x:Key="CalculatorExpressionHint">Supports + - * / % ^, parentheses and decimals; evaluates as you type.</system:String>
+    <system:String x:Key="CalculatorExpressionInvalid">Invalid expression</system:String>
+    <system:String x:Key="CalculatorDivideByZero">Division by zero</system:String>
+    <system:String x:Key="CalculatorCopy">Copy</system:String>
 </ResourceDictionary>

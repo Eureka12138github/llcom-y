@@ -18,6 +18,7 @@
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto" />
         <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
       </Grid.RowDefinitions>
 
       <!--  第一行：搜索 / 分类筛选 / 只看收藏  -->
@@ -27,8 +28,7 @@
           <ColumnDefinition Width="Auto" />
           <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-
-        <Grid Grid.Column="0" MinWidth="140">
+        <Grid Grid.Column="0" MinWidth="30">
           <TextBox
             Name="SearchBox"
             Height="28"
@@ -90,7 +90,7 @@
 
         <ComboBox
           Grid.Column="1"
-          Width="110"
+          Width="96"
           Height="28"
           Margin="6,0,0,0"
           DisplayMemberPath="Label"
@@ -107,13 +107,13 @@
         />
       </Grid>
 
-      <!--  第二行：当前脚本 / 收藏 / 分类 / 更多 / 页面操作按钮  -->
+      <!--  第二行：当前脚本 / 收藏 / 分类 / 更多（窄宽度自动换行）  -->
       <WrapPanel Grid.Row="1" Orientation="Horizontal">
         <ComboBox
           Name="ScriptCombo"
-          Width="200"
+          Width="140"
           Height="28"
-          Margin="0,0,6,0"
+          Margin="0,0,6,4"
           ItemsSource="{Binding Files}"
           PreviewMouseRightButtonUp="ScriptCombo_PreviewMouseRightButtonUp"
           SelectedItem="{Binding VisibleSelectedFile}"
@@ -121,7 +121,11 @@
         />
 
         <Button
-          Margin="0,0,4,0"
+          Width="28"
+          Height="28"
+          MinWidth="28"
+          MinHeight="28"
+          Margin="0,0,4,4"
           Click="Favorite_Click"
         >
           <Button.Style>
@@ -168,7 +172,7 @@
 
         <Button
           Height="28"
-          Margin="0,0,4,0"
+          Margin="0,0,4,4"
           Padding="7,0"
           Click="Category_Click"
           ToolTip="{DynamicResource ScriptCategoryChipTip}"
@@ -182,7 +186,7 @@
               Icon="Tag"
             />
             <TextBlock
-              MaxWidth="90"
+              MaxWidth="64"
               VerticalAlignment="Center"
               Text="{Binding SelectedCategoryDisplay}"
               TextTrimming="CharacterEllipsis"
@@ -192,6 +196,11 @@
 
         <Button
           Name="MoreButton"
+          Width="28"
+          Height="28"
+          MinWidth="28"
+          MinHeight="28"
+          Margin="0,0,0,4"
           Click="MoreButton_Click"
           Style="{StaticResource IconButton}"
           ToolTip="{DynamicResource ScriptMore}"
@@ -214,13 +223,15 @@
             </ContextMenu>
           </Button.ContextMenu>
         </Button>
-
-        <ContentPresenter
-          Margin="8,0,0,0"
-          VerticalAlignment="Center"
-          Content="{Binding ActionsContent, ElementName=Root}"
-        />
       </WrapPanel>
+
+      <!--  第三行：页面操作按钮（约束在可用宽度内，自动换行）  -->
+      <ContentPresenter
+        Grid.Row="2"
+        Margin="0,2,0,0"
+        VerticalAlignment="Center"
+        Content="{Binding ActionsContent, ElementName=Root}"
+      />
     </Grid>
   </Border>
 

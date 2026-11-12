@@ -1950,6 +1950,94 @@
     "Dlt645ExpectedDataLength": {
       "zh-CN": "数据长度应为 {0} 字节（当前 {1}）",
       "en-US": "Data length should be {0} bytes (currently {1})."
+    },
+    "CalculatorTitle": {
+      "zh-CN": "计算器",
+      "en-US": "Calculator"
+    },
+    "CalculatorWidth": {
+      "zh-CN": "位宽",
+      "en-US": "Width"
+    },
+    "CalculatorBits8": {
+      "zh-CN": "8 位",
+      "en-US": "8 bit"
+    },
+    "CalculatorBits16": {
+      "zh-CN": "16 位",
+      "en-US": "16 bit"
+    },
+    "CalculatorBits32": {
+      "zh-CN": "32 位",
+      "en-US": "32 bit"
+    },
+    "CalculatorBits64": {
+      "zh-CN": "64 位",
+      "en-US": "64 bit"
+    },
+    "CalculatorFloat": {
+      "zh-CN": "浮点数解析",
+      "en-US": "Floating point"
+    },
+    "CalculatorBigEndian": {
+      "zh-CN": "大端",
+      "en-US": "Big-endian"
+    },
+    "CalculatorLittleEndian": {
+      "zh-CN": "小端",
+      "en-US": "Little-endian"
+    },
+    "CalculatorEndianHint": {
+      "zh-CN": "FLOAT32 最多 8 位十六进制，FLOAT64 最多 16 位（仅 0-9 / A-F）；大端为高位字节在前。",
+      "en-US": "FLOAT32 accepts up to 8 hex digits, FLOAT64 up to 16 (0-9 / A-F); big-endian means the high byte comes first."
+    },
+    "CalculatorInput": {
+      "zh-CN": "输入（各进制实时同步）",
+      "en-US": "Input (all bases update live)"
+    },
+    "CalculatorInvalid": {
+      "zh-CN": "输入格式无效",
+      "en-US": "Invalid input"
+    },
+    "CalculatorInvalidOperand": {
+      "zh-CN": "位运算操作数格式无效",
+      "en-US": "Invalid operand"
+    },
+    "CalculatorBitOps": {
+      "zh-CN": "位运算",
+      "en-US": "Bitwise operations"
+    },
+    "CalculatorOperand": {
+      "zh-CN": "操作数",
+      "en-US": "Operand"
+    },
+    "CalculatorBitOpsHint": {
+      "zh-CN": "操作数按当前输入进制解析，结果自动截断到所选位宽。",
+      "en-US": "The operand uses the current input base; the result is masked to the selected width."
+    },
+    "CalculatorArithmetic": {
+      "zh-CN": "四则运算",
+      "en-US": "Arithmetic"
+    },
+    "CalculatorResult": {
+      "zh-CN": "结果",
+      "en-US": "Result"
+    },
+    "CalculatorExpressionHint": {
+      "zh-CN": "支持 + - * / % ^、括号和小数，输入即计算。",
+      "en-US": "Supports + - * / % ^, parentheses and decimals; evaluates as you type."
+    },
+    "CalculatorExpressionInvalid": {
+      "zh-CN": "表达式无效",
+      "en-US": "Invalid expression"
+    },
+    "CalculatorDivideByZero": {
+      "zh-CN": "除数不能为 0",
+      "en-US": "Division by zero"
+    },
+    "CalculatorCopy": {
+      "zh-CN": "复制",
+      "en-US": "Copy"
     }
   }
 }
