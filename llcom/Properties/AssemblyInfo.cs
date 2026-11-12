@@ -8,7 +8,7 @@ using System.Windows;
 // 控制。更改这些特性值可修改
 // 与程序集关联的信息。
 [assembly: AssemblyTitle("LLCOM-Y")]
-[assembly: AssemblyDescription("https://github.com/Eureka12138github/llcom-y (unofficial fork of LLCOM)")]
+[assembly: AssemblyDescription("https://github.com/Eureka12138github/llcom-y (unofficial build based on LLCOM)")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Eureka12138github")]
 [assembly: AssemblyProduct("LLCOM-Y")]
