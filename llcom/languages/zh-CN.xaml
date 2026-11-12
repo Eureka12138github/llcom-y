@@ -484,4 +484,26 @@
     <system:String x:Key="Dlt645ExtraEventReset">密码+操作者代码+事件DI（HEX，12 字节）</system:String>
     <system:String x:Key="Dlt645RawDataTip">按帧内顺序（低位在前）输入，组帧时不做翻转</system:String>
     <system:String x:Key="Dlt645ExpectedDataLength">数据长度应为 {0} 字节（当前 {1}）</system:String>
+    <system:String x:Key="CalculatorTitle">计算器</system:String>
+    <system:String x:Key="CalculatorWidth">位宽</system:String>
+    <system:String x:Key="CalculatorBits8">8 位</system:String>
+    <system:String x:Key="CalculatorBits16">16 位</system:String>
+    <system:String x:Key="CalculatorBits32">32 位</system:String>
+    <system:String x:Key="CalculatorBits64">64 位</system:String>
+    <system:String x:Key="CalculatorFloat">浮点数解析</system:String>
+    <system:String x:Key="CalculatorBigEndian">大端</system:String>
+    <system:String x:Key="CalculatorLittleEndian">小端</system:String>
+    <system:String x:Key="CalculatorEndianHint">FLOAT32 最多 8 位十六进制，FLOAT64 最多 16 位（仅 0-9 / A-F）；大端为高位字节在前。</system:String>
+    <system:String x:Key="CalculatorInput">输入（各进制实时同步）</system:String>
+    <system:String x:Key="CalculatorInvalid">输入格式无效</system:String>
+    <system:String x:Key="CalculatorInvalidOperand">位运算操作数格式无效</system:String>
+    <system:String x:Key="CalculatorBitOps">位运算</system:String>
+    <system:String x:Key="CalculatorOperand">操作数</system:String>
+    <system:String x:Key="CalculatorBitOpsHint">操作数按当前输入进制解析，结果自动截断到所选位宽。</system:String>
+    <system:String x:Key="CalculatorArithmetic">四则运算</system:String>
+    <system:String x:Key="CalculatorResult">结果</system:String>
+    <system:String x:Key="CalculatorExpressionHint">支持 + - * / % ^、括号和小数，输入即计算。</system:String>
+    <system:String x:Key="CalculatorExpressionInvalid">表达式无效</system:String>
+    <system:String x:Key="CalculatorDivideByZero">除数不能为 0</system:String>
+    <system:String x:Key="CalculatorCopy">复制</system:String>
 </ResourceDictionary>

@@ -22,6 +22,7 @@ public static class ToolCatalog
         new("plot", "PlotHeader", "绘制曲线", "Pages/PlotPage.xaml"),
         new("winusb", null, "WinUSB", "Pages/WinUSBPage.xaml"),
         new("dlt645", "Dlt645Title", "DL/T 645-2007", "Pages/Dlt645Page.xaml"),
+        new("calculator", "CalculatorTitle", "计算器", "Pages/CalculatorPage.xaml"),
     };
 
     /// <summary>按 Id 查找；找不到返回 null。</summary>
