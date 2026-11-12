@@ -173,6 +173,7 @@ public partial class MainWindow : Window
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
         ClampSidebarWidth();
+        UpdateQuickSendNoteIcon();
 
         //初始化“串口设置”页的下拉参数
         mainDataBitsComboBox.SelectedIndex = Tools.Global.setting.dataBits - 5;
@@ -715,6 +716,17 @@ public partial class MainWindow : Window
             return;
         // 未选中只显示同色的空心便签；选中时才显示黄色填充
         QuickSendNoteIcon.Opacity = mainTabControl.SelectedIndex == 1 ? 1 : 0;
+
+        // 便签背景跟随 Tab 头部：未选中用 AdonisUI Layer0，选中用 FlatTabItem 的 Surface
+        if (QuickSendMenu != null)
+        {
+            QuickSendMenu.SetResourceReference(
+                Control.BackgroundProperty,
+                mainTabControl.SelectedIndex == 1
+                    ? "Brush.Surface"
+                    : AdonisUI.Brushes.Layer0BackgroundBrush
+            );
+        }
     }
 
     /// <summary>工具选择器：切换到对应工具页（各页在 Window_Loaded 已 Navigate 一次，这里只切可见性）。</summary>
