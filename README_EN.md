@@ -6,6 +6,7 @@
 > Original author: chenxuuu and upstream contributors.
 > Maintained by [Eureka12138github](https://github.com/Eureka12138github/llcom-y) for personal learning and use.
 > **Not the official version**; not affiliated with or endorsed by the original author.
+> This is a standalone repository (no longer linked as a GitHub fork); upstream attribution and the Apache-2.0 license are unchanged.
 > See [CHANGES.md](CHANGES.md) for changes relative to upstream.
 
 [中文说明](/README.md)

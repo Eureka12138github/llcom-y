@@ -6,6 +6,7 @@
 > 原作者：chenxuuu 及[上游贡献者](https://github.com/chenxuuu/llcom/graphs/contributors)。
 > 由 [Eureka12138github](https://github.com/Eureka12138github/llcom-y) 个人学习与自用维护，
 > **不是官方版本**，与原作者无隶属关系，也不代表原作者背书。
+> 本仓库为独立仓库（不再以 GitHub fork 形式关联）；上游署名与 Apache-2.0 许可保持不变。
 > 相对上游的改动见 [CHANGES.md](CHANGES.md)。
 
 [English readme click here](/README_EN.md)
