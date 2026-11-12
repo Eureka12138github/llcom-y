@@ -121,6 +121,10 @@
         />
 
         <Button
+          Width="28"
+          Height="28"
+          MinWidth="28"
+          MinHeight="28"
           Margin="0,0,4,4"
           Click="Favorite_Click"
         >
@@ -192,6 +196,10 @@
 
         <Button
           Name="MoreButton"
+          Width="28"
+          Height="28"
+          MinWidth="28"
+          MinHeight="28"
           Margin="0,0,0,4"
           Click="MoreButton_Click"
           Style="{StaticResource IconButton}"
