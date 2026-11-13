@@ -1,0 +1,168 @@
+{
+  // LLCOM-Y 本地 Release 构建任务
+  // 一键构建：Ctrl+Shift+B 运行默认任务「构建 Release (x64)」
+  // 也可用 终端 > 运行任务... 选择其他平台
+  // 产物：artifacts\Release\{x64|x86}\llcom-y.exe
+  //       artifacts\release\llcom-y-{x64|x86}.zip + autoUpdate 清单
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "构建 Release (x64)",
+      "detail": "编译 Release x64 并生成发布 zip 与自动更新清单（默认一键构建）",
+      "type": "shell",
+      "command": "powershell.exe",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}\\scripts\\build-release.ps1",
+        "-Platform",
+        "x64"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": [
+        "$msCompile"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true,
+        "showReuseMessage": false
+      }
+    },
+    {
+      "label": "构建 Release (x86)",
+      "detail": "编译 Release x86 并生成发布 zip 与 autoUpdate-x86.xml",
+      "type": "shell",
+      "command": "powershell.exe",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}\\scripts\\build-release.ps1",
+        "-Platform",
+        "x86"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "problemMatcher": [
+        "$msCompile"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true,
+        "showReuseMessage": false
+      }
+    },
+    {
+      "label": "构建 Release (自定义平台/版本)",
+      "detail": "运行时选择 x64/x86 并填写版本号，用于正式发版",
+      "type": "shell",
+      "command": "powershell.exe",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}\\scripts\\build-release.ps1",
+        "-Platform",
+        "${input:platform}",
+        "-Version",
+        "${input:version}"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "problemMatcher": [
+        "$msCompile"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true,
+        "showReuseMessage": false
+      }
+    },
+    {
+      "label": "仅编译 Release (x64，不打包)",
+      "detail": "只执行 dotnet build，快速验证编译是否通过，不生成 zip",
+      "type": "shell",
+      "command": "dotnet",
+      "args": [
+        "build",
+        "llcom\\llcom.csproj",
+        "-c",
+        "Release",
+        "-p:Platform=x64"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "problemMatcher": [
+        "$msCompile"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true,
+        "showReuseMessage": false
+      }
+    },
+    {
+      "label": "运行单元测试",
+      "detail": "dotnet test tests/llcom.Tests，输出到 artifacts\\Tests",
+      "type": "shell",
+      "command": "dotnet",
+      "args": [
+        "test",
+        "tests\\llcom.Tests\\llcom.Tests.csproj",
+        "-c",
+        "Release"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "test",
+      "problemMatcher": [
+        "$msCompile"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true,
+        "showReuseMessage": false
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "platform",
+      "type": "pickString",
+      "description": "目标平台",
+      "options": [
+        "x64",
+        "x86"
+      ],
+      "default": "x64"
+    },
+    {
+      "id": "version",
+      "type": "promptString",
+      "description": "发布版本号（写入自动更新清单）",
+      "default": "2.0.0.3"
+    }
+  ]
+}
