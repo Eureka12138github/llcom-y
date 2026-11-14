@@ -208,6 +208,7 @@
     <system:String x:Key="ClearSendBox">Clear input</system:String>
     <system:String x:Key="SendHistory">Send history</system:String>
     <system:String x:Key="SendHistoryEmpty">(no history)</system:String>
+    <system:String x:Key="SendHistoryItemTip">Left click: fill back into input&#10;Right click: send this entry</system:String>
     <system:String x:Key="SendHistoryLimit">History limit: </system:String>
     <system:String x:Key="SendHistoryLimitTip">5~200 entries: type a number, press Enter or leave the box</system:String>
     <system:String x:Key="ClearSendHistory">Clear history</system:String>

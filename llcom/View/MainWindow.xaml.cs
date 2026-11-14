@@ -880,6 +880,24 @@ public partial class MainWindow : Window
         sendHistoryPopup.IsOpen = false;
     }
 
+    /// <summary>
+    /// 右键历史项：填回发送框并直接发送（走完整发送管线，含未开串口提示）。
+    /// 弹层故意不关闭，方便连续右键发送多条；点弹层外部自然失焦后关闭（StaysOpen="False"）。
+    /// </summary>
+    private void SendHistoryList_PreviewMouseRightButtonUp(object sender, MouseButtonEventArgs e)
+    {
+        if (e.OriginalSource is not DependencyObject source)
+            return;
+        if (ItemsControl.ContainerFromElement(sendHistoryList, source) is not ListBoxItem item)
+            return;
+        if (item.DataContext is not string text || string.IsNullOrEmpty(text))
+            return;
+        // 不传下去，避免列表项弹出右键菜单或触发左键路径
+        e.Handled = true;
+        _vm.SendText = text;
+        _vm.SendCommand.Execute(null);
+    }
+
     /// <summary>发送记录上限的合法范围（与 Settings / 帮助文档保持一致）</summary>
     private const int SendHistoryLimitMin = 5;
     private const int SendHistoryLimitMax = 200;

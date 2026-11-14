@@ -474,7 +474,8 @@
 - 现状：鼠标左键点击某条记录推送到主发送框待编辑发送，右击无管理功能，而鼠标悬浮时提示信息多余，直接把当前记录重复一遍，没有必要
 - 期望：左击逻辑不变，右击时直接发送该记录，鼠标悬浮在记录上时提示鼠标左右击的逻辑
 - 优先级：中
-- 状态：待评估
+- 状态：已实现（2026-11-14）
+- 实现：`sendHistoryList` 增加 `PreviewMouseRightButtonUp`，右键取到条目的文本后填回发送框并调用 `SendCommand`（走完整发送管线，未开串口会提示）；右键发送后弹层不关闭，方便连续发多条，点弹层外部失焦后自动关闭（`StaysOpen="False"`）；左键仍为填回后关闭。条目 `ToolTip` 由直接绑定记录内容改为 `SendHistoryItemTip` 资源，悬停提示“左键：填回发送框 / 右键：直接发送该条”。
 
 ---
 
@@ -484,7 +485,8 @@
 - 现状：按钮“打开串口”打开串口后仍显示“打开串口”，而不是“关闭串口”
 - 期望：打开串口后按钮显示“关闭串口”
 - 优先级：中
-- 状态：待评估
+- 状态：已实现（2026-11-14）
+- 实现：根因是 `MainViewModel` 的 `IsPortOpen`（`[ObservableProperty]` 生成）从未被赋值，恒为 `false`，而按钮文字/插头颜色/悬停提示的 `DataTrigger` 都绑它。新增 `ApplyPortOpenState(bool open)` 统一同步 `IsPortOpen` / `OpenCloseButtonText` / `IsPortComboEnabled` / `StatusText`，替换打开、关闭、自动重连、USB 拔插四处手工赋值，`RefreshLocalization` 也改为复用它。
 <!-- 复制以下模板追加到下方：
 
 ### [YYYY-MM-DD] 建议标题

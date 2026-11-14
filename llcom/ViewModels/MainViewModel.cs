@@ -302,8 +302,7 @@ public partial class MainViewModel : ObservableObject
         };
 
         //初始状态文本
-        StatusText = Localize("OpenPort_close");
-        OpenCloseButtonText = Localize("OpenPort_open");
+        ApplyPortOpenState(false);
 
         //载入发送记录
         if (Tools.Global.setting.sendHistory != null)
@@ -329,10 +328,19 @@ public partial class MainViewModel : ObservableObject
     /// <summary>
     /// 语言切换后刷新 ViewModel 缓存的本地化文本（状态栏、开关串口按钮等）。
     /// </summary>
-    internal void RefreshLocalization()
+    internal void RefreshLocalization() => ApplyPortOpenState(IsPortOpen);
+
+    /// <summary>
+    /// 统一同步串口开关状态：IsPortOpen（驱动 XAML 触发器切换按钮文字/插头颜色/悬停提示）、
+    /// 按钮文字缓存、端口下拉可用性和状态栏文字。
+    /// 所有打开/关闭串口的路径都必须走这里，否则会出现"已打开但按钮仍显示打开"的不一致。
+    /// </summary>
+    private void ApplyPortOpenState(bool open)
     {
-        OpenCloseButtonText = Localize(IsPortOpen ? "OpenPort_close" : "OpenPort_open");
-        StatusText = Localize(IsPortOpen ? "OpenPort_open" : "OpenPort_close");
+        IsPortOpen = open;
+        OpenCloseButtonText = Localize(open ? "OpenPort_close" : "OpenPort_open");
+        IsPortComboEnabled = !open;
+        StatusText = Localize(open ? "OpenPort_open" : "OpenPort_close");
     }
 
     /// <summary>
@@ -470,12 +478,7 @@ public partial class MainViewModel : ObservableObject
                             try
                             {
                                 _uart.Open();
-                                Application.Current.Dispatcher.Invoke(() =>
-                                {
-                                    OpenCloseButtonText = Localize("OpenPort_close");
-                                    IsPortComboEnabled = false;
-                                    StatusText = Localize("OpenPort_open");
-                                });
+                                Application.Current.Dispatcher.Invoke(() => ApplyPortOpenState(true));
                             }
                             catch
                             {
@@ -503,9 +506,7 @@ public partial class MainViewModel : ObservableObject
         }
         else
         {
-            OpenCloseButtonText = Localize("OpenPort_open");
-            IsPortComboEnabled = true;
-            StatusText = Localize("OpenPort_close");
+            ApplyPortOpenState(false);
             RefreshPorts();
         }
     }
@@ -536,9 +537,7 @@ public partial class MainViewModel : ObservableObject
         {
             Tools.MessageBox.Show(Localize("ErrorClosePort"));
         }
-        OpenCloseButtonText = Localize("OpenPort_open");
-        IsPortComboEnabled = true;
-        StatusText = Localize("OpenPort_close");
+        ApplyPortOpenState(false);
         // 关闭串口不改变系统里的端口集合，无需重新枚举。
         // 以前这里调用 RefreshPorts：它会先 Ports.Clear()，状态栏绑定 SelectedPort.PortName
         // 立刻变成空白，等 WMI 枚举约 1 秒后才恢复，看起来像“关闭很慢”。
@@ -593,9 +592,7 @@ public partial class MainViewModel : ObservableObject
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     _portLostWhileOpen = false;
-                    OpenCloseButtonText = Localize("OpenPort_close");
-                    IsPortComboEnabled = false;
-                    StatusText = Localize("OpenPort_open");
+                    ApplyPortOpenState(true);
                 });
             }
             catch (Exception)

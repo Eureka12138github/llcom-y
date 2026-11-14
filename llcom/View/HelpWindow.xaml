@@ -99,7 +99,7 @@
       <TextBlock Style="{StaticResource HelpLi}" Text="· 发送按钮左侧：插头图标 = 开/关串口（绿色=未打开，红色=已打开；悬停提示「打开串口 / 关闭串口」），不用再切到「串口设置」页。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 插头图标左侧三个控件（从左到右）：" />
       <TextBlock Style="{StaticResource HelpLi}" Text="    - 橡皮图标：清空发送框内容。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="    - 记录图标：发送记录。点其中一条会把该内容填回发送框；弹层固定高度、列表可滚动（不会把底部设置挤掉）；底部「记录上限（条）」可直接键盘输入（5~200，回车或失焦生效），右侧「清空记录」一键清空（不可恢复）。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="    - 记录图标：发送记录。左键点其中一条把该内容填回发送框，右键点则直接发送该条（弹层保持打开，可连续发多条；点其他地方失焦后才关闭；未开串口会提示）；弹层固定高度、列表可滚动（不会把底部设置挤掉）；底部「记录上限（条）」可直接键盘输入（5~200，回车或失焦生效），右侧「清空记录」一键清空（不可恢复）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="    - 换行下拉：发送时在末尾追加的换行，可选 无追加 / \n / \r / \n\r / \r\n。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 发送按钮右侧的下拉（▾）是「发送选项」：连续发送（按「发送后延时」和「重复次数」周期性发送）、按 Enter 发送 / 按 Ctrl+Enter 发送。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="    - 关于「重复次数」：它表示在首次发送之后再重复几次。填 3 = 总共发 4 次；填 0 = 只发一次；填 -1 = 一直重复，直到再次点「发送」停止。" />

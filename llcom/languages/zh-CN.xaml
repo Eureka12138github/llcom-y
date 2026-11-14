@@ -208,6 +208,7 @@
     <system:String x:Key="ClearSendBox">清除发送框内容</system:String>
     <system:String x:Key="SendHistory">发送记录</system:String>
     <system:String x:Key="SendHistoryEmpty">（暂无发送记录）</system:String>
+    <system:String x:Key="SendHistoryItemTip">左键：填回发送框&#10;右键：直接发送该条</system:String>
     <system:String x:Key="SendHistoryLimit">记录上限（条）：</system:String>
     <system:String x:Key="SendHistoryLimitTip">5~200 条：可直接键盘输入，回车或失焦生效</system:String>
     <system:String x:Key="ClearSendHistory">清空记录</system:String>
