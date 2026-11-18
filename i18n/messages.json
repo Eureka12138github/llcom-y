@@ -610,6 +610,46 @@
       "zh-CN": "左键：隐藏 / 展开　右键：清除",
       "en-US": "Left: hide / show   Right: dismiss"
     },
+    "OpenLogFile": {
+      "zh-CN": "打开当前日志文件",
+      "en-US": "Open current log file"
+    },
+    "OpenLogFileTip": {
+      "zh-CN": "打开当前日志文件；右键可选择程序或设置默认编辑器",
+      "en-US": "Open the current log file; right-click to choose a program or set a default editor"
+    },
+    "OpenLogWithSystem": {
+      "zh-CN": "用系统默认程序打开",
+      "en-US": "Open with system default"
+    },
+    "OpenLogWith": {
+      "zh-CN": "选择程序打开一次…",
+      "en-US": "Open once with…"
+    },
+    "SetLogEditor": {
+      "zh-CN": "设置默认编辑器…",
+      "en-US": "Set default editor…"
+    },
+    "ClearLogEditor": {
+      "zh-CN": "清除默认编辑器",
+      "en-US": "Clear default editor"
+    },
+    "LogFileMissing": {
+      "zh-CN": "日志文件还没生成，先收发一些数据再试。",
+      "en-US": "The log file has not been created yet; send or receive some data first."
+    },
+    "LogEditorMissing": {
+      "zh-CN": "默认编辑器不存在，请重新设置。",
+      "en-US": "The default editor no longer exists; please choose it again."
+    },
+    "LogEditorDialogTitle": {
+      "zh-CN": "选择用于打开日志的程序",
+      "en-US": "Choose a program for opening logs"
+    },
+    "OpenLogFailed": {
+      "zh-CN": "打开日志文件失败：",
+      "en-US": "Failed to open the log file:"
+    },
     "ScriptNotifyErrorTitle": {
       "zh-CN": "脚本出错",
       "en-US": "Script error"

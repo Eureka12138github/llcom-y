@@ -154,6 +154,16 @@
     <system:String x:Key="TrayRecentNotices">最近提示</system:String>
     <system:String x:Key="TrayNoNotices">（暂无提示）</system:String>
     <system:String x:Key="NoticeActionHint">左键：隐藏 / 展开　右键：清除</system:String>
+    <system:String x:Key="OpenLogFile">打开当前日志文件</system:String>
+    <system:String x:Key="OpenLogFileTip">打开当前日志文件；右键可选择程序或设置默认编辑器</system:String>
+    <system:String x:Key="OpenLogWithSystem">用系统默认程序打开</system:String>
+    <system:String x:Key="OpenLogWith">选择程序打开一次…</system:String>
+    <system:String x:Key="SetLogEditor">设置默认编辑器…</system:String>
+    <system:String x:Key="ClearLogEditor">清除默认编辑器</system:String>
+    <system:String x:Key="LogFileMissing">日志文件还没生成，先收发一些数据再试。</system:String>
+    <system:String x:Key="LogEditorMissing">默认编辑器不存在，请重新设置。</system:String>
+    <system:String x:Key="LogEditorDialogTitle">选择用于打开日志的程序</system:String>
+    <system:String x:Key="OpenLogFailed">打开日志文件失败：</system:String>
     <system:String x:Key="ScriptNotifyErrorTitle">脚本出错</system:String>
     <system:String x:Key="TrayShowWindow">显示主窗口</system:String>
     <system:String x:Key="TrayExit">退出 LLCOM-Y</system:String>

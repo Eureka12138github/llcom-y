@@ -154,6 +154,16 @@
     <system:String x:Key="TrayRecentNotices">Recent notifications</system:String>
     <system:String x:Key="TrayNoNotices">(no notifications)</system:String>
     <system:String x:Key="NoticeActionHint">Left: hide / show   Right: dismiss</system:String>
+    <system:String x:Key="OpenLogFile">Open current log file</system:String>
+    <system:String x:Key="OpenLogFileTip">Open the current log file; right-click to choose a program or set a default editor</system:String>
+    <system:String x:Key="OpenLogWithSystem">Open with system default</system:String>
+    <system:String x:Key="OpenLogWith">Open once with…</system:String>
+    <system:String x:Key="SetLogEditor">Set default editor…</system:String>
+    <system:String x:Key="ClearLogEditor">Clear default editor</system:String>
+    <system:String x:Key="LogFileMissing">The log file has not been created yet; send or receive some data first.</system:String>
+    <system:String x:Key="LogEditorMissing">The default editor no longer exists; please choose it again.</system:String>
+    <system:String x:Key="LogEditorDialogTitle">Choose a program for opening logs</system:String>
+    <system:String x:Key="OpenLogFailed">Failed to open the log file:</system:String>
     <system:String x:Key="ScriptNotifyErrorTitle">Script error</system:String>
     <system:String x:Key="TrayShowWindow">Show main window</system:String>
     <system:String x:Key="TrayExit">Exit LLCOM-Y</system:String>

@@ -124,6 +124,31 @@
         IsHitTestVisible="False"
         Orientation="Horizontal"
       >
+        <!--  打开当前日志文件：左键直接打开，右键选择程序 / 设置默认编辑器  -->
+        <Button
+          Name="OpenLogFileButton"
+          Margin="4,0,0,0"
+          Style="{StaticResource FlatIconButton}"
+          AutomationProperties.Name="{DynamicResource OpenLogFile}"
+          Click="OpenLogFileButton_Click"
+          ToolTip="{DynamicResource OpenLogFileTip}"
+        >
+          <fa:FontAwesome
+            Foreground="{DynamicResource Brush.Icon.Doc}"
+            Icon="FileTextOutline"
+          />
+          <Button.ContextMenu>
+            <ContextMenu>
+              <MenuItem
+                Click="OpenLogWithSystemButton_Click"
+                Header="{DynamicResource OpenLogWithSystem}"
+              />
+              <MenuItem Click="OpenLogWithButton_Click" Header="{DynamicResource OpenLogWith}" />
+              <MenuItem Click="SetLogEditorButton_Click" Header="{DynamicResource SetLogEditor}" />
+              <MenuItem Click="ClearLogEditorButton_Click" Header="{DynamicResource ClearLogEditor}" />
+            </ContextMenu>
+          </Button.ContextMenu>
+        </Button>
         <!--  帮助：扁平纯图标（常态无框；悬停中性浅灰）  -->
         <Button
           Name="HelpButton"

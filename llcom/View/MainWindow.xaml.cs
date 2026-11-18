@@ -696,6 +696,130 @@ public partial class MainWindow : Window
     private void MainWindow_Activated(object? sender, EventArgs e) =>
         NotificationService.MarkAllRead();
 
+    /// <summary>打开当前自动保存的串口日志文件：有默认编辑器就直接用，否则让用户选一次。</summary>
+    private void OpenLogFileButton_Click(object sender, RoutedEventArgs e) =>
+        OpenCurrentLogFile();
+
+    /// <summary>用系统默认程序（文件关联）打开。</summary>
+    private void OpenLogWithSystemButton_Click(object sender, RoutedEventArgs e)
+    {
+        var path = ResolveLogFilePath();
+        if (path == null)
+            return;
+
+        try
+        {
+            System.Diagnostics.Process.Start(
+                new System.Diagnostics.ProcessStartInfo { FileName = path, UseShellExecute = true }
+            );
+        }
+        catch (Exception ex)
+        {
+            ReportOpenLogFailed(ex);
+        }
+    }
+
+    /// <summary>选择一个程序打开一次（不保存为默认）。</summary>
+    private void OpenLogWithButton_Click(object sender, RoutedEventArgs e)
+    {
+        var path = ResolveLogFilePath();
+        if (path != null)
+            PickEditorAndOpen(path, saveAsDefault: false);
+    }
+
+    /// <summary>选择默认编辑器，保存并立即用它打开一次。</summary>
+    private void SetLogEditorButton_Click(object sender, RoutedEventArgs e)
+    {
+        var path = ResolveLogFilePath();
+        if (path != null)
+            PickEditorAndOpen(path, saveAsDefault: true);
+    }
+
+    private void ClearLogEditorButton_Click(object sender, RoutedEventArgs e) =>
+        Tools.Global.setting.logEditorPath = "";
+
+    private void OpenCurrentLogFile()
+    {
+        var path = ResolveLogFilePath();
+        if (path == null)
+            return;
+
+        var editor = Tools.Global.setting.logEditorPath ?? "";
+        if (string.IsNullOrWhiteSpace(editor))
+        {
+            PickEditorAndOpen(path, saveAsDefault: false);
+            return;
+        }
+
+        if (!File.Exists(editor))
+        {
+            Tools.MessageBox.Show(
+                TryFindResource("LogEditorMissing") as string
+                    ?? "The default editor no longer exists; please choose it again."
+            );
+            return;
+        }
+
+        LaunchLogEditor(editor, path);
+    }
+
+    /// <summary>取当前日志文件；还没生成时提示用户先收发数据。</summary>
+    private string? ResolveLogFilePath()
+    {
+        var path = Tools.Logger.GetCurrentUartLogPath();
+        if (File.Exists(path))
+            return path;
+
+        Tools.MessageBox.Show(
+            TryFindResource("LogFileMissing") as string
+                ?? "The log file has not been created yet; send or receive some data first."
+        );
+        return null;
+    }
+
+    private void PickEditorAndOpen(string path, bool saveAsDefault)
+    {
+        var dialog = new Microsoft.Win32.OpenFileDialog
+        {
+            Title = TryFindResource("LogEditorDialogTitle") as string ?? "Select editor",
+            Filter = "Program (*.exe)|*.exe|All files (*.*)|*.*",
+            CheckFileExists = true,
+        };
+        if (dialog.ShowDialog(this) != true)
+            return;
+
+        if (saveAsDefault)
+            Tools.Global.setting.logEditorPath = dialog.FileName;
+
+        LaunchLogEditor(dialog.FileName, path);
+    }
+
+    private void LaunchLogEditor(string editor, string path)
+    {
+        try
+        {
+            System.Diagnostics.Process.Start(
+                new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = editor,
+                    Arguments = "\"" + path + "\"",
+                    UseShellExecute = false,
+                }
+            );
+        }
+        catch (Exception ex)
+        {
+            ReportOpenLogFailed(ex);
+        }
+    }
+
+    private void ReportOpenLogFailed(Exception ex)
+    {
+        Tools.Logger.Swallowed("open log file", ex);
+        var message = TryFindResource("OpenLogFailed") as string ?? "Failed to open the log file.";
+        Tools.MessageBox.Show(message + "\r\n" + ex.Message);
+    }
+
     Window? helpWindow;
 
     /// <summary>顶栏 “?”：打开使用说明窗口（单实例；关闭后可再次打开）。</summary>

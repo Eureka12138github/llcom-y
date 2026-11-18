@@ -26,7 +26,7 @@ public partial class DataShowPage : Page
     private bool _logRowSelectionActive;
 
     // 日志底栏低于该宽度时，常显图标折叠成「⋯」菜单（右下角悬停工具组约 144px）
-    private const double LogBarCollapseMinWidth = 400;
+    private const double LogBarCollapseMinWidth = 430;
 
     public DataShowPage()
     {

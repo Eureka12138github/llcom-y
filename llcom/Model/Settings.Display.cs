@@ -170,6 +170,21 @@ partial class Settings
         }
     }
 
+    private string _logEditorPath = "";
+
+    /// <summary>
+    /// 「打开当前日志文件」使用的默认编辑器路径；留空时使用系统「打开方式」对话框。
+    /// </summary>
+    public string logEditorPath
+    {
+        get => _logEditorPath;
+        set
+        {
+            if (SetProperty(ref _logEditorPath, value ?? ""))
+                Save();
+        }
+    }
+
     /// <summary>
     /// 串口接收每包最大长度
     /// </summary>

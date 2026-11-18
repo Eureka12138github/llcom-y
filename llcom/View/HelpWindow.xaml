@@ -71,7 +71,8 @@
       <TextBlock Style="{StaticResource HelpLi}" Text="· 自动重连：串口被拔出后自动恢复连接（只重连上次手动打开过的端口）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· RTS / DTR：串口两根硬件控制信号线的电平（详见文末「RTS / DTR 详解」）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 打开串口 / 关闭串口：打开成功后按钮变绿，状态栏显示 COM 与波特率。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 日志底栏右端（与「清空日志」同一行、靠右对齐）：鼠标移入该角落才显示 ? 使用说明、🌙/☀ 切换主题、☰ 更多设置、🌐 切换语言；移开自动隐藏。这组图标不随日志区变窄而折叠。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 日志底栏右端（与「清空日志」同一行、靠右对齐）：鼠标移入该角落才显示「打开当前日志」、? 使用说明、🌙/☀ 切换主题、☰ 更多设置、🌐 切换语言；移开自动隐藏。这组图标不随日志区变窄而折叠。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 打开当前日志：左键直接用你设置的默认编辑器打开当天日志（未设置时弹出程序选择框，只对本次生效）；右键可「用系统默认程序打开」「选择程序打开一次…」「设置默认编辑器…」「清除默认编辑器」。日志按天保存在 logs/ 目录。" />
 
       <TextBlock Style="{StaticResource HelpH}" Text="四、收发数据显示区（左侧）" />
       <TextBlock Style="{StaticResource HelpP}" Text="每行显示：时间 + 方向（→ 发送 / ← 接收）+ 数据（十六进制或文本，单行）。" />
@@ -226,7 +227,8 @@
         <TextBlock Style="{StaticResource HelpLi}" Text="· Auto reconnect: reconnect automatically after the serial cable is unplugged (only the port last opened manually)." />
         <TextBlock Style="{StaticResource HelpLi}" Text="· RTS / DTR: levels of the two hardware control lines (see RTS / DTR details at the end)." />
         <TextBlock Style="{StaticResource HelpLi}" Text="· Open port / Close port: after a successful open the button turns green; the status bar shows the COM port and baud rate." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Bottom-right end of the log (same row as Clear log, right-aligned): hover over that corner to show ? Help, 🌙/☀ Theme, ☰ More settings, 🌐 Change language; they hide when the mouse leaves. This group does not collapse when the log area is narrow." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Bottom-right end of the log (same row as Clear log, right-aligned): hover over that corner to show Open current log, ? Help, 🌙/☀ Theme, ☰ More settings, 🌐 Change language; they hide when the mouse leaves. This group does not collapse when the log area is narrow." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Open current log: left-click opens today's log with your configured default editor (if none is set, a program picker opens and only applies to this time); right-click offers Open with system default, Open once with…, Set default editor…, Clear default editor. Logs are saved per day under logs/." />
 
         <TextBlock Style="{StaticResource HelpH}" Text="4. Send/receive data area (left side)" />
         <TextBlock Style="{StaticResource HelpP}" Text="Each row shows: time + direction (→ send / ← receive) + data (hex or text, one line)." />
