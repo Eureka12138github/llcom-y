@@ -742,6 +742,10 @@
       "zh-CN": "语言/Language",
       "en-US": "Language"
     },
+    "MoreActions": {
+      "zh-CN": "更多操作",
+      "en-US": "More actions"
+    },
     "TcpTabTitle": {
       "zh-CN": "socket公共服务端",
       "en-US": "Socket Public Server"

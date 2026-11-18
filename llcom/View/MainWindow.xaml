@@ -102,6 +102,7 @@
       NavigationUIVisibility="Hidden"
       PreviewKeyDown="uartDataFlowDocument_PreviewKeyDown"
       PreviewTextInput="uartDataFlowDocument_PreviewTextInput"
+      SizeChanged="DataShowFrame_SizeChanged"
     />
 
     <!--  日志底栏右端：使用说明 / 更多设置 / 语言（同一行右对齐；平时隐藏，鼠标悬浮该区域时淡入）  -->
@@ -116,12 +117,17 @@
       MouseEnter="LogCornerZone_MouseEnter"
       MouseLeave="LogCornerZone_MouseLeave"
     >
-      <StackPanel
-        Name="LogCornerTools"
+      <Grid
+        Name="LogCornerContent"
         HorizontalAlignment="Right"
         VerticalAlignment="Center"
         Opacity="0"
         IsHitTestVisible="False"
+      >
+      <StackPanel
+        Name="LogCornerTools"
+        HorizontalAlignment="Right"
+        VerticalAlignment="Center"
         Orientation="Horizontal"
       >
         <!--  帮助：扁平纯图标（常态无框；悬停中性浅灰）  -->
@@ -214,6 +220,43 @@
           </MenuItem>
         </Menu>
       </StackPanel>
+
+      <!--  窄宽度时折叠成「⋯」菜单，避免和日志底栏图标重叠  -->
+      <StackPanel
+        Name="LogCornerOverflow"
+        HorizontalAlignment="Right"
+        VerticalAlignment="Center"
+        Orientation="Horizontal"
+        Visibility="Collapsed"
+      >
+        <Button
+          Name="LogCornerMoreButton"
+          Style="{StaticResource FlatIconButton}"
+          AutomationProperties.Name="{DynamicResource MoreActions}"
+          Click="LogCornerMoreButton_Click"
+          ContextMenuOpening="LogCornerMoreMenu_ContextMenuOpening"
+          ToolTip="{DynamicResource MoreActions}"
+        >
+          <fa:FontAwesome Foreground="{DynamicResource Brush.Foreground}" Icon="EllipsisH" />
+          <Button.ContextMenu>
+            <ContextMenu x:Name="LogCornerMoreMenu">
+              <MenuItem Click="HelpButton_Click" Header="{DynamicResource Help}" />
+              <MenuItem
+                x:Name="ThemeMenuItem"
+                Click="ThemeMenuItem_Click"
+                Header="{DynamicResource ThemeSwitch}"
+                IsCheckable="True"
+              />
+              <MenuItem Click="MoreSettingButton_Click" Header="{DynamicResource MoreSettings}" />
+              <MenuItem Header="{DynamicResource ChangeLanguage}">
+                <MenuItem Click="MenuItem_Click" Header="简体中文" Tag="zh-CN" />
+                <MenuItem Click="MenuItem_Click" Header="English" Tag="en-US" />
+              </MenuItem>
+            </ContextMenu>
+          </Button.ContextMenu>
+        </Button>
+      </StackPanel>
+      </Grid>
     </Grid>
 
     <!--  日志/发送区之间的可拖拽分隔条（上下调整发送区高度）  -->

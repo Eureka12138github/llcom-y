@@ -602,17 +602,64 @@ public partial class MainWindow : Window
     private void LogCornerZone_MouseLeave(object sender, MouseEventArgs e) =>
         ShowLogCornerTools(false);
 
-    /// <summary>淡入/淡出三按钮；隐藏时同时禁用点击，避免误触。</summary>
+    /// <summary>淡入/淡出；隐藏时同时禁用点击，避免误触。</summary>
     private void ShowLogCornerTools(bool show)
     {
-        LogCornerTools.IsHitTestVisible = show;
-        LogCornerTools.BeginAnimation(
+        LogCornerContent.IsHitTestVisible = show;
+        LogCornerContent.BeginAnimation(
             OpacityProperty,
             new System.Windows.Media.Animation.DoubleAnimation(
                 show ? 1.0 : 0.0,
                 TimeSpan.FromMilliseconds(show ? 120 : 200)
             )
         );
+    }
+
+    // 日志列宽度低于该值时，底部常显图标会和角落工具重叠（底栏约 214px + 角落工具约 144px + 边距）
+    private const double LogCornerExpandMinWidth = 400;
+
+    private void DataShowFrame_SizeChanged(object sender, SizeChangedEventArgs e) =>
+        UpdateLogCornerLayout();
+
+    /// <summary>日志列变窄时把角落工具折叠为「⋯」菜单，避免和日志底栏图标叠在一起。</summary>
+    private void UpdateLogCornerLayout()
+    {
+        var width = LogColumn.ActualWidth;
+        if (width <= 0)
+            return;
+
+        var collapse = width < LogCornerExpandMinWidth;
+        var expandedVisibility = collapse ? Visibility.Collapsed : Visibility.Visible;
+        if (LogCornerTools.Visibility == expandedVisibility)
+            return;
+
+        LogCornerTools.Visibility = expandedVisibility;
+        LogCornerOverflow.Visibility = collapse ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    /// <summary>「⋯」按钮：打开折叠后的角落工具菜单。</summary>
+    private void LogCornerMoreButton_Click(object sender, RoutedEventArgs e)
+    {
+        var menu = LogCornerMoreButton.ContextMenu;
+        if (menu == null)
+            return;
+
+        ThemeMenuItem.IsChecked = Tools.Global.setting.darkMode;
+        menu.PlacementTarget = LogCornerMoreButton;
+        menu.Placement = PlacementMode.Bottom;
+        menu.IsOpen = true;
+    }
+
+    private void LogCornerMoreMenu_ContextMenuOpening(object sender, ContextMenuEventArgs e) =>
+        ThemeMenuItem.IsChecked = Tools.Global.setting.darkMode;
+
+    /// <summary>折叠菜单里的主题切换（与日志角落的 🌙/☀ 按钮等价）。</summary>
+    private void ThemeMenuItem_Click(object sender, RoutedEventArgs e)
+    {
+        var setting = Tools.Global.setting;
+        setting.darkMode = !setting.darkMode;
+        if (sender is MenuItem item)
+            item.IsChecked = setting.darkMode;
     }
 
     Window? helpWindow;

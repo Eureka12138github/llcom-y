@@ -71,7 +71,7 @@
       <TextBlock Style="{StaticResource HelpLi}" Text="· 自动重连：串口被拔出后自动恢复连接（只重连上次手动打开过的端口）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· RTS / DTR：串口两根硬件控制信号线的电平（详见文末「RTS / DTR 详解」）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 打开串口 / 关闭串口：打开成功后按钮变绿，状态栏显示 COM 与波特率。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 日志底栏右端（与「清空日志」同一行、靠右对齐）：鼠标移入该角落才显示 ? 使用说明、🌙/☀ 切换主题、☰ 更多设置、🌐 切换语言；移开自动隐藏。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 日志底栏右端（与「清空日志」同一行、靠右对齐）：鼠标移入该角落才显示 ? 使用说明、🌙/☀ 切换主题、☰ 更多设置、🌐 切换语言；移开自动隐藏。日志区较窄时，这一组图标会自动折叠成「⋯」菜单，点开后选择同样的功能（不会再和底栏图标重叠）。" />
 
       <TextBlock Style="{StaticResource HelpH}" Text="四、收发数据显示区（左侧）" />
       <TextBlock Style="{StaticResource HelpP}" Text="每行显示：时间 + 方向（→ 发送 / ← 接收）+ 数据（十六进制或文本，单行）。" />
@@ -140,6 +140,7 @@
       <TextBlock Style="{StaticResource HelpLi}" Text="· 串口监听：选择目标进程与其使用的串口后开始监听，旁路显示该进程的收发。使用要点：① 先点「开始监听」，再让目标程序打开串口（监听开始前已打开的串口捕获不到）；② 目标必须是 64 位程序（64 位版 LLCOM 只能监听 64 位目标；32 位目标的监听暂不可用）；③ 安全软件可能拦截注入，必要时以管理员身份运行。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 绘图：接收 Lua 通过接口上报的数据点并绘制曲线；可查看全图 / 清空图表 / 切换主题。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· WinUSB：选择 USB 设备、读/写端点，连接后收发（可 Hex）。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 计算器：多进制同步显示 / 位运算 / IEEE-754 浮点解析 / 四则运算（详见下方「计算器详解」）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· DL/T 645-2007：电表报文工具（开发者向，组帧后直接发送，写数据和自定义控制码不做二次确认）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="    - 表地址：输入 1 / 123 后回车或失焦，自动补 0 成 12 位；地址右侧放大镜按钮可自动读取表地址，成功后按钮变绿，鼠标悬停显示地址；关闭串口后按钮恢复灰色。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="    - 操作：读数据 / 读通信地址 / 写数据 / 广播校时 / 写通信地址 / 冻结命令 / 更改通信速率 / 修改密码 / 最大需量清零 / 电表清零 / 事件清零 / 自定义控制码；写数据和自定义控制码才显示「附加数据」行，其它功能按需显示对应数据域输入框；新功能的数据域按帧内顺序（低位在前）输入，组帧时不做翻转。" />
@@ -150,6 +151,19 @@
       <TextBlock Style="{StaticResource HelpLi}" Text="    - 勾选「主日志减 33H」后，仅在 645 工具页处于激活状态时生效：完整 645 帧的数据域减 33H 并重算 CS 后，作为一条记录写入左侧主日志；非 645 数据、半帧、坏帧原样显示。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="    - 帧预览下方三个操作：发送（直接从 645 页发送）、复制（复制帧文本）、发送到主发送框（把帧填入底部发送框，复用发送记录与定时发送；会自动切到 Hex 发送且不追加换行）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="    - 「应答解析」：粘贴完整帧后显示原始帧、地址（AA 通配/广播标注）、控制码方向、功能码名称、长度、数据域、校验和；异常应答按位解释错误信息字 ERR；常用功能会拆分字段（读数据 DI+数据、写数据 DI+密码权限+密码+操作者代码+数据、读/写地址、广播校时、冻结、改速率/改密码/清零），DI 会附带目录中的名称；读地址应答解析后可一键把地址填回表地址。" />
+
+      <TextBlock
+        Margin="0,14,0,0"
+        FontWeight="Bold"
+        Style="{StaticResource HelpP}"
+        Text="计算器详解（工具 → 计算器）"
+      />
+      <TextBlock Style="{StaticResource HelpP}" Text="输入：左侧下拉选择输入进制（HEX / DEC / OCT / BIN），右侧输入数值；四种进制会实时同步显示。输入内容按所选进制解析，出现非法字符时提示「输入格式无效」。" />
+      <TextBlock Style="{StaticResource HelpP}" Text="位宽：可选 8 / 16 / 32 / 64 位；超出位宽的高位会被截掉，切换位宽时当前值也会按新位宽截断。DEC 按无符号数显示；HEX / OCT / BIN 会按位宽补零，并按 2 / 3 / 4 位分组方便按字节阅读。" />
+      <TextBlock Style="{StaticResource HelpP}" Text="复制：每个进制结果右侧的复制按钮只复制该行文本（保留分组空格；需要连续数值时可粘贴到发送框后自行去空格）。" />
+      <TextBlock Style="{StaticResource HelpP}" Text="位运算：在「操作数」里按当前输入进制填第二个数，再点 &lt;&lt; / &gt;&gt; / &amp; / | / ^ / ~ 对当前值运算，结果写回当前值并按位宽截断；~ 为按位取反，不需要操作数。" />
+      <TextBlock Style="{StaticResource HelpP}" Text="浮点解析：FLOAT32 输入 8 位、FLOAT64 输入 16 位十六进制（只接受 0-9 / A-F，其他字符会被自动过滤）；用「大端 / 小端」切换字节序，下方直接显示对应的十进制浮点值。" />
+      <TextBlock Style="{StaticResource HelpP}" Text="四则运算：与上面的位运算互不影响，支持 + - * / % ^、括号和小数，边输入边出结果；除数为 0 或表达式非法时会给出提示。" />
 
       <TextBlock Style="{StaticResource HelpH}" Text="十、更多设置（点日志区右下角 ☰ 直接打开，鼠标移入才显示）" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 分三个页签：「更多串口设置」（打开日志文件夹、显示发送、数据字号、窗口置顶、串口超时（分包）、按空行分包、终端模式、日志保留上限、流式保留字符数）、「发送脚本」、「接收脚本」。" />
@@ -166,8 +180,8 @@
       <TextBlock Style="{StaticResource HelpLi}" Text="· 串口与各网络工具都作为「通用通道」，Lua 用 apiSend / apiSetCb 收发。" />
 
       <TextBlock Style="{StaticResource HelpH}" Text="十二、其他" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 语言：日志区右下角 🌐 切换中/英（与 ? 使用说明、☰ 更多设置同一行的右端，鼠标移入才显示）。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 外观：日志区右下角 🌙/☀ 图标切换深色 / 浅色主题（鼠标移入才显示；切换立即生效并保存）。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 语言：日志区右下角 🌐 切换中/英（与 ? 使用说明、☰ 更多设置同一行的右端，鼠标移入才显示；窄窗口下在「⋯」菜单里）。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 外观：日志区右下角 🌙/☀ 图标切换深色 / 浅色主题（鼠标移入才显示；窄窗口下在「⋯」菜单里；切换立即生效并保存）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 日志文件：程序目录 logs/（串口日志与崩溃日志 fatal.log）与 user_script_run/logs/（Lua 日志）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 配置与脚本均保存在程序目录。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 程序遇到错误时会弹出一个只有「关闭程序」按钮的窗口，并把错误详情写入 logs/fatal.log。" />
@@ -210,7 +224,7 @@
         <TextBlock Style="{StaticResource HelpLi}" Text="· Auto reconnect: reconnect automatically after the serial cable is unplugged (only the port last opened manually)." />
         <TextBlock Style="{StaticResource HelpLi}" Text="· RTS / DTR: levels of the two hardware control lines (see RTS / DTR details at the end)." />
         <TextBlock Style="{StaticResource HelpLi}" Text="· Open port / Close port: after a successful open the button turns green; the status bar shows the COM port and baud rate." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Bottom-right end of the log (same row as Clear log, right-aligned): hover over that corner to show ? Help, 🌙/☀ Theme, ☰ More settings, 🌐 Change language; they hide when the mouse leaves." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Bottom-right end of the log (same row as Clear log, right-aligned): hover over that corner to show ? Help, 🌙/☀ Theme, ☰ More settings, 🌐 Change language; they hide when the mouse leaves. When the log area is narrow, this group collapses into a ⋯ menu with the same actions (so it no longer overlaps the bottom-bar icons)." />
 
         <TextBlock Style="{StaticResource HelpH}" Text="4. Send/receive data area (left side)" />
         <TextBlock Style="{StaticResource HelpP}" Text="Each row shows: time + direction (→ send / ← receive) + data (hex or text, one line)." />
@@ -279,6 +293,7 @@
         <TextBlock Style="{StaticResource HelpLi}" Text="· Serial monitor: choose the target process and its serial port, then start monitoring; the target's send/receive data is shown in a side channel. Key points: ① click Start monitoring first, then let the target program open the port (ports already open before monitoring starts cannot be captured); ② the target must be a 64-bit program (the 64-bit LLCOM can only monitor 64-bit targets; monitoring 32-bit targets is not available yet); ③ security software may block injection; run as administrator if necessary." />
         <TextBlock Style="{StaticResource HelpLi}" Text="· Plot: receives data points reported by Lua through the API and draws curves; view the full chart / clear the chart / switch theme." />
         <TextBlock Style="{StaticResource HelpLi}" Text="· WinUSB: select a USB device, read/write endpoints, connect and send/receive (Hex supported)." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Calculator: multi-base display / bitwise operations / IEEE-754 float decoding / arithmetic (see Calculator details below)." />
         <TextBlock Style="{StaticResource HelpLi}" Text="· DL/T 645-2007: meter frame tool (developer-oriented; frames are sent directly after assembly; write-data and custom control codes are not confirmed again)." />
         <TextBlock Style="{StaticResource HelpLi}" Text="    - Meter address: type 1 / 123 and press Enter or leave the field; it is padded with zeros to 12 digits. The magnifier button to the right of the address reads the meter address automatically; on success the button turns green and hovering shows the address; after closing the port the button returns to gray." />
         <TextBlock Style="{StaticResource HelpLi}" Text="    - Operations: read data / read communication address / write data / broadcast time calibration / write communication address / freeze command / change baud rate / change password / maximum demand reset / meter reset / event reset / custom control code; only write data and custom control code show the extra data row; other functions show the corresponding data-field input as needed; data fields for new functions are entered in frame order (low byte first) and are not reversed when assembling." />
@@ -289,6 +304,19 @@
         <TextBlock Style="{StaticResource HelpLi}" Text="    - With Main log -33H checked, only while the 645 tool page is active: complete 645 frames have 33H subtracted from the data field and the CS recalculated, then are written to the left main log as one record; non-645 data, partial frames and bad frames are shown as-is." />
         <TextBlock Style="{StaticResource HelpLi}" Text="    - The three actions below the frame preview: Send (send directly from the 645 page), Copy (copy the frame text), Send to main send box (put the frame into the bottom send box, reusing send history and timed sending; automatically switches to Hex send and appends no newline)." />
         <TextBlock Style="{StaticResource HelpLi}" Text="    - Response parsing: paste a complete frame to show the raw frame, address (with AA wildcard/broadcast annotation), control-code direction, function-code name, length, data field and checksum; exception responses explain the ERR error word bit by bit; common functions split fields (read data DI+data; write data DI+password permission+password+operator code+data; read/write address; broadcast time calibration; freeze; change baud rate/password/reset), and DI includes the catalog name; after parsing a read-address response, the address can be filled back into the meter address with one click." />
+
+        <TextBlock
+          Margin="0,14,0,0"
+          FontWeight="Bold"
+          Style="{StaticResource HelpP}"
+          Text="Calculator details (Tools → Calculator)"
+        />
+        <TextBlock Style="{StaticResource HelpP}" Text="Input: choose the input base (HEX / DEC / OCT / BIN) on the left and type a value on the right; all four bases update live. Input is parsed in the selected base and invalid characters show Invalid input." />
+        <TextBlock Style="{StaticResource HelpP}" Text="Width: 8 / 16 / 32 / 64 bits. Bits above the selected width are dropped, and switching width truncates the current value too. DEC is shown unsigned; HEX / OCT / BIN are zero-padded to the width and grouped by 2 / 3 / 4 digits for easier byte reading." />
+        <TextBlock Style="{StaticResource HelpP}" Text="Copy: the copy button next to each base copies only that line (grouping spaces are kept; paste into the send box and remove spaces if you need a continuous value)." />
+        <TextBlock Style="{StaticResource HelpP}" Text="Bitwise: type the second value in Operand using the current input base, then click &lt;&lt; / &gt;&gt; / &amp; / | / ^ / ~ to apply it to the current value; the result is written back and masked to the width. ~ is bitwise NOT and needs no operand." />
+        <TextBlock Style="{StaticResource HelpP}" Text="Float decoding: FLOAT32 takes 8 hex digits and FLOAT64 takes 16 (only 0-9 / A-F; other characters are filtered out). Use Big-endian / Little-endian to switch byte order; the decimal float value is shown below." />
+        <TextBlock Style="{StaticResource HelpP}" Text="Arithmetic: independent of the bitwise section; supports + - * / % ^, parentheses and decimals, evaluating as you type; division by zero or an invalid expression shows a hint." />
 
         <TextBlock Style="{StaticResource HelpH}" Text="10. More settings (click ☰ at the bottom-right of the log area; shown on hover)" />
         <TextBlock Style="{StaticResource HelpLi}" Text="· Three tabs: More serial settings (open log folder, show sent data, data font size, keep window on top, serial timeout (packet), split by blank line, terminal mode, log retention limit, stream retention characters), Send script, Receive script." />
@@ -305,8 +333,8 @@
         <TextBlock Style="{StaticResource HelpLi}" Text="· The serial port and all network tools are exposed as common channels; Lua uses apiSend / apiSetCb to send and receive." />
 
         <TextBlock Style="{StaticResource HelpH}" Text="12. Other" />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Language: use the 🌐 icon at the bottom-right of the log area to switch Chinese/English (same right-aligned row as ? Help and ☰ More settings; shown on hover)." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Appearance: use the 🌙/☀ icon at the bottom-right of the log area to switch dark / light theme (shown on hover; applied immediately and saved)." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Language: use the 🌐 icon at the bottom-right of the log area to switch Chinese/English (same right-aligned row as ? Help and ☰ More settings; shown on hover; under the ⋯ menu in narrow windows)." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Appearance: use the 🌙/☀ icon at the bottom-right of the log area to switch dark / light theme (shown on hover; under the ⋯ menu in narrow windows; applied immediately and saved)." />
         <TextBlock Style="{StaticResource HelpLi}" Text="· Log files: logs/ in the program folder (serial log and fatal.log) and user_script_run/logs/ (Lua log)." />
         <TextBlock Style="{StaticResource HelpLi}" Text="· Configuration and scripts are stored in the program folder." />
         <TextBlock Style="{StaticResource HelpLi}" Text="· On a fatal error LLCOM opens a window with only a Close program button and writes details to logs/fatal.log." />
