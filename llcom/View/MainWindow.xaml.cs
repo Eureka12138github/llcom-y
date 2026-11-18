@@ -107,6 +107,9 @@ public partial class MainWindow : Window
     /// <summary>Alt+M 恢复用全局热键是否已注册（只在最小化期间注册，避免长期占用）。</summary>
     private bool _minimizeHotKeyRegistered;
 
+    /// <summary>状态栏提示是否折叠成只显示彩色圆点（左键切换）。</summary>
+    private bool _noticeTextCollapsed;
+
     public MainWindow(MainViewModel vm)
     {
         InitializeComponent();
@@ -174,6 +177,10 @@ public partial class MainWindow : Window
     {
         ClampSidebarWidth();
         UpdateQuickSendNoteIcon();
+        NotificationService.Initialize(this);
+        NotificationService.NoticeAdded += NotificationService_NoticeAdded;
+        NotificationService.UnreadChanged += NotificationService_UnreadChanged;
+        Activated += MainWindow_Activated;
 
         //初始化“串口设置”页的下拉参数
         mainDataBitsComboBox.SelectedIndex = Tools.Global.setting.dataBits - 5;
@@ -444,6 +451,10 @@ public partial class MainWindow : Window
             _minimizeHotKeyRegistered = false;
         }
         Tools.Global.isMainWindowsClosed = true;
+        NotificationService.Shutdown();
+        NotificationService.NoticeAdded -= NotificationService_NoticeAdded;
+        NotificationService.UnreadChanged -= NotificationService_UnreadChanged;
+        Activated -= MainWindow_Activated;
         foreach (Window win in App.Current.Windows)
         {
             if (win != this)
@@ -613,6 +624,200 @@ public partial class MainWindow : Window
                 TimeSpan.FromMilliseconds(show ? 120 : 200)
             )
         );
+    }
+
+    /// <summary>状态栏显示最近一条脚本提示（气泡错过时的兜底，绿=完成 / 红=报错）。</summary>
+    private void NotificationService_NoticeAdded(Notice notice)
+    {
+        Dispatcher.BeginInvoke(
+            new Action(() =>
+            {
+                noticeText.Text = $"{notice.Time:HH:mm:ss}  {notice.Title}：{notice.Message}";
+                var detail = string.IsNullOrWhiteSpace(notice.Message)
+                    ? $"{notice.Time:HH:mm:ss}  {notice.Title}"
+                    : $"{notice.Time:HH:mm:ss}  {notice.Title}\n{notice.Message}";
+                var actionHint = TryFindResource("NoticeActionHint") as string;
+                noticePanel.ToolTip = string.IsNullOrEmpty(actionHint)
+                    ? detail
+                    : detail + "\n" + actionHint;
+                noticeDot.Fill = ThemeService.GetBrush(
+                    notice.IsError ? "Brush.State.Error" : "Brush.State.Success",
+                    notice.IsError
+                        ? Color.FromArgb(0xFF, 0xEF, 0x44, 0x44)
+                        : Color.FromArgb(0xFF, 0x22, 0xC5, 0x5E)
+                );
+                _noticeTextCollapsed = false;
+                noticeText.Visibility = Visibility.Visible;
+                noticePanel.Visibility = Visibility.Visible;
+            })
+        );
+    }
+
+    /// <summary>未读时把状态栏提示加粗，读过恢复常规字重。</summary>
+    private void NotificationService_UnreadChanged()
+    {
+        Dispatcher.BeginInvoke(
+            new Action(() =>
+                noticeText.FontWeight = NotificationService.HasUnread
+                    ? FontWeights.Bold
+                    : FontWeights.Normal
+            )
+        );
+    }
+
+    private void NoticePanel_MouseLeftButtonUp(object sender, MouseButtonEventArgs e) =>
+        ToggleNoticeText();
+
+    private void NoticePanel_MouseRightButtonUp(object sender, MouseButtonEventArgs e) =>
+        DismissNotice();
+
+    /// <summary>左键：在“完整提示 / 只留彩色圆点”之间切换；圆点保留，便于再次展开。</summary>
+    private void ToggleNoticeText()
+    {
+        _noticeTextCollapsed = !_noticeTextCollapsed;
+        noticeText.Visibility = _noticeTextCollapsed
+            ? Visibility.Collapsed
+            : Visibility.Visible;
+        NotificationService.MarkAllRead();
+    }
+
+    /// <summary>右键：直接清除这条提示（同时清掉托盘未读角标）。</summary>
+    private void DismissNotice()
+    {
+        _noticeTextCollapsed = false;
+        noticePanel.Visibility = Visibility.Collapsed;
+        noticePanel.ToolTip = null;
+        noticeText.Visibility = Visibility.Visible;
+        noticeText.Text = "";
+        noticeText.FontWeight = FontWeights.Normal;
+        NotificationService.MarkAllRead();
+    }
+
+    private void MainWindow_Activated(object? sender, EventArgs e) =>
+        NotificationService.MarkAllRead();
+
+    /// <summary>打开当前自动保存的串口日志文件：有默认编辑器就直接用，否则让用户选一次。</summary>
+    private void OpenLogFileButton_Click(object sender, RoutedEventArgs e) =>
+        OpenCurrentLogFile();
+
+    /// <summary>用系统默认程序（文件关联）打开。</summary>
+    private void OpenLogWithSystemButton_Click(object sender, RoutedEventArgs e)
+    {
+        var path = ResolveLogFilePath();
+        if (path == null)
+            return;
+
+        try
+        {
+            System.Diagnostics.Process.Start(
+                new System.Diagnostics.ProcessStartInfo { FileName = path, UseShellExecute = true }
+            );
+        }
+        catch (Exception ex)
+        {
+            ReportOpenLogFailed(ex);
+        }
+    }
+
+    /// <summary>选择一个程序打开一次（不保存为默认）。</summary>
+    private void OpenLogWithButton_Click(object sender, RoutedEventArgs e)
+    {
+        var path = ResolveLogFilePath();
+        if (path != null)
+            PickEditorAndOpen(path, saveAsDefault: false);
+    }
+
+    /// <summary>选择默认编辑器，保存并立即用它打开一次。</summary>
+    private void SetLogEditorButton_Click(object sender, RoutedEventArgs e)
+    {
+        var path = ResolveLogFilePath();
+        if (path != null)
+            PickEditorAndOpen(path, saveAsDefault: true);
+    }
+
+    private void ClearLogEditorButton_Click(object sender, RoutedEventArgs e) =>
+        Tools.Global.setting.logEditorPath = "";
+
+    private void OpenCurrentLogFile()
+    {
+        var path = ResolveLogFilePath();
+        if (path == null)
+            return;
+
+        var editor = Tools.Global.setting.logEditorPath ?? "";
+        if (string.IsNullOrWhiteSpace(editor))
+        {
+            PickEditorAndOpen(path, saveAsDefault: false);
+            return;
+        }
+
+        if (!File.Exists(editor))
+        {
+            Tools.MessageBox.Show(
+                TryFindResource("LogEditorMissing") as string
+                    ?? "The default editor no longer exists; please choose it again."
+            );
+            return;
+        }
+
+        LaunchLogEditor(editor, path);
+    }
+
+    /// <summary>取当前日志文件；还没生成时提示用户先收发数据。</summary>
+    private string? ResolveLogFilePath()
+    {
+        var path = Tools.Logger.GetCurrentUartLogPath();
+        if (File.Exists(path))
+            return path;
+
+        Tools.MessageBox.Show(
+            TryFindResource("LogFileMissing") as string
+                ?? "The log file has not been created yet; send or receive some data first."
+        );
+        return null;
+    }
+
+    private void PickEditorAndOpen(string path, bool saveAsDefault)
+    {
+        var dialog = new Microsoft.Win32.OpenFileDialog
+        {
+            Title = TryFindResource("LogEditorDialogTitle") as string ?? "Select editor",
+            Filter = "Program (*.exe)|*.exe|All files (*.*)|*.*",
+            CheckFileExists = true,
+        };
+        if (dialog.ShowDialog(this) != true)
+            return;
+
+        if (saveAsDefault)
+            Tools.Global.setting.logEditorPath = dialog.FileName;
+
+        LaunchLogEditor(dialog.FileName, path);
+    }
+
+    private void LaunchLogEditor(string editor, string path)
+    {
+        try
+        {
+            System.Diagnostics.Process.Start(
+                new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = editor,
+                    Arguments = "\"" + path + "\"",
+                    UseShellExecute = false,
+                }
+            );
+        }
+        catch (Exception ex)
+        {
+            ReportOpenLogFailed(ex);
+        }
+    }
+
+    private void ReportOpenLogFailed(Exception ex)
+    {
+        Tools.Logger.Swallowed("open log file", ex);
+        var message = TryFindResource("OpenLogFailed") as string ?? "Failed to open the log file.";
+        Tools.MessageBox.Show(message + "\r\n" + ex.Message);
     }
 
     Window? helpWindow;

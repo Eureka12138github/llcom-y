@@ -2,6 +2,9 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Ports;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading;
 using llcom.Model;
 using Newtonsoft.Json;
 
@@ -168,18 +171,25 @@ internal static class ProfileInitializer
                 Directory.Delete(AppPaths.ProfilePath + "core_script", true);
         }
 
-        //检测多开
-        string processName = Process.GetCurrentProcess().ProcessName;
-        Process[] processes = Process.GetProcessesByName(processName);
-        //如果该数组长度大于1，说明多次运行
-        if (processes.Length > 1 && File.Exists(AppPaths.ProfilePath + "lock"))
+        //检测多开：按“当前文件夹”判断，而不是按进程名。
+        //同名进程可能来自其他目录（多开本来就允许），旧逻辑会误判；
+        //另外 lock 文件在进程被强杀时会残留，导致之后永远打不开。
+        //命名互斥量在进程退出/被强杀时由系统自动释放，不会留下“假占用”。
+        if (!TryAcquireInstanceMutex())
         {
             Tools.MessageBox.Show(
                 "不支持同文件夹多开！\r\n如需多开，请在多个文件夹分别存放llcom-y.exe后，分别运行。"
             );
             Environment.Exit(1);
         }
-        File.Create(AppPaths.ProfilePath + "lock").Close();
+        //清理旧版本遗留的 lock 文件（新逻辑不再使用）
+        try
+        {
+            var staleLock = AppPaths.ProfilePath + "lock";
+            if (File.Exists(staleLock))
+                File.Delete(staleLock);
+        }
+        catch { /* 无权限时忽略 */ }
         try
         {
             if (!Directory.Exists(AppPaths.ProfilePath + "core_script"))
@@ -222,7 +232,8 @@ internal static class ProfileInitializer
                 "AT控制TCP连接-慢发模式.lua",
                 "example.lua",
                 "循环发送快捷发送区数据.lua",
-                "channel-demo.lua"
+                "channel-demo.lua",
+                "完成提示演示.lua"
             );
 
             if (!Directory.Exists(AppPaths.ProfilePath + "user_script_run/requires"))
@@ -344,5 +355,36 @@ internal static class ProfileInitializer
         {
             FileUtils.CreateFile($"DefaultFiles/{folder}/{file}", destDir + "/" + file, false);
         }
+    }
+
+    // 同文件夹多开检测用的互斥量：静态字段保证生命周期与进程一致
+    private static Mutex? instanceMutex;
+
+    /// <summary>
+    /// 按“当前程序目录”申请一个命名互斥量。
+    /// 进程正常退出或被强杀时由系统释放，不会像 lock 文件那样残留；
+    /// 其他目录的同名进程也不会影响本目录。
+    /// </summary>
+    private static bool TryAcquireInstanceMutex()
+    {
+        var folder = (AppPaths.ProfilePath ?? "").TrimEnd('\\').ToLowerInvariant();
+        string hash;
+        using (var md5 = MD5.Create())
+        {
+            hash = BitConverter
+                .ToString(md5.ComputeHash(Encoding.UTF8.GetBytes(folder)))
+                .Replace("-", "");
+        }
+
+        bool createdNew;
+        var mutex = new Mutex(true, "Local\\llcom-y-" + hash, out createdNew);
+        if (createdNew)
+        {
+            instanceMutex = mutex;
+            return true;
+        }
+
+        mutex.Dispose();
+        return false;
     }
 }

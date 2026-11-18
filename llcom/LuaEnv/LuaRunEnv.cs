@@ -23,6 +23,12 @@ namespace llcom.LuaEnv
 
         public static bool isRunning = false;
 
+        //当前运行的脚本名（用于托盘提示文案）
+        private static string currentScript = "";
+
+        //本次运行是否已经发过“脚本出错”提示（避免回调连续报错时刷屏）
+        private static bool errorNotified;
+
         //用事件替代轮询忙等：UI 准备好后 Set，New() 里 Wait（可被取消）
         private static readonly ManualResetEventSlim canRunEvent = new ManualResetEventSlim(false);
 
@@ -108,6 +114,9 @@ namespace llcom.LuaEnv
                             catch (Exception le)
                             {
                                 LuaApis.PrintLog("回调报错：\r\n" + le.ToString());
+                                // 正常情况下 Lua 层已用 pcall 吞掉错误并通过 apiScriptError 上报，
+                                // 这里兜底处理 C# 绑定层抛出的异常；同一次运行只提示一次。
+                                ReportScriptError(le.ToString());
                             }
                             if (tokenSource.IsCancellationRequested)
                                 return;
@@ -175,13 +184,57 @@ namespace llcom.LuaEnv
         }
 
         /// <summary>
+        /// 脚本报错时弹托盘气泡（窗口最小化/被遮挡时也能看到）。
+        /// </summary>
+        private static void NotifyScriptError(string ex)
+        {
+            var name = string.IsNullOrEmpty(currentScript) ? "" : $"[{currentScript}] ";
+
+            var text = (ex ?? "").Replace("\r", " ").Replace("\n", " ").Trim();
+            // sys.lua 会在错误信息末尾追加 ",hex:..." 调试串，提示里不需要
+            var hexIndex = text.IndexOf(",hex:", StringComparison.Ordinal);
+            if (hexIndex >= 0)
+                text = text.Substring(0, hexIndex);
+            // 去掉 “core_script/sys.lua:296: 路径/脚本.lua:84:” 这类前缀，只保留人类可读的错误内容
+            // （脚本路径在 Lua 侧是 GBK 字节，直接显示会是乱码；完整信息仍在 Lua 日志里）
+            text = System.Text.RegularExpressions.Regex.Replace(
+                text,
+                @"^.*\.lua:\d+:\s*",
+                ""
+            );
+            if (text.Length > 180)
+                text = text.Substring(0, 177) + "...";
+
+            llcom.Services.NotificationService.NotifyLocalized(
+                "ScriptNotifyErrorTitle",
+                name + text,
+                isError: true
+            );
+        }
+
+        /// <summary>
+        /// 供 Lua 层（head.lua 的 tiggerCB）上报回调错误：同一次运行只提示一次。
+        /// </summary>
+        public static void ReportScriptError(string? message)
+        {
+            if (errorNotified)
+                return;
+
+            errorNotified = true;
+            NotifyScriptError(message ?? "");
+        }
+
+        /// <summary>
         /// 停止运行lua
         /// </summary>
         public static void StopLua(string ex)
         {
             LuaRunError?.Invoke(null, EventArgs.Empty);
             if (ex != "")
+            {
                 LuaApis.PrintLog("lua代码报错了：\r\n" + ex);
+                ReportScriptError(ex);
+            }
             else
                 LuaApis.PrintLog("lua代码已停止");
             foreach (var v in pool)
@@ -201,6 +254,8 @@ namespace llcom.LuaEnv
         {
             canRun = false;
             isRunning = true;
+            currentScript = Path.GetFileNameWithoutExtension(file);
+            errorNotified = false;
             if (tokenSource != null)
                 tokenSource.Dispose();
             tokenSource = new CancellationTokenSource(); //task取消指示

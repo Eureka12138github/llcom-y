@@ -120,7 +120,27 @@ tiggerCB = function (id,type,data)
         end
     end)
     if not result then
-        log.error("task","run failed\r\n"..apiAscii2Utf8(tostring(info)))
+        local raw = tostring(info)
+
+        --错误信息是混合编码：
+        --  require 的 chunk 名（脚本路径）是 GBK 字节；
+        --  错误正文来自 UTF-8 源码。
+        --只转换路径部分，避免正文被二次编码成乱码。
+        local function encodeError(s)
+            local head, body = s:match("^(.*%.lua:%d+:%s*)(.*)$")
+            if head then
+                return apiAscii2Utf8(head) .. body
+            end
+            return apiAscii2Utf8(s)
+        end
+
+        log.error("task","run failed\r\n"..encodeError(raw))
+        -- 只对「运行脚本」里的回调错误弹红色托盘提示；
+        -- 发送/接收脚本的错误仍只写日志，避免刷屏。
+        -- 注意：这里传原始字符串，不能再经过 apiAscii2Utf8（那是给 GBK 字符串用的）。
+        if runType == "script" and apiScriptError then
+            apiScriptError(raw)
+        end
     end
 end
 

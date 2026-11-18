@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Forms;
 using System.Windows.Input;
 using llcom.Model;
@@ -23,6 +24,9 @@ public partial class DataShowPage : Page
     private DataShowViewModel _vm = null!;
     private bool loaded = false;
     private bool _logRowSelectionActive;
+
+    // 日志底栏低于该宽度时，常显图标折叠成「⋯」菜单（右下角悬停工具组约 144px）
+    private const double LogBarCollapseMinWidth = 430;
 
     public DataShowPage()
     {
@@ -75,6 +79,47 @@ public partial class DataShowPage : Page
         var needPack = _vm.Setting.timeout >= 0;
         MainList.Visibility = needPack ? Visibility.Visible : Visibility.Collapsed;
         MainTextBox.Visibility = needPack ? Visibility.Collapsed : Visibility.Visible;
+
+        UpdateLogBarLayout();
+    }
+
+    private void Page_SizeChanged(object sender, SizeChangedEventArgs e) =>
+        UpdateLogBarLayout();
+
+    /// <summary>
+    /// 日志区变窄时，把底栏常显图标折叠成「⋯」菜单，避免和右下角（悬停显示）的工具组重叠。
+    /// 宽度恢复后展开。
+    /// </summary>
+    private void UpdateLogBarLayout()
+    {
+        if (!loaded || ActualWidth <= 0)
+            return;
+
+        var collapse = ActualWidth < LogBarCollapseMinWidth;
+        var visibility = collapse ? Visibility.Collapsed : Visibility.Visible;
+        if (SendHexToggle.Visibility == visibility)
+            return;
+
+        SendHexToggle.Visibility = visibility;
+        RecvHexToggle.Visibility = visibility;
+        ShowSymbolToggle.Visibility = visibility;
+        DisableLogToggle.Visibility = visibility;
+        LockLogButton.Visibility = visibility;
+        ClearLogButton.Visibility = visibility;
+        SaveLogButton.Visibility = visibility;
+        LogBarMoreButton.Visibility = collapse ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    /// <summary>「⋯」按钮：打开折叠后的底栏功能菜单。</summary>
+    private void LogBarMoreButton_Click(object sender, RoutedEventArgs e)
+    {
+        var menu = LogBarMoreButton.ContextMenu;
+        if (menu == null)
+            return;
+
+        menu.PlacementTarget = LogBarMoreButton;
+        menu.Placement = PlacementMode.Top;
+        menu.IsOpen = true;
     }
 
     private void LockLogButton_Click(object sender, RoutedEventArgs e)

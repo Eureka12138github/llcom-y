@@ -72,6 +72,34 @@ namespace llcom.Tools
         }
 
         /// <summary>
+        /// 当前串口日志文件的路径（按天滚动，按文件大小滚动时取最新的一个）。
+        /// 文件尚未生成时返回今天的预期路径。
+        /// </summary>
+        public static string GetCurrentUartLogPath()
+        {
+            var dir = Tools.Global.ProfilePath + "logs";
+            var prefix = "log" + DateTime.Now.ToString("yyyyMMdd");
+            try
+            {
+                if (Directory.Exists(dir))
+                {
+                    var newest = new DirectoryInfo(dir)
+                        .GetFiles(prefix + "*.txt")
+                        .OrderByDescending(f => f.LastWriteTime)
+                        .FirstOrDefault();
+                    if (newest != null)
+                        return newest.FullName;
+                }
+            }
+            catch (Exception ex)
+            {
+                Swallowed("current uart log", ex);
+            }
+
+            return Path.Combine(dir, prefix + ".txt");
+        }
+
+        /// <summary>
         /// 写入一条串口日志
         /// </summary>
         /// <param name="l"></param>

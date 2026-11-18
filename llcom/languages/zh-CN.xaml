@@ -21,6 +21,8 @@
     <system:String x:Key="MoreSettings">更多设置</system:String>
     <system:String x:Key="MoreSettingsTip">可设置串口校验位停止位等信息、设置发送前的自动处理脚本。</system:String>
     <system:String x:Key="MoreActions">更多操作</system:String>
+    <system:String x:Key="LogBarMenuLock">锁定视图（禁止自动滚动）</system:String>
+    <system:String x:Key="LogBarMenuSave">保存日志…</system:String>
     <system:String x:Key="SettingLogFontSize">数据字号：</system:String>
     <system:String x:Key="RecvHexView">接收显示Hex</system:String>
     <system:String x:Key="SerialSettingsCard">串口设置</system:String>
@@ -145,6 +147,26 @@
     <system:String x:Key="SettingStreamMaxCharsTip">流式模式（分包数据超时设为负数）最多保留多少字符，超过后自动丢弃最早的文本；范围 100000~10000000</system:String>
     <system:String x:Key="SettingTerminal">终端模式（在日志区直接键盘发送）</system:String>
     <system:String x:Key="SettingTerminalTip">开启后，点击日志区并敲键盘，字符会直接发送到串口。终端模式下 Ctrl+C 会发送 0x03，与复制快捷键冲突；复制日志前建议先关闭。</system:String>
+    <system:String x:Key="SettingScriptNotify">脚本结束提示（系统托盘气泡）</system:String>
+    <system:String x:Key="SettingScriptNotifyTip">开启后系统托盘会常驻 LLCOM-Y 图标：脚本报错、或脚本调用 apiNotify 时弹出气泡，窗口最小化或被其他程序遮挡时也能看到；点击气泡或双击图标可切回主窗口。</system:String>
+    <system:String x:Key="SettingScriptNotifyFlash">托盘图标闪烁提醒（30 秒）</system:String>
+    <system:String x:Key="SettingScriptNotifyFlashTip">气泡消失后，未读提示会让托盘图标显示彩色角标（完成=绿色、报错=红色）并闪烁 30 秒；鼠标移到图标上或回到主窗口即停止闪烁，角标保留到点击托盘/状态栏里的提示。关闭后只显示角标、不闪烁。</system:String>
+    <system:String x:Key="TrayRecentNotices">最近提示</system:String>
+    <system:String x:Key="TrayNoNotices">（暂无提示）</system:String>
+    <system:String x:Key="NoticeActionHint">左键：隐藏 / 展开　右键：清除</system:String>
+    <system:String x:Key="OpenLogFile">打开当前日志文件</system:String>
+    <system:String x:Key="OpenLogFileTip">打开当前日志文件；右键可选择程序或设置默认编辑器</system:String>
+    <system:String x:Key="OpenLogWithSystem">用系统默认程序打开</system:String>
+    <system:String x:Key="OpenLogWith">选择程序打开一次…</system:String>
+    <system:String x:Key="SetLogEditor">设置默认编辑器…</system:String>
+    <system:String x:Key="ClearLogEditor">清除默认编辑器</system:String>
+    <system:String x:Key="LogFileMissing">日志文件还没生成，先收发一些数据再试。</system:String>
+    <system:String x:Key="LogEditorMissing">默认编辑器不存在，请重新设置。</system:String>
+    <system:String x:Key="LogEditorDialogTitle">选择用于打开日志的程序</system:String>
+    <system:String x:Key="OpenLogFailed">打开日志文件失败：</system:String>
+    <system:String x:Key="ScriptNotifyErrorTitle">脚本出错</system:String>
+    <system:String x:Key="TrayShowWindow">显示主窗口</system:String>
+    <system:String x:Key="TrayExit">退出 LLCOM-Y</system:String>
     <system:String x:Key="SettingConfigBackup">配置备份</system:String>
     <system:String x:Key="SettingConfigBackupTip">导出 / 导入整份 settings.json（串口、界面、快捷发送、MQTT 等全部设置）。</system:String>
     <system:String x:Key="SettingExportConfig">导出配置</system:String>
@@ -208,7 +230,6 @@
     <system:String x:Key="ClearSendBox">清除发送框内容</system:String>
     <system:String x:Key="SendHistory">发送记录</system:String>
     <system:String x:Key="SendHistoryEmpty">（暂无发送记录）</system:String>
-    <system:String x:Key="SendHistoryItemTip">左键：填回发送框&#10;右键：直接发送该条</system:String>
     <system:String x:Key="SendHistoryLimit">记录上限（条）：</system:String>
     <system:String x:Key="SendHistoryLimitTip">5~200 条：可直接键盘输入，回车或失焦生效</system:String>
     <system:String x:Key="ClearSendHistory">清空记录</system:String>

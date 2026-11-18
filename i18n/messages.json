@@ -78,6 +78,14 @@
       "zh-CN": "更多操作",
       "en-US": "More actions"
     },
+    "LogBarMenuLock": {
+      "zh-CN": "锁定视图（禁止自动滚动）",
+      "en-US": "Lock view (no auto-scroll)"
+    },
+    "LogBarMenuSave": {
+      "zh-CN": "保存日志…",
+      "en-US": "Save log…"
+    },
     "SettingLogFontSize": {
       "zh-CN": "数据字号：",
       "en-US": "Log font size:"
@@ -573,6 +581,86 @@
     "SettingTerminalTip": {
       "zh-CN": "开启后，点击日志区并敲键盘，字符会直接发送到串口。终端模式下 Ctrl+C 会发送 0x03，与复制快捷键冲突；复制日志前建议先关闭。",
       "en-US": "When enabled, click the log area and type: characters are sent to the serial port immediately. Ctrl+C sends 0x03, which conflicts with copying."
+    },
+    "SettingScriptNotify": {
+      "zh-CN": "脚本结束提示（系统托盘气泡）",
+      "en-US": "Script completion notification (tray balloon)"
+    },
+    "SettingScriptNotifyTip": {
+      "zh-CN": "开启后系统托盘会常驻 LLCOM-Y 图标：脚本报错、或脚本调用 apiNotify 时弹出气泡，窗口最小化或被其他程序遮挡时也能看到；点击气泡或双击图标可切回主窗口。",
+      "en-US": "When enabled, LLCOM-Y stays in the system tray: a balloon appears when a script fails or calls apiNotify, even if the window is minimized or covered. Click the balloon or double-click the icon to return to the main window."
+    },
+    "SettingScriptNotifyFlash": {
+      "zh-CN": "托盘图标闪烁提醒（30 秒）",
+      "en-US": "Flash the tray icon (30 seconds)"
+    },
+    "SettingScriptNotifyFlashTip": {
+      "zh-CN": "气泡消失后，未读提示会让托盘图标显示彩色角标（完成=绿色、报错=红色）并闪烁 30 秒；鼠标移到图标上或回到主窗口即停止闪烁，角标保留到点击托盘/状态栏里的提示。关闭后只显示角标、不闪烁。",
+      "en-US": "After the balloon disappears, unread notifications show a colored badge on the tray icon (green = done, red = error) and flash for 30 seconds. Hovering the icon or returning to the main window stops the flashing; the badge stays until you click the tray or status-bar notice. Turn off to keep the badge without flashing."
+    },
+    "TrayRecentNotices": {
+      "zh-CN": "最近提示",
+      "en-US": "Recent notifications"
+    },
+    "TrayNoNotices": {
+      "zh-CN": "（暂无提示）",
+      "en-US": "(no notifications)"
+    },
+    "NoticeActionHint": {
+      "zh-CN": "左键：隐藏 / 展开　右键：清除",
+      "en-US": "Left: hide / show   Right: dismiss"
+    },
+    "OpenLogFile": {
+      "zh-CN": "打开当前日志文件",
+      "en-US": "Open current log file"
+    },
+    "OpenLogFileTip": {
+      "zh-CN": "打开当前日志文件；右键可选择程序或设置默认编辑器",
+      "en-US": "Open the current log file; right-click to choose a program or set a default editor"
+    },
+    "OpenLogWithSystem": {
+      "zh-CN": "用系统默认程序打开",
+      "en-US": "Open with system default"
+    },
+    "OpenLogWith": {
+      "zh-CN": "选择程序打开一次…",
+      "en-US": "Open once with…"
+    },
+    "SetLogEditor": {
+      "zh-CN": "设置默认编辑器…",
+      "en-US": "Set default editor…"
+    },
+    "ClearLogEditor": {
+      "zh-CN": "清除默认编辑器",
+      "en-US": "Clear default editor"
+    },
+    "LogFileMissing": {
+      "zh-CN": "日志文件还没生成，先收发一些数据再试。",
+      "en-US": "The log file has not been created yet; send or receive some data first."
+    },
+    "LogEditorMissing": {
+      "zh-CN": "默认编辑器不存在，请重新设置。",
+      "en-US": "The default editor no longer exists; please choose it again."
+    },
+    "LogEditorDialogTitle": {
+      "zh-CN": "选择用于打开日志的程序",
+      "en-US": "Choose a program for opening logs"
+    },
+    "OpenLogFailed": {
+      "zh-CN": "打开日志文件失败：",
+      "en-US": "Failed to open the log file:"
+    },
+    "ScriptNotifyErrorTitle": {
+      "zh-CN": "脚本出错",
+      "en-US": "Script error"
+    },
+    "TrayShowWindow": {
+      "zh-CN": "显示主窗口",
+      "en-US": "Show main window"
+    },
+    "TrayExit": {
+      "zh-CN": "退出 LLCOM-Y",
+      "en-US": "Exit LLCOM-Y"
     },
     "SettingConfigBackup": {
       "zh-CN": "配置备份",

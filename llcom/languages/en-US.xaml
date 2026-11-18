@@ -21,6 +21,8 @@
     <system:String x:Key="MoreSettings">Settings</system:String>
     <system:String x:Key="MoreSettingsTip">Set stopbit, parity, Lua script for data to send and so on.</system:String>
     <system:String x:Key="MoreActions">More actions</system:String>
+    <system:String x:Key="LogBarMenuLock">Lock view (no auto-scroll)</system:String>
+    <system:String x:Key="LogBarMenuSave">Save log…</system:String>
     <system:String x:Key="SettingLogFontSize">Log font size:</system:String>
     <system:String x:Key="RecvHexView">Show received as Hex</system:String>
     <system:String x:Key="SerialSettingsCard">Serial Port</system:String>
@@ -145,6 +147,26 @@
     <system:String x:Key="SettingStreamMaxCharsTip">Max characters kept in stream mode (pack timeout &lt; 0); oldest text is dropped. Range 100000~10000000</system:String>
     <system:String x:Key="SettingTerminal">Terminal mode (type directly in the log area)</system:String>
     <system:String x:Key="SettingTerminalTip">When enabled, click the log area and type: characters are sent to the serial port immediately. Ctrl+C sends 0x03, which conflicts with copying.</system:String>
+    <system:String x:Key="SettingScriptNotify">Script completion notification (tray balloon)</system:String>
+    <system:String x:Key="SettingScriptNotifyTip">When enabled, LLCOM-Y stays in the system tray: a balloon appears when a script fails or calls apiNotify, even if the window is minimized or covered. Click the balloon or double-click the icon to return to the main window.</system:String>
+    <system:String x:Key="SettingScriptNotifyFlash">Flash the tray icon (30 seconds)</system:String>
+    <system:String x:Key="SettingScriptNotifyFlashTip">After the balloon disappears, unread notifications show a colored badge on the tray icon (green = done, red = error) and flash for 30 seconds. Hovering the icon or returning to the main window stops the flashing; the badge stays until you click the tray or status-bar notice. Turn off to keep the badge without flashing.</system:String>
+    <system:String x:Key="TrayRecentNotices">Recent notifications</system:String>
+    <system:String x:Key="TrayNoNotices">(no notifications)</system:String>
+    <system:String x:Key="NoticeActionHint">Left: hide / show   Right: dismiss</system:String>
+    <system:String x:Key="OpenLogFile">Open current log file</system:String>
+    <system:String x:Key="OpenLogFileTip">Open the current log file; right-click to choose a program or set a default editor</system:String>
+    <system:String x:Key="OpenLogWithSystem">Open with system default</system:String>
+    <system:String x:Key="OpenLogWith">Open once with…</system:String>
+    <system:String x:Key="SetLogEditor">Set default editor…</system:String>
+    <system:String x:Key="ClearLogEditor">Clear default editor</system:String>
+    <system:String x:Key="LogFileMissing">The log file has not been created yet; send or receive some data first.</system:String>
+    <system:String x:Key="LogEditorMissing">The default editor no longer exists; please choose it again.</system:String>
+    <system:String x:Key="LogEditorDialogTitle">Choose a program for opening logs</system:String>
+    <system:String x:Key="OpenLogFailed">Failed to open the log file:</system:String>
+    <system:String x:Key="ScriptNotifyErrorTitle">Script error</system:String>
+    <system:String x:Key="TrayShowWindow">Show main window</system:String>
+    <system:String x:Key="TrayExit">Exit LLCOM-Y</system:String>
     <system:String x:Key="SettingConfigBackup">Config backup</system:String>
     <system:String x:Key="SettingConfigBackupTip">Export / import the whole settings.json (serial, UI, quick send, MQTT, etc.).</system:String>
     <system:String x:Key="SettingExportConfig">Export config</system:String>
@@ -208,7 +230,6 @@
     <system:String x:Key="ClearSendBox">Clear input</system:String>
     <system:String x:Key="SendHistory">Send history</system:String>
     <system:String x:Key="SendHistoryEmpty">(no history)</system:String>
-    <system:String x:Key="SendHistoryItemTip">Left click: fill back into input&#10;Right click: send this entry</system:String>
     <system:String x:Key="SendHistoryLimit">History limit: </system:String>
     <system:String x:Key="SendHistoryLimitTip">5~200 entries: type a number, press Enter or leave the box</system:String>
     <system:String x:Key="ClearSendHistory">Clear history</system:String>

@@ -140,6 +140,51 @@ partial class Settings
         }
     }
 
+    private bool _scriptNotifyEnabled = true;
+
+    /// <summary>
+    /// 脚本结束/报错时是否在系统托盘弹出气泡提示（同时决定托盘图标是否常驻）。
+    /// </summary>
+    public bool scriptNotifyEnabled
+    {
+        get => _scriptNotifyEnabled;
+        set
+        {
+            if (SetProperty(ref _scriptNotifyEnabled, value))
+                Save();
+        }
+    }
+
+    private bool _scriptNotifyFlash = true;
+
+    /// <summary>
+    /// 未读时是否让托盘图标闪烁 30 秒（关闭后只保留彩色角标）。
+    /// </summary>
+    public bool scriptNotifyFlash
+    {
+        get => _scriptNotifyFlash;
+        set
+        {
+            if (SetProperty(ref _scriptNotifyFlash, value))
+                Save();
+        }
+    }
+
+    private string _logEditorPath = "";
+
+    /// <summary>
+    /// 「打开当前日志文件」使用的默认编辑器路径；留空时使用系统「打开方式」对话框。
+    /// </summary>
+    public string logEditorPath
+    {
+        get => _logEditorPath;
+        set
+        {
+            if (SetProperty(ref _logEditorPath, value ?? ""))
+                Save();
+        }
+    }
+
     /// <summary>
     /// 串口接收每包最大长度
     /// </summary>
