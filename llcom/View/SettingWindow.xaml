@@ -126,6 +126,20 @@
               IsChecked="{Binding terminal}"
               ToolTip="{DynamicResource SettingTerminalTip}"
             />
+            <CheckBox
+              Margin="8"
+              Click="ScriptNotifyCheckBox_Click"
+              Content="{DynamicResource SettingScriptNotify}"
+              IsChecked="{Binding scriptNotifyEnabled}"
+              ToolTip="{DynamicResource SettingScriptNotifyTip}"
+            />
+            <CheckBox
+              Margin="8,0,8,8"
+              Click="ScriptNotifyFlashCheckBox_Click"
+              Content="{DynamicResource SettingScriptNotifyFlash}"
+              IsChecked="{Binding scriptNotifyFlash}"
+              ToolTip="{DynamicResource SettingScriptNotifyFlashTip}"
+            />
             <Separator Margin="8,12,8,4" />
             <TextBlock
               Margin="8,0,8,4"

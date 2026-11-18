@@ -107,6 +107,9 @@ public partial class MainWindow : Window
     /// <summary>Alt+M 恢复用全局热键是否已注册（只在最小化期间注册，避免长期占用）。</summary>
     private bool _minimizeHotKeyRegistered;
 
+    /// <summary>状态栏提示是否折叠成只显示彩色圆点（左键切换）。</summary>
+    private bool _noticeTextCollapsed;
+
     public MainWindow(MainViewModel vm)
     {
         InitializeComponent();
@@ -174,6 +177,10 @@ public partial class MainWindow : Window
     {
         ClampSidebarWidth();
         UpdateQuickSendNoteIcon();
+        NotificationService.Initialize(this);
+        NotificationService.NoticeAdded += NotificationService_NoticeAdded;
+        NotificationService.UnreadChanged += NotificationService_UnreadChanged;
+        Activated += MainWindow_Activated;
 
         //初始化“串口设置”页的下拉参数
         mainDataBitsComboBox.SelectedIndex = Tools.Global.setting.dataBits - 5;
@@ -444,6 +451,10 @@ public partial class MainWindow : Window
             _minimizeHotKeyRegistered = false;
         }
         Tools.Global.isMainWindowsClosed = true;
+        NotificationService.Shutdown();
+        NotificationService.NoticeAdded -= NotificationService_NoticeAdded;
+        NotificationService.UnreadChanged -= NotificationService_UnreadChanged;
+        Activated -= MainWindow_Activated;
         foreach (Window win in App.Current.Windows)
         {
             if (win != this)
@@ -602,11 +613,11 @@ public partial class MainWindow : Window
     private void LogCornerZone_MouseLeave(object sender, MouseEventArgs e) =>
         ShowLogCornerTools(false);
 
-    /// <summary>淡入/淡出；隐藏时同时禁用点击，避免误触。</summary>
+    /// <summary>淡入/淡出三按钮；隐藏时同时禁用点击，避免误触。</summary>
     private void ShowLogCornerTools(bool show)
     {
-        LogCornerContent.IsHitTestVisible = show;
-        LogCornerContent.BeginAnimation(
+        LogCornerTools.IsHitTestVisible = show;
+        LogCornerTools.BeginAnimation(
             OpacityProperty,
             new System.Windows.Media.Animation.DoubleAnimation(
                 show ? 1.0 : 0.0,
@@ -615,52 +626,75 @@ public partial class MainWindow : Window
         );
     }
 
-    // 日志列宽度低于该值时，底部常显图标会和角落工具重叠（底栏约 214px + 角落工具约 144px + 边距）
-    private const double LogCornerExpandMinWidth = 400;
-
-    private void DataShowFrame_SizeChanged(object sender, SizeChangedEventArgs e) =>
-        UpdateLogCornerLayout();
-
-    /// <summary>日志列变窄时把角落工具折叠为「⋯」菜单，避免和日志底栏图标叠在一起。</summary>
-    private void UpdateLogCornerLayout()
+    /// <summary>状态栏显示最近一条脚本提示（气泡错过时的兜底，绿=完成 / 红=报错）。</summary>
+    private void NotificationService_NoticeAdded(Notice notice)
     {
-        var width = LogColumn.ActualWidth;
-        if (width <= 0)
-            return;
-
-        var collapse = width < LogCornerExpandMinWidth;
-        var expandedVisibility = collapse ? Visibility.Collapsed : Visibility.Visible;
-        if (LogCornerTools.Visibility == expandedVisibility)
-            return;
-
-        LogCornerTools.Visibility = expandedVisibility;
-        LogCornerOverflow.Visibility = collapse ? Visibility.Visible : Visibility.Collapsed;
+        Dispatcher.BeginInvoke(
+            new Action(() =>
+            {
+                noticeText.Text = $"{notice.Time:HH:mm:ss}  {notice.Title}：{notice.Message}";
+                var detail = string.IsNullOrWhiteSpace(notice.Message)
+                    ? $"{notice.Time:HH:mm:ss}  {notice.Title}"
+                    : $"{notice.Time:HH:mm:ss}  {notice.Title}\n{notice.Message}";
+                var actionHint = TryFindResource("NoticeActionHint") as string;
+                noticePanel.ToolTip = string.IsNullOrEmpty(actionHint)
+                    ? detail
+                    : detail + "\n" + actionHint;
+                noticeDot.Fill = ThemeService.GetBrush(
+                    notice.IsError ? "Brush.State.Error" : "Brush.State.Success",
+                    notice.IsError
+                        ? Color.FromArgb(0xFF, 0xEF, 0x44, 0x44)
+                        : Color.FromArgb(0xFF, 0x22, 0xC5, 0x5E)
+                );
+                _noticeTextCollapsed = false;
+                noticeText.Visibility = Visibility.Visible;
+                noticePanel.Visibility = Visibility.Visible;
+            })
+        );
     }
 
-    /// <summary>「⋯」按钮：打开折叠后的角落工具菜单。</summary>
-    private void LogCornerMoreButton_Click(object sender, RoutedEventArgs e)
+    /// <summary>未读时把状态栏提示加粗，读过恢复常规字重。</summary>
+    private void NotificationService_UnreadChanged()
     {
-        var menu = LogCornerMoreButton.ContextMenu;
-        if (menu == null)
-            return;
-
-        ThemeMenuItem.IsChecked = Tools.Global.setting.darkMode;
-        menu.PlacementTarget = LogCornerMoreButton;
-        menu.Placement = PlacementMode.Bottom;
-        menu.IsOpen = true;
+        Dispatcher.BeginInvoke(
+            new Action(() =>
+                noticeText.FontWeight = NotificationService.HasUnread
+                    ? FontWeights.Bold
+                    : FontWeights.Normal
+            )
+        );
     }
 
-    private void LogCornerMoreMenu_ContextMenuOpening(object sender, ContextMenuEventArgs e) =>
-        ThemeMenuItem.IsChecked = Tools.Global.setting.darkMode;
+    private void NoticePanel_MouseLeftButtonUp(object sender, MouseButtonEventArgs e) =>
+        ToggleNoticeText();
 
-    /// <summary>折叠菜单里的主题切换（与日志角落的 🌙/☀ 按钮等价）。</summary>
-    private void ThemeMenuItem_Click(object sender, RoutedEventArgs e)
+    private void NoticePanel_MouseRightButtonUp(object sender, MouseButtonEventArgs e) =>
+        DismissNotice();
+
+    /// <summary>左键：在“完整提示 / 只留彩色圆点”之间切换；圆点保留，便于再次展开。</summary>
+    private void ToggleNoticeText()
     {
-        var setting = Tools.Global.setting;
-        setting.darkMode = !setting.darkMode;
-        if (sender is MenuItem item)
-            item.IsChecked = setting.darkMode;
+        _noticeTextCollapsed = !_noticeTextCollapsed;
+        noticeText.Visibility = _noticeTextCollapsed
+            ? Visibility.Collapsed
+            : Visibility.Visible;
+        NotificationService.MarkAllRead();
     }
+
+    /// <summary>右键：直接清除这条提示（同时清掉托盘未读角标）。</summary>
+    private void DismissNotice()
+    {
+        _noticeTextCollapsed = false;
+        noticePanel.Visibility = Visibility.Collapsed;
+        noticePanel.ToolTip = null;
+        noticeText.Visibility = Visibility.Visible;
+        noticeText.Text = "";
+        noticeText.FontWeight = FontWeights.Normal;
+        NotificationService.MarkAllRead();
+    }
+
+    private void MainWindow_Activated(object? sender, EventArgs e) =>
+        NotificationService.MarkAllRead();
 
     Window? helpWindow;
 

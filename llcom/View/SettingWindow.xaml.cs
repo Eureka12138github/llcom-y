@@ -35,6 +35,24 @@ public partial class SettingWindow : Window
         InitializeComponent();
     }
 
+    /// <summary>「脚本结束提示」开关：立即创建/移除托盘图标。</summary>
+    private void ScriptNotifyCheckBox_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is CheckBox box)
+            Tools.Global.setting.scriptNotifyEnabled = box.IsChecked == true;
+
+        NotificationService.ApplyEnabled(Tools.Global.setting.scriptNotifyEnabled);
+    }
+
+    /// <summary>「托盘图标闪烁提醒」开关：关闭时立即停止闪烁（角标保留）。</summary>
+    private void ScriptNotifyFlashCheckBox_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is CheckBox box)
+            Tools.Global.setting.scriptNotifyFlash = box.IsChecked == true;
+
+        NotificationService.ApplyFlashSetting();
+    }
+
     //发送/接收转换脚本编辑器（与主窗口 Lua 编辑器共用 LuaEditorViewModel）
     private LuaEditorViewModel _sendEditor = null!;
     private LuaEditorViewModel _recvEditor = null!;

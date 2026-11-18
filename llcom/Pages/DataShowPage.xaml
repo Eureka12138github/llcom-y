@@ -13,6 +13,7 @@
   d:DesignHeight="450"
   d:DesignWidth="800"
   Loaded="Page_Loaded"
+  SizeChanged="Page_SizeChanged"
   mc:Ignorable="d"
 >
   <Grid x:Name="mainGrid" Background="Transparent">
@@ -22,7 +23,7 @@
     </Grid.RowDefinitions>
     <TextBox
       Name="MainTextBox"
-      VerticalContentAlignment="Top"
+      VerticalContentAlignment="Stretch"
       Background="Transparent"
       BorderThickness="0"
       FontFamily="Consolas,Microsoft YaHei,微软雅黑"
@@ -123,6 +124,52 @@
       VerticalAlignment="Bottom"
       Orientation="Horizontal"
     >
+      <!--  窄宽度时折叠为「⋯」菜单，避免和右下角工具组重叠  -->
+      <Button
+        Name="LogBarMoreButton"
+        Style="{StaticResource LogBarButton}"
+        AutomationProperties.Name="{DynamicResource MoreActions}"
+        Click="LogBarMoreButton_Click"
+        ToolTip="{DynamicResource MoreActions}"
+        Visibility="Collapsed"
+      >
+        <fa:FontAwesome FontSize="14" Icon="EllipsisH" />
+        <Button.ContextMenu>
+          <ContextMenu
+            x:Name="LogBarMoreMenu"
+            DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"
+          >
+            <MenuItem
+              Header="{DynamicResource HexSendMode}"
+              IsCheckable="True"
+              IsChecked="{Binding Setting.hexSend, Mode=TwoWay}"
+            />
+            <MenuItem
+              Header="{DynamicResource RecvHexView}"
+              IsCheckable="True"
+              IsChecked="{Binding Setting.recvShowHex, Mode=TwoWay}"
+            />
+            <MenuItem
+              Header="{DynamicResource ShowSymbol}"
+              IsCheckable="True"
+              IsChecked="{Binding Setting.EnableSymbol, Mode=TwoWay}"
+            />
+            <MenuItem
+              Header="{DynamicResource DisableLog}"
+              IsCheckable="True"
+              IsChecked="{Binding Setting.DisableLog, Mode=TwoWay}"
+            />
+            <MenuItem
+              Header="{DynamicResource LogBarMenuLock}"
+              IsCheckable="True"
+              IsChecked="{Binding LockLog, Mode=TwoWay}"
+            />
+            <Separator />
+            <MenuItem Click="ClearLogButton_Click" Header="{DynamicResource ClearLog}" />
+            <MenuItem Click="SaveLogButton_Click" Header="{DynamicResource LogBarMenuSave}" />
+          </ContextMenu>
+        </Button.ContextMenu>
+      </Button>
       <!--  发送显示方式：Abc（字符串）/ Hex  -->
       <ToggleButton
         Name="SendHexToggle"

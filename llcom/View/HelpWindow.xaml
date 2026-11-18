@@ -71,7 +71,7 @@
       <TextBlock Style="{StaticResource HelpLi}" Text="· 自动重连：串口被拔出后自动恢复连接（只重连上次手动打开过的端口）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· RTS / DTR：串口两根硬件控制信号线的电平（详见文末「RTS / DTR 详解」）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 打开串口 / 关闭串口：打开成功后按钮变绿，状态栏显示 COM 与波特率。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 日志底栏右端（与「清空日志」同一行、靠右对齐）：鼠标移入该角落才显示 ? 使用说明、🌙/☀ 切换主题、☰ 更多设置、🌐 切换语言；移开自动隐藏。日志区较窄时，这一组图标会自动折叠成「⋯」菜单，点开后选择同样的功能（不会再和底栏图标重叠）。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 日志底栏右端（与「清空日志」同一行、靠右对齐）：鼠标移入该角落才显示 ? 使用说明、🌙/☀ 切换主题、☰ 更多设置、🌐 切换语言；移开自动隐藏。这组图标不随日志区变窄而折叠。" />
 
       <TextBlock Style="{StaticResource HelpH}" Text="四、收发数据显示区（左侧）" />
       <TextBlock Style="{StaticResource HelpP}" Text="每行显示：时间 + 方向（→ 发送 / ← 接收）+ 数据（十六进制或文本，单行）。" />
@@ -83,6 +83,7 @@
       <TextBlock Style="{StaticResource HelpLi}" Text="· 锁图标：锁定视图禁止自动滚动（点一下切换，锁定时为绿色开锁图标）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 垃圾桶图标：清空日志显示。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 保存图标：把当前日志保存为文件。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 日志区较窄时（例如把右侧栏向左拖），这一排底栏图标会自动折叠成一个「⋯」菜单，点开后提供同样的开关与操作；宽度恢复后自动展开。右下角悬停出现的 使用说明 / 主题 / 设置 / 语言 不受影响。" />
       <TextBlock Style="{StaticResource HelpP}" Text="多行复制：「分包」模式下日志列表支持 Ctrl+点击多选，按 Ctrl+C 或右键「复制选中行」即可复制；右键菜单还有「全选 / 复制全部」。复制的每一行都带时间与方向箭头，与界面显示一致。「流式」模式下右键可「复制全部」。" />
       <TextBlock Style="{StaticResource HelpP}" Text="终端模式（在「更多设置」中开启）：日志区可直接键盘输入并即时发送按键。" />
       <TextBlock Style="{StaticResource HelpP}" FontWeight="Bold" Text="终端模式（键盘直发）详解" />
@@ -124,6 +125,7 @@
       <TextBlock Style="{StaticResource HelpLi}" Text="· 工具栏图标：新建 / 运行 / 打开脚本文件夹 / 刷新列表 / Lua API 文档 / 分享脚本。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 点「运行」后进入日志视图：显示 print 输出；可「停止/退出」「暂停/继续打印」，底部输入框可执行单行 Lua。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 脚本目录：程序目录下 user_script_run/。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 完成提示：脚本里调用 apiNotify(标题, 内容) 会弹系统托盘气泡；脚本报错时也会自动提示（正常完成=绿色，报错=红色）。气泡消失后托盘图标会显示对应颜色的角标并闪烁 30 秒；鼠标悬浮或点击图标、回到主窗口都会停止闪烁，角标保留到点击托盘 / 状态栏里的提示。开关在「更多设置 → 脚本结束提示 / 托盘图标闪烁提醒」。" />
 
       <TextBlock Style="{StaticResource HelpH}" Text="八、在线脚本" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 浏览社区脚本（作者 / 名称 / 版本 / 简介），点开查看，点「下载」保存到本地脚本目录。" />
@@ -166,7 +168,7 @@
       <TextBlock Style="{StaticResource HelpP}" Text="四则运算：与上面的位运算互不影响，支持 + - * / % ^、括号和小数，边输入边出结果；除数为 0 或表达式非法时会给出提示。" />
 
       <TextBlock Style="{StaticResource HelpH}" Text="十、更多设置（点日志区右下角 ☰ 直接打开，鼠标移入才显示）" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 分三个页签：「更多串口设置」（打开日志文件夹、显示发送、数据字号、窗口置顶、串口超时（分包）、按空行分包、终端模式、日志保留上限、流式保留字符数）、「发送脚本」、「接收脚本」。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 分三个页签：「更多串口设置」（打开日志文件夹、显示发送、数据字号、窗口置顶、串口超时（分包）、按空行分包、终端模式、脚本结束提示、托盘图标闪烁提醒、日志保留上限、流式保留字符数）、「发送脚本」、「接收脚本」。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 日志保留上限（条）：分包模式最多保留多少条日志（1000~200000，默认 50000），超过后自动丢弃最早的记录；另有 32 MB 负载预算兜底（大包时会先按字节裁剪）。两者谁先到谁生效。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 流式保留字符数：把「串口超时」设为负数进入流式模式后，最多保留多少字符（100000~10000000，默认 2000000），超过后丢弃最早的文本。两个输入框都可直接键盘输入数字，回车或失焦生效。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 窗口保持置顶显示：让主窗口始终显示在其他程序窗口的最上层，不被别的窗口挡住（对「更多设置」窗口本身无影响）。" />
@@ -180,8 +182,8 @@
       <TextBlock Style="{StaticResource HelpLi}" Text="· 串口与各网络工具都作为「通用通道」，Lua 用 apiSend / apiSetCb 收发。" />
 
       <TextBlock Style="{StaticResource HelpH}" Text="十二、其他" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 语言：日志区右下角 🌐 切换中/英（与 ? 使用说明、☰ 更多设置同一行的右端，鼠标移入才显示；窄窗口下在「⋯」菜单里）。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 外观：日志区右下角 🌙/☀ 图标切换深色 / 浅色主题（鼠标移入才显示；窄窗口下在「⋯」菜单里；切换立即生效并保存）。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 语言：日志区右下角 🌐 切换中/英（与 ? 使用说明、☰ 更多设置同一行的右端，鼠标移入才显示）。" />
+      <TextBlock Style="{StaticResource HelpLi}" Text="· 外观：日志区右下角 🌙/☀ 图标切换深色 / 浅色主题（鼠标移入才显示；切换立即生效并保存）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 日志文件：程序目录 logs/（串口日志与崩溃日志 fatal.log）与 user_script_run/logs/（Lua 日志）。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 配置与脚本均保存在程序目录。" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 程序遇到错误时会弹出一个只有「关闭程序」按钮的窗口，并把错误详情写入 logs/fatal.log。" />
@@ -224,7 +226,7 @@
         <TextBlock Style="{StaticResource HelpLi}" Text="· Auto reconnect: reconnect automatically after the serial cable is unplugged (only the port last opened manually)." />
         <TextBlock Style="{StaticResource HelpLi}" Text="· RTS / DTR: levels of the two hardware control lines (see RTS / DTR details at the end)." />
         <TextBlock Style="{StaticResource HelpLi}" Text="· Open port / Close port: after a successful open the button turns green; the status bar shows the COM port and baud rate." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Bottom-right end of the log (same row as Clear log, right-aligned): hover over that corner to show ? Help, 🌙/☀ Theme, ☰ More settings, 🌐 Change language; they hide when the mouse leaves. When the log area is narrow, this group collapses into a ⋯ menu with the same actions (so it no longer overlaps the bottom-bar icons)." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Bottom-right end of the log (same row as Clear log, right-aligned): hover over that corner to show ? Help, 🌙/☀ Theme, ☰ More settings, 🌐 Change language; they hide when the mouse leaves. This group does not collapse when the log area is narrow." />
 
         <TextBlock Style="{StaticResource HelpH}" Text="4. Send/receive data area (left side)" />
         <TextBlock Style="{StaticResource HelpP}" Text="Each row shows: time + direction (→ send / ← receive) + data (hex or text, one line)." />
@@ -236,6 +238,7 @@
         <TextBlock Style="{StaticResource HelpLi}" Text="· Lock icon: lock the view to prevent auto-scroll (click to toggle; when locked it shows a green unlocked icon)." />
         <TextBlock Style="{StaticResource HelpLi}" Text="· Trash icon: clear the log display." />
         <TextBlock Style="{StaticResource HelpLi}" Text="· Save icon: save the current log to a file." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· When the log area is narrow (for example, dragging the right sidebar left), this bottom row of icons collapses into a single ⋯ menu with the same switches and actions; it expands again when there is room. The hover-only Help / Theme / Settings / Language group at the bottom-right is unaffected." />
         <TextBlock Style="{StaticResource HelpP}" Text="Multi-line copy: in Packet mode, Ctrl+click to select multiple rows, then Ctrl+C or right-click Copy selected lines; the context menu also has Select all / Copy all. Each copied line includes the time and direction arrow, matching the display. In Stream mode, right-click Copy all." />
         <TextBlock Style="{StaticResource HelpP}" Text="Terminal mode (enable in More settings): type directly in the log area and send keys immediately." />
         <TextBlock Style="{StaticResource HelpP}" FontWeight="Bold" Text="Terminal mode (direct keyboard input) details" />
@@ -277,6 +280,7 @@
         <TextBlock Style="{StaticResource HelpLi}" Text="· Toolbar icons: New / Run / Open script folder / Refresh list / Lua API documentation / Share script." />
         <TextBlock Style="{StaticResource HelpLi}" Text="· After clicking Run, the log view opens: it shows print output; you can Stop/Exit and Pause/Resume printing; the input box at the bottom runs a single line of Lua." />
         <TextBlock Style="{StaticResource HelpLi}" Text="· Script folder: user_script_run/ under the program folder." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Completion notification: call apiNotify(title, message) in a script to show a tray balloon; script errors also notify automatically (green = done, red = error). After the balloon disappears, the tray icon shows a matching colored badge and flashes for 30 seconds; hovering or clicking the icon, or returning to the main window, stops the flashing, and the badge stays until you click the tray or the status-bar notice. Toggle it in More settings → Script completion notification / Flash the tray icon." />
 
         <TextBlock Style="{StaticResource HelpH}" Text="8. Online scripts" />
         <TextBlock Style="{StaticResource HelpLi}" Text="· Browse community scripts (author / name / version / description), click to view, and click Download to save to the local script folder." />
@@ -319,7 +323,7 @@
         <TextBlock Style="{StaticResource HelpP}" Text="Arithmetic: independent of the bitwise section; supports + - * / % ^, parentheses and decimals, evaluating as you type; division by zero or an invalid expression shows a hint." />
 
         <TextBlock Style="{StaticResource HelpH}" Text="10. More settings (click ☰ at the bottom-right of the log area; shown on hover)" />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Three tabs: More serial settings (open log folder, show sent data, data font size, keep window on top, serial timeout (packet), split by blank line, terminal mode, log retention limit, stream retention characters), Send script, Receive script." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Three tabs: More serial settings (open log folder, show sent data, data font size, keep window on top, serial timeout (packet), split by blank line, terminal mode, script completion notification, flash the tray icon, log retention limit, stream retention characters), Send script, Receive script." />
         <TextBlock Style="{StaticResource HelpLi}" Text="· Log retention limit (entries): the maximum number of log entries kept in Packet mode (1000~200000, default 50000); older entries are discarded automatically; a 32 MB payload budget also applies (large packets are trimmed by bytes first). Whichever limit is reached first takes effect." />
         <TextBlock Style="{StaticResource HelpLi}" Text="· Stream retention characters: after setting Serial timeout to a negative value to enter Stream mode, the maximum number of characters kept (100000~10000000, default 2000000); older text is discarded. Both input boxes accept direct keyboard input; Enter or focus loss applies the value." />
         <TextBlock Style="{StaticResource HelpLi}" Text="· Keep window on top: keeps the main window above other application windows so it is not covered (does not affect the More settings window itself)." />
@@ -333,8 +337,8 @@
         <TextBlock Style="{StaticResource HelpLi}" Text="· The serial port and all network tools are exposed as common channels; Lua uses apiSend / apiSetCb to send and receive." />
 
         <TextBlock Style="{StaticResource HelpH}" Text="12. Other" />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Language: use the 🌐 icon at the bottom-right of the log area to switch Chinese/English (same right-aligned row as ? Help and ☰ More settings; shown on hover; under the ⋯ menu in narrow windows)." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Appearance: use the 🌙/☀ icon at the bottom-right of the log area to switch dark / light theme (shown on hover; under the ⋯ menu in narrow windows; applied immediately and saved)." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Language: use the 🌐 icon at the bottom-right of the log area to switch Chinese/English (same right-aligned row as ? Help and ☰ More settings; shown on hover)." />
+        <TextBlock Style="{StaticResource HelpLi}" Text="· Appearance: use the 🌙/☀ icon at the bottom-right of the log area to switch dark / light theme (shown on hover; applied immediately and saved)." />
         <TextBlock Style="{StaticResource HelpLi}" Text="· Log files: logs/ in the program folder (serial log and fatal.log) and user_script_run/logs/ (Lua log)." />
         <TextBlock Style="{StaticResource HelpLi}" Text="· Configuration and scripts are stored in the program folder." />
         <TextBlock Style="{StaticResource HelpLi}" Text="· On a fatal error LLCOM opens a window with only a Close program button and writes details to logs/fatal.log." />

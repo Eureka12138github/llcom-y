@@ -222,7 +222,8 @@ internal static class ProfileInitializer
                 "AT控制TCP连接-慢发模式.lua",
                 "example.lua",
                 "循环发送快捷发送区数据.lua",
-                "channel-demo.lua"
+                "channel-demo.lua",
+                "完成提示演示.lua"
             );
 
             if (!Directory.Exists(AppPaths.ProfilePath + "user_script_run/requires"))

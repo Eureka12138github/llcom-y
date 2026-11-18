@@ -164,6 +164,21 @@ namespace llcom.LuaEnv
             return ret.Item1;
         }
 
+        /// <summary>
+        /// 弹系统托盘气泡提示（脚本完成时可用，需在“更多设置”里开启提示）。
+        /// </summary>
+        /// <param name="title">标题，留空显示 LLCOM-Y</param>
+        /// <param name="message">内容，过长会自动截断</param>
+        public static void Notify(string? title, string? message) =>
+            llcom.Services.NotificationService.Notify(title, message);
+
+        /// <summary>
+        /// 供 Lua 层上报脚本回调错误（core_script/head.lua 的 tiggerCB 使用），
+        /// 触发一次红色「脚本出错」托盘提示；同一次运行只提示一次。
+        /// </summary>
+        public static void ScriptError(string? message) =>
+            LuaRunEnv.ReportScriptError(message);
+
         public static event EventHandler<Model.LinePlotPoint>? LinePlotAdd;
 
         /// <summary>

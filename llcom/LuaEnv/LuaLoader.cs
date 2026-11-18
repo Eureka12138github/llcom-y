@@ -35,6 +35,10 @@ namespace llcom.LuaEnv
             lua.DoString("apiGetVersion = CS.llcom.LuaEnv.LuaApis.GetVersion");
             //输入框
             lua.DoString("apiInputBox = CS.llcom.LuaEnv.LuaApis.InputBox");
+            //托盘气泡提示
+            lua.DoString("apiNotify = CS.llcom.LuaEnv.LuaApis.Notify");
+            //脚本回调错误上报（head.lua 使用）
+            lua.DoString("apiScriptError = CS.llcom.LuaEnv.LuaApis.ScriptError");
             //加点
             lua.DoString("apiAddPoint = CS.llcom.LuaEnv.LuaApis.AddPoint");
 

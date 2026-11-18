@@ -102,7 +102,6 @@
       NavigationUIVisibility="Hidden"
       PreviewKeyDown="uartDataFlowDocument_PreviewKeyDown"
       PreviewTextInput="uartDataFlowDocument_PreviewTextInput"
-      SizeChanged="DataShowFrame_SizeChanged"
     />
 
     <!--  日志底栏右端：使用说明 / 更多设置 / 语言（同一行右对齐；平时隐藏，鼠标悬浮该区域时淡入）  -->
@@ -117,17 +116,12 @@
       MouseEnter="LogCornerZone_MouseEnter"
       MouseLeave="LogCornerZone_MouseLeave"
     >
-      <Grid
-        Name="LogCornerContent"
-        HorizontalAlignment="Right"
-        VerticalAlignment="Center"
-        Opacity="0"
-        IsHitTestVisible="False"
-      >
       <StackPanel
         Name="LogCornerTools"
         HorizontalAlignment="Right"
         VerticalAlignment="Center"
+        Opacity="0"
+        IsHitTestVisible="False"
         Orientation="Horizontal"
       >
         <!--  帮助：扁平纯图标（常态无框；悬停中性浅灰）  -->
@@ -220,43 +214,6 @@
           </MenuItem>
         </Menu>
       </StackPanel>
-
-      <!--  窄宽度时折叠成「⋯」菜单，避免和日志底栏图标重叠  -->
-      <StackPanel
-        Name="LogCornerOverflow"
-        HorizontalAlignment="Right"
-        VerticalAlignment="Center"
-        Orientation="Horizontal"
-        Visibility="Collapsed"
-      >
-        <Button
-          Name="LogCornerMoreButton"
-          Style="{StaticResource FlatIconButton}"
-          AutomationProperties.Name="{DynamicResource MoreActions}"
-          Click="LogCornerMoreButton_Click"
-          ContextMenuOpening="LogCornerMoreMenu_ContextMenuOpening"
-          ToolTip="{DynamicResource MoreActions}"
-        >
-          <fa:FontAwesome Foreground="{DynamicResource Brush.Foreground}" Icon="EllipsisH" />
-          <Button.ContextMenu>
-            <ContextMenu x:Name="LogCornerMoreMenu">
-              <MenuItem Click="HelpButton_Click" Header="{DynamicResource Help}" />
-              <MenuItem
-                x:Name="ThemeMenuItem"
-                Click="ThemeMenuItem_Click"
-                Header="{DynamicResource ThemeSwitch}"
-                IsCheckable="True"
-              />
-              <MenuItem Click="MoreSettingButton_Click" Header="{DynamicResource MoreSettings}" />
-              <MenuItem Header="{DynamicResource ChangeLanguage}">
-                <MenuItem Click="MenuItem_Click" Header="简体中文" Tag="zh-CN" />
-                <MenuItem Click="MenuItem_Click" Header="English" Tag="en-US" />
-              </MenuItem>
-            </ContextMenu>
-          </Button.ContextMenu>
-        </Button>
-      </StackPanel>
-      </Grid>
     </Grid>
 
     <!--  日志/发送区之间的可拖拽分隔条（上下调整发送区高度）  -->
@@ -293,7 +250,7 @@
       <TextBox
         Name="toSendDataTextBox"
         Margin="0,0,8,0"
-        VerticalContentAlignment="Top"
+        VerticalContentAlignment="Stretch"
         AcceptsReturn="True"
         FontFamily="Consolas"
         FontSize="{Binding Setting.logFontSize}"
@@ -685,6 +642,33 @@
             <TextBlock Style="{StaticResource Status.Text}" Text="{Binding SelectedPort.PortName}" />
             <TextBlock Style="{StaticResource Status.Text}" Text="  ·  " />
             <TextBlock Style="{StaticResource Status.Text}" Text="{Binding SelectedBaudRate.Display}" />
+          </StackPanel>
+        </StatusBarItem>
+        <StatusBarItem Grid.Column="1">
+          <StackPanel
+            Name="noticePanel"
+            HorizontalAlignment="Left"
+            Background="Transparent"
+            Cursor="Hand"
+            MouseLeftButtonUp="NoticePanel_MouseLeftButtonUp"
+            MouseRightButtonUp="NoticePanel_MouseRightButtonUp"
+            Orientation="Horizontal"
+            Visibility="Collapsed"
+          >
+            <Ellipse
+              Name="noticeDot"
+              Width="8"
+              Height="8"
+              Margin="10,0,6,0"
+              VerticalAlignment="Center"
+              Fill="{DynamicResource Brush.State.Success}"
+            />
+            <TextBlock
+              Name="noticeText"
+              MaxWidth="420"
+              Style="{StaticResource Status.Text}"
+              TextTrimming="CharacterEllipsis"
+            />
           </StackPanel>
         </StatusBarItem>
         <StatusBarItem Grid.Column="2">
@@ -1409,6 +1393,7 @@
                     Style="{StaticResource IconButton}"
                     Margin="2,0,0,0"
                     Click="RunScriptButton_Click"
+                    AutomationProperties.Name="{DynamicResource LuaRunScript}"
                     ToolTip="{DynamicResource LuaRunScript}"
                   >
                     <fa:FontAwesome Foreground="{DynamicResource Brush.Icon.Run}" Icon="Play" />
@@ -1501,7 +1486,7 @@
             </Grid.RowDefinitions>
             <TextBox
               Name="luaLogTextBox"
-              VerticalContentAlignment="Top"
+              VerticalContentAlignment="Stretch"
               IsReadOnly="true"
               IsUndoEnabled="False"
               MouseLeave="luaLogTextBox_MouseLeave"
