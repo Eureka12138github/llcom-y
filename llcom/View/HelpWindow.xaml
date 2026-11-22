@@ -163,7 +163,7 @@
       />
       <TextBlock Style="{StaticResource HelpP}" Text="输入：左侧下拉选择输入进制（HEX / DEC / OCT / BIN），右侧输入数值；四种进制会实时同步显示。输入内容按所选进制解析，出现非法字符时提示「输入格式无效」。" />
       <TextBlock Style="{StaticResource HelpP}" Text="位宽：可选 8 / 16 / 32 / 64 位；超出位宽的高位会被截掉，切换位宽时当前值也会按新位宽截断。DEC 按无符号数显示；HEX / OCT / BIN 会按位宽补零，并按 2 / 3 / 4 位分组方便按字节阅读。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="复制：每个进制结果右侧的复制按钮只复制该行文本（保留分组空格；需要连续数值时可粘贴到发送框后自行去空格）。" />
+      <TextBlock Style="{StaticResource HelpP}" Text="复制：每个进制结果右侧的复制按钮只复制该行文本（保留分组空格；需要连续数值时可粘贴到发送框后自行去空格）。复制成功后按钮会短暂变成绿色对勾，并提示「已复制」。" />
       <TextBlock Style="{StaticResource HelpP}" Text="位运算：在「操作数」里按当前输入进制填第二个数，再点 &lt;&lt; / &gt;&gt; / &amp; / | / ^ / ~ 对当前值运算，结果写回当前值并按位宽截断；~ 为按位取反，不需要操作数。" />
       <TextBlock Style="{StaticResource HelpP}" Text="浮点解析：FLOAT32 输入 8 位、FLOAT64 输入 16 位十六进制（只接受 0-9 / A-F，其他字符会被自动过滤）；用「大端 / 小端」切换字节序，下方直接显示对应的十进制浮点值。" />
       <TextBlock Style="{StaticResource HelpP}" Text="四则运算：与上面的位运算互不影响，支持 + - * / % ^、括号和小数，边输入边出结果；除数为 0 或表达式非法时会给出提示。" />
@@ -319,7 +319,7 @@
         />
         <TextBlock Style="{StaticResource HelpP}" Text="Input: choose the input base (HEX / DEC / OCT / BIN) on the left and type a value on the right; all four bases update live. Input is parsed in the selected base and invalid characters show Invalid input." />
         <TextBlock Style="{StaticResource HelpP}" Text="Width: 8 / 16 / 32 / 64 bits. Bits above the selected width are dropped, and switching width truncates the current value too. DEC is shown unsigned; HEX / OCT / BIN are zero-padded to the width and grouped by 2 / 3 / 4 digits for easier byte reading." />
-        <TextBlock Style="{StaticResource HelpP}" Text="Copy: the copy button next to each base copies only that line (grouping spaces are kept; paste into the send box and remove spaces if you need a continuous value)." />
+        <TextBlock Style="{StaticResource HelpP}" Text="Copy: the copy button next to each base copies only that line (grouping spaces are kept; paste into the send box and remove spaces if you need a continuous value). After a successful copy the button briefly turns into a green check and shows Copied." />
         <TextBlock Style="{StaticResource HelpP}" Text="Bitwise: type the second value in Operand using the current input base, then click &lt;&lt; / &gt;&gt; / &amp; / | / ^ / ~ to apply it to the current value; the result is written back and masked to the width. ~ is bitwise NOT and needs no operand." />
         <TextBlock Style="{StaticResource HelpP}" Text="Float decoding: FLOAT32 takes 8 hex digits and FLOAT64 takes 16 (only 0-9 / A-F; other characters are filtered out). Use Big-endian / Little-endian to switch byte order; the decimal float value is shown below." />
         <TextBlock Style="{StaticResource HelpP}" Text="Arithmetic: independent of the bitwise section; supports + - * / % ^, parentheses and decimals, evaluating as you type; division by zero or an invalid expression shows a hint." />

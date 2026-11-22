@@ -2134,6 +2134,10 @@
     "CalculatorCopy": {
       "zh-CN": "复制",
       "en-US": "Copy"
+    },
+    "CalculatorCopied": {
+      "zh-CN": "已复制",
+      "en-US": "Copied"
     }
   }
 }

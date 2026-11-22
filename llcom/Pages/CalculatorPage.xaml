@@ -88,6 +88,13 @@
       <Setter Property="VerticalAlignment" Value="Center" />
       <Setter Property="ToolTip" Value="{DynamicResource CalculatorCopy}" />
     </Style>
+
+    <!--  复制按钮图标：显式使用主题色，避免深色模式下默认黑色看不清  -->
+    <Style x:Key="CopyIcon" TargetType="{x:Type fa:FontAwesome}">
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="Foreground" Value="{DynamicResource Brush.Icon.Neutral}" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
   </Page.Resources>
 
   <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
@@ -209,11 +216,13 @@
           <Button
             Grid.Row="0"
             Grid.Column="2"
+            AutomationProperties.AutomationId="CopyHexButton"
+            AutomationProperties.Name="{DynamicResource CalculatorCopy}"
             Click="CopyValue_Click"
             Style="{StaticResource CopyButton}"
             Tag="{Binding ElementName=HexBox}"
           >
-            <fa:FontAwesome FontSize="11" Icon="Copy" />
+            <fa:FontAwesome Icon="Copy" Style="{StaticResource CopyIcon}" />
           </Button>
 
           <TextBlock
@@ -231,11 +240,13 @@
           <Button
             Grid.Row="1"
             Grid.Column="2"
+            AutomationProperties.AutomationId="CopyDecButton"
+            AutomationProperties.Name="{DynamicResource CalculatorCopy}"
             Click="CopyValue_Click"
             Style="{StaticResource CopyButton}"
             Tag="{Binding ElementName=DecBox}"
           >
-            <fa:FontAwesome FontSize="11" Icon="Copy" />
+            <fa:FontAwesome Icon="Copy" Style="{StaticResource CopyIcon}" />
           </Button>
 
           <TextBlock
@@ -253,11 +264,13 @@
           <Button
             Grid.Row="2"
             Grid.Column="2"
+            AutomationProperties.AutomationId="CopyOctButton"
+            AutomationProperties.Name="{DynamicResource CalculatorCopy}"
             Click="CopyValue_Click"
             Style="{StaticResource CopyButton}"
             Tag="{Binding ElementName=OctBox}"
           >
-            <fa:FontAwesome FontSize="11" Icon="Copy" />
+            <fa:FontAwesome Icon="Copy" Style="{StaticResource CopyIcon}" />
           </Button>
 
           <TextBlock
@@ -275,11 +288,13 @@
           <Button
             Grid.Row="3"
             Grid.Column="2"
+            AutomationProperties.AutomationId="CopyBinButton"
+            AutomationProperties.Name="{DynamicResource CalculatorCopy}"
             Click="CopyValue_Click"
             Style="{StaticResource CopyButton}"
             Tag="{Binding ElementName=BinBox}"
           >
-            <fa:FontAwesome FontSize="11" Icon="Copy" />
+            <fa:FontAwesome Icon="Copy" Style="{StaticResource CopyIcon}" />
           </Button>
         </Grid>
       </Border>
@@ -500,11 +515,13 @@
             />
             <Button
               Grid.Column="2"
+              AutomationProperties.AutomationId="CopyExpressionButton"
+              AutomationProperties.Name="{DynamicResource CalculatorCopy}"
               Click="CopyValue_Click"
               Style="{StaticResource CopyButton}"
               Tag="{Binding ElementName=ExpressionResult}"
             >
-              <fa:FontAwesome FontSize="11" Icon="Copy" />
+              <fa:FontAwesome Icon="Copy" Style="{StaticResource CopyIcon}" />
             </Button>
           </Grid>
           <TextBlock

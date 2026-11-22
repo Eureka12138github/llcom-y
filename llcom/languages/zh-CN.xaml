@@ -530,4 +530,5 @@
     <system:String x:Key="CalculatorExpressionInvalid">表达式无效</system:String>
     <system:String x:Key="CalculatorDivideByZero">除数不能为 0</system:String>
     <system:String x:Key="CalculatorCopy">复制</system:String>
+    <system:String x:Key="CalculatorCopied">已复制</system:String>
 </ResourceDictionary>

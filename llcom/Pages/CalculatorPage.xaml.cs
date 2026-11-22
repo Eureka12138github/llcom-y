@@ -2,6 +2,9 @@ using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
+using FontAwesomeControl = FontAwesome.WPF.FontAwesome;
+using FontAwesomeIcon = FontAwesome.WPF.FontAwesomeIcon;
 using llcom.Services;
 
 namespace llcom.Pages;
@@ -19,9 +22,20 @@ public partial class CalculatorPage : Page
     private bool _suppressInput;
     private bool _suppressFloat;
 
+    //复制成功后的短暂反馈（绿色对勾 + 「已复制」提示）
+    private readonly DispatcherTimer _copyFeedbackTimer = new()
+    {
+        Interval = TimeSpan.FromMilliseconds(1200),
+    };
+    private Button? _copyFeedbackButton;
+    private FontAwesomeControl? _copyFeedbackIcon;
+
     public CalculatorPage()
     {
         InitializeComponent();
+
+        _copyFeedbackTimer.Tick += (_, _) => ResetCopyFeedback();
+        Unloaded += (_, _) => ResetCopyFeedback();
 
         _ready = true;
         Width32Radio.IsChecked = true;
@@ -151,11 +165,45 @@ public partial class CalculatorPage : Page
         try
         {
             Clipboard.SetText(box.Text);
+            ShowCopyFeedback(button);
         }
         catch (Exception ex)
         {
             Tools.Logger.Swallowed("calculator clipboard", ex);
         }
+    }
+
+    /// <summary>复制成功后把图标短暂变成绿色对勾，并把提示改为「已复制」。</summary>
+    private void ShowCopyFeedback(Button button)
+    {
+        ResetCopyFeedback();
+        if (button.Content is not FontAwesomeControl icon)
+            return;
+
+        _copyFeedbackButton = button;
+        _copyFeedbackIcon = icon;
+        icon.Icon = FontAwesomeIcon.Check;
+        icon.SetResourceReference(TextBlock.ForegroundProperty, "Brush.State.Success");
+        button.ToolTip = TryFindResource("CalculatorCopied") as string ?? "Copied";
+        _copyFeedbackTimer.Start();
+    }
+
+    private void ResetCopyFeedback()
+    {
+        _copyFeedbackTimer.Stop();
+
+        if (_copyFeedbackIcon != null)
+        {
+            _copyFeedbackIcon.Icon = FontAwesomeIcon.Copy;
+            _copyFeedbackIcon.SetResourceReference(
+                TextBlock.ForegroundProperty,
+                "Brush.Icon.Neutral"
+            );
+        }
+
+        _copyFeedbackButton?.ClearValue(FrameworkElement.ToolTipProperty);
+        _copyFeedbackButton = null;
+        _copyFeedbackIcon = null;
     }
 
     private void BitOp_Click(object sender, RoutedEventArgs e)

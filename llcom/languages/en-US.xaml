@@ -530,4 +530,5 @@
     <system:String x:Key="CalculatorExpressionInvalid">Invalid expression</system:String>
     <system:String x:Key="CalculatorDivideByZero">Division by zero</system:String>
     <system:String x:Key="CalculatorCopy">Copy</system:String>
+    <system:String x:Key="CalculatorCopied">Copied</system:String>
 </ResourceDictionary>
