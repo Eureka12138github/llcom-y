@@ -507,8 +507,8 @@
       "en-US": "Auto reconnect after disconnect"
     },
     "SettingOpenLogFolder": {
-      "zh-CN": "打开串口收发日志目录",
-      "en-US": "Open serial port log data folder"
+      "zh-CN": "打开日志目录",
+      "en-US": "Open log folder"
     },
     "SettingShowFormat": {
       "zh-CN": "串口数据显示方式：",
@@ -566,6 +566,14 @@
       "zh-CN": "分包模式最多保留多少条日志，超过后自动丢弃最早的记录（另有 32 MB 负载预算兜底）；范围 1000~200000",
       "en-US": "Max entries kept in packet mode; oldest are dropped (a 32 MB payload budget also applies). Range 1000~200000"
     },
+    "SettingLogTrimPercent": {
+      "zh-CN": "达到上限后清理比例：",
+      "en-US": "Trim ratio at limit:"
+    },
+    "SettingLogTrimPercentTip": {
+      "zh-CN": "日志达到上限时一次性清掉多少（%）。50 = 删掉一半（推荐，裁剪次数最少）；100 = 全部清空。范围 10~100",
+      "en-US": "How much to drop at once when the log limit is reached (%). 50 = drop half (recommended, fewest trims); 100 = clear everything. Range 10~100"
+    },
     "SettingStreamMaxChars": {
       "zh-CN": "流式保留字符数：",
       "en-US": "Stream buffer (chars):"
@@ -611,12 +619,12 @@
       "en-US": "Left: hide / show   Right: dismiss"
     },
     "OpenLogFile": {
-      "zh-CN": "打开当前日志文件",
-      "en-US": "Open current log file"
+      "zh-CN": "导出并打开当前日志",
+      "en-US": "Export and open current log"
     },
     "OpenLogFileTip": {
-      "zh-CN": "打开当前日志文件；右键可选择程序或设置默认编辑器",
-      "en-US": "Open the current log file; right-click to choose a program or set a default editor"
+      "zh-CN": "把当前主日志导出为新文件（内容与界面显示一致）并打开；右键可选择程序或设置默认编辑器",
+      "en-US": "Export the current main log to a new file (identical to the view) and open it; right-click to choose a program or set a default editor"
     },
     "OpenLogWithSystem": {
       "zh-CN": "用系统默认程序打开",
@@ -635,8 +643,8 @@
       "en-US": "Clear default editor"
     },
     "LogFileMissing": {
-      "zh-CN": "日志文件还没生成，先收发一些数据再试。",
-      "en-US": "The log file has not been created yet; send or receive some data first."
+      "zh-CN": "主日志为空，先收发一些数据再导出。",
+      "en-US": "The main log is empty; send or receive some data first."
     },
     "LogEditorMissing": {
       "zh-CN": "默认编辑器不存在，请重新设置。",
@@ -647,8 +655,8 @@
       "en-US": "Choose a program for opening logs"
     },
     "OpenLogFailed": {
-      "zh-CN": "打开日志文件失败：",
-      "en-US": "Failed to open the log file:"
+      "zh-CN": "导出或打开日志失败：",
+      "en-US": "Failed to export or open the log:"
     },
     "ScriptNotifyErrorTitle": {
       "zh-CN": "脚本出错",
@@ -2126,6 +2134,10 @@
     "CalculatorCopy": {
       "zh-CN": "复制",
       "en-US": "Copy"
+    },
+    "CalculatorCopied": {
+      "zh-CN": "已复制",
+      "en-US": "Copied"
     }
   }
 }

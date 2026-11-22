@@ -68,12 +68,16 @@ public partial class DataShowPage : Page
             MainList.Visibility = pack ? Visibility.Visible : Visibility.Collapsed;
             MainTextBox.Visibility = pack ? Visibility.Collapsed : Visibility.Visible;
         };
-        //分包模式新增条目后滚动到底部（虚拟化列表用 ScrollIntoView）
+        //分包模式新增条目后滚动到底部（虚拟化列表直接按索引滚动，避免按对象查找的 O(n) 开销）
         _vm.ScrollRequested += () =>
         {
-            if (!_vm.LockLog && MainList.Items.Count > 0)
-                MainList.ScrollIntoView(MainList.Items[MainList.Items.Count - 1]);
+            if (!_vm.LockLog)
+                ScrollListToEnd();
         };
+
+        //批量裁剪会触发一次 Reset：锁定视图时尽量恢复滚动位置与选中项
+        _vm.TrimStarting += _ => CaptureViewStateBeforeTrim();
+        _vm.Trimmed += () => RestoreViewStateAfterTrim();
 
         //初始显示模式（timeout≥0 分包，否则流式）
         var needPack = _vm.Setting.timeout >= 0;
@@ -110,6 +114,126 @@ public partial class DataShowPage : Page
         LogBarMoreButton.Visibility = collapse ? Visibility.Visible : Visibility.Collapsed;
     }
 
+    // ===== 批量裁剪（Reset）时的视图状态保持 =====
+    private DataShowItem? _anchorBeforeTrim;
+    private List<DataShowItem>? _selectionBeforeTrim;
+
+    /// <summary>裁剪前记录首个可见条目与选中项（Reset 会清空这两者）。</summary>
+    private void CaptureViewStateBeforeTrim()
+    {
+        _anchorBeforeTrim = GetFirstVisibleItem();
+        // 选中项过多（例如全选）时不恢复，避免一次裁剪做上万次线性查找
+        var selected = MainList.SelectedItems.OfType<DataShowItem>().ToList();
+        _selectionBeforeTrim = selected.Count is > 0 and <= 500 ? selected : null;
+    }
+
+    /// <summary>裁剪后恢复选中项；锁定视图时再滚回裁剪前看到的位置。</summary>
+    private void RestoreViewStateAfterTrim()
+    {
+        var anchor = _anchorBeforeTrim;
+        var selection = _selectionBeforeTrim;
+        _anchorBeforeTrim = null;
+        _selectionBeforeTrim = null;
+
+        if (anchor == null && selection == null)
+            return;
+
+        Dispatcher.BeginInvoke(
+            new Action(() =>
+            {
+                if (selection != null)
+                {
+                    // 一次构建现存项集合，避免每个选中项都做一次 O(n) 查找
+                    var present = new HashSet<DataShowItem>(MainList.Items.OfType<DataShowItem>());
+                    foreach (var item in selection)
+                    {
+                        if (present.Contains(item))
+                            MainList.SelectedItems.Add(item);
+                    }
+                    if (MainList.SelectedItems.Count > 0)
+                        _logRowSelectionActive = true;
+                }
+
+                if (!_vm.LockLog || anchor == null)
+                    return;
+
+                if (MainList.Items.Contains(anchor))
+                    MainList.ScrollIntoView(anchor);
+                else if (MainList.Items.Count > 0)
+                    MainList.ScrollIntoView(MainList.Items[0]);
+            }),
+            System.Windows.Threading.DispatcherPriority.Background
+        );
+    }
+
+    /// <summary>按索引滚动到列表末尾（避免 ScrollIntoView 按对象查找的 O(n) 开销）。</summary>
+    private void ScrollListToEnd()
+    {
+        if (MainList.Items.Count == 0)
+            return;
+
+        if (FindVisualChild<VirtualizingStackPanel>(MainList) is { } panel)
+        {
+            try
+            {
+                panel.BringIndexIntoViewPublic(MainList.Items.Count - 1);
+                return;
+            }
+            catch (ArgumentOutOfRangeException) { }
+        }
+        MainList.ScrollIntoView(MainList.Items[MainList.Items.Count - 1]);
+    }
+
+    /// <summary>当前视口内最靠上的日志条目（裁剪后据此恢复位置）。</summary>
+    private DataShowItem? GetFirstVisibleItem()
+    {
+        var scrollViewer = FindVisualChild<ScrollViewer>(MainList);
+        var panel = FindVisualChild<VirtualizingStackPanel>(MainList);
+        if (scrollViewer == null || panel == null)
+            return null;
+
+        var count = System.Windows.Media.VisualTreeHelper.GetChildrenCount(panel);
+        for (var i = 0; i < count; i++)
+        {
+            if (System.Windows.Media.VisualTreeHelper.GetChild(panel, i) is not FrameworkElement child)
+                continue;
+
+            double top;
+            try
+            {
+                top = child.TransformToAncestor(scrollViewer).Transform(new Point(0, 0)).Y;
+            }
+            catch (InvalidOperationException)
+            {
+                continue;
+            }
+
+            if (top + child.ActualHeight <= 0)
+                continue; // 完全在视口上方
+
+            var index = MainList.ItemContainerGenerator.IndexFromContainer(child);
+            if (index >= 0 && index < MainList.Items.Count)
+                return MainList.Items[index] as DataShowItem;
+        }
+
+        return null;
+    }
+
+    private static T? FindVisualChild<T>(DependencyObject parent)
+        where T : DependencyObject
+    {
+        var count = System.Windows.Media.VisualTreeHelper.GetChildrenCount(parent);
+        for (var i = 0; i < count; i++)
+        {
+            var child = System.Windows.Media.VisualTreeHelper.GetChild(parent, i);
+            if (child is T typed)
+                return typed;
+            if (FindVisualChild<T>(child) is { } nested)
+                return nested;
+        }
+        return null;
+    }
+
     /// <summary>「⋯」按钮：打开折叠后的底栏功能菜单。</summary>
     private void LogBarMoreButton_Click(object sender, RoutedEventArgs e)
     {
@@ -135,11 +259,38 @@ public partial class DataShowPage : Page
 
     private void SaveLogButton_Click(object sender, RoutedEventArgs e)
     {
-        SaveFileDialog saveFileDialog = new SaveFileDialog();
-        saveFileDialog.Filter = "Log files(*.log)|*.log";
-        if (saveFileDialog.ShowDialog() == DialogResult.OK)
+        if (!_vm.HasLogContent)
+        {
+            Tools.MessageBox.Show(
+                TryFindResource("LogFileMissing") as string
+                    ?? "The main log is empty; send or receive some data first."
+            );
+            return;
+        }
+
+        //默认文件名与「导出并打开当前日志」一致，放在 logs 目录
+        var suggested = Tools.Logger.GetExportLogPath(DateTime.Now);
+        SaveFileDialog saveFileDialog = new SaveFileDialog
+        {
+            Filter = "Log files(*.txt)|*.txt|All files(*.*)|*.*",
+            InitialDirectory = System.IO.Path.GetDirectoryName(suggested),
+            FileName = System.IO.Path.GetFileName(suggested),
+        };
+        if (saveFileDialog.ShowDialog() != DialogResult.OK)
+            return;
+
+        try
         {
             _vm.SaveLog(saveFileDialog.FileName);
+        }
+        catch (Exception ex)
+        {
+            Tools.Logger.Swallowed("save log", ex);
+            Tools.MessageBox.Show(
+                (TryFindResource("OpenLogFailed") as string ?? "Failed to save the log:")
+                    + "\r\n"
+                    + ex.Message
+            );
         }
     }
 

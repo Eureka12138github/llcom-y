@@ -111,6 +111,17 @@ public partial class SettingWindow : Window
         logMaxItemsBox.Text = setting.logMaxItems.ToString();
     }
 
+    /// <summary>达到上限后的清理比例：校验并把夹取后的值写回输入框</summary>
+    private void LogTrimPercentBox_LostFocus(object sender, RoutedEventArgs e)
+    {
+        var setting = Tools.Global.setting;
+        var value = int.TryParse(logTrimPercentBox.Text, out var parsed)
+            ? parsed
+            : setting.logTrimPercent;
+        setting.logTrimPercent = value;
+        logTrimPercentBox.Text = setting.logTrimPercent.ToString();
+    }
+
     /// <summary>流式保留字符数：校验并把夹取后的值写回输入框</summary>
     private void StreamMaxCharsBox_LostFocus(object sender, RoutedEventArgs e)
     {
@@ -253,6 +264,7 @@ public partial class SettingWindow : Window
 
         //数字输入框初值（OneWay 绑定之外的兜底同步）
         logMaxItemsBox.Text = Tools.Global.setting.logMaxItems.ToString();
+        logTrimPercentBox.Text = Tools.Global.setting.logTrimPercent.ToString();
         streamMaxCharsBox.Text = Tools.Global.setting.streamMaxChars.ToString();
 
         //快速搜索
@@ -403,18 +415,16 @@ public partial class SettingWindow : Window
 
     private void OpenLogButton_Click(object sender, RoutedEventArgs e)
     {
+        //日志改为导出时才生成，目录可能还不存在，先创建再打开
+        var path = Tools.Global.GetTrueProfilePath() + "logs";
         try
         {
-            System.Diagnostics.Process.Start(
-                "explorer.exe",
-                Tools.Global.GetTrueProfilePath() + "logs"
-            );
+            System.IO.Directory.CreateDirectory(path);
+            System.Diagnostics.Process.Start("explorer.exe", path);
         }
         catch
         {
-            Tools.MessageBox.Show(
-                $"尝试打开文件夹失败，请自行打开该路径：{Tools.Global.GetTrueProfilePath()}logs"
-            );
+            Tools.MessageBox.Show($"尝试打开文件夹失败，请自行打开该路径：{path}");
         }
     }
 

@@ -128,7 +128,7 @@
     <system:String x:Key="SettingTitle">More settings</system:String>
     <system:String x:Key="SettingBasic">More serial port settings</system:String>
     <system:String x:Key="SettingAutoReconnect">Auto reconnect after disconnect</system:String>
-    <system:String x:Key="SettingOpenLogFolder">Open serial port log data folder</system:String>
+    <system:String x:Key="SettingOpenLogFolder">Open log folder</system:String>
     <system:String x:Key="SettingShowFormat">Data show format:</system:String>
     <system:String x:Key="SettingShowBoth">Both Text and Hex</system:String>
     <system:String x:Key="SettingShoText">Only Text</system:String>
@@ -143,6 +143,8 @@
     <system:String x:Key="SettingSplitByEmpty">Split by no data time(or split by time from first time)</system:String>
     <system:String x:Key="SettingLogMaxItems">Log buffer limit (items):</system:String>
     <system:String x:Key="SettingLogMaxItemsTip">Max entries kept in packet mode; oldest are dropped (a 32 MB payload budget also applies). Range 1000~200000</system:String>
+    <system:String x:Key="SettingLogTrimPercent">Trim ratio at limit:</system:String>
+    <system:String x:Key="SettingLogTrimPercentTip">How much to drop at once when the log limit is reached (%). 50 = drop half (recommended, fewest trims); 100 = clear everything. Range 10~100</system:String>
     <system:String x:Key="SettingStreamMaxChars">Stream buffer (chars):</system:String>
     <system:String x:Key="SettingStreamMaxCharsTip">Max characters kept in stream mode (pack timeout &lt; 0); oldest text is dropped. Range 100000~10000000</system:String>
     <system:String x:Key="SettingTerminal">Terminal mode (type directly in the log area)</system:String>
@@ -154,16 +156,16 @@
     <system:String x:Key="TrayRecentNotices">Recent notifications</system:String>
     <system:String x:Key="TrayNoNotices">(no notifications)</system:String>
     <system:String x:Key="NoticeActionHint">Left: hide / show   Right: dismiss</system:String>
-    <system:String x:Key="OpenLogFile">Open current log file</system:String>
-    <system:String x:Key="OpenLogFileTip">Open the current log file; right-click to choose a program or set a default editor</system:String>
+    <system:String x:Key="OpenLogFile">Export and open current log</system:String>
+    <system:String x:Key="OpenLogFileTip">Export the current main log to a new file (identical to the view) and open it; right-click to choose a program or set a default editor</system:String>
     <system:String x:Key="OpenLogWithSystem">Open with system default</system:String>
     <system:String x:Key="OpenLogWith">Open once with…</system:String>
     <system:String x:Key="SetLogEditor">Set default editor…</system:String>
     <system:String x:Key="ClearLogEditor">Clear default editor</system:String>
-    <system:String x:Key="LogFileMissing">The log file has not been created yet; send or receive some data first.</system:String>
+    <system:String x:Key="LogFileMissing">The main log is empty; send or receive some data first.</system:String>
     <system:String x:Key="LogEditorMissing">The default editor no longer exists; please choose it again.</system:String>
     <system:String x:Key="LogEditorDialogTitle">Choose a program for opening logs</system:String>
-    <system:String x:Key="OpenLogFailed">Failed to open the log file:</system:String>
+    <system:String x:Key="OpenLogFailed">Failed to export or open the log:</system:String>
     <system:String x:Key="ScriptNotifyErrorTitle">Script error</system:String>
     <system:String x:Key="TrayShowWindow">Show main window</system:String>
     <system:String x:Key="TrayExit">Exit LLCOM-Y</system:String>
@@ -528,4 +530,5 @@
     <system:String x:Key="CalculatorExpressionInvalid">Invalid expression</system:String>
     <system:String x:Key="CalculatorDivideByZero">Division by zero</system:String>
     <system:String x:Key="CalculatorCopy">Copy</system:String>
+    <system:String x:Key="CalculatorCopied">Copied</system:String>
 </ResourceDictionary>

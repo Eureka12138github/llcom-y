@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.IO.Ports;
 using System.Security.Cryptography;
@@ -13,7 +12,7 @@ namespace llcom.Tools;
 /// <summary>
 /// 配置文件与环境初始化服务。
 /// 负责：加载/保存设置（settings.json）、软件首次运行的文件结构生成、
-/// 多开检测、环境检查（.net 版本 / 文件名 / 压缩包内运行）、串口事件日志挂接。
+/// 多开检测、环境检查（.net 版本 / 文件名 / 压缩包内运行）。
 /// 从原 Tools/Global.cs 拆出（Step 2）。
 /// </summary>
 internal static class ProfileInitializer
@@ -307,37 +306,6 @@ internal static class ProfileInitializer
         Tools.Global.uart.serial.Parity = (Parity)Tools.Global.setting.parity;
         Tools.Global.uart.serial.DataBits = Tools.Global.setting.dataBits;
         Tools.Global.uart.serial.StopBits = (StopBits)Tools.Global.setting.stopBit;
-        Tools.Global.uart.UartDataRecived += Uart_UartDataRecived;
-        Tools.Global.uart.UartDataSent += Uart_UartDataSent;
-        Tools.Global.uart.UartDataRawSent += Uart_UartDataRawSent;
-    }
-
-    /// <summary>
-    /// 已发送记录到日志
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private static void Uart_UartDataSent(object sender, EventArgs e)
-    {
-        Logger.AddUartLogInfo($"<-{EncodingHelper.Byte2Readable((byte[])sender)}");
-        Logger.AddUartLogDebug($"[HEX]{EncodingHelper.Byte2Hex((byte[])sender, " ")}");
-    }
-
-    private static void Uart_UartDataRawSent(object sender, EventArgs e)
-    {
-        Logger.AddUartLogInfo($"Raw<-{EncodingHelper.Byte2Readable((byte[])sender)}");
-        Logger.AddUartLogDebug($"[Raw HEX]{EncodingHelper.Byte2Hex((byte[])sender, " ")}");
-    }
-
-    /// <summary>
-    /// 收到的数据记录到日志
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private static void Uart_UartDataRecived(object sender, EventArgs e)
-    {
-        Logger.AddUartLogInfo($"->{EncodingHelper.Byte2Readable((byte[])sender)}");
-        Logger.AddUartLogDebug($"[HEX]{EncodingHelper.Byte2Hex((byte[])sender, " ")}");
     }
 
     /// <summary>
