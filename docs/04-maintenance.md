@@ -166,6 +166,9 @@ public partial class XxxPage : Page, INotifyPropertyChanged
 ### 8. 主日志批量裁剪（不要改回逐条删除）
 分包日志用 `Tools/BulkObservableCollection.TrimStart` 做**一次批量删除 + 一次 Reset**通知；WPF 的 `ListCollectionView` 不支持范围删除通知，若改回 `RemoveAt(0)` 循环，5 万条时每次裁剪都要搬运整张列表并触发上百次集合变更，会明显卡顿。裁剪量与低水位由 `setting.logTrimPercent` 决定（默认 50%）。
 
+### 9. 串口日志只在导出时写入
+`logs/` 平时不会因收发数据而增长：只有用户点击「导出并打开当前日志」或「保存日志」时，才把 `DataShowViewModel` 当前内容逐行写盘（`DataShowItem.ToLogText()`，与界面/多行复制同源、与 Hex 开关一致）。不要再往 `ProfileInitializer` 的串口事件里加文件日志；运行时排查用 `Logger.Swallowed`（仅 `Debug.WriteLine`）。导出文件名为 `logs/logYYYYMMDD_HHmmss.txt`，同一秒重复导出会加 `_2`、`_3`，不覆盖旧文件。取舍：崩溃或超过主日志上限后旧数据不再留档；`fatal.log` 与 Lua 日志不受影响。
+
 ## 五、开发新功能流程（推荐）
 
 1. **数据/服务** → 放 `Services/` 或 `Model/`（纯逻辑，带中文注释）
@@ -182,4 +185,4 @@ public partial class XxxPage : Page, INotifyPropertyChanged
 | 加 NuGet 包 | `dotnet add llcom\llcom.csproj package <名字>`，或编辑 csproj 的 `<PackageReference>` |
 | 加 Lua API | `LuaEnv/LuaApis.cs` 静态方法 → `LuaEnv/LuaLoader.cs` 里 `lua.DoString("apiXxx = CS...")` 注册 → 更新 `LuaApi.md` |
 | 改语言文案 | `llcom/languages/zh-CN.xaml` + `en-US.xaml`（键一致） |
-| 看运行时日志 | `artifacts/Debug/x64/logs/log.txt`（串口）、`user_script_run/logs/log.txt`（Lua） |
+| 看运行时日志 | 串口日志改为导出时生成：点「导出并打开当前日志」→ `logs/logYYYYMMDD_HHmmss.txt`（平时不写盘）；Lua 日志仍在 `user_script_run/logs/log.txt`，崩溃日志 `logs/fatal.log` |

@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 using Serilog;
 
@@ -41,89 +38,29 @@ namespace llcom.Tools
             DataShowTask?.Invoke(null, s);
         }
 
-        private static Serilog.Core.Logger? uartLogFile = null;
         private static Serilog.Core.Logger? luaLogFile = null;
 
         /// <summary>
-        /// 初始化串口日志文件
+        /// 一次导出日志的目标路径：`logs/logyyyyMMdd_HHmmss.txt`。
+        /// 主日志只在用户点击导出/保存时写盘，平时不创建文件；
+        /// 同一秒重复导出时自动追加 `_2`、`_3`，避免覆盖已有快照。
         /// </summary>
-        public static void InitUartLog()
+        public static string GetExportLogPath(DateTime now)
         {
-            uartLogFile = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .WriteTo.Console()
-                .WriteTo.File(
-                    Tools.Global.ProfilePath + "logs/log.txt",
-                    rollingInterval: RollingInterval.Day,
-                    retainedFileCountLimit: 30,
-                    encoding: Encoding.UTF8,
-                    rollOnFileSizeLimit: true
-                )
-                .CreateLogger();
-            AddUartLogInfo("[START]LLCOM-Y (unofficial fork of LLCOM by chenxuuu, https://github.com/chenxuuu/llcom). https://github.com/Eureka12138github/llcom-y");
-        }
+            var dir = Path.Combine(Tools.Global.ProfilePath, "logs");
+            Directory.CreateDirectory(dir);
 
-        public static void CloseUartLog()
-        {
-            if (uartLogFile == null)
-                return;
-            uartLogFile.Dispose();
-            uartLogFile = null;
+            var baseName = "log" + now.ToString("yyyyMMdd_HHmmss");
+            var path = Path.Combine(dir, baseName + ".txt");
+            for (var i = 2; File.Exists(path); i++)
+                path = Path.Combine(dir, baseName + "_" + i + ".txt");
+            return path;
         }
 
         /// <summary>
-        /// 当前串口日志文件的路径（按天滚动，按文件大小滚动时取最新的一个）。
-        /// 文件尚未生成时返回今天的预期路径。
-        /// </summary>
-        public static string GetCurrentUartLogPath()
-        {
-            var dir = Tools.Global.ProfilePath + "logs";
-            var prefix = "log" + DateTime.Now.ToString("yyyyMMdd");
-            try
-            {
-                if (Directory.Exists(dir))
-                {
-                    var newest = new DirectoryInfo(dir)
-                        .GetFiles(prefix + "*.txt")
-                        .OrderByDescending(f => f.LastWriteTime)
-                        .FirstOrDefault();
-                    if (newest != null)
-                        return newest.FullName;
-                }
-            }
-            catch (Exception ex)
-            {
-                Swallowed("current uart log", ex);
-            }
-
-            return Path.Combine(dir, prefix + ".txt");
-        }
-
-        /// <summary>
-        /// 写入一条串口日志
-        /// </summary>
-        /// <param name="l"></param>
-        public static void AddUartLogInfo(string l)
-        {
-            if (uartLogFile == null)
-                InitUartLog();
-            uartLogFile?.Information(l);
-        }
-
-        /// <summary>
-        /// 写入一条串口日志
-        /// </summary>
-        /// <param name="l"></param>
-        public static void AddUartLogDebug(string l)
-        {
-            if (uartLogFile == null)
-                InitUartLog();
-            uartLogFile?.Debug(l);
-        }
-
-        /// <summary>
-        /// 记录一处被吞掉的异常（debug 级）。把"静默 catch"变为可追踪：
-        /// 不改变容错行为，但让问题在日志中可见，便于排查。
+        /// 记录一处被吞掉的异常（仅调试输出）。把"静默 catch"变为可追踪：
+        /// 不改变容错行为，但能在调试器/调试输出中看到。
+        /// 主日志改为"导出时才写入"，这里不再落盘。
         /// </summary>
         /// <param name="context">发生位置/操作说明</param>
         /// <param name="ex">被吞掉的异常</param>
@@ -131,7 +68,9 @@ namespace llcom.Tools
         {
             try
             {
-                AddUartLogDebug($"[swallowed] {context}: {ex?.GetType().Name} {ex?.Message}");
+                System.Diagnostics.Debug.WriteLine(
+                    $"[swallowed] {context}: {ex?.GetType().Name} {ex?.Message}"
+                );
             }
             catch
             {
