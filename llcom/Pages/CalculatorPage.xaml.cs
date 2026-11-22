@@ -82,7 +82,10 @@ public partial class CalculatorPage : Page
         var text = InputBox.Text;
         if (string.IsNullOrWhiteSpace(text))
         {
+            //清空输入框时归零，避免下方各进制残留上一次的有效值
+            _value = 0;
             ClearError();
+            UpdateDisplays();
             return;
         }
 
