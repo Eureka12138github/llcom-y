@@ -124,7 +124,7 @@
         IsHitTestVisible="False"
         Orientation="Horizontal"
       >
-        <!--  打开当前日志文件：左键直接打开，右键选择程序 / 设置默认编辑器  -->
+        <!--  导出并打开当前日志：左键先导出再打开，右键选择程序 / 设置默认编辑器  -->
         <Button
           Name="OpenLogFileButton"
           Margin="4,0,0,0"
