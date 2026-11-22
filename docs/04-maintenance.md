@@ -163,6 +163,9 @@ public partial class XxxPage : Page, INotifyPropertyChanged
 ### 7. 设置防抖保存
 属性 setter → `Save()`（600ms 合并写盘），窗口关闭时 `Global.isMainWindowsClosed=true` 触发 `Flush()` 强制落盘。加新设置属性时保持此模式。
 
+### 8. 主日志批量裁剪（不要改回逐条删除）
+分包日志用 `Tools/BulkObservableCollection.TrimStart` 做**一次批量删除 + 一次 Reset**通知；WPF 的 `ListCollectionView` 不支持范围删除通知，若改回 `RemoveAt(0)` 循环，5 万条时每次裁剪都要搬运整张列表并触发上百次集合变更，会明显卡顿。裁剪量与低水位由 `setting.logTrimPercent` 决定（默认 50%）。
+
 ## 五、开发新功能流程（推荐）
 
 1. **数据/服务** → 放 `Services/` 或 `Model/`（纯逻辑，带中文注释）
