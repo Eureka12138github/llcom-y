@@ -566,6 +566,14 @@
       "zh-CN": "分包模式最多保留多少条日志，超过后自动丢弃最早的记录（另有 32 MB 负载预算兜底）；范围 1000~200000",
       "en-US": "Max entries kept in packet mode; oldest are dropped (a 32 MB payload budget also applies). Range 1000~200000"
     },
+    "SettingLogTrimPercent": {
+      "zh-CN": "达到上限后清理比例：",
+      "en-US": "Trim ratio at limit:"
+    },
+    "SettingLogTrimPercentTip": {
+      "zh-CN": "日志达到上限时一次性清掉多少（%）。50 = 删掉一半（推荐，裁剪次数最少）；100 = 全部清空。范围 10~100",
+      "en-US": "How much to drop at once when the log limit is reached (%). 50 = drop half (recommended, fewest trims); 100 = clear everything. Range 10~100"
+    },
     "SettingStreamMaxChars": {
       "zh-CN": "流式保留字符数：",
       "en-US": "Stream buffer (chars):"

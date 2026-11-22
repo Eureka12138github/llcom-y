@@ -1,8 +1,6 @@
 using System;
-using System.Collections.ObjectModel;
 using System.Text;
 using System.Windows;
-using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using llcom.Tools;
 
@@ -11,7 +9,7 @@ namespace llcom.ViewModels;
 /// <summary>
 /// 收发数据区 ViewModel（Step 8）。
 /// 职责：订阅 Logger.DataShowTask，将串口/TCP/MQTT 等通道数据分发显示——
-/// 分包模式（timeout≥0）写入 <see cref="ObservableCollection{T}"/>（绑定列表，虚拟化），
+/// 分包模式（timeout≥0）写入 <see cref="Tools.BulkObservableCollection{T}"/>（绑定列表，虚拟化），
 /// 流式模式（timeout&lt;0）追加到流式文本框（经 SetTextBridge 桥接，保持增量追加性能）。
 /// 两种模式都有上限（条数/字节、字符数），超过后自动丢弃最早的记录。
 /// </summary>
@@ -26,9 +24,8 @@ public partial class DataShowViewModel : ObservableObject
     /// <summary>日志负载字节预算（与条数上限同时生效，谁先到谁先裁）</summary>
     private const long MaxPayloadBytes = 32L * 1024 * 1024;
 
-    /// <summary>分包模式显示条目（绑定 MainList；超过上限时裁剪最早的记录）</summary>
-    public ObservableCollection<Model.DataShowItem> Items { get; } =
-        new ObservableCollection<Model.DataShowItem>();
+    /// <summary>分包模式显示条目（绑定 MainList；超过上限时批量裁剪最早的记录）</summary>
+    public Tools.BulkObservableCollection<Model.DataShowItem> Items { get; } = new();
 
     //当前 Items 中的负载字节总数（裁剪依据）
     private long _payloadBytes;
@@ -71,6 +68,12 @@ public partial class DataShowViewModel : ObservableObject
 
     /// <summary>分包模式新增条目后触发（View 据此滚动到底部）</summary>
     public event Action? ScrollRequested;
+
+    /// <summary>裁剪前触发（View 可在此记录滚动锚点与选中项）；参数为本次计划删除的条数。</summary>
+    public event Action<int>? TrimStarting;
+
+    /// <summary>裁剪完成（集合已发出一次 Reset）；View 可在此恢复滚动位置。</summary>
+    public event Action? Trimmed;
 
     internal DataShowViewModel(Model.Settings setting, Services.ISerialPortService uart)
     {
@@ -276,22 +279,36 @@ public partial class DataShowViewModel : ObservableObject
 
     /// <summary>
     /// 分包日志裁剪：**条数上限与负载字节预算同时生效，谁先到谁先裁**。
-    /// 逐条删除最早的记录（WPF 的 ListCollectionView 不支持“范围删除”通知），
-    /// 留少量余量后再裁，避免每来一条都触发删除。
+    /// 超出后一次性删到“低水位”（按 <see cref="Model.Settings.logTrimPercent"/> 决定清掉多少），
+    /// 并用一次批量删除（单次 Reset 通知）代替逐条 RemoveAt；
+    /// 否则列表贴在上限附近时，每 100 条就要逐条删 100 多条，5 万条规模下会明显卡顿。
     /// </summary>
     private void TrimLogBuffer(bool force = false)
     {
         var maxItems = Math.Max(Model.Settings.LogMaxItemsMin, Setting.logMaxItems);
-        // 余量：攒够 100 条再裁，减少集合变更次数
-        var itemLimit = force ? maxItems : maxItems + 100;
+        var percent = Math.Min(
+            Model.Settings.LogTrimPercentMax,
+            Math.Max(Model.Settings.LogTrimPercentMin, Setting.logTrimPercent)
+        );
+
+        // 余量：轻微超出上限后再裁，减少检查频率；force（用户调小上限）时立即裁。
+        var slack = force ? 0 : Math.Min(100, Math.Max(10, maxItems / 100));
+        var countLimit = maxItems + slack;
         var byteLimit = force ? MaxPayloadBytes : MaxPayloadBytes + MaxPayloadBytes / 20;
-        if (Items.Count <= itemLimit && _payloadBytes <= byteLimit)
+        if (Items.Count <= countLimit && _payloadBytes <= byteLimit)
             return;
 
-        //从头部逐条计算，直到同时满足「条数 ≤ 上限」且「负载 ≤ 预算」
+        // 目标：按比例清到低水位；100% 表示全部清空。
+        var targetCount =
+            force ? maxItems : (int)((long)maxItems * (100 - percent) / 100);
+
+        // 字节也留 10% 余量，避免大包数据每来一条都触发裁剪。
+        var targetBytes = force ? MaxPayloadBytes : MaxPayloadBytes / 10 * 9;
+
+        //从头部逐条计算，直到同时满足「条数 ≤ 目标」且「负载 ≤ 目标预算」
         var remove = 0;
         var bytes = _payloadBytes;
-        while (remove < Items.Count && (Items.Count - remove > maxItems || bytes > MaxPayloadBytes))
+        while (remove < Items.Count && (Items.Count - remove > targetCount || bytes > targetBytes))
         {
             bytes -= Items[remove].PayloadLength;
             remove++;
@@ -299,8 +316,9 @@ public partial class DataShowViewModel : ObservableObject
         if (remove <= 0)
             return;
 
-        for (var i = 0; i < remove; i++)
-            Items.RemoveAt(0);
+        TrimStarting?.Invoke(remove);
+        Items.TrimStart(remove);
         _payloadBytes = bytes;
+        Trimmed?.Invoke();
     }
 }

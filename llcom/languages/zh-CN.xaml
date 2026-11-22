@@ -143,6 +143,8 @@
     <system:String x:Key="SettingSplitByEmpty">超时时间表示空白间隔（不勾选表示从第一个字节开始算超时时间）</system:String>
     <system:String x:Key="SettingLogMaxItems">日志保留上限（条）：</system:String>
     <system:String x:Key="SettingLogMaxItemsTip">分包模式最多保留多少条日志，超过后自动丢弃最早的记录（另有 32 MB 负载预算兜底）；范围 1000~200000</system:String>
+    <system:String x:Key="SettingLogTrimPercent">达到上限后清理比例：</system:String>
+    <system:String x:Key="SettingLogTrimPercentTip">日志达到上限时一次性清掉多少（%）。50 = 删掉一半（推荐，裁剪次数最少）；100 = 全部清空。范围 10~100</system:String>
     <system:String x:Key="SettingStreamMaxChars">流式保留字符数：</system:String>
     <system:String x:Key="SettingStreamMaxCharsTip">流式模式（分包数据超时设为负数）最多保留多少字符，超过后自动丢弃最早的文本；范围 100000~10000000</system:String>
     <system:String x:Key="SettingTerminal">终端模式（在日志区直接键盘发送）</system:String>

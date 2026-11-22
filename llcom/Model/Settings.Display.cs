@@ -74,6 +74,33 @@ partial class Settings
         }
     }
 
+    /// <summary>达到上限后清理比例下限（百分比）</summary>
+    public const int LogTrimPercentMin = 10;
+
+    /// <summary>达到上限后清理比例上限（百分比，100 = 全部清空）</summary>
+    public const int LogTrimPercentMax = 100;
+
+    private int _logTrimPercent = 50;
+
+    /// <summary>
+    /// 分包日志达到上限后一次性清理多少（百分比，范围 10~100）。
+    /// 默认 50：一次删掉一半，避免“刚删完又立刻到上限”的频繁裁剪。
+    /// 100 = 全部清空。
+    /// </summary>
+    public int logTrimPercent
+    {
+        get => _logTrimPercent;
+        set
+        {
+            var v =
+                value < LogTrimPercentMin ? LogTrimPercentMin
+                : value > LogTrimPercentMax ? LogTrimPercentMax
+                : value;
+            if (SetProperty(ref _logTrimPercent, v))
+                Save();
+        }
+    }
+
     /// <summary>流式模式（分包超时&lt;0）保留字符数下限</summary>
     public const int StreamMaxCharsMin = 100000;
 

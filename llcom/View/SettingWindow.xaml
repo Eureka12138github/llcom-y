@@ -95,6 +95,32 @@
               />
             </StackPanel>
             <StackPanel Margin="8" Orientation="Horizontal">
+              <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingLogTrimPercent}" />
+              <TextBox
+                Name="logTrimPercentBox"
+                Width="60"
+                Margin="6,0,0,0"
+                DataObject.Pasting="NumericBox_Pasting"
+                LostFocus="LogTrimPercentBox_LostFocus"
+                PreviewKeyDown="NumericBox_PreviewKeyDown"
+                PreviewTextInput="NumericBox_PreviewTextInput"
+                Text="{Binding logTrimPercent, Mode=OneWay}"
+                TextAlignment="Center"
+                ToolTip="{DynamicResource SettingLogTrimPercentTip}"
+              />
+              <TextBlock
+                Margin="6,0,0,0"
+                VerticalAlignment="Center"
+                Text="%"
+              />
+              <TextBlock
+                Margin="6,0,0,0"
+                VerticalAlignment="Center"
+                Foreground="{DynamicResource Brush.Foreground.Muted}"
+                Text="10~100"
+              />
+            </StackPanel>
+            <StackPanel Margin="8" Orientation="Horizontal">
               <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingStreamMaxChars}" />
               <TextBox
                 Name="streamMaxCharsBox"

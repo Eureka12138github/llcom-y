@@ -143,6 +143,8 @@
     <system:String x:Key="SettingSplitByEmpty">Split by no data time(or split by time from first time)</system:String>
     <system:String x:Key="SettingLogMaxItems">Log buffer limit (items):</system:String>
     <system:String x:Key="SettingLogMaxItemsTip">Max entries kept in packet mode; oldest are dropped (a 32 MB payload budget also applies). Range 1000~200000</system:String>
+    <system:String x:Key="SettingLogTrimPercent">Trim ratio at limit:</system:String>
+    <system:String x:Key="SettingLogTrimPercentTip">How much to drop at once when the log limit is reached (%). 50 = drop half (recommended, fewest trims); 100 = clear everything. Range 10~100</system:String>
     <system:String x:Key="SettingStreamMaxChars">Stream buffer (chars):</system:String>
     <system:String x:Key="SettingStreamMaxCharsTip">Max characters kept in stream mode (pack timeout &lt; 0); oldest text is dropped. Range 100000~10000000</system:String>
     <system:String x:Key="SettingTerminal">Terminal mode (type directly in the log area)</system:String>
