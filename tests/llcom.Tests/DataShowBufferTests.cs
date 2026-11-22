@@ -1,8 +1,5 @@
 using System;
-using System.IO.Ports;
-using System.Threading;
 using llcom.Model;
-using llcom.Services;
 using llcom.Tools;
 using llcom.ViewModels;
 using Xunit;
@@ -19,56 +16,8 @@ namespace llcom.Tests
             TestEnv.Init();
         }
 
-        /// <summary>串口服务的空实现（DataShowViewModel 只用到 RTS/DTR）。</summary>
-        private sealed class FakeSerial : ISerialPortService
-        {
-            public SerialPort serial => null;
-
-            public event EventHandler UartDataRecived
-            {
-                add { }
-                remove { }
-            }
-
-            public event EventHandler UartDataSent
-            {
-                add { }
-                remove { }
-            }
-
-            public event EventHandler UartDataRawSent
-            {
-                add { }
-                remove { }
-            }
-
-            public event EventHandler UartStateChanged
-            {
-                add { }
-                remove { }
-            }
-
-            public bool Rts { get; set; }
-            public bool Dtr { get; set; }
-
-            public string GetName() => "COM1";
-
-            public void SetName(string s) { }
-
-            public bool IsOpen() => false;
-
-            public void Open() { }
-
-            public void Close() { }
-
-            public void SendData(byte[] data, byte[] dataRaw = null) { }
-
-            public EventWaitHandle WaitUartReceive { get; } =
-                new EventWaitHandle(false, EventResetMode.AutoReset);
-        }
-
         private static DataShowViewModel CreateVm() =>
-            new DataShowViewModel(Global.setting, new FakeSerial());
+            new DataShowViewModel(Global.setting, new FakeSerialPortService());
 
         [Fact]
         public void PackMode_TrimsToConfiguredLimit()

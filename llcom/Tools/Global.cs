@@ -44,7 +44,6 @@ class Global
             {
                 setting?.Flush(); //防抖队列中的修改强制落盘
                 uart.WaitUartReceive.Set();
-                Logger.CloseUartLog();
                 Logger.CloseLuaLog();
                 if (File.Exists(ProfilePath + "lock"))
                     File.Delete(ProfilePath + "lock");

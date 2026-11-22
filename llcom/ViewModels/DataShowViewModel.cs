@@ -135,32 +135,27 @@ public partial class DataShowViewModel : ObservableObject
         _clearStreamBridge();
     }
 
+    /// <summary>当前主日志是否有可导出的内容（分包看条目，流式看缓冲文本）。</summary>
+    public bool HasLogContent =>
+        _lastPackShowMode ? Items.Count > 0 : _streamBuffer.Length > 0;
+
     /// <summary>
-    /// 保存显示内容到文件（分包模式遍历 Items，流式模式输出缓冲文本）
+    /// 保存显示内容到文件：**与主日志逐行一致**（时间 + 方向 + 当前 Hex/字符串表示）。
+    /// 分包模式遍历 Items，流式模式输出缓冲文本；模式取实际显示模式，
+    /// 避免用户刚改完「串口超时」但还没收到新数据时导出内容和界面对不上。
     /// </summary>
     public void SaveLog(string path)
     {
-        var needPack = Setting.timeout >= 0;
         using (var sw = new System.IO.StreamWriter(path, false, Encoding.UTF8))
         {
-            if (!needPack)
+            if (!_lastPackShowMode)
             {
                 sw.Write(_streamBuffer.ToString());
             }
             else
             {
                 for (int i = 0; i < Items.Count; i++)
-                {
-                    var item = Items[i];
-                    if (string.IsNullOrEmpty(item.RawTitle))
-                        sw.WriteLine(
-                            item.TimeText
-                                + (item.ArrowText == " → " ? " [send] " : " [recv] ")
-                                + item.DataText
-                        );
-                    else
-                        sw.WriteLine(item.TimeText + " [" + item.RawTitle + "] " + item.RawText);
-                }
+                    sw.WriteLine(Items[i].ToLogText());
             }
             sw.Flush();
         }

@@ -259,11 +259,38 @@ public partial class DataShowPage : Page
 
     private void SaveLogButton_Click(object sender, RoutedEventArgs e)
     {
-        SaveFileDialog saveFileDialog = new SaveFileDialog();
-        saveFileDialog.Filter = "Log files(*.log)|*.log";
-        if (saveFileDialog.ShowDialog() == DialogResult.OK)
+        if (!_vm.HasLogContent)
+        {
+            Tools.MessageBox.Show(
+                TryFindResource("LogFileMissing") as string
+                    ?? "The main log is empty; send or receive some data first."
+            );
+            return;
+        }
+
+        //默认文件名与「导出并打开当前日志」一致，放在 logs 目录
+        var suggested = Tools.Logger.GetExportLogPath(DateTime.Now);
+        SaveFileDialog saveFileDialog = new SaveFileDialog
+        {
+            Filter = "Log files(*.txt)|*.txt|All files(*.*)|*.*",
+            InitialDirectory = System.IO.Path.GetDirectoryName(suggested),
+            FileName = System.IO.Path.GetFileName(suggested),
+        };
+        if (saveFileDialog.ShowDialog() != DialogResult.OK)
+            return;
+
+        try
         {
             _vm.SaveLog(saveFileDialog.FileName);
+        }
+        catch (Exception ex)
+        {
+            Tools.Logger.Swallowed("save log", ex);
+            Tools.MessageBox.Show(
+                (TryFindResource("OpenLogFailed") as string ?? "Failed to save the log:")
+                    + "\r\n"
+                    + ex.Message
+            );
         }
     }
 

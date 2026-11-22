@@ -234,7 +234,6 @@ public partial class MainWindow : Window
                         {
                             _usbDebounceTimer.Stop();
                             _vm.OnUsbDeviceChanged();
-                            Logger.AddUartLogInfo($"[USB拔插事件] {DateTime.Now:HH:mm:ss.fff}");
                         };
                         //刷新设备列表
                         _vm.RefreshPorts();
@@ -696,14 +695,14 @@ public partial class MainWindow : Window
     private void MainWindow_Activated(object? sender, EventArgs e) =>
         NotificationService.MarkAllRead();
 
-    /// <summary>打开当前自动保存的串口日志文件：有默认编辑器就直接用，否则让用户选一次。</summary>
+    /// <summary>导出当前主日志并打开：有默认编辑器就直接用，否则让用户选一次。</summary>
     private void OpenLogFileButton_Click(object sender, RoutedEventArgs e) =>
         OpenCurrentLogFile();
 
-    /// <summary>用系统默认程序（文件关联）打开。</summary>
+    /// <summary>导出当前主日志，用系统默认程序（文件关联）打开。</summary>
     private void OpenLogWithSystemButton_Click(object sender, RoutedEventArgs e)
     {
-        var path = ResolveLogFilePath();
+        var path = ExportCurrentLog();
         if (path == null)
             return;
 
@@ -719,20 +718,24 @@ public partial class MainWindow : Window
         }
     }
 
-    /// <summary>选择一个程序打开一次（不保存为默认）。</summary>
+    /// <summary>先选程序，再导出并用它打开一次（不保存为默认）。</summary>
     private void OpenLogWithButton_Click(object sender, RoutedEventArgs e)
     {
-        var path = ResolveLogFilePath();
+        var editor = PickLogEditor();
+        if (editor == null)
+            return;
+
+        var path = ExportCurrentLog();
         if (path != null)
-            PickEditorAndOpen(path, saveAsDefault: false);
+            LaunchLogEditor(editor, path);
     }
 
-    /// <summary>选择默认编辑器，保存并立即用它打开一次。</summary>
+    /// <summary>只选择并保存默认编辑器，不要求主日志已有内容。</summary>
     private void SetLogEditorButton_Click(object sender, RoutedEventArgs e)
     {
-        var path = ResolveLogFilePath();
-        if (path != null)
-            PickEditorAndOpen(path, saveAsDefault: true);
+        var editor = PickLogEditor();
+        if (editor != null)
+            Tools.Global.setting.logEditorPath = editor;
     }
 
     private void ClearLogEditorButton_Click(object sender, RoutedEventArgs e) =>
@@ -740,18 +743,15 @@ public partial class MainWindow : Window
 
     private void OpenCurrentLogFile()
     {
-        var path = ResolveLogFilePath();
-        if (path == null)
-            return;
-
         var editor = Tools.Global.setting.logEditorPath ?? "";
         if (string.IsNullOrWhiteSpace(editor))
         {
-            PickEditorAndOpen(path, saveAsDefault: false);
-            return;
+            //未设置默认编辑器：先让用户选一次（取消则什么都不做）
+            editor = PickLogEditor();
+            if (editor == null)
+                return;
         }
-
-        if (!File.Exists(editor))
+        else if (!File.Exists(editor))
         {
             Tools.MessageBox.Show(
                 TryFindResource("LogEditorMissing") as string
@@ -760,24 +760,47 @@ public partial class MainWindow : Window
             return;
         }
 
-        LaunchLogEditor(editor, path);
+        var path = ExportCurrentLog();
+        if (path != null)
+            LaunchLogEditor(editor, path);
     }
 
-    /// <summary>取当前日志文件；还没生成时提示用户先收发数据。</summary>
-    private string? ResolveLogFilePath()
+    /// <summary>
+    /// 把当前主日志导出为 `logs/logyyyyMMdd_HHmmss.txt`（内容与界面逐行一致）并返回路径。
+    /// 日志不再后台持续写入，只在用户点击导出/保存时生成。
+    /// </summary>
+    private string? ExportCurrentLog()
     {
-        var path = Tools.Logger.GetCurrentUartLogPath();
-        if (File.Exists(path))
-            return path;
+        var vm = Tools.AppHost.Services.GetRequiredService<ViewModels.DataShowViewModel>();
+        if (!vm.HasLogContent)
+        {
+            Tools.MessageBox.Show(
+                TryFindResource("LogFileMissing") as string
+                    ?? "The main log is empty; send or receive some data first."
+            );
+            return null;
+        }
 
-        Tools.MessageBox.Show(
-            TryFindResource("LogFileMissing") as string
-                ?? "The log file has not been created yet; send or receive some data first."
-        );
-        return null;
+        try
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+            var path = Tools.Logger.GetExportLogPath(DateTime.Now);
+            vm.SaveLog(path);
+            return path;
+        }
+        catch (Exception ex)
+        {
+            ReportOpenLogFailed(ex);
+            return null;
+        }
+        finally
+        {
+            Mouse.OverrideCursor = null;
+        }
     }
 
-    private void PickEditorAndOpen(string path, bool saveAsDefault)
+    /// <summary>选择用于打开日志的程序；取消时返回 null。</summary>
+    private string? PickLogEditor()
     {
         var dialog = new Microsoft.Win32.OpenFileDialog
         {
@@ -785,13 +808,7 @@ public partial class MainWindow : Window
             Filter = "Program (*.exe)|*.exe|All files (*.*)|*.*",
             CheckFileExists = true,
         };
-        if (dialog.ShowDialog(this) != true)
-            return;
-
-        if (saveAsDefault)
-            Tools.Global.setting.logEditorPath = dialog.FileName;
-
-        LaunchLogEditor(dialog.FileName, path);
+        return dialog.ShowDialog(this) == true ? dialog.FileName : null;
     }
 
     private void LaunchLogEditor(string editor, string path)

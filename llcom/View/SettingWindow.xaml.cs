@@ -415,18 +415,16 @@ public partial class SettingWindow : Window
 
     private void OpenLogButton_Click(object sender, RoutedEventArgs e)
     {
+        //日志改为导出时才生成，目录可能还不存在，先创建再打开
+        var path = Tools.Global.GetTrueProfilePath() + "logs";
         try
         {
-            System.Diagnostics.Process.Start(
-                "explorer.exe",
-                Tools.Global.GetTrueProfilePath() + "logs"
-            );
+            System.IO.Directory.CreateDirectory(path);
+            System.Diagnostics.Process.Start("explorer.exe", path);
         }
         catch
         {
-            Tools.MessageBox.Show(
-                $"尝试打开文件夹失败，请自行打开该路径：{Tools.Global.GetTrueProfilePath()}logs"
-            );
+            Tools.MessageBox.Show($"尝试打开文件夹失败，请自行打开该路径：{path}");
         }
     }
 
