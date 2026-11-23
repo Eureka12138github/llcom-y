@@ -300,6 +300,7 @@
     <system:String x:Key="PlotTheme">切换主题</system:String>
     <system:String x:Key="PlotStart">开始绘制</system:String>
     <system:String x:Key="PlotStop">停止绘制</system:String>
+    <system:String x:Key="PlotScrollTip">拖动查看缓冲区中的历史曲线</system:String>
     <system:String x:Key="RefreshIpList">刷新IP</system:String>
     <system:String x:Key="StartListen">开始监听</system:String>
     <system:String x:Key="StopListen">停止监听</system:String>

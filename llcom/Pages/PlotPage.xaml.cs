@@ -43,6 +43,9 @@ public partial class PlotPage : Page
     //自动跟随时显示的窗口点数（滚轮缩放会改变它，默认 1000）
     private int _followWindowPoints = ViewPoints;
 
+    //代码更新滑块时忽略 ValueChanged，避免和坐标轴互相触发
+    private bool _updatingScrollBar;
+
     private ScottPlot.Plottable.Crosshair? ch = null;
     private readonly ScottPlot.Styles.IStyle[] Styles = ScottPlot.Style.GetStyles();
     private int StyleNow = -1;
@@ -115,6 +118,9 @@ public partial class PlotPage : Page
         };
 
         llcom.Services.ThemeService.ThemeChanged += (_, _) => ApplyTheme();
+
+        //鼠标拖动/程序改坐标后同步底部滑块
+        Plot.AxesChanged += (_, _) => UpdateScrollBarFromView();
 
         _refreshTimer.Tick += (_, _) => RefreshTick();
         if (IsVisible)
@@ -225,6 +231,7 @@ public partial class PlotPage : Page
     {
         var dark = llcom.Services.ThemeService.IsDark;
         Plot.Plot.Style(dark ? ScottPlot.Style.Black : ScottPlot.Style.Default);
+        ConfigureAxes();
         if (ch != null)
         {
             ch.Color = dark
@@ -239,6 +246,22 @@ public partial class PlotPage : Page
         {
             Tools.Logger.Swallowed("plot theme", ex);
         }
+    }
+
+    /// <summary>Y 轴刻度移到右侧，左侧只保留网格。</summary>
+    private void ConfigureAxes()
+    {
+        Plot.Plot.LeftAxis.Ticks(false);
+        Plot.Plot.RightAxis.Ticks(true);
+        Plot.Plot.LeftAxis.Grid(true);
+        Plot.Plot.RightAxis.Grid(false);
+
+        var limits = Plot.Plot.GetAxisLimits();
+        Plot.Plot.SetAxisLimitsY(
+            limits.YMin,
+            limits.YMax,
+            Plot.Plot.RightAxis.AxisIndex
+        );
     }
 
     private void RefreshTick()
@@ -258,7 +281,10 @@ public partial class PlotPage : Page
             if (_autoFollow)
                 FitLatestView();
             else
+            {
                 UpdateRenderIndices();
+                UpdateScrollBarFromView();
+            }
         }
 
         if (!NeedRefresh)
@@ -373,6 +399,7 @@ public partial class PlotPage : Page
         Plot.Plot.SetAxisLimitsX(xMin, xMax);
         FitY(xMin, xMax);
         UpdateRenderIndices();
+        UpdateScrollBarFromView();
         Refresh();
     }
 
@@ -443,6 +470,7 @@ public partial class PlotPage : Page
         _followWindowPoints = (int)Math.Max(10, Math.Round(xMax - xMin + 1));
         Plot.Plot.SetAxisLimitsX(xMin, xMax);
         UpdateRenderIndices();
+        UpdateScrollBarFromView();
         Refresh();
         e.Handled = true;
     }
@@ -495,6 +523,7 @@ public partial class PlotPage : Page
         Plot.Plot.SetAxisLimitsX(xMin, xMax);
         FitY(xMin, xMax);
         UpdateRenderIndices();
+        UpdateScrollBarFromView();
         Refresh();
     }
 
@@ -543,7 +572,92 @@ public partial class PlotPage : Page
             max += padding;
         }
 
-        Plot.Plot.SetAxisLimitsY(min, max);
+        Plot.Plot.SetAxisLimitsY(min, max, 0);
+        Plot.Plot.SetAxisLimitsY(min, max, Plot.Plot.RightAxis.AxisIndex);
+    }
+
+    /// <summary>把当前 X 轴窗口同步到底部历史滑块（滑块表示已保留的全部数据）。</summary>
+    private void UpdateScrollBarFromView()
+    {
+        if (PlotScrollBar == null)
+            return;
+
+        _updatingScrollBar = true;
+        try
+        {
+            if (_buffer == null || !TryGetDataXRange(out var dataMin, out var dataMax))
+            {
+                PlotScrollBar.Minimum = 0;
+                PlotScrollBar.Maximum = 0;
+                PlotScrollBar.ViewportSize = 0;
+                PlotScrollBar.Value = 0;
+                PlotScrollBar.IsEnabled = false;
+                return;
+            }
+
+            var total = Math.Max(1, dataMax - dataMin + 1);
+            var limits = Plot.Plot.GetAxisLimits();
+            var view = Math.Max(1, limits.XMax - limits.XMin);
+            var viewPoints = Math.Min(view, total);
+            var maxValue = Math.Max(0, total - viewPoints);
+
+            PlotScrollBar.Minimum = 0;
+            PlotScrollBar.Maximum = maxValue;
+            PlotScrollBar.ViewportSize = viewPoints;
+            PlotScrollBar.LargeChange = Math.Max(1, viewPoints);
+            PlotScrollBar.SmallChange = Math.Max(1, viewPoints / 10);
+            var left = limits.XMin - dataMin;
+            PlotScrollBar.Value = Math.Max(0, Math.Min(maxValue, left));
+            PlotScrollBar.IsEnabled = maxValue > 0;
+        }
+        finally
+        {
+            _updatingScrollBar = false;
+        }
+    }
+
+    private void PlotScrollBar_ValueChanged(
+        object sender,
+        RoutedPropertyChangedEventArgs<double> e
+    )
+    {
+        if (_updatingScrollBar || _buffer == null)
+            return;
+        if (!TryGetDataXRange(out var dataMin, out var dataMax))
+            return;
+
+        var total = Math.Max(1, dataMax - dataMin + 1);
+        var limits = Plot.Plot.GetAxisLimits();
+        var view = Math.Max(1, limits.XMax - limits.XMin);
+        var viewPoints = Math.Min(view, total);
+        var maxValue = Math.Max(0, total - viewPoints);
+        var value = Math.Max(0, Math.Min(maxValue, e.NewValue));
+
+        double xMin;
+        double xMax;
+        if (viewPoints >= total)
+        {
+            xMin = dataMin;
+            xMax = dataMax;
+        }
+        else
+        {
+            xMin = dataMin + value;
+            xMax = xMin + viewPoints;
+            if (xMax > dataMax)
+            {
+                xMax = dataMax;
+                xMin = xMax - viewPoints;
+            }
+        }
+
+        //拖到最右端时恢复自动跟随；拖到左边则停住查看历史
+        _autoFollow = value >= maxValue - 0.5;
+        _followWindowPoints = (int)Math.Max(10, Math.Round(viewPoints));
+        Plot.Plot.SetAxisLimitsX(xMin, xMax);
+        UpdateRenderIndices();
+        UpdateScrollBarFromView();
+        Refresh();
     }
 
     private void ClearButton_Click(object sender, RoutedEventArgs e) => ClearPlot();

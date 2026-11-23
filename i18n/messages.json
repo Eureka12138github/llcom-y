@@ -1194,6 +1194,10 @@
       "zh-CN": "停止绘制",
       "en-US": "Stop plotting"
     },
+    "PlotScrollTip": {
+      "zh-CN": "拖动查看缓冲区中的历史曲线",
+      "en-US": "Scroll through buffered history"
+    },
     "RefreshIpList": {
       "zh-CN": "刷新IP",
       "en-US": "Refresh IP"
