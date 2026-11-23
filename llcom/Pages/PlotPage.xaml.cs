@@ -22,10 +22,15 @@ public partial class PlotPage : Page
     //最大点数量
     private const int MaxPoints = 1000;
 
+    //只有收到数据的线才显示，避免 10 条空线一起参与渲染
+    private readonly ScottPlot.Plottable.SignalPlotXY?[] _signals =
+        new ScottPlot.Plottable.SignalPlotXY?[10];
+
     //每条线已加入的点数（用于 X 轴缩放 / Y 轴只看有效数据）
     private readonly int[] _pointCounts = new int[10];
     private int _maxPointCount;
     private bool _autoFitDone;
+    private DateTime _lastFitUtc = DateTime.MinValue;
 
     //Lua 线程只入队，UI 定时器统一消费
     private readonly ConcurrentQueue<(double Value, int Line)> _pendingPoints = new();
@@ -41,7 +46,7 @@ public partial class PlotPage : Page
     private readonly DispatcherTimer _refreshTimer =
         new System.Windows.Threading.DispatcherTimer
         {
-            Interval = TimeSpan.FromMilliseconds(100),
+            Interval = TimeSpan.FromMilliseconds(50),
         };
 
     private bool first = true;
@@ -64,7 +69,10 @@ public partial class PlotPage : Page
         {
             if (Data[i] == null)
                 Data[i] = new double[MaxPoints];
-            Plot.Plot.AddSignalXY(DataX, Data[i]);
+            var signal = Plot.Plot.AddSignalXY(DataX, Data[i]);
+            signal.Label = "Line " + i;
+            signal.IsVisible = false;
+            _signals[i] = signal;
         }
 
         ch = Plot.Plot.AddCrosshair(0, 0);
@@ -79,6 +87,18 @@ public partial class PlotPage : Page
         _refreshTimer.Tick += (_, _) => RefreshTick();
         _refreshTimer.Start();
         Unloaded += (_, _) => _refreshTimer.Stop();
+
+        //切换到曲线页时才需要绘制；隐藏时只消费队列，不调用 Plot.Render
+        IsVisibleChanged += (_, _) =>
+        {
+            if (!IsVisible)
+                return;
+            DrainPendingPoints();
+            FitView();
+            _lastFitUtc = DateTime.UtcNow;
+            if (_maxPointCount >= MaxPoints)
+                _autoFitDone = true;
+        };
 
         //Lua 回调可能来自脚本线程：只入队，不在回调里碰 UI/绘图数组
         LuaEnv.LuaApis.LinePlotAdd += (_, e) => _pendingPoints.Enqueue((e.N, e.Line));
@@ -109,16 +129,26 @@ public partial class PlotPage : Page
     {
         var added = DrainPendingPoints();
         if (added > 0)
-        {
             NeedRefresh = true;
 
-            //数据填充阶段自动缩放；填满 1000 点后固定窗口，避免持续抖动
-            if (!_autoFitDone)
-            {
-                FitView();
-                if (_maxPointCount >= MaxPoints)
-                    _autoFitDone = true;
-            }
+        //页面不可见时只消费队列，不渲染；切回来时由 IsVisibleChanged 统一适配
+        if (!IsVisible)
+        {
+            NeedRefresh = false;
+            return;
+        }
+
+        //数据填充阶段自动缩放，但限制为每 500ms 一次，避免坐标轴持续抖动
+        if (
+            added > 0
+            && !_autoFitDone
+            && (DateTime.UtcNow - _lastFitUtc).TotalMilliseconds >= 500
+        )
+        {
+            FitView();
+            _lastFitUtc = DateTime.UtcNow;
+            if (_maxPointCount >= MaxPoints)
+                _autoFitDone = true;
         }
 
         if (!NeedRefresh)
@@ -152,6 +182,10 @@ public partial class PlotPage : Page
             return;
         if (double.IsNaN(value) || double.IsInfinity(value))
             return;
+
+        var signal = _signals[line];
+        if (_pointCounts[line] == 0 && signal != null)
+            signal.IsVisible = true;
 
         var data = Data[line];
         for (int i = 0; i < MaxPoints - 1; i++)
@@ -230,10 +264,14 @@ public partial class PlotPage : Page
         {
             Array.Clear(Data[i], 0, Data[i].Length);
             _pointCounts[i] = 0;
+            var signal = _signals[i];
+            if (signal != null)
+                signal.IsVisible = false;
         }
 
         _maxPointCount = 0;
         _autoFitDone = false;
+        _lastFitUtc = DateTime.MinValue;
         if (ch != null)
         {
             ch.X = 0;
@@ -256,6 +294,9 @@ public partial class PlotPage : Page
         //先把队列里尚未绘制的点写入，再按完整数据适配
         DrainPendingPoints();
         FitView();
+        _lastFitUtc = DateTime.UtcNow;
+        if (_maxPointCount >= MaxPoints)
+            _autoFitDone = true;
     }
 
     private void Plot_MouseMove(object sender, MouseEventArgs e)

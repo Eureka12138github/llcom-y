@@ -25,22 +25,32 @@
 注意：重复运行前可以先点一下「清空图表」，避免和上一次的波形混在一起。
 ]]
 
-local points = 1000 -- 生成多少个点（正好填满 1000 点窗口）
-local delayMs = 10 -- 每个点间隔多少毫秒（1000 × 10ms = 10 秒）
+local totalPoints = 1000 -- 生成多少个点（正好填满 1000 点窗口）
+local pointsPerTick = 10 -- 每批生成多少个点
+local tickMs = 100 -- 每批间隔多少毫秒（100 批 × 100ms = 10 秒）
+local batches = math.floor(totalPoints / pointsPerTick)
 
-log.info("曲线演示", "开始生成 " .. points .. " 个点（约 10 秒），请切换到 工具 → 曲线")
+log.info(
+    "曲线演示",
+    "开始生成 " .. totalPoints .. " 个点（约 10 秒），请切换到 工具 → 曲线"
+)
 
 sys.taskInit(function()
-    for i = 1, points do
-        local x = i / 20
+    local point = 0
+    for _ = 1, batches do
+        -- 每 100ms 批量生成 10 个点，减少 Lua 定时器开销
+        for _ = 1, pointsPerTick do
+            point = point + 1
+            local x = point / 20
 
-        -- 第一条曲线：正弦波，范围约 -100 ~ 100
-        apiAddPoint(math.sin(x) * 100, 1)
+            -- 第一条曲线：正弦波，范围约 -100 ~ 100
+            apiAddPoint(math.sin(x) * 100, 1)
 
-        -- 第二条曲线：余弦波，振幅小一些，便于区分
-        apiAddPoint(math.cos(x) * 60, 2)
+            -- 第二条曲线：余弦波，振幅小一些，便于区分
+            apiAddPoint(math.cos(x) * 60, 2)
+        end
 
-        sys.wait(delayMs)
+        sys.wait(tickMs)
     end
 
     log.info("曲线演示", "完成；如视图被缩放，可点「查看全图」重新适配")
