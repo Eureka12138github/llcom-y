@@ -85,6 +85,13 @@ public partial class PlotPage : Page
         ApplyTheme();
         FitView();
 
+        //窗口最大化 / 拖动分隔条改变绘图区大小时，按当前数据重新适配，避免波形缩成一小块
+        Plot.SizeChanged += (_, _) =>
+        {
+            if (DataX != null && IsVisible)
+                FitView();
+        };
+
         llcom.Services.ThemeService.ThemeChanged += (_, _) => ApplyTheme();
 
         _refreshTimer.Tick += (_, _) => RefreshTick();
