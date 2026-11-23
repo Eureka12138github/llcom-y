@@ -25,8 +25,8 @@ public partial class DataShowPage : Page
     private bool loaded = false;
     private bool _logRowSelectionActive;
 
-    // 日志底栏低于该宽度时，常显图标折叠成「⋯」菜单（右下角悬停工具组约 144px）
-    private const double LogBarCollapseMinWidth = 430;
+    // 日志底栏低于该宽度时，常显图标折叠成「⋯」菜单（右下角悬停工具组约 80px）
+    private const double LogBarCollapseMinWidth = 400;
 
     public DataShowPage()
     {
@@ -110,7 +110,7 @@ public partial class DataShowPage : Page
         DisableLogToggle.Visibility = visibility;
         LockLogButton.Visibility = visibility;
         ClearLogButton.Visibility = visibility;
-        SaveLogButton.Visibility = visibility;
+        ExportLogButton.Visibility = visibility;
         LogBarMoreButton.Visibility = collapse ? Visibility.Visible : Visibility.Collapsed;
     }
 
@@ -257,14 +257,15 @@ public partial class DataShowPage : Page
         Tools.Logger.ClearData();
     }
 
-    private void SaveLogButton_Click(object sender, RoutedEventArgs e)
+    /// <summary>导出日志（唯一入口）：左键导出为新文件并用默认编辑器打开。</summary>
+    private void ExportLogButton_Click(object sender, RoutedEventArgs e) => OpenCurrentLogFile();
+
+    /// <summary>右键菜单 /「⋯」菜单：另存到指定位置（由用户选择路径）。</summary>
+    private void SaveLogAsMenuItem_Click(object sender, RoutedEventArgs e)
     {
         if (!_vm.HasLogContent)
         {
-            Tools.MessageBox.Show(
-                TryFindResource("LogFileMissing") as string
-                    ?? "The main log is empty; send or receive some data first."
-            );
+            ShowLogMissing();
             return;
         }
 
@@ -293,6 +294,149 @@ public partial class DataShowPage : Page
             );
         }
     }
+
+    /// <summary>导出当前主日志，用系统默认程序（文件关联）打开。</summary>
+    private void OpenLogWithSystemButton_Click(object sender, RoutedEventArgs e)
+    {
+        var path = ExportCurrentLog();
+        if (path == null)
+            return;
+
+        try
+        {
+            System.Diagnostics.Process.Start(
+                new System.Diagnostics.ProcessStartInfo { FileName = path, UseShellExecute = true }
+            );
+        }
+        catch (Exception ex)
+        {
+            ReportOpenLogFailed(ex);
+        }
+    }
+
+    /// <summary>先选程序，再导出并用它打开一次（不保存为默认）。</summary>
+    private void OpenLogWithButton_Click(object sender, RoutedEventArgs e)
+    {
+        var editor = PickLogEditor();
+        if (editor == null)
+            return;
+
+        var path = ExportCurrentLog();
+        if (path != null)
+            LaunchLogEditor(editor, path);
+    }
+
+    /// <summary>只选择并保存默认编辑器，不要求主日志已有内容。</summary>
+    private void SetLogEditorButton_Click(object sender, RoutedEventArgs e)
+    {
+        var editor = PickLogEditor();
+        if (editor != null)
+            Tools.Global.setting.logEditorPath = editor;
+    }
+
+    private void ClearLogEditorButton_Click(object sender, RoutedEventArgs e) =>
+        Tools.Global.setting.logEditorPath = "";
+
+    /// <summary>导出当前主日志并打开：有默认编辑器就直接用，否则让用户选一次。</summary>
+    private void OpenCurrentLogFile()
+    {
+        var editor = Tools.Global.setting.logEditorPath ?? "";
+        if (string.IsNullOrWhiteSpace(editor))
+        {
+            //未设置默认编辑器：先让用户选一次（取消则什么都不做）
+            editor = PickLogEditor();
+            if (editor == null)
+                return;
+        }
+        else if (!System.IO.File.Exists(editor))
+        {
+            Tools.MessageBox.Show(
+                TryFindResource("LogEditorMissing") as string
+                    ?? "The default editor no longer exists; please choose it again."
+            );
+            return;
+        }
+
+        var path = ExportCurrentLog();
+        if (path != null)
+            LaunchLogEditor(editor, path);
+    }
+
+    /// <summary>
+    /// 把当前主日志导出为 `logs/logyyyyMMdd_HHmmss.txt`（内容与界面逐行一致）并返回路径。
+    /// 日志不在后台持续写入，只在用户点击导出/保存时生成。
+    /// </summary>
+    private string? ExportCurrentLog()
+    {
+        if (!_vm.HasLogContent)
+        {
+            ShowLogMissing();
+            return null;
+        }
+
+        try
+        {
+            //全限定：本文件同时引用了 System.Windows.Forms，Cursors 存在同名类型
+            System.Windows.Input.Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            var path = Tools.Logger.GetExportLogPath(DateTime.Now);
+            _vm.SaveLog(path);
+            return path;
+        }
+        catch (Exception ex)
+        {
+            ReportOpenLogFailed(ex);
+            return null;
+        }
+        finally
+        {
+            System.Windows.Input.Mouse.OverrideCursor = null;
+        }
+    }
+
+    /// <summary>选择用于打开日志的程序；取消时返回 null。</summary>
+    private string? PickLogEditor()
+    {
+        var dialog = new Microsoft.Win32.OpenFileDialog
+        {
+            Title = TryFindResource("LogEditorDialogTitle") as string ?? "Select editor",
+            Filter = "Program (*.exe)|*.exe|All files (*.*)|*.*",
+            CheckFileExists = true,
+        };
+        var owner = Window.GetWindow(this);
+        return dialog.ShowDialog(owner) == true ? dialog.FileName : null;
+    }
+
+    private void LaunchLogEditor(string editor, string path)
+    {
+        try
+        {
+            System.Diagnostics.Process.Start(
+                new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = editor,
+                    Arguments = "\"" + path + "\"",
+                    UseShellExecute = false,
+                }
+            );
+        }
+        catch (Exception ex)
+        {
+            ReportOpenLogFailed(ex);
+        }
+    }
+
+    private void ReportOpenLogFailed(Exception ex)
+    {
+        Tools.Logger.Swallowed("open log file", ex);
+        var message = TryFindResource("OpenLogFailed") as string ?? "Failed to open the log file.";
+        Tools.MessageBox.Show(message + "\r\n" + ex.Message);
+    }
+
+    private void ShowLogMissing() =>
+        Tools.MessageBox.Show(
+            TryFindResource("LogFileMissing") as string
+                ?? "The main log is empty; send or receive some data first."
+        );
 
     /// <summary>Ctrl+C 复制选中的多行；没有选中行时保留 RichTextBox 的原生文本复制。</summary>
     private void MainList_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)

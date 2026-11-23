@@ -22,7 +22,7 @@
     <system:String x:Key="MoreSettingsTip">Set stopbit, parity, Lua script for data to send and so on.</system:String>
     <system:String x:Key="MoreActions">More actions</system:String>
     <system:String x:Key="LogBarMenuLock">Lock view (no auto-scroll)</system:String>
-    <system:String x:Key="LogBarMenuSave">Save log…</system:String>
+    <system:String x:Key="LogBarMenuSave">Save log to…</system:String>
     <system:String x:Key="SettingLogFontSize">Log font size:</system:String>
     <system:String x:Key="RecvHexView">Show received as Hex</system:String>
     <system:String x:Key="SerialSettingsCard">Serial Port</system:String>
@@ -157,7 +157,7 @@
     <system:String x:Key="TrayNoNotices">(no notifications)</system:String>
     <system:String x:Key="NoticeActionHint">Left: hide / show   Right: dismiss</system:String>
     <system:String x:Key="OpenLogFile">Export and open current log</system:String>
-    <system:String x:Key="OpenLogFileTip">Export the current main log to a new file (identical to the view) and open it; right-click to choose a program or set a default editor</system:String>
+    <system:String x:Key="OpenLogFileTip">Export the current main log to a new file (identical to the view) and open it; right-click to save it elsewhere, choose a program, or set a default editor</system:String>
     <system:String x:Key="OpenLogWithSystem">Open with system default</system:String>
     <system:String x:Key="OpenLogWith">Open once with…</system:String>
     <system:String x:Key="SetLogEditor">Set default editor…</system:String>
@@ -240,7 +240,6 @@
     <system:String x:Key="AppendNewlineTip">Append the selected newline to sent data (send script still runs first)</system:String>
     <system:String x:Key="LockLogButton">Lock logs and disable auto scroll</system:String>
     <system:String x:Key="LockLogText">Locked</system:String>
-    <system:String x:Key="SaveLogButton">Click to save received logs</system:String>
     <system:String x:Key="ShowHexFormat">Hex format</system:String>
     <system:String x:Key="ShowHexFormatTip">modes: Only Hex/Only Text/Both Hex and Text</system:String>
     <system:String x:Key="HexSendMode">Send Hex</system:String>

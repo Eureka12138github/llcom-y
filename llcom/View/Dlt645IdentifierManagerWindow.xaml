@@ -24,6 +24,11 @@
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
 
+    <!--
+      列宽统一用固定像素（不用星号）：DataGrid 的空间不足时会把固定列压扁到视口内，
+      星号列永远不会触发横向滚动条。固定像素宽度总和超过视口时才会出现横条，
+      可左右拖动查看完整备注；「备注」列的实际宽度由代码按窗口宽度动态调整。
+    -->
     <DataGrid
       Name="IdentifierGrid"
       AutoGenerateColumns="False"
@@ -31,12 +36,14 @@
       CanUserDeleteRows="False"
       GridLinesVisibility="Horizontal"
       HeadersVisibility="Column"
+      ScrollViewer.HorizontalScrollBarVisibility="Auto"
       SelectionMode="Extended"
       SelectionUnit="FullRow"
+      SizeChanged="IdentifierGrid_SizeChanged"
     >
       <DataGrid.Columns>
         <DataGridTextColumn
-          Width="2*"
+          Width="220"
           Binding="{Binding Name}"
           Header="{DynamicResource Dlt645DiName}"
         />
@@ -60,11 +67,19 @@
           Binding="{Binding Decimals}"
           Header="{DynamicResource Dlt645DiDecimals}"
         />
+        <!-- 备注列：窗口宽时铺满剩余空间，窄时保持最小宽度并出现横向滚动条 -->
         <DataGridTextColumn
-          Width="*"
+          x:Name="NoteColumn"
+          Width="420"
           Binding="{Binding Note}"
           Header="{DynamicResource Dlt645DiNote}"
-        />
+        >
+          <DataGridTextColumn.ElementStyle>
+            <Style TargetType="TextBlock">
+              <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            </Style>
+          </DataGridTextColumn.ElementStyle>
+        </DataGridTextColumn>
       </DataGrid.Columns>
     </DataGrid>
 

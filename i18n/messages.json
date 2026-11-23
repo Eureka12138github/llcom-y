@@ -83,8 +83,8 @@
       "en-US": "Lock view (no auto-scroll)"
     },
     "LogBarMenuSave": {
-      "zh-CN": "保存日志…",
-      "en-US": "Save log…"
+      "zh-CN": "保存日志到指定位置…",
+      "en-US": "Save log to…"
     },
     "SettingLogFontSize": {
       "zh-CN": "数据字号：",
@@ -623,8 +623,8 @@
       "en-US": "Export and open current log"
     },
     "OpenLogFileTip": {
-      "zh-CN": "把当前主日志导出为新文件（内容与界面显示一致）并打开；右键可选择程序或设置默认编辑器",
-      "en-US": "Export the current main log to a new file (identical to the view) and open it; right-click to choose a program or set a default editor"
+      "zh-CN": "把当前主日志导出为新文件（内容与界面显示一致）并打开；右键可另存到指定位置、选择打开程序或设置默认编辑器",
+      "en-US": "Export the current main log to a new file (identical to the view) and open it; right-click to save it elsewhere, choose a program, or set a default editor"
     },
     "OpenLogWithSystem": {
       "zh-CN": "用系统默认程序打开",
@@ -953,10 +953,6 @@
     "LockLogText": {
       "zh-CN": "已锁定",
       "en-US": "Locked"
-    },
-    "SaveLogButton": {
-      "zh-CN": "点击按钮保存接收日志",
-      "en-US": "Click to save received logs"
     },
     "ShowHexFormat": {
       "zh-CN": "Hex显示",

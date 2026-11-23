@@ -166,7 +166,7 @@
             />
             <Separator />
             <MenuItem Click="ClearLogButton_Click" Header="{DynamicResource ClearLog}" />
-            <MenuItem Click="SaveLogButton_Click" Header="{DynamicResource LogBarMenuSave}" />
+            <MenuItem Click="SaveLogAsMenuItem_Click" Header="{DynamicResource LogBarMenuSave}" />
           </ContextMenu>
         </Button.ContextMenu>
       </Button>
@@ -247,15 +247,31 @@
       >
         <fa:FontAwesome FontSize="14" Icon="Trash" />
       </Button>
-      <!--  保存日志  -->
+      <!--
+        导出日志（唯一的日志导出入口）：
+        左键导出为新文件并打开；右键可另存到指定位置、选择打开程序或设置默认编辑器。
+      -->
       <Button
-        Name="SaveLogButton"
+        Name="ExportLogButton"
         Style="{StaticResource LogBarButton}"
-        AutomationProperties.Name="{DynamicResource SaveLogButton}"
-        Click="SaveLogButton_Click"
-        ToolTip="{DynamicResource SaveLogButton}"
+        AutomationProperties.Name="{DynamicResource OpenLogFile}"
+        Click="ExportLogButton_Click"
+        ToolTip="{DynamicResource OpenLogFileTip}"
       >
-        <fa:FontAwesome FontSize="14" Icon="Save" />
+        <fa:FontAwesome FontSize="14" Icon="FileTextOutline" />
+        <Button.ContextMenu>
+          <ContextMenu>
+            <MenuItem Click="SaveLogAsMenuItem_Click" Header="{DynamicResource LogBarMenuSave}" />
+            <Separator />
+            <MenuItem
+              Click="OpenLogWithSystemButton_Click"
+              Header="{DynamicResource OpenLogWithSystem}"
+            />
+            <MenuItem Click="OpenLogWithButton_Click" Header="{DynamicResource OpenLogWith}" />
+            <MenuItem Click="SetLogEditorButton_Click" Header="{DynamicResource SetLogEditor}" />
+            <MenuItem Click="ClearLogEditorButton_Click" Header="{DynamicResource ClearLogEditor}" />
+          </ContextMenu>
+        </Button.ContextMenu>
       </Button>
     </WrapPanel>
   </Grid>

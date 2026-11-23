@@ -37,6 +37,34 @@ public partial class Dlt645IdentifierManagerWindow : Window
     private void OnThemeChanged(object sender, System.EventArgs e) =>
         llcom.Services.ThemeService.ApplyWindowChrome(this);
 
+    /// <summary>备注列最小宽度：窗口较窄时保持该宽度，由横向滚动条查看。</summary>
+    private const double NoteColumnMinWidth = 420;
+
+    /// <summary>竖向滚动条宽度预留，避免多出几像素就误触发横向滚动条。</summary>
+    private const double VerticalScrollBarAllowance = 20;
+
+    /// <summary>
+    /// 让「备注」列吃掉窗口多余宽度：窗口宽时铺满，窄时保持最小宽度并出现横向滚动条。
+    /// DataGrid 的星号列在空间不足时会把固定像素列压扁、且永远不会溢出，
+    /// 所以这里用代码控制像素宽度。
+    /// </summary>
+    private void IdentifierGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        if (IdentifierGrid.ActualWidth <= 0)
+            return;
+
+        double otherColumnsWidth = 0;
+        foreach (var column in IdentifierGrid.Columns)
+        {
+            if (!ReferenceEquals(column, NoteColumn))
+                otherColumnsWidth += column.Width.DisplayValue;
+        }
+
+        double available =
+            IdentifierGrid.ActualWidth - otherColumnsWidth - VerticalScrollBarAllowance;
+        NoteColumn.Width = new DataGridLength(System.Math.Max(NoteColumnMinWidth, available));
+    }
+
     private void LoadEntries()
     {
         _entries.Clear();

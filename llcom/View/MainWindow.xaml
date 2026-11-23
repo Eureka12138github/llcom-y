@@ -104,7 +104,7 @@
       PreviewTextInput="uartDataFlowDocument_PreviewTextInput"
     />
 
-    <!--  日志底栏右端：使用说明 / 更多设置 / 语言（同一行右对齐；平时隐藏，鼠标悬浮该区域时淡入）  -->
+    <!--  日志底栏右端：使用说明 / 主题切换（同一行右对齐；平时隐藏，鼠标悬浮该区域时淡入）  -->
     <Grid
       Name="LogCornerZone"
       Grid.Row="0"
@@ -124,31 +124,6 @@
         IsHitTestVisible="False"
         Orientation="Horizontal"
       >
-        <!--  导出并打开当前日志：左键先导出再打开，右键选择程序 / 设置默认编辑器  -->
-        <Button
-          Name="OpenLogFileButton"
-          Margin="4,0,0,0"
-          Style="{StaticResource FlatIconButton}"
-          AutomationProperties.Name="{DynamicResource OpenLogFile}"
-          Click="OpenLogFileButton_Click"
-          ToolTip="{DynamicResource OpenLogFileTip}"
-        >
-          <fa:FontAwesome
-            Foreground="{DynamicResource Brush.Icon.Doc}"
-            Icon="FileTextOutline"
-          />
-          <Button.ContextMenu>
-            <ContextMenu>
-              <MenuItem
-                Click="OpenLogWithSystemButton_Click"
-                Header="{DynamicResource OpenLogWithSystem}"
-              />
-              <MenuItem Click="OpenLogWithButton_Click" Header="{DynamicResource OpenLogWith}" />
-              <MenuItem Click="SetLogEditorButton_Click" Header="{DynamicResource SetLogEditor}" />
-              <MenuItem Click="ClearLogEditorButton_Click" Header="{DynamicResource ClearLogEditor}" />
-            </ContextMenu>
-          </Button.ContextMenu>
-        </Button>
         <!--  帮助：扁平纯图标（常态无框；悬停中性浅灰）  -->
         <Button
           Name="HelpButton"
