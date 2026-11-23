@@ -147,6 +147,8 @@
     <system:String x:Key="SettingLogTrimPercentTip">日志达到上限时一次性清掉多少（%）。50 = 删掉一半（推荐，裁剪次数最少）；100 = 全部清空。范围 10~100</system:String>
     <system:String x:Key="SettingStreamMaxChars">流式保留字符数：</system:String>
     <system:String x:Key="SettingStreamMaxCharsTip">流式模式（分包数据超时设为负数）最多保留多少字符，超过后自动丢弃最早的文本；范围 100000~10000000</system:String>
+    <system:String x:Key="SettingPlotHistoryPoints">曲线保留点数：</system:String>
+    <system:String x:Key="SettingPlotHistoryPointsTip">每条曲线保留的历史点数（10000~100000，默认 20000）；默认显示最近 1000 点，缩小后可查看更早的数据。修改后会清空当前曲线。</system:String>
     <system:String x:Key="SettingTerminal">终端模式（在日志区直接键盘发送）</system:String>
     <system:String x:Key="SettingTerminalTip">开启后，点击日志区并敲键盘，字符会直接发送到串口。终端模式下 Ctrl+C 会发送 0x03，与复制快捷键冲突；复制日志前建议先关闭。</system:String>
     <system:String x:Key="SettingScriptNotify">脚本结束提示（系统托盘气泡）</system:String>

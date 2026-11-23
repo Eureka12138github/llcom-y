@@ -133,6 +133,17 @@ public partial class SettingWindow : Window
         streamMaxCharsBox.Text = setting.streamMaxChars.ToString();
     }
 
+    /// <summary>曲线保留点数：校验并把夹取后的值写回输入框（修改后会清空曲线）</summary>
+    private void PlotHistoryPointsBox_LostFocus(object sender, RoutedEventArgs e)
+    {
+        var setting = Tools.Global.setting;
+        var value = int.TryParse(plotHistoryPointsBox.Text, out var parsed)
+            ? parsed
+            : setting.plotHistoryPoints;
+        setting.plotHistoryPoints = value;
+        plotHistoryPointsBox.Text = setting.plotHistoryPoints.ToString();
+    }
+
     // ===== 配置导出 / 导入（整份 settings.json） =====
 
     /// <summary>导出当前配置到用户选择的 JSON 文件。</summary>
@@ -266,6 +277,7 @@ public partial class SettingWindow : Window
         logMaxItemsBox.Text = Tools.Global.setting.logMaxItems.ToString();
         logTrimPercentBox.Text = Tools.Global.setting.logTrimPercent.ToString();
         streamMaxCharsBox.Text = Tools.Global.setting.streamMaxChars.ToString();
+        plotHistoryPointsBox.Text = Tools.Global.setting.plotHistoryPoints.ToString();
 
         //快速搜索
         SearchPanel.Install(textEditor.TextArea);
