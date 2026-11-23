@@ -232,7 +232,8 @@ internal static class ProfileInitializer
                 "example.lua",
                 "循环发送快捷发送区数据.lua",
                 "channel-demo.lua",
-                "完成提示演示.lua"
+                "完成提示演示.lua",
+                "绘制曲线演示.lua"
             );
 
             if (!Directory.Exists(AppPaths.ProfilePath + "user_script_run/requires"))
