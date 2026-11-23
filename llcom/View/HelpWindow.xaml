@@ -175,10 +175,10 @@
         Text="曲线工具详解（工具 → 曲线）"
       />
       <TextBlock Style="{StaticResource HelpP}" Text="数据来源：脚本里调用 apiAddPoint(值, 线号) 上报数据点；线号 0~9，最多同时显示 10 条曲线。每次调用把一个点追加到对应曲线的末端。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="X / Y 轴：X 轴是「最近 1000 个样本点」的滚动窗口，不是时间轴；Y 轴是数值。点「查看全图」会按当前数据自动适配 Y 轴范围；也可用鼠标滚轮缩放、拖动平移。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="按钮：查看全图 = 重新适配坐标范围；清空图表 = 把所有曲线数据归零；切换主题 = 循环切换绘图区配色，应用深/浅色主题时也会自动跟随。" />
+      <TextBlock Style="{StaticResource HelpP}" Text="X / Y 轴：X 轴是「最近 1000 个样本点」的滚动窗口，不是时间轴；数据不足 1000 点时按实际点数自动缩放，填满后固定为 1000 点。Y 轴在填充阶段自动适配，之后可用「查看全图」重新适配；也可用鼠标滚轮缩放、拖动平移。" />
+      <TextBlock Style="{StaticResource HelpP}" Text="按钮：查看全图 = 按当前实际数据同时适配 X/Y 轴；清空图表 = 把所有曲线数据归零；切换主题 = 循环切换绘图区配色，应用深/浅色主题时也会自动跟随。" />
       <TextBlock Style="{StaticResource HelpP}" Text="交互与限制：鼠标在图上移动时十字准线跟随，便于对齐曲线；每条曲线最多保留 1000 个点，超出后丢弃最早的点；数据只保存在内存中，重启软件或重新加载工具页后清空；当前没有图例、暂停和导出功能。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="示例：在脚本里用 sys.taskInit + sys.wait(100) 每 100ms 调用一次 apiAddPoint，即可看到曲线持续滚动；完整示例见 LuaApi.md 的 apiAddPoint 一节。也可以直接运行默认脚本「绘制曲线演示.lua」体验（不需要串口）。" />
+      <TextBlock Style="{StaticResource HelpP}" Text="示例：默认脚本「绘制曲线演示.lua」会生成 1000 个点（约 10 秒），数据填充阶段自动缩放，直接运行即可体验；也可以在自己的脚本里用 sys.taskInit + sys.wait(...) 周期调用 apiAddPoint，完整示例见 LuaApi.md 的 apiAddPoint 一节。" />
 
       <TextBlock Style="{StaticResource HelpH}" Text="十、更多设置（点日志区右下角 ☰ 直接打开，鼠标移入才显示）" />
       <TextBlock Style="{StaticResource HelpLi}" Text="· 分三个页签：「更多串口设置」（打开日志目录、显示发送、数据字号、窗口置顶、串口超时（分包）、按空行分包、终端模式、脚本结束提示、托盘图标闪烁提醒、日志保留上限、流式保留字符数）、「发送脚本」、「接收脚本」。" />
@@ -343,10 +343,10 @@
           Text="Plot details (Tools → Chart)"
         />
         <TextBlock Style="{StaticResource HelpP}" Text="Data source: call apiAddPoint(value, line) from Lua; line is 0-9 (up to 10 curves). Each call appends one point to the end of that curve." />
-        <TextBlock Style="{StaticResource HelpP}" Text="Axes: X is a rolling window of the latest 1000 samples (not wall-clock time); Y is the value. Fit rescales Y to the current data; the mouse wheel zooms and dragging pans." />
-        <TextBlock Style="{StaticResource HelpP}" Text="Buttons: Fit = rescale the axes; Clear = set all curve data to zero; Theme = cycle the chart color styles, and the chart also follows the app light/dark theme." />
+        <TextBlock Style="{StaticResource HelpP}" Text="Axes: X is a rolling window of the latest 1000 samples (not wall-clock time). While fewer than 1000 points exist, X scales to the actual point count; Y auto-fits while the data fills, and Fit rescales both X and Y later. The mouse wheel zooms and dragging pans." />
+        <TextBlock Style="{StaticResource HelpP}" Text="Buttons: Fit = rescale X and Y to the current data; Clear = set all curve data to zero; Theme = cycle the chart color styles, and the chart also follows the app light/dark theme." />
         <TextBlock Style="{StaticResource HelpP}" Text="Interaction and limits: the crosshair follows the mouse to help align curves; each curve keeps at most 1000 points (oldest points are dropped); data lives in memory only and is cleared when the app restarts or the tool page reloads; there is no legend, pause or export yet." />
-        <TextBlock Style="{StaticResource HelpP}" Text="Example: use sys.taskInit + sys.wait(100) in a script and call apiAddPoint every 100 ms to see the curve scroll; see the apiAddPoint section in LuaApi.md for a complete example. You can also run the default script 绘制曲线演示.lua directly (no serial port needed)." />
+        <TextBlock Style="{StaticResource HelpP}" Text="Example: the default script 绘制曲线演示.lua generates 1000 points in about 10 seconds and auto-fits while filling — run it directly to try; you can also call apiAddPoint periodically in your own script (see the apiAddPoint section in LuaApi.md)." />
 
         <TextBlock Style="{StaticResource HelpH}" Text="10. More settings (click ☰ at the bottom-right of the log area; shown on hover)" />
         <TextBlock Style="{StaticResource HelpLi}" Text="· Three tabs: More serial settings (open log folder, show sent data, data font size, keep window on top, serial timeout (packet), split by blank line, terminal mode, script completion notification, flash the tray icon, log retention limit, stream retention characters), Send script, Receive script." />
