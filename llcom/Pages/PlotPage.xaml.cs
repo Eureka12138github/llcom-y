@@ -35,6 +35,9 @@ public partial class PlotPage : Page
     //Lua 线程只入队，UI 定时器统一消费
     private readonly ConcurrentQueue<(double Value, int Line)> _pendingPoints = new();
 
+    //只有曲线页可见时才接收点；切走期间的数据直接丢弃，不做回放
+    private volatile bool _acceptPoints;
+
     private ScottPlot.Plottable.Crosshair? ch = null;
 
     private readonly ScottPlot.Styles.IStyle[] Styles = ScottPlot.Style.GetStyles();
@@ -88,20 +91,33 @@ public partial class PlotPage : Page
         _refreshTimer.Start();
         Unloaded += (_, _) => _refreshTimer.Stop();
 
-        //切换到曲线页时才需要绘制；隐藏时只消费队列，不调用 Plot.Render
+        //只有曲线页可见时才记录；切走时丢弃排队点，回来也不补画
+        _acceptPoints = IsVisible;
         IsVisibleChanged += (_, _) =>
         {
-            if (!IsVisible)
-                return;
-            DrainPendingPoints();
-            FitView();
-            _lastFitUtc = DateTime.UtcNow;
-            if (_maxPointCount >= MaxPoints)
-                _autoFitDone = true;
+            if (IsVisible)
+            {
+                //先丢掉切走期间可能残留的点，再开始接收当前数据
+                while (_pendingPoints.TryDequeue(out _)) { }
+                _acceptPoints = true;
+                FitView();
+                _lastFitUtc = DateTime.UtcNow;
+                if (_maxPointCount >= MaxPoints)
+                    _autoFitDone = true;
+            }
+            else
+            {
+                _acceptPoints = false;
+                while (_pendingPoints.TryDequeue(out _)) { }
+            }
         };
 
         //Lua 回调可能来自脚本线程：只入队，不在回调里碰 UI/绘图数组
-        LuaEnv.LuaApis.LinePlotAdd += (_, e) => _pendingPoints.Enqueue((e.N, e.Line));
+        LuaEnv.LuaApis.LinePlotAdd += (_, e) =>
+        {
+            if (_acceptPoints)
+                _pendingPoints.Enqueue((e.N, e.Line));
+        };
     }
 
     /// <summary>让 ScottPlot 跟随应用主题（深色用 Black 风格）。</summary>
@@ -127,16 +143,17 @@ public partial class PlotPage : Page
 
     private void RefreshTick()
     {
-        var added = DrainPendingPoints();
-        if (added > 0)
-            NeedRefresh = true;
-
-        //页面不可见时只消费队列，不渲染；切回来时由 IsVisibleChanged 统一适配
+        //页面不可见时丢弃残留数据，不记录也不渲染；切回来时从当前点重新开始
         if (!IsVisible)
         {
+            while (_pendingPoints.TryDequeue(out _)) { }
             NeedRefresh = false;
             return;
         }
+
+        var added = DrainPendingPoints();
+        if (added > 0)
+            NeedRefresh = true;
 
         //数据填充阶段自动缩放，但限制为每 500ms 一次，避免坐标轴持续抖动
         if (

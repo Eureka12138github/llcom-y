@@ -15,29 +15,29 @@
   - 每条曲线最多保留最近 1000 个点，超过后自动丢弃最早的点；
   - 数据不足 1000 点时，曲线页按实际点数自动缩放 X 轴，填满后变为滚动窗口；
   - X 轴是样本序号，不是时间；Y 轴是传入的数值；
-  - 「清空图表」会把所有曲线数据归零；「切换主题」切换绘图区配色。
+  - 「清空图表」会把所有曲线数据归零；「切换主题」切换绘图区配色；
+  - 只有「工具 → 曲线」页面可见时才会记录数据；切到其他页面期间的点会直接丢弃，
+    回到曲线页后从当前收到的点继续画，不会补画之前的点。
 
 想改成自己的数据：
   - 把 value 换成从串口解析出来的数值；
   - 把 line 换成 0~9 中你想用的曲线编号；
-  - 如果希望一直运行，把 for 循环改成 while true 即可。
+  - 如果只需要固定数量的点，把 while true 改成 for 循环即可。
 
 注意：重复运行前可以先点一下「清空图表」，避免和上一次的波形混在一起。
 ]]
 
-local totalPoints = 1000 -- 生成多少个点（正好填满 1000 点窗口）
 local pointsPerTick = 10 -- 每批生成多少个点
-local tickMs = 100 -- 每批间隔多少毫秒（100 批 × 100ms = 10 秒）
-local batches = math.floor(totalPoints / pointsPerTick)
+local tickMs = 100 -- 每批间隔多少毫秒
 
 log.info(
     "曲线演示",
-    "开始生成 " .. totalPoints .. " 个点（约 10 秒），请切换到 工具 → 曲线"
+    "开始持续生成数据，直到手动停止；切到 工具 → 曲线 后从当前点开始绘制"
 )
 
 sys.taskInit(function()
     local point = 0
-    for _ = 1, batches do
+    while true do
         -- 每 100ms 批量生成 10 个点，减少 Lua 定时器开销
         for _ = 1, pointsPerTick do
             point = point + 1
@@ -52,6 +52,4 @@ sys.taskInit(function()
 
         sys.wait(tickMs)
     end
-
-    log.info("曲线演示", "完成；如视图被缩放，可点「查看全图」重新适配")
 end)
