@@ -342,7 +342,14 @@ local ok, result = apiInputBox("请输入你要发送的tcp数据")
 
 ### apiAddPoint(num,line)
 
-绘制曲线，添加点（添加的点会被加到曲线末端）
+绘制曲线，添加点（添加的点会被加到曲线末端）。
+
+* 说明
+
+- 最多同时显示 10 条曲线，`line` 取 0~9；超出范围的点会被忽略。
+- 每条曲线最多保留最近 1000 个点，超出后丢弃最早的点；因此 X 轴是滚动的样本序号，不是时间轴。
+- 「查看全图」按当前数据适配 Y 轴范围；「清空图表」把所有曲线数据归零。
+- 数据只保存在内存中，重启软件或重新加载工具页后清空；当前没有图例、暂停和导出功能。
 
 * 参数
 
@@ -360,8 +367,9 @@ local ok, result = apiInputBox("请输入你要发送的tcp数据")
 ```lua
 sys.taskInit(function()
     for i=1,100 do
-        apiAddPoint(i,1)
-        sys.wait(10)
+        apiAddPoint(math.sin(i / 10) * 100, 1)
+        apiAddPoint(math.cos(i / 10) * 100, 2)
+        sys.wait(100)
     end
 end)
 ```
