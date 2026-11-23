@@ -46,6 +46,10 @@ public partial class PlotPage : Page
     //代码更新滑块时忽略 ValueChanged，避免和坐标轴互相触发
     private bool _updatingScrollBar;
 
+    //左键拖动阈值：单击/双击时也可能收到一次 MouseMove，不能因此停掉跟随
+    private Point _dragStart;
+    private bool _mouseDown;
+
     //Y 轴自动适配；手动缩放 Y 后关闭，双击/查看全局/Y 按钮恢复
     private bool _autoFitY = true;
     private bool _updatingAutoYToggle;
@@ -94,6 +98,10 @@ public partial class PlotPage : Page
         }
         first = false;
 
+        //ScottPlot 默认双击会切换左下角的渲染耗时基准框，这里关掉
+        if (Plot.Configuration != null)
+            Plot.Configuration.DoubleClickBenchmark = false;
+
         InitializePlotData();
 
         //窗口最大化 / 拖动分隔条改变绘图区大小
@@ -113,20 +121,37 @@ public partial class PlotPage : Page
         //滚轮按鼠标位置缩放：绘图区默认只缩 X，底部 X 刻度区缩 X，右侧 Y 刻度区缩 Y；
         //绘图区 Ctrl+滚轮只缩 Y、Alt+滚轮同时缩 X/Y。左键拖动会退出自动跟随/Y 自动适配
         Plot.PreviewMouseWheel += Plot_PreviewMouseWheel;
+        Plot.PreviewMouseLeftButtonDown += (_, e) =>
+        {
+            _mouseDown = true;
+            _dragStart = e.GetPosition(Plot);
+        };
+        Plot.PreviewMouseLeftButtonUp += (_, _) => _mouseDown = false;
         Plot.PreviewMouseMove += (_, e) =>
         {
-            if (e.LeftButton == MouseButtonState.Pressed)
+            if (e.LeftButton != MouseButtonState.Pressed)
             {
-                _autoFollow = false;
-                SetAutoFitY(false);
+                _mouseDown = false;
+                return;
             }
+            if (!_mouseDown)
+                return;
+
+            //移动超过 3 像素才算拖动；单击/双击产生的零位移 MouseMove 不改变跟随状态
+            var pos = e.GetPosition(Plot);
+            if (Math.Abs(pos.X - _dragStart.X) < 3 && Math.Abs(pos.Y - _dragStart.Y) < 3)
+                return;
+
+            _autoFollow = false;
+            SetAutoFitY(false);
         };
-        //双击图表恢复跟随最新点，并恢复 Y 轴自动适配
-        Plot.PreviewMouseDoubleClick += (_, _) =>
+        //双击图表恢复跟随最新点，并恢复 Y 轴自动适配；同时阻止 ScottPlot 自带的双击基准测试
+        Plot.PreviewMouseDoubleClick += (_, e) =>
         {
             _autoFollow = true;
             SetAutoFitY(true);
             FitLatestView();
+            e.Handled = true;
         };
 
         llcom.Services.ThemeService.ThemeChanged += (_, _) => ApplyTheme();
