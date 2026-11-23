@@ -1198,6 +1198,10 @@
       "zh-CN": "拖动查看缓冲区中的历史曲线",
       "en-US": "Scroll through buffered history"
     },
+    "PlotAutoYTip": {
+      "zh-CN": "Y 轴自动适配（点击切换手动/自动）",
+      "en-US": "Auto-fit Y axis (click to toggle manual/auto)"
+    },
     "RefreshIpList": {
       "zh-CN": "刷新IP",
       "en-US": "Refresh IP"

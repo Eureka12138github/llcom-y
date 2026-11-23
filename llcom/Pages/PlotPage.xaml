@@ -24,6 +24,7 @@
         <ColumnDefinition Width="*" />
         <ColumnDefinition Width="*" />
         <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
       </Grid.ColumnDefinitions>
       <Button Content="{DynamicResource PlotFit}" Margin="2" Click="RefreshButton_Click" />
       <Button
@@ -49,6 +50,19 @@
       >
         <fa:FontAwesome Name="PlotToggleIcon" FontSize="14" Icon="Pause" />
       </Button>
+      <ToggleButton
+        Name="PlotAutoYButton"
+        Grid.Column="4"
+        Margin="2,2,0,2"
+        AutomationProperties.Name="{DynamicResource PlotAutoYTip}"
+        Checked="PlotAutoY_Checked"
+        IsChecked="True"
+        Style="{StaticResource LogBarIconToggle}"
+        ToolTip="{DynamicResource PlotAutoYTip}"
+        Unchecked="PlotAutoY_Unchecked"
+      >
+        <fa:FontAwesome FontSize="12" Icon="ArrowsV" />
+      </ToggleButton>
     </Grid>
     <Grid Grid.Row="1">
       <WpfPlot Name="Plot" MouseMove="Plot_MouseMove" />

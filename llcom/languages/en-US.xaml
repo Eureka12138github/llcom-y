@@ -301,6 +301,7 @@
     <system:String x:Key="PlotStart">Start plotting</system:String>
     <system:String x:Key="PlotStop">Stop plotting</system:String>
     <system:String x:Key="PlotScrollTip">Scroll through buffered history</system:String>
+    <system:String x:Key="PlotAutoYTip">Auto-fit Y axis (click to toggle manual/auto)</system:String>
     <system:String x:Key="RefreshIpList">Refresh IP</system:String>
     <system:String x:Key="StartListen">Start listen</system:String>
     <system:String x:Key="StopListen">Stop listen</system:String>

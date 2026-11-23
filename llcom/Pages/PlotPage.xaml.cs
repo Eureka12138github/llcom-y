@@ -46,6 +46,13 @@ public partial class PlotPage : Page
     //代码更新滑块时忽略 ValueChanged，避免和坐标轴互相触发
     private bool _updatingScrollBar;
 
+    //Y 轴自动适配；手动缩放 Y 后关闭，双击/查看全局/Y 按钮恢复
+    private bool _autoFitY = true;
+    private bool _updatingAutoYToggle;
+
+    //把右侧刻度同步到左侧（数据）Y 轴时防止重复触发
+    private bool _syncingRightAxis;
+
     private ScottPlot.Plottable.Crosshair? ch = null;
     private readonly ScottPlot.Styles.IStyle[] Styles = ScottPlot.Style.GetStyles();
     private int StyleNow = -1;
@@ -103,24 +110,33 @@ public partial class PlotPage : Page
             }
         };
 
-        //鼠标滚轮只缩放 X 轴（查看历史），不改 Y 轴；左键拖动会退出自动跟随
+        //滚轮按鼠标位置缩放：绘图区默认只缩 X，底部 X 刻度区缩 X，右侧 Y 刻度区缩 Y；
+        //绘图区 Ctrl+滚轮只缩 Y、Alt+滚轮同时缩 X/Y。左键拖动会退出自动跟随/Y 自动适配
         Plot.PreviewMouseWheel += Plot_PreviewMouseWheel;
         Plot.PreviewMouseMove += (_, e) =>
         {
             if (e.LeftButton == MouseButtonState.Pressed)
+            {
                 _autoFollow = false;
+                SetAutoFitY(false);
+            }
         };
-        //双击图表恢复跟随最新点
+        //双击图表恢复跟随最新点，并恢复 Y 轴自动适配
         Plot.PreviewMouseDoubleClick += (_, _) =>
         {
             _autoFollow = true;
+            SetAutoFitY(true);
             FitLatestView();
         };
 
         llcom.Services.ThemeService.ThemeChanged += (_, _) => ApplyTheme();
 
-        //鼠标拖动/程序改坐标后同步底部滑块
-        Plot.AxesChanged += (_, _) => UpdateScrollBarFromView();
+        //鼠标拖动/框选缩放后：让右侧刻度跟随数据轴，并同步底部滑块
+        Plot.AxesChanged += (_, _) =>
+        {
+            SyncRightAxisLimits();
+            UpdateScrollBarFromView();
+        };
 
         _refreshTimer.Tick += (_, _) => RefreshTick();
         if (IsVisible)
@@ -196,6 +212,13 @@ public partial class PlotPage : Page
 
         _autoFollow = true;
         _followWindowPoints = ViewPoints;
+        _autoFitY = true;
+        if (PlotAutoYButton.IsChecked != true)
+        {
+            _updatingAutoYToggle = true;
+            PlotAutoYButton.IsChecked = true;
+            _updatingAutoYToggle = false;
+        }
         ApplyTheme();
         FitLatestView();
     }
@@ -397,82 +420,210 @@ public partial class PlotPage : Page
             xMax = xMin + 1;
 
         Plot.Plot.SetAxisLimitsX(xMin, xMax);
-        FitY(xMin, xMax);
+        if (_autoFitY)
+            FitY(xMin, xMax);
         UpdateRenderIndices();
         UpdateScrollBarFromView();
         Refresh();
     }
 
     /// <summary>
-    /// 滚轮只缩放 X 轴，并限制在已保留的数据范围内：
-    /// 既能向左查看历史，也不会把 Y 轴一起缩小导致波形变成一小块。
+    /// 按鼠标所在区域缩放：
+    /// 绘图区默认只缩放 X（保持跟随最新），Ctrl 只缩放 Y，Alt 同时缩放 X/Y；
+    /// 底部 X 刻度区只缩放 X，右侧 Y 刻度区只缩放 Y（并关闭 Y 自动适配）。
+    /// 缩放围绕鼠标位置进行，且限制在已保留的数据范围内。
     /// </summary>
     private void Plot_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
     {
         if (_buffer == null || !TryGetDataXRange(out var dataMin, out var dataMax))
             return;
 
+        var zone = GetPlotZone(e.GetPosition(Plot));
+        var ctrl = (Keyboard.Modifiers & ModifierKeys.Control) != 0;
+        var alt = (Keyboard.Modifiers & ModifierKeys.Alt) != 0;
+
+        bool zoomX;
+        bool zoomY;
+        if (zone == PlotZone.XAxis)
+        {
+            zoomX = true;
+            zoomY = false;
+        }
+        else if (zone == PlotZone.YAxis)
+        {
+            zoomX = false;
+            zoomY = true;
+        }
+        else
+        {
+            //绘图区：默认只缩放 X；Ctrl 只缩放 Y；Alt 同时缩放 X/Y
+            zoomX = alt || !ctrl;
+            zoomY = alt || ctrl;
+        }
+
         var limits = Plot.Plot.GetAxisLimits();
         var width = limits.XMax - limits.XMin;
         if (width <= 0)
             width = ViewPoints;
+        var height = limits.YMax - limits.YMin;
+        if (height <= 0)
+            height = 1;
 
-        var wasFollowing = _autoFollow;
         var factor = e.Delta > 0 ? 0.8 : 1.25;
-        var minWidth = 5.0;
-        var maxWidth = Math.Max(minWidth, dataMax - dataMin);
-        var newWidth = Math.Max(minWidth, Math.Min(maxWidth, width * factor));
+        var mouse = Plot.GetMouseCoordinates();
+        double? newXMin = null;
+        double? newXMax = null;
+        double? newYMin = null;
+        double? newYMax = null;
 
-        double xMin;
-        double xMax;
-        if (wasFollowing)
+        if (zoomX)
         {
-            //正在跟随最新点时，滚轮只改变窗口宽度，仍把最新点固定在右边缘；
-            //这样缩放后曲线会继续滚动，不会停在原地。
-            xMax = dataMax;
-            xMin = xMax - newWidth + 1;
-            if (xMin < dataMin)
+            var minWidth = 5.0;
+            var maxWidth = Math.Max(minWidth, dataMax - dataMin);
+            var newWidth = Math.Max(minWidth, Math.Min(maxWidth, width * factor));
+
+            double xMin;
+            double xMax;
+            if (_autoFollow)
             {
-                xMin = dataMin;
-                xMax = xMin + newWidth;
-            }
-            if (xMax > dataMax)
-            {
+                //跟随最新点时，滚轮只改变窗口宽度，最新点仍在右边缘
                 xMax = dataMax;
-                xMin = xMax - newWidth;
+                xMin = xMax - newWidth + 1;
+                if (xMin < dataMin)
+                {
+                    xMin = dataMin;
+                    xMax = xMin + newWidth;
+                }
+                if (xMax > dataMax)
+                {
+                    xMax = dataMax;
+                    xMin = xMax - newWidth;
+                }
             }
+            else
+            {
+                //已手动拖动/查看全局后，围绕鼠标位置缩放
+                var ratio = (mouse.x - limits.XMin) / width;
+                if (ratio < 0)
+                    ratio = 0;
+                if (ratio > 1)
+                    ratio = 1;
+
+                xMin = mouse.x - newWidth * ratio;
+                xMax = xMin + newWidth;
+                if (xMin < dataMin)
+                {
+                    xMin = dataMin;
+                    xMax = xMin + newWidth;
+                }
+                if (xMax > dataMax)
+                {
+                    xMax = dataMax;
+                    xMin = xMax - newWidth;
+                }
+            }
+
+            _followWindowPoints = (int)Math.Max(10, Math.Round(xMax - xMin + 1));
+            newXMin = xMin;
+            newXMax = xMax;
         }
-        else
+
+        if (zoomY)
         {
-            //已经手动拖动/查看全局后，围绕鼠标位置缩放
-            var mouse = Plot.GetMouseCoordinates();
-            var ratio = (mouse.x - limits.XMin) / width;
+            var newHeight = Math.Max(1e-6, height * factor);
+            var ratio = (mouse.y - limits.YMin) / height;
             if (ratio < 0)
                 ratio = 0;
             if (ratio > 1)
                 ratio = 1;
 
-            xMin = mouse.x - newWidth * ratio;
-            xMax = xMin + newWidth;
-            if (xMin < dataMin)
-            {
-                xMin = dataMin;
-                xMax = xMin + newWidth;
-            }
-            if (xMax > dataMax)
-            {
-                xMax = dataMax;
-                xMin = xMax - newWidth;
-            }
+            var yMin = mouse.y - newHeight * ratio;
+            var yMax = yMin + newHeight;
+            newYMin = yMin;
+            newYMax = yMax;
         }
 
-        //记住当前缩放宽度，双击/重新开始绘制时按这个宽度继续跟随
-        _followWindowPoints = (int)Math.Max(10, Math.Round(xMax - xMin + 1));
-        Plot.Plot.SetAxisLimitsX(xMin, xMax);
+        if (newXMin.HasValue && newXMax.HasValue)
+            Plot.Plot.SetAxisLimitsX(newXMin.Value, newXMax.Value);
+
+        if (newYMin.HasValue && newYMax.HasValue)
+        {
+            SetYAxisLimits(newYMin.Value, newYMax.Value);
+            SetAutoFitY(false);
+        }
+        else if (newXMin.HasValue && newXMax.HasValue && _autoFitY)
+        {
+            //X 缩放后让 Y 自动适配新的可见范围（Y 自动开启时）
+            FitY(newXMin.Value, newXMax.Value);
+        }
+
         UpdateRenderIndices();
         UpdateScrollBarFromView();
         Refresh();
         e.Handled = true;
+    }
+
+    private enum PlotZone
+    {
+        Data,
+        XAxis,
+        YAxis,
+    }
+
+    /// <summary>
+    /// 判断鼠标在绘图区、底部 X 轴区域还是右侧 Y 轴区域。
+    /// 用 ScottPlot 的数据区像素边界，并按 DPI 缩放换算鼠标坐标。
+    /// </summary>
+    private PlotZone GetPlotZone(Point position)
+    {
+        if (Plot.Plot.Width <= 0 || Plot.ActualWidth <= 0 || Plot.ActualHeight <= 0)
+            return PlotZone.Data;
+
+        var scaleX = Plot.Plot.Width / Plot.ActualWidth;
+        var scaleY = Plot.Plot.Height / Plot.ActualHeight;
+        var px = position.X * scaleX;
+        var py = position.Y * scaleY;
+
+        var limits = Plot.Plot.GetAxisLimits();
+        var right = Plot.Plot.GetPixelX(limits.XMax);
+        var bottom = Plot.Plot.GetPixelY(limits.YMin);
+
+        if (px > right)
+            return PlotZone.YAxis;
+        if (py > bottom)
+            return PlotZone.XAxis;
+        return PlotZone.Data;
+    }
+
+    private void SetYAxisLimits(double min, double max)
+    {
+        Plot.Plot.SetAxisLimitsY(min, max, 0);
+        Plot.Plot.SetAxisLimitsY(min, max, Plot.Plot.RightAxis.AxisIndex);
+    }
+
+    /// <summary>右侧刻度只负责显示：鼠标拖动/框选缩放后让它跟随左侧数据轴的 Y 范围。</summary>
+    private void SyncRightAxisLimits()
+    {
+        if (_syncingRightAxis)
+            return;
+
+        var limits = Plot.Plot.GetAxisLimits();
+        if (double.IsNaN(limits.YMin) || double.IsNaN(limits.YMax))
+            return;
+
+        _syncingRightAxis = true;
+        try
+        {
+            Plot.Plot.SetAxisLimitsY(
+                limits.YMin,
+                limits.YMax,
+                Plot.Plot.RightAxis.AxisIndex
+            );
+        }
+        finally
+        {
+            _syncingRightAxis = false;
+        }
     }
 
     /// <summary>所有线当前保留数据的最旧/最新绝对样本序号。</summary>
@@ -572,8 +723,38 @@ public partial class PlotPage : Page
             max += padding;
         }
 
-        Plot.Plot.SetAxisLimitsY(min, max, 0);
-        Plot.Plot.SetAxisLimitsY(min, max, Plot.Plot.RightAxis.AxisIndex);
+        SetYAxisLimits(min, max);
+    }
+
+    private void PlotAutoY_Checked(object sender, RoutedEventArgs e)
+    {
+        if (!_updatingAutoYToggle)
+            SetAutoFitY(true);
+    }
+
+    private void PlotAutoY_Unchecked(object sender, RoutedEventArgs e)
+    {
+        if (!_updatingAutoYToggle)
+            SetAutoFitY(false);
+    }
+
+    /// <summary>切换 Y 轴自动适配；手动缩放 Y 后自动关闭，按钮/双击/查看全局可恢复。</summary>
+    private void SetAutoFitY(bool enabled)
+    {
+        _autoFitY = enabled;
+        if (PlotAutoYButton != null && PlotAutoYButton.IsChecked != enabled)
+        {
+            _updatingAutoYToggle = true;
+            PlotAutoYButton.IsChecked = enabled;
+            _updatingAutoYToggle = false;
+        }
+
+        if (enabled && _buffer != null)
+        {
+            var limits = Plot.Plot.GetAxisLimits();
+            FitY(limits.XMin, limits.XMax);
+            Refresh();
+        }
     }
 
     /// <summary>把当前 X 轴窗口同步到底部历史滑块（滑块表示已保留的全部数据）。</summary>
@@ -655,6 +836,8 @@ public partial class PlotPage : Page
         _autoFollow = value >= maxValue - 0.5;
         _followWindowPoints = (int)Math.Max(10, Math.Round(viewPoints));
         Plot.Plot.SetAxisLimitsX(xMin, xMax);
+        if (_autoFitY)
+            FitY(xMin, xMax);
         UpdateRenderIndices();
         UpdateScrollBarFromView();
         Refresh();
@@ -684,6 +867,7 @@ public partial class PlotPage : Page
 
         _autoFollow = true;
         _followWindowPoints = ViewPoints;
+        SetAutoFitY(true);
         FitLatestView();
         if (IsVisible && !_refreshTimer.IsEnabled)
             _refreshTimer.Start();
@@ -727,6 +911,7 @@ public partial class PlotPage : Page
         if (StyleNow >= Styles.Length)
             StyleNow = 0;
         Plot.Plot.Style(Styles[StyleNow]);
+        ConfigureAxes();
         Refresh();
     }
 
@@ -735,11 +920,18 @@ public partial class PlotPage : Page
         //查看当前保留的全部历史；之后滚轮/拖动可继续查看局部
         DrainPendingPoints();
         _autoFollow = false;
+        SetAutoFitY(true);
         FitAllView();
     }
 
     private void Plot_MouseMove(object sender, MouseEventArgs e)
     {
+        var zone = GetPlotZone(e.GetPosition(Plot));
+        Plot.Cursor =
+            zone == PlotZone.XAxis ? Cursors.SizeWE
+            : zone == PlotZone.YAxis ? Cursors.SizeNS
+            : Cursors.Arrow;
+
         var p = Plot.GetMouseCoordinates();
         if (ch == null)
             return;
