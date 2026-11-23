@@ -181,6 +181,9 @@ namespace llcom.LuaEnv
 
         public static event EventHandler<Model.LinePlotPoint>? LinePlotAdd;
 
+        /// <summary>脚本重新开始时通知曲线页清空旧数据。</summary>
+        public static event EventHandler? LinePlotClear;
+
         /// <summary>
         /// 画点
         /// </summary>
@@ -190,6 +193,9 @@ namespace llcom.LuaEnv
         {
             LinePlotAdd?.Invoke(null, new Model.LinePlotPoint { N = n, Line = l });
         }
+
+        /// <summary>请求曲线页清空当前数据（由脚本运行环境在重新运行时调用）。</summary>
+        public static void ClearLinePlot() => LinePlotClear?.Invoke(null, EventArgs.Empty);
 
         /// <summary>
         /// 发送通道的回调函数

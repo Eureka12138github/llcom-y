@@ -126,6 +126,32 @@ partial class Settings
         }
     }
 
+    /// <summary>曲线工具保留点数下限</summary>
+    public const int PlotHistoryPointsMin = 10000;
+
+    /// <summary>曲线工具保留点数上限</summary>
+    public const int PlotHistoryPointsMax = 100000;
+
+    private int _plotHistoryPoints = 20000;
+
+    /// <summary>
+    /// 曲线工具每条线保留多少个历史点（范围 10000~100000，默认 20000）。
+    /// 修改后曲线页会清空并按新容量重建。
+    /// </summary>
+    public int plotHistoryPoints
+    {
+        get => _plotHistoryPoints;
+        set
+        {
+            var v =
+                value < PlotHistoryPointsMin ? PlotHistoryPointsMin
+                : value > PlotHistoryPointsMax ? PlotHistoryPointsMax
+                : value;
+            if (SetProperty(ref _plotHistoryPoints, v))
+                Save();
+        }
+    }
+
     private bool _recvShowHex = true;
 
     /// <summary>

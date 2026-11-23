@@ -252,6 +252,13 @@ namespace llcom.LuaEnv
         /// </summary>
         public static void New(string file)
         {
+            //重新运行前先停掉上一次的脚本和定时器，避免旧的持续脚本继续产生数据
+            if (isRunning)
+                StopLua("");
+
+            //新脚本从空白曲线开始，避免和上一次运行的数据混在一起
+            LuaApis.ClearLinePlot();
+
             canRun = false;
             isRunning = true;
             currentScript = Path.GetFileNameWithoutExtension(file);

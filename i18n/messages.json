@@ -582,6 +582,14 @@
       "zh-CN": "流式模式（分包数据超时设为负数）最多保留多少字符，超过后自动丢弃最早的文本；范围 100000~10000000",
       "en-US": "Max characters kept in stream mode (pack timeout < 0); oldest text is dropped. Range 100000~10000000"
     },
+    "SettingPlotHistoryPoints": {
+      "zh-CN": "曲线保留点数：",
+      "en-US": "Chart history points:"
+    },
+    "SettingPlotHistoryPointsTip": {
+      "zh-CN": "每条曲线保留的历史点数（10000~100000，默认 20000）；默认显示最近 1000 点，缩小后可查看更早的数据。修改后会清空当前曲线。",
+      "en-US": "History points kept per curve (10000~100000, default 20000); the view starts with the latest 1000 points and zooming out shows older data. Changing this clears the current curves."
+    },
     "SettingTerminal": {
       "zh-CN": "终端模式（在日志区直接键盘发送）",
       "en-US": "Terminal mode (type directly in the log area)"
@@ -1177,6 +1185,22 @@
     "PlotTheme": {
       "zh-CN": "切换主题",
       "en-US": "Theme"
+    },
+    "PlotStart": {
+      "zh-CN": "开始绘制",
+      "en-US": "Start plotting"
+    },
+    "PlotStop": {
+      "zh-CN": "停止绘制",
+      "en-US": "Stop plotting"
+    },
+    "PlotScrollTip": {
+      "zh-CN": "拖动查看缓冲区中的历史曲线",
+      "en-US": "Scroll through buffered history"
+    },
+    "PlotAutoYTip": {
+      "zh-CN": "Y 轴自动适配（点击切换手动/自动）",
+      "en-US": "Auto-fit Y axis (click to toggle manual/auto)"
     },
     "RefreshIpList": {
       "zh-CN": "刷新IP",

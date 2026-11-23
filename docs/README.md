@@ -24,6 +24,7 @@
 | [18-dlt645-frame-parser.md](18-dlt645-frame-parser.md) | DL/T 645-2007 帧解析基础：帧结构、控制码、ERR、常用功能数据域与 80% 实现范围 | 做 645 帧解析前先读 |
 | [19-serial-monitor-bypass-plan.md](19-serial-monitor-bypass-plan.md) | 串口监听旁路方案计划：B′ com0com + hub4com 分流（先做）/ C USBPcap 抓包（兜底）/ E′ 485 旁听（备查），含现状归因、开源同类软件调研、风险（com0com 签名）与验收清单（**仅计划，未改代码**） | 做抗反注入的串口监听时 |
 | [20-log-format-hex-string-plan.md](20-log-format-hex-string-plan.md) | 日志文件区分 Hex / 字符串与 TX/RX 方向的改进计划：现状、原因、两种格式方案与验收标准（**仅计划，未改代码**） | 改进日志可读性时 |
+| [21-verification-playbook.md](21-verification-playbook.md) | Agent 可用的验证手段、限制、自动/手动分工约定与标准模板 | 每次改动后决定怎么验证 |
 | [improvements/](improvements/README.md) | 使用过程中的需求、体验问题与优化方向记录（持续收集） | 记录/评估改进建议 |
 
 ## 分支说明
