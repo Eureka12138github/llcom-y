@@ -37,8 +37,11 @@ public partial class PlotPage : Page
     private volatile bool _acceptPoints;
     private bool _plotEnabled = true;
 
-    //自动跟随最新点；鼠标滚轮/拖动后关闭，双击或重新开始绘制恢复
+    //自动跟随最新点；滚轮只改变跟随窗口宽度，拖动/查看全局后关闭，双击或重新开始绘制恢复
     private bool _autoFollow = true;
+
+    //自动跟随时显示的窗口点数（滚轮缩放会改变它，默认 1000）
+    private int _followWindowPoints = ViewPoints;
 
     private ScottPlot.Plottable.Crosshair? ch = null;
     private readonly ScottPlot.Styles.IStyle[] Styles = ScottPlot.Style.GetStyles();
@@ -186,6 +189,7 @@ public partial class PlotPage : Page
         ch.LineWidth = 2;
 
         _autoFollow = true;
+        _followWindowPoints = ViewPoints;
         ApplyTheme();
         FitLatestView();
     }
@@ -342,16 +346,17 @@ public partial class PlotPage : Page
             return;
 
         var latest = _buffer.LatestX;
+        var window = Math.Max(10, _followWindowPoints);
         double xMin;
         double xMax;
         if (latest < 0)
         {
-            xMin = -ViewPoints + 1;
+            xMin = -window + 1;
             xMax = 0;
         }
         else
         {
-            //数据不足 ViewPoints 时从最旧点开始，避免左边出现一大块空白
+            //数据不足窗口点数时从最旧点开始，避免左边出现一大块空白
             var dataMin = long.MaxValue;
             for (var line = 0; line < PlotBuffer.LineCount; line++)
             {
@@ -360,7 +365,7 @@ public partial class PlotPage : Page
             }
 
             xMax = latest;
-            xMin = Math.Max(dataMin, latest - ViewPoints + 1);
+            xMin = Math.Max(dataMin, latest - window + 1);
         }
         if (xMax <= xMin)
             xMax = xMin + 1;
@@ -385,32 +390,57 @@ public partial class PlotPage : Page
         if (width <= 0)
             width = ViewPoints;
 
+        var wasFollowing = _autoFollow;
         var factor = e.Delta > 0 ? 0.8 : 1.25;
         var minWidth = 5.0;
         var maxWidth = Math.Max(minWidth, dataMax - dataMin);
         var newWidth = Math.Max(minWidth, Math.Min(maxWidth, width * factor));
 
-        var mouse = Plot.GetMouseCoordinates();
-        var ratio = (mouse.x - limits.XMin) / width;
-        if (ratio < 0)
-            ratio = 0;
-        if (ratio > 1)
-            ratio = 1;
-
-        var xMin = mouse.x - newWidth * ratio;
-        var xMax = xMin + newWidth;
-        if (xMin < dataMin)
+        double xMin;
+        double xMax;
+        if (wasFollowing)
         {
-            xMin = dataMin;
-            xMax = xMin + newWidth;
-        }
-        if (xMax > dataMax)
-        {
+            //正在跟随最新点时，滚轮只改变窗口宽度，仍把最新点固定在右边缘；
+            //这样缩放后曲线会继续滚动，不会停在原地。
             xMax = dataMax;
-            xMin = xMax - newWidth;
+            xMin = xMax - newWidth + 1;
+            if (xMin < dataMin)
+            {
+                xMin = dataMin;
+                xMax = xMin + newWidth;
+            }
+            if (xMax > dataMax)
+            {
+                xMax = dataMax;
+                xMin = xMax - newWidth;
+            }
+        }
+        else
+        {
+            //已经手动拖动/查看全局后，围绕鼠标位置缩放
+            var mouse = Plot.GetMouseCoordinates();
+            var ratio = (mouse.x - limits.XMin) / width;
+            if (ratio < 0)
+                ratio = 0;
+            if (ratio > 1)
+                ratio = 1;
+
+            xMin = mouse.x - newWidth * ratio;
+            xMax = xMin + newWidth;
+            if (xMin < dataMin)
+            {
+                xMin = dataMin;
+                xMax = xMin + newWidth;
+            }
+            if (xMax > dataMax)
+            {
+                xMax = dataMax;
+                xMin = xMax - newWidth;
+            }
         }
 
-        _autoFollow = false;
+        //记住当前缩放宽度，双击/重新开始绘制时按这个宽度继续跟随
+        _followWindowPoints = (int)Math.Max(10, Math.Round(xMax - xMin + 1));
         Plot.Plot.SetAxisLimitsX(xMin, xMax);
         UpdateRenderIndices();
         Refresh();
@@ -539,6 +569,7 @@ public partial class PlotPage : Page
         }
 
         _autoFollow = true;
+        _followWindowPoints = ViewPoints;
         FitLatestView();
         if (IsVisible && !_refreshTimer.IsEnabled)
             _refreshTimer.Start();
