@@ -256,6 +256,9 @@ namespace llcom.LuaEnv
             if (isRunning)
                 StopLua("");
 
+            //新脚本从空白曲线开始，避免和上一次运行的数据混在一起
+            LuaApis.ClearLinePlot();
+
             canRun = false;
             isRunning = true;
             currentScript = Path.GetFileNameWithoutExtension(file);

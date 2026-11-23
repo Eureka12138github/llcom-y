@@ -176,8 +176,8 @@
       />
       <TextBlock Style="{StaticResource HelpP}" Text="数据来源：脚本里调用 apiAddPoint(值, 线号) 上报数据点；线号 0~9，最多同时显示 10 条曲线。每次调用把一个点追加到对应曲线的末端。" />
       <TextBlock Style="{StaticResource HelpP}" Text="X / Y 轴：X 轴是「最近 1000 个样本点」的滚动窗口，不是时间轴；数据不足 1000 点时按实际点数自动缩放，填满后固定为 1000 点。Y 轴在填充阶段自动适配，之后可用「查看全图」重新适配；也可用鼠标滚轮缩放、拖动平移。窗口最大化或调整右侧栏宽度时会自动按当前数据适配；如果手动缩放后波形变小，点「查看全图」即可复位。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="按钮：查看全图 = 按当前实际数据同时适配 X/Y 轴；清空图表 = 把所有曲线数据归零；切换主题 = 循环切换绘图区配色，应用深/浅色主题时也会自动跟随。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="交互与限制：只有「工具 → 曲线」页面可见时才记录数据，切到其他页面期间的点会直接丢弃，回到曲线页后从当前收到的点继续画（不补画之前的点）；鼠标在图上移动时十字准线跟随，便于对齐曲线；每条曲线最多保留 1000 个点，超出后丢弃最早的点；数据只保存在内存中，重启软件或重新加载工具页后清空；当前没有图例、暂停和导出功能。" />
+      <TextBlock Style="{StaticResource HelpP}" Text="按钮：查看全图 = 按当前实际数据同时适配 X/Y 轴；清空图表 = 把所有曲线数据归零；切换主题 = 循环切换绘图区配色，应用深/浅色主题时也会自动跟随；最右侧的暂停/播放图标 = 停止/开始绘制（只冻结画面，不影响脚本运行）。" />
+      <TextBlock Style="{StaticResource HelpP}" Text="交互与限制：只有「工具 → 曲线」页面可见且处于「开始绘制」状态时才记录数据，切到其他页面期间的点会直接丢弃，回到曲线页后从当前收到的点继续画（不补画之前的点）；重新运行脚本会清空旧曲线，从空白开始；鼠标在图上移动时十字准线跟随，便于对齐曲线；每条曲线最多保留 1000 个点，超出后丢弃最早的点；数据只保存在内存中，重启软件或重新加载工具页后清空；当前没有图例和导出功能。" />
       <TextBlock Style="{StaticResource HelpP}" Text="示例：默认脚本「绘制曲线演示.lua」会持续生成两条不同振幅的正弦/余弦波形，直到你手动停止脚本；只有切到曲线页后才开始绘制，适合边跑边看。也可以在自己的脚本里用 sys.taskInit + sys.wait(...) 周期调用 apiAddPoint，完整示例见 LuaApi.md 的 apiAddPoint 一节。" />
 
       <TextBlock Style="{StaticResource HelpH}" Text="十、更多设置（点日志区右下角 ☰ 直接打开，鼠标移入才显示）" />
@@ -344,8 +344,8 @@
         />
         <TextBlock Style="{StaticResource HelpP}" Text="Data source: call apiAddPoint(value, line) from Lua; line is 0-9 (up to 10 curves). Each call appends one point to the end of that curve." />
         <TextBlock Style="{StaticResource HelpP}" Text="Axes: X is a rolling window of the latest 1000 samples (not wall-clock time). While fewer than 1000 points exist, X scales to the actual point count; Y auto-fits while the data fills, and Fit rescales both X and Y later. The mouse wheel zooms and dragging pans; maximizing the window or resizing the pane auto-fits the current data, and Fit resets a manually zoomed view." />
-        <TextBlock Style="{StaticResource HelpP}" Text="Buttons: Fit = rescale X and Y to the current data; Clear = set all curve data to zero; Theme = cycle the chart color styles, and the chart also follows the app light/dark theme." />
-        <TextBlock Style="{StaticResource HelpP}" Text="Interaction and limits: data is recorded only while the Chart page is visible; points received while you are on another page are discarded and are not replayed when you come back. The crosshair follows the mouse to help align curves; each curve keeps at most 1000 points (oldest points are dropped); data lives in memory only and is cleared when the app restarts or the tool page reloads; there is no legend, pause or export yet." />
+        <TextBlock Style="{StaticResource HelpP}" Text="Buttons: Fit = rescale X and Y to the current data; Clear = set all curve data to zero; Theme = cycle the chart color styles, and the chart also follows the app light/dark theme; the pause/play icon at the far right stops/starts plotting (it only freezes the view, the script keeps running)." />
+        <TextBlock Style="{StaticResource HelpP}" Text="Interaction and limits: data is recorded only while the Chart page is visible and plotting is started; points received while you are on another page are discarded and are not replayed when you come back. Re-running a script clears the old curves and starts from blank. The crosshair follows the mouse to help align curves; each curve keeps at most 1000 points (oldest points are dropped); data lives in memory only and is cleared when the app restarts or the tool page reloads; there is no legend or export yet." />
         <TextBlock Style="{StaticResource HelpP}" Text="Example: the default script 绘制曲线演示.lua keeps generating two sine/cosine curves until you stop it; it starts drawing only after you switch to the Chart page, so you can watch it live. You can also call apiAddPoint periodically in your own script (see the apiAddPoint section in LuaApi.md)." />
 
         <TextBlock Style="{StaticResource HelpH}" Text="10. More settings (click ☰ at the bottom-right of the log area; shown on hover)" />

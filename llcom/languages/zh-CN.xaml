@@ -296,6 +296,8 @@
     <system:String x:Key="PlotFit">查看全局</system:String>
     <system:String x:Key="PlotClear">清空图像</system:String>
     <system:String x:Key="PlotTheme">切换主题</system:String>
+    <system:String x:Key="PlotStart">开始绘制</system:String>
+    <system:String x:Key="PlotStop">停止绘制</system:String>
     <system:String x:Key="RefreshIpList">刷新IP</system:String>
     <system:String x:Key="StartListen">开始监听</system:String>
     <system:String x:Key="StopListen">停止监听</system:String>

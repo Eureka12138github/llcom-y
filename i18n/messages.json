@@ -1178,6 +1178,14 @@
       "zh-CN": "切换主题",
       "en-US": "Theme"
     },
+    "PlotStart": {
+      "zh-CN": "开始绘制",
+      "en-US": "Start plotting"
+    },
+    "PlotStop": {
+      "zh-CN": "停止绘制",
+      "en-US": "Stop plotting"
+    },
     "RefreshIpList": {
       "zh-CN": "刷新IP",
       "en-US": "Refresh IP"

@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using FontAwesomeIcon = FontAwesome.WPF.FontAwesomeIcon;
 using ScottPlot;
 
 namespace llcom.Pages;
@@ -39,6 +40,9 @@ public partial class PlotPage : Page
     //只有曲线页可见时才接收点；切走期间的数据直接丢弃，不做回放
     private volatile bool _acceptPoints;
 
+    //曲线页自己的开始/停止绘制开关；停止时冻结当前画面，但不影响脚本运行
+    private bool _plotEnabled = true;
+
     private ScottPlot.Plottable.Crosshair? ch = null;
 
     private readonly ScottPlot.Styles.IStyle[] Styles = ScottPlot.Style.GetStyles();
@@ -63,7 +67,17 @@ public partial class PlotPage : Page
     private void Page_Loaded(object sender, RoutedEventArgs e)
     {
         if (!first)
+        {
+            //页面被重新加载时恢复刷新；之前 Unloaded 会停掉定时器
+            if (IsVisible)
+            {
+                _acceptPoints = _plotEnabled;
+                if (!_refreshTimer.IsEnabled)
+                    _refreshTimer.Start();
+                FitView();
+            }
             return;
+        }
         first = false;
 
         DataX = new double[MaxPoints];
@@ -96,18 +110,21 @@ public partial class PlotPage : Page
         llcom.Services.ThemeService.ThemeChanged += (_, _) => ApplyTheme();
 
         _refreshTimer.Tick += (_, _) => RefreshTick();
-        _refreshTimer.Start();
+        if (IsVisible)
+            _refreshTimer.Start();
         Unloaded += (_, _) => _refreshTimer.Stop();
 
-        //只有曲线页可见时才记录；切走时丢弃排队点，回来也不补画
-        _acceptPoints = IsVisible;
+        //只有曲线页可见且处于“开始绘制”状态时才记录；切走时丢弃排队点，回来也不补画
+        _acceptPoints = IsVisible && _plotEnabled;
         IsVisibleChanged += (_, _) =>
         {
             if (IsVisible)
             {
                 //先丢掉切走期间可能残留的点，再开始接收当前数据
                 _pendingPoints = new ConcurrentQueue<(double Value, int Line)>();
-                _acceptPoints = true;
+                _acceptPoints = _plotEnabled;
+                if (!_refreshTimer.IsEnabled)
+                    _refreshTimer.Start();
                 FitView();
                 _lastFitUtc = DateTime.UtcNow;
                 if (_maxPointCount >= MaxPoints)
@@ -117,6 +134,7 @@ public partial class PlotPage : Page
             {
                 _acceptPoints = false;
                 _pendingPoints = new ConcurrentQueue<(double Value, int Line)>();
+                _refreshTimer.Stop();
             }
         };
 
@@ -127,6 +145,10 @@ public partial class PlotPage : Page
                 return;
             _pendingPoints.Enqueue((e.N, e.Line));
         };
+
+        //重新运行脚本时从空白曲线开始，避免旧数据和新数据混在一起
+        LuaEnv.LuaApis.LinePlotClear += (_, _) =>
+            Dispatcher.BeginInvoke(new Action(ClearPlot));
     }
 
     /// <summary>让 ScottPlot 跟随应用主题（深色用 Black 风格）。</summary>
@@ -164,7 +186,7 @@ public partial class PlotPage : Page
         if (added > 0)
             NeedRefresh = true;
 
-        //数据填充阶段自动缩放，但限制为每 500ms 一次，避免坐标轴持续抖动
+        //数据填充阶段自动缩放，但限制为每 250ms 一次，避免坐标轴持续抖动
         if (
             added > 0
             && !_autoFitDone
@@ -283,7 +305,9 @@ public partial class PlotPage : Page
         Refresh();
     }
 
-    private void ClearButton_Click(object sender, RoutedEventArgs e)
+    private void ClearButton_Click(object sender, RoutedEventArgs e) => ClearPlot();
+
+    private void ClearPlot()
     {
         _pendingPoints = new ConcurrentQueue<(double Value, int Line)>();
         for (int i = 0; i < Data.Length; i++)
@@ -304,6 +328,38 @@ public partial class PlotPage : Page
             ch.Y = 0;
         }
         FitView();
+        if (IsVisible && !_refreshTimer.IsEnabled)
+            _refreshTimer.Start();
+        NeedRefresh = true;
+    }
+
+    private void PlotToggleButton_Click(object sender, RoutedEventArgs e) =>
+        SetPlotEnabled(!_plotEnabled);
+
+    private void SetPlotEnabled(bool enabled)
+    {
+        _plotEnabled = enabled;
+        var text =
+            TryFindResource(enabled ? "PlotStop" : "PlotStart") as string
+            ?? (enabled ? "Stop plotting" : "Start plotting");
+        PlotToggleIcon.Icon = enabled ? FontAwesomeIcon.Pause : FontAwesomeIcon.Play;
+        PlotToggleButton.ToolTip = text;
+        System.Windows.Automation.AutomationProperties.SetName(PlotToggleButton, text);
+
+        if (enabled)
+        {
+            _pendingPoints = new ConcurrentQueue<(double Value, int Line)>();
+            _acceptPoints = IsVisible;
+            if (IsVisible && !_refreshTimer.IsEnabled)
+                _refreshTimer.Start();
+            FitView();
+        }
+        else
+        {
+            _acceptPoints = false;
+            _pendingPoints = new ConcurrentQueue<(double Value, int Line)>();
+            NeedRefresh = true;
+        }
     }
 
     private void ThemeButton_Click(object sender, RoutedEventArgs e)

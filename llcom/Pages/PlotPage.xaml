@@ -4,6 +4,7 @@
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:fa="http://schemas.fontawesome.io/icons/"
   xmlns:local="clr-namespace:llcom.Pages"
   mc:Ignorable="d"
   d:DesignHeight="440"
@@ -21,6 +22,7 @@
         <ColumnDefinition Width="*" />
         <ColumnDefinition Width="*" />
         <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto" />
       </Grid.ColumnDefinitions>
       <Button Content="{DynamicResource PlotFit}" Margin="2" Click="RefreshButton_Click" />
       <Button
@@ -35,6 +37,17 @@
         Margin="2"
         Click="ThemeButton_Click"
       />
+      <Button
+        Name="PlotToggleButton"
+        Grid.Column="3"
+        Margin="2,2,0,2"
+        AutomationProperties.Name="{DynamicResource PlotStop}"
+        Click="PlotToggleButton_Click"
+        Style="{StaticResource IconButton}"
+        ToolTip="{DynamicResource PlotStop}"
+      >
+        <fa:FontAwesome Name="PlotToggleIcon" FontSize="14" Icon="Pause" />
+      </Button>
     </Grid>
     <Grid Grid.Row="1">
       <WpfPlot Name="Plot" MouseMove="Plot_MouseMove" />
