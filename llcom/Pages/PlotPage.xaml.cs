@@ -32,8 +32,9 @@ public partial class PlotPage : Page
     private bool _autoFitDone;
     private DateTime _lastFitUtc = DateTime.MinValue;
 
-    //Lua 线程只入队，UI 定时器统一消费
-    private readonly ConcurrentQueue<(double Value, int Line)> _pendingPoints = new();
+    //Lua 线程只入队，UI 定时器统一消费；限制积压量，避免脚本异常刷点时把 UI 拖死
+    private const int MaxPendingPoints = 4096;
+    private ConcurrentQueue<(double Value, int Line)> _pendingPoints = new();
 
     //只有曲线页可见时才接收点；切走期间的数据直接丢弃，不做回放
     private volatile bool _acceptPoints;
@@ -49,7 +50,7 @@ public partial class PlotPage : Page
     private readonly DispatcherTimer _refreshTimer =
         new System.Windows.Threading.DispatcherTimer
         {
-            Interval = TimeSpan.FromMilliseconds(50),
+            Interval = TimeSpan.FromMilliseconds(33),
         };
 
     private bool first = true;
@@ -105,7 +106,7 @@ public partial class PlotPage : Page
             if (IsVisible)
             {
                 //先丢掉切走期间可能残留的点，再开始接收当前数据
-                while (_pendingPoints.TryDequeue(out _)) { }
+                _pendingPoints = new ConcurrentQueue<(double Value, int Line)>();
                 _acceptPoints = true;
                 FitView();
                 _lastFitUtc = DateTime.UtcNow;
@@ -115,15 +116,16 @@ public partial class PlotPage : Page
             else
             {
                 _acceptPoints = false;
-                while (_pendingPoints.TryDequeue(out _)) { }
+                _pendingPoints = new ConcurrentQueue<(double Value, int Line)>();
             }
         };
 
         //Lua 回调可能来自脚本线程：只入队，不在回调里碰 UI/绘图数组
         LuaEnv.LuaApis.LinePlotAdd += (_, e) =>
         {
-            if (_acceptPoints)
-                _pendingPoints.Enqueue((e.N, e.Line));
+            if (!_acceptPoints || _pendingPoints.Count >= MaxPendingPoints)
+                return;
+            _pendingPoints.Enqueue((e.N, e.Line));
         };
     }
 
@@ -153,7 +155,7 @@ public partial class PlotPage : Page
         //页面不可见时丢弃残留数据，不记录也不渲染；切回来时从当前点重新开始
         if (!IsVisible)
         {
-            while (_pendingPoints.TryDequeue(out _)) { }
+            _pendingPoints = new ConcurrentQueue<(double Value, int Line)>();
             NeedRefresh = false;
             return;
         }
@@ -166,7 +168,7 @@ public partial class PlotPage : Page
         if (
             added > 0
             && !_autoFitDone
-            && (DateTime.UtcNow - _lastFitUtc).TotalMilliseconds >= 500
+            && (DateTime.UtcNow - _lastFitUtc).TotalMilliseconds >= 250
         )
         {
             FitView();
@@ -283,7 +285,7 @@ public partial class PlotPage : Page
 
     private void ClearButton_Click(object sender, RoutedEventArgs e)
     {
-        while (_pendingPoints.TryDequeue(out _)) { }
+        _pendingPoints = new ConcurrentQueue<(double Value, int Line)>();
         for (int i = 0; i < Data.Length; i++)
         {
             Array.Clear(Data[i], 0, Data[i].Length);
