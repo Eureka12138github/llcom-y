@@ -590,6 +590,14 @@
       "zh-CN": "每条曲线保留的历史点数（10000~100000，默认 20000）；默认显示最近 1000 点，缩小后可查看更早的数据。修改后会清空当前曲线。",
       "en-US": "History points kept per curve (10000~100000, default 20000); the view starts with the latest 1000 points and zooming out shows older data. Changing this clears the current curves."
     },
+    "SettingPlotValueFontSize": {
+      "zh-CN": "曲线数值标签字号：",
+      "en-US": "Chart value label size:"
+    },
+    "SettingPlotValueFontSizeTip": {
+      "zh-CN": "曲线交点数值标签的字体大小（12~20，默认 12）；底部 X 标签会随之略大。修改后即时生效，重启保留。",
+      "en-US": "Font size of the curve value labels at the cursor (12~20, default 12); the bottom X label grows with it. Changes apply immediately and are saved."
+    },
     "SettingTerminal": {
       "zh-CN": "终端模式（在日志区直接键盘发送）",
       "en-US": "Terminal mode (type directly in the log area)"
@@ -1201,6 +1209,102 @@
     "PlotAutoYTip": {
       "zh-CN": "Y 轴自动适配（点击切换手动/自动）",
       "en-US": "Auto-fit Y axis (click to toggle manual/auto)"
+    },
+    "PlotLinesTip": {
+      "zh-CN": "曲线选项",
+      "en-US": "Plot options"
+    },
+    "PlotLineNameFormat": {
+      "zh-CN": "线 {0}",
+      "en-US": "Line {0}"
+    },
+    "PlotShowAllLines": {
+      "zh-CN": "全部显示",
+      "en-US": "Show all"
+    },
+    "PlotTimeAxisMenu": {
+      "zh-CN": "X 轴显示时间",
+      "en-US": "Show time on X axis"
+    },
+    "PlotMeasureAmplitude": {
+      "zh-CN": "幅值测量",
+      "en-US": "Amplitude measurement"
+    },
+    "PlotMeasureInterval": {
+      "zh-CN": "间隔测量",
+      "en-US": "Interval measurement"
+    },
+    "PlotMeasureSwap": {
+      "zh-CN": "交换 A/B",
+      "en-US": "Swap A/B"
+    },
+    "PlotMeasureAlignExtremes": {
+      "zh-CN": "对齐极值",
+      "en-US": "Align extremes"
+    },
+    "PlotMeasureAlignPeaks": {
+      "zh-CN": "对齐相邻峰",
+      "en-US": "Align adjacent peaks"
+    },
+    "PlotMeasureAlignPeaksTip": {
+      "zh-CN": "在当前可见范围内，找参考曲线（可见点数最多的一条）的两个相邻峰；找不到时给出提示，不改动原位置。适合周期信号测周期/频率。",
+      "en-US": "Finds two adjacent peaks of the reference curve (the visible line with the most points) in the current view; if none are found, a hint is shown and the lines stay put. Best for periodic signals."
+    },
+    "PlotMeasureClose": {
+      "zh-CN": "关闭",
+      "en-US": "Close"
+    },
+    "PlotMeasureHoldHint": {
+      "zh-CN": "测量中：视图已暂停，数据仍在记录",
+      "en-US": "Measuring: view paused, data still recording"
+    },
+    "PlotMeasureHoldNoRecord": {
+      "zh-CN": "测量中：视图已暂停，数据未记录",
+      "en-US": "Measuring: view paused, data not recorded"
+    },
+    "PlotMeasureNoPeaks": {
+      "zh-CN": "当前可见范围内没有找到两个相邻峰",
+      "en-US": "No two adjacent peaks found in the visible range"
+    },
+    "PlotMeasureYReadout": {
+      "zh-CN": "幅值：A={0}  B={1}  |Δ|={2}",
+      "en-US": "Amplitude: A={0}  B={1}  |Δ|={2}"
+    },
+    "PlotMeasureXReadout": {
+      "zh-CN": "间隔：A={0}  B={1}  Δ={2} 样本 / {3} s / {4} Hz",
+      "en-US": "Interval: A={0}  B={1}  Δ={2} samples / {3} s / {4} Hz"
+    },
+    "PlotCopyPng": {
+      "zh-CN": "复制 PNG",
+      "en-US": "Copy PNG"
+    },
+    "PlotCopyPngDone": {
+      "zh-CN": "图片已复制到剪贴板",
+      "en-US": "Image copied to the clipboard"
+    },
+    "PlotCopyFailed": {
+      "zh-CN": "复制图片到剪贴板失败",
+      "en-US": "Failed to copy the image to the clipboard"
+    },
+    "PlotExportPng": {
+      "zh-CN": "导出 PNG…",
+      "en-US": "Export PNG…"
+    },
+    "PlotExportPngTitleCopied": {
+      "zh-CN": "PNG 已复制到剪贴板；选择保存位置（可取消）",
+      "en-US": "PNG copied to the clipboard; choose where to save (or cancel)"
+    },
+    "PlotExportCsv": {
+      "zh-CN": "导出 CSV…",
+      "en-US": "Export CSV…"
+    },
+    "PlotExportEmpty": {
+      "zh-CN": "当前没有可导出的曲线数据。",
+      "en-US": "There is no curve data to export."
+    },
+    "PlotExportFailed": {
+      "zh-CN": "导出失败：",
+      "en-US": "Export failed:"
     },
     "RefreshIpList": {
       "zh-CN": "刷新IP",

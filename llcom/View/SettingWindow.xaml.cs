@@ -144,6 +144,17 @@ public partial class SettingWindow : Window
         plotHistoryPointsBox.Text = setting.plotHistoryPoints.ToString();
     }
 
+    /// <summary>曲线数值标签字号：校验并夹取到 10~20。</summary>
+    private void PlotValueFontSizeBox_LostFocus(object sender, RoutedEventArgs e)
+    {
+        var setting = Tools.Global.setting;
+        var value = int.TryParse(plotValueFontSizeBox.Text, out var parsed)
+            ? parsed
+            : setting.plotValueFontSize;
+        setting.plotValueFontSize = value;
+        plotValueFontSizeBox.Text = setting.plotValueFontSize.ToString();
+    }
+
     // ===== 配置导出 / 导入（整份 settings.json） =====
 
     /// <summary>导出当前配置到用户选择的 JSON 文件。</summary>
@@ -278,6 +289,7 @@ public partial class SettingWindow : Window
         logTrimPercentBox.Text = Tools.Global.setting.logTrimPercent.ToString();
         streamMaxCharsBox.Text = Tools.Global.setting.streamMaxChars.ToString();
         plotHistoryPointsBox.Text = Tools.Global.setting.plotHistoryPoints.ToString();
+        plotValueFontSizeBox.Text = Tools.Global.setting.plotValueFontSize.ToString();
 
         //快速搜索
         SearchPanel.Install(textEditor.TextArea);

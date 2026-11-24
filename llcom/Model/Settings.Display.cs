@@ -152,6 +152,42 @@ partial class Settings
         }
     }
 
+    /// <summary>曲线交点数值标签字号下限</summary>
+    public const int PlotValueFontSizeMin = 12;
+
+    /// <summary>曲线交点数值标签字号上限</summary>
+    public const int PlotValueFontSizeMax = 20;
+
+    private int _plotValueFontSize = 12;
+
+    /// <summary>曲线交点数值标签的字号（12~20，默认 12）；修改后即时生效。</summary>
+    public int plotValueFontSize
+    {
+        get => _plotValueFontSize;
+        set
+        {
+            var v =
+                value < PlotValueFontSizeMin ? PlotValueFontSizeMin
+                : value > PlotValueFontSizeMax ? PlotValueFontSizeMax
+                : value;
+            if (SetProperty(ref _plotValueFontSize, v))
+                Save();
+        }
+    }
+
+    private bool _plotTimeAxis;
+
+    /// <summary>曲线 X 轴是否按时间显示（false = 样本序号）。</summary>
+    public bool plotTimeAxis
+    {
+        get => _plotTimeAxis;
+        set
+        {
+            if (SetProperty(ref _plotTimeAxis, value))
+                Save();
+        }
+    }
+
     private bool _recvShowHex = true;
 
     /// <summary>
