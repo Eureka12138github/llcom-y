@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
+using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Threading;
 using FontAwesomeIcon = FontAwesome.WPF.FontAwesomeIcon;
@@ -31,7 +36,7 @@ public partial class PlotPage : Page
         new ScottPlot.Plottable.SignalPlotXY?[PlotBuffer.LineCount];
 
     //Lua 线程只入队，UI 定时器统一消费
-    private ConcurrentQueue<(double Value, int Line)> _pendingPoints = new();
+    private ConcurrentQueue<(double Value, int Line, double Time)> _pendingPoints = new();
 
     //只有曲线页可见且处于「开始绘制」状态时才接收点
     private volatile bool _acceptPoints;
@@ -42,6 +47,13 @@ public partial class PlotPage : Page
 
     //自动跟随时显示的窗口点数（滚轮缩放会改变它，默认 1000）
     private int _followWindowPoints = ViewPoints;
+
+    //时间轴模式：X 仍为样本序号，刻度标签按平均采样间隔换算成时间
+    private bool _timeAxis;
+    private double _timeAnchorX;
+    private double _timeAnchorTime;
+    private double _timeScale = 0.01;
+    private DateTime _timeOrigin = DateTime.Now;
 
     //代码更新滑块时忽略 ValueChanged，避免和坐标轴互相触发
     private bool _updatingScrollBar;
@@ -57,7 +69,17 @@ public partial class PlotPage : Page
     //把右侧刻度同步到左侧（数据）Y 轴时防止重复触发
     private bool _syncingRightAxis;
 
+    //每条线是否显示（菜单勾选）；隐藏只影响绘制和 Y 自动适配，数据仍保留
+    private readonly bool[] _lineVisible = new bool[PlotBuffer.LineCount];
+    private readonly MenuItem[] _lineMenuItems = new MenuItem[PlotBuffer.LineCount];
+    private MenuItem? _showAllLinesItem;
+    private MenuItem? _timeAxisMenuItem;
+    private MenuItem? _exportPngItem;
+    private MenuItem? _exportCsvItem;
+
     private ScottPlot.Plottable.Crosshair? ch = null;
+    private ScottPlot.Renderable.Legend? _legend;
+    private bool _legendVisible = true;
     private readonly ScottPlot.Styles.IStyle[] Styles = ScottPlot.Style.GetStyles();
     private int StyleNow = -1;
 
@@ -74,6 +96,8 @@ public partial class PlotPage : Page
     public PlotPage()
     {
         InitializeComponent();
+        for (var i = 0; i < _lineVisible.Length; i++)
+            _lineVisible[i] = true;
     }
 
     private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -101,6 +125,19 @@ public partial class PlotPage : Page
         //ScottPlot 默认双击会切换左下角的渲染耗时基准框，这里关掉
         if (Plot.Configuration != null)
             Plot.Configuration.DoubleClickBenchmark = false;
+
+        //ScottPlot 自带右键菜单是英文，且导出/查看全局与「曲线选项」重复：
+        //默认菜单不是通过 ContextMenu 属性打开的，而是构造函数里挂了 RightClicked -> DefaultRightClickEvent，
+        //这里把这个处理器移除，右键就不会再弹菜单。
+        Plot.RemoveHandler(
+            ScottPlot.WpfPlot.RightClickedEvent,
+            new RoutedEventHandler(Plot.DefaultRightClickEvent)
+        );
+        Plot.ContextMenu = null;
+        //右键直接切换图例显示/隐藏，不再弹菜单
+        Plot.RightClicked += (_, _) => ToggleLegend();
+
+        _timeAxis = Tools.Global.setting.plotTimeAxis;
 
         InitializePlotData();
 
@@ -174,7 +211,7 @@ public partial class PlotPage : Page
         {
             if (IsVisible)
             {
-                _pendingPoints = new ConcurrentQueue<(double Value, int Line)>();
+                _pendingPoints = new ConcurrentQueue<(double Value, int Line, double Time)>();
                 _acceptPoints = _plotEnabled;
                 if (!_refreshTimer.IsEnabled)
                     _refreshTimer.Start();
@@ -189,7 +226,7 @@ public partial class PlotPage : Page
             else
             {
                 _acceptPoints = false;
-                _pendingPoints = new ConcurrentQueue<(double Value, int Line)>();
+                _pendingPoints = new ConcurrentQueue<(double Value, int Line, double Time)>();
                 _refreshTimer.Stop();
             }
         };
@@ -199,7 +236,8 @@ public partial class PlotPage : Page
         {
             if (!_acceptPoints || _pendingPoints.Count >= MaxPendingPoints)
                 return;
-            _pendingPoints.Enqueue((e.N, e.Line));
+            var timeSeconds = (DateTime.Now - _timeOrigin).TotalSeconds;
+            _pendingPoints.Enqueue((e.N, e.Line, timeSeconds));
         };
 
         //重新运行脚本时从空白曲线开始
@@ -221,6 +259,10 @@ public partial class PlotPage : Page
         _xs = new double[capacity];
         for (var i = 0; i < capacity; i++)
             _xs[i] = i;
+        _timeOrigin = DateTime.Now;
+        _timeAnchorX = 0;
+        _timeAnchorTime = 0;
+        _timeScale = 0.01;
 
         Plot.Plot.Clear();
         for (var line = 0; line < PlotBuffer.LineCount; line++)
@@ -234,6 +276,20 @@ public partial class PlotPage : Page
         ch = Plot.Plot.AddCrosshair(0, 0);
         ch.Color = System.Drawing.Color.LightGray;
         ch.LineWidth = 2;
+
+        //图例跟随线条颜色；隐藏的线由 ScottPlot 自动从图例中排除
+        ConfigureLegend();
+
+        ApplyXAxisMode();
+        if (_timeAxisMenuItem != null)
+            _timeAxisMenuItem.IsChecked = _timeAxis;
+
+        for (var i = 0; i < _lineVisible.Length; i++)
+        {
+            _lineVisible[i] = true;
+            if (_lineMenuItems[i] != null)
+                _lineMenuItems[i].IsChecked = true;
+        }
 
         _autoFollow = true;
         _followWindowPoints = ViewPoints;
@@ -274,12 +330,141 @@ public partial class PlotPage : Page
         );
     }
 
+    /// <summary>曲线工具栏的“显示/隐藏”菜单（Line 0~9）。</summary>
+    private void BuildLineMenu()
+    {
+        var menu = new ContextMenu();
+        _showAllLinesItem = new MenuItem
+        {
+            Header = TryFindResource("PlotShowAllLines") as string ?? "Show all",
+        };
+        _showAllLinesItem.Click += (_, _) => SetAllLinesVisible(true);
+        menu.Items.Add(_showAllLinesItem);
+        menu.Items.Add(new Separator());
+
+        for (var line = 0; line < PlotBuffer.LineCount; line++)
+        {
+            var item = new MenuItem
+            {
+                Header = "Line " + line,
+                IsCheckable = true,
+                IsChecked = true,
+                Tag = line,
+            };
+            item.Click += LineMenuItem_Click;
+            _lineMenuItems[line] = item;
+            menu.Items.Add(item);
+        }
+
+        menu.Items.Add(new Separator());
+        _timeAxisMenuItem = new MenuItem
+        {
+            Header = TryFindResource("PlotTimeAxisMenu") as string ?? "Show time on X axis",
+            IsCheckable = true,
+            IsChecked = _timeAxis,
+        };
+        _timeAxisMenuItem.Click += (_, _) => SetTimeAxis(_timeAxisMenuItem.IsChecked);
+        menu.Items.Add(_timeAxisMenuItem);
+
+        menu.Items.Add(new Separator());
+        _exportPngItem = new MenuItem
+        {
+            Header = TryFindResource("PlotExportPng") as string ?? "Export PNG…",
+        };
+        _exportPngItem.Click += PlotExportPng_Click;
+        menu.Items.Add(_exportPngItem);
+
+        _exportCsvItem = new MenuItem
+        {
+            Header = TryFindResource("PlotExportCsv") as string ?? "Export CSV…",
+        };
+        _exportCsvItem.Click += PlotExportCsv_Click;
+        menu.Items.Add(_exportCsvItem);
+
+        PlotLinesButton.ContextMenu = menu;
+    }
+
+    private void PlotLinesButton_Click(object sender, RoutedEventArgs e)
+    {
+        //每次打开时重建菜单，保证运行时切换语言后菜单文字跟着更新
+        BuildLineMenu();
+
+        var menu = PlotLinesButton.ContextMenu;
+        if (menu == null)
+            return;
+
+        var hasHiddenWithData = false;
+        for (var line = 0; line < PlotBuffer.LineCount; line++)
+        {
+            var hasData = _buffer != null && _buffer.Counts[line] > 0;
+            _lineMenuItems[line].IsEnabled = hasData;
+            _lineMenuItems[line].IsChecked = _lineVisible[line];
+            if (hasData && !_lineVisible[line])
+                hasHiddenWithData = true;
+        }
+        if (_showAllLinesItem != null)
+            _showAllLinesItem.IsEnabled = hasHiddenWithData;
+        if (_timeAxisMenuItem != null)
+            _timeAxisMenuItem.IsChecked = _timeAxis;
+
+        var hasAnyData = _buffer != null && TryGetDataXRange(out _, out _);
+        if (_exportPngItem != null)
+            _exportPngItem.IsEnabled = hasAnyData;
+        if (_exportCsvItem != null)
+            _exportCsvItem.IsEnabled = hasAnyData;
+
+        menu.PlacementTarget = PlotLinesButton;
+        menu.Placement = PlacementMode.Bottom;
+        menu.IsOpen = true;
+    }
+
+    private void LineMenuItem_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not MenuItem item || item.Tag is not int line)
+            return;
+        if (line < 0 || line >= _lineVisible.Length)
+            return;
+
+        _lineVisible[line] = item.IsChecked;
+        ApplyLineVisibility();
+    }
+
+    private void SetAllLinesVisible(bool visible)
+    {
+        for (var line = 0; line < _lineVisible.Length; line++)
+        {
+            _lineVisible[line] = visible;
+            _lineMenuItems[line].IsChecked = visible;
+        }
+        ApplyLineVisibility();
+    }
+
+    /// <summary>按菜单勾选更新线条可见性，并在 Y 自动适配时排除隐藏线。</summary>
+    private void ApplyLineVisibility()
+    {
+        if (_buffer == null)
+        {
+            Refresh();
+            return;
+        }
+
+        UpdateRenderIndices();
+        if (_autoFitY)
+        {
+            var limits = Plot.Plot.GetAxisLimits();
+            FitY(limits.XMin, limits.XMax);
+        }
+        Refresh();
+    }
+
     /// <summary>让 ScottPlot 跟随应用主题（深色用 Black 风格）。</summary>
     private void ApplyTheme()
     {
         var dark = llcom.Services.ThemeService.IsDark;
         Plot.Plot.Style(dark ? ScottPlot.Style.Black : ScottPlot.Style.Default);
         ConfigureAxes();
+        ConfigureLegend();
+        ApplyXAxisMode();
         if (ch != null)
         {
             ch.Color = dark
@@ -294,6 +479,100 @@ public partial class PlotPage : Page
         {
             Tools.Logger.Swallowed("plot theme", ex);
         }
+    }
+
+    private void ToggleLegend()
+    {
+        _legendVisible = !_legendVisible;
+        if (_legend != null)
+            _legend.IsVisible = _legendVisible;
+        Refresh();
+    }
+
+    /// <summary>图例背景/文字颜色跟随深浅主题，避免深色下出现白底黑字。</summary>
+    private void ConfigureLegend()
+    {
+        //Style() 可能会重建图例对象，这里每次都取当前图例
+        _legend = Plot.Plot.Legend(true, Alignment.UpperLeft);
+        if (_legend == null)
+            return;
+        _legend.FontSize = 10;
+        _legend.FontBold = false;
+
+        var dark = llcom.Services.ThemeService.IsDark;
+        _legend.FillColor = dark
+            ? System.Drawing.Color.FromArgb(220, 30, 30, 30)
+            : System.Drawing.Color.FromArgb(230, 255, 255, 255);
+        _legend.FontColor = dark
+            ? System.Drawing.Color.FromArgb(230, 237, 243)
+            : System.Drawing.Color.Black;
+        _legend.OutlineColor = dark
+            ? System.Drawing.Color.FromArgb(90, 230, 237, 243)
+            : System.Drawing.Color.FromArgb(160, 0, 0, 0);
+        _legend.IsVisible = _legendVisible;
+    }
+
+    /// <summary>
+    /// 切换 X 轴刻度：样本序号，或按平均采样间隔换算成时间。
+    /// 只改刻度标签，几何仍按样本序号排布，避免批量投递的点在时间轴上挤成台阶。
+    /// </summary>
+    private void ApplyXAxisMode()
+    {
+        if (_timeAxis)
+        {
+            UpdateTimeLabelMapping();
+            Plot.Plot.BottomAxis.TickLabelFormat(FormatTimeLabel);
+        }
+        else
+        {
+            Plot.Plot.BottomAxis.TickLabelFormat(x => x.ToString("0"));
+        }
+    }
+
+    /// <summary>按当前可见时间跨度选择时间格式：短跨度带毫秒，长跨度只到秒。</summary>
+    private string FormatTimeLabel(double x)
+    {
+        var limits = Plot.Plot.GetAxisLimits();
+        var span = Math.Abs(limits.XMax - limits.XMin) * Math.Abs(_timeScale);
+        var format = span < 10 ? "HH:mm:ss.fff" : span < 120 ? "HH:mm:ss.f" : "HH:mm:ss";
+        return _timeOrigin
+            .AddSeconds(_timeAnchorTime + (x - _timeAnchorX) * _timeScale)
+            .ToString(format);
+    }
+
+    /// <summary>
+    /// 用点数最多的线估算“每个样本多少秒”，把样本序号映射到时间标签。
+    /// 采样间隔均匀时准确；批量投递/间隔变化时是近似值。
+    /// </summary>
+    private void UpdateTimeLabelMapping()
+    {
+        if (_buffer == null)
+            return;
+
+        var line = -1;
+        var count = 0;
+        for (var i = 0; i < PlotBuffer.LineCount; i++)
+        {
+            if (_buffer.Counts[i] > count)
+            {
+                count = _buffer.Counts[i];
+                line = i;
+            }
+        }
+
+        if (line < 0 || count < 2)
+        {
+            _timeAnchorX = 0;
+            _timeAnchorTime = 0;
+            _timeScale = 0.01;
+            return;
+        }
+
+        var times = _buffer.Times[line];
+        var span = times[count - 1] - times[0];
+        _timeScale = span > 0 ? span / (count - 1) : 0.01;
+        _timeAnchorX = _buffer.BaseX[line];
+        _timeAnchorTime = times[0];
     }
 
     /// <summary>Y 轴刻度移到右侧，左侧只保留网格。</summary>
@@ -317,7 +596,7 @@ public partial class PlotPage : Page
         //页面不可见时丢弃残留数据，不记录也不渲染
         if (!IsVisible)
         {
-            _pendingPoints = new ConcurrentQueue<(double Value, int Line)>();
+            _pendingPoints = new ConcurrentQueue<(double Value, int Line, double Time)>();
             NeedRefresh = false;
             return;
         }
@@ -340,6 +619,8 @@ public partial class PlotPage : Page
         NeedRefresh = false;
         try
         {
+            if (_timeAxis)
+                UpdateTimeLabelMapping();
             Plot.Render();
         }
         catch (Exception ex)
@@ -354,24 +635,24 @@ public partial class PlotPage : Page
         var added = 0;
         while (_pendingPoints.TryDequeue(out var point))
         {
-            AddPointCore(point.Value, point.Line);
+            AddPointCore(point.Value, point.Line, point.Time);
             added++;
         }
         return added;
     }
 
-    private void AddPointCore(double value, int line)
+    private void AddPointCore(double value, int line, double timeSeconds)
     {
         if (_buffer == null || line < 0 || line >= PlotBuffer.LineCount)
             return;
 
-        _buffer.Add(line, value);
+        _buffer.Add(line, value, timeSeconds);
         var signal = _signals[line];
         if (signal == null)
             return;
 
         signal.OffsetX = _buffer.BaseX[line];
-        signal.IsVisible = true;
+        signal.IsVisible = _lineVisible[line];
     }
 
     /// <summary>
@@ -391,7 +672,7 @@ public partial class PlotPage : Page
                 continue;
 
             if (
-                _buffer.TryGetVisibleRange(
+                TryGetVisibleRange(
                     line,
                     limits.XMin,
                     limits.XMax,
@@ -402,7 +683,7 @@ public partial class PlotPage : Page
             {
                 signal.MinRenderIndex = start;
                 signal.MaxRenderIndex = end;
-                signal.IsVisible = true;
+                signal.IsVisible = _lineVisible[line];
             }
             else
             {
@@ -413,7 +694,7 @@ public partial class PlotPage : Page
         }
     }
 
-    /// <summary>视图跟随最新数据：只显示最近 ViewPoints 个点，最新点在右边缘。</summary>
+    /// <summary>视图跟随最新数据：默认显示最近 ViewPoints 个点（时间轴模式下换算为对应秒数）。</summary>
     private void FitLatestView()
     {
         if (_buffer == null)
@@ -651,11 +932,11 @@ public partial class PlotPage : Page
         }
     }
 
-    /// <summary>所有线当前保留数据的最旧/最新绝对样本序号。</summary>
-    private bool TryGetDataXRange(out long min, out long max)
+    /// <summary>所有线当前保留数据的最旧/最新样本序号。</summary>
+    private bool TryGetDataXRange(out double min, out double max)
     {
-        min = long.MaxValue;
-        max = long.MinValue;
+        min = double.MaxValue;
+        max = double.MinValue;
         if (_buffer == null)
             return false;
 
@@ -669,23 +950,31 @@ public partial class PlotPage : Page
         return min <= max;
     }
 
+    /// <summary>取某条线在给定 X 范围内的索引区间。</summary>
+    private bool TryGetVisibleRange(
+        int line,
+        double xMin,
+        double xMax,
+        out int start,
+        out int end
+    )
+    {
+        if (_buffer == null)
+        {
+            start = 0;
+            end = -1;
+            return false;
+        }
+        return _buffer.TryGetVisibleRange(line, xMin, xMax, out start, out end);
+    }
+
     /// <summary>显示当前保留的全部历史。</summary>
     private void FitAllView()
     {
         if (_buffer == null)
             return;
 
-        var min = long.MaxValue;
-        var max = long.MinValue;
-        for (var line = 0; line < PlotBuffer.LineCount; line++)
-        {
-            if (_buffer.Counts[line] <= 0)
-                continue;
-            min = Math.Min(min, _buffer.OldestX(line));
-            max = Math.Max(max, _buffer.NewestX(line));
-        }
-
-        if (min > max)
+        if (!TryGetDataXRange(out var min, out var max))
         {
             FitLatestView();
             return;
@@ -713,8 +1002,10 @@ public partial class PlotPage : Page
         {
             for (var line = 0; line < PlotBuffer.LineCount; line++)
             {
+                if (!_lineVisible[line])
+                    continue;
                 if (
-                    !_buffer.TryGetVisibleRange(line, xMin, xMax, out var start, out var end)
+                    !TryGetVisibleRange(line, xMin, xMax, out var start, out var end)
                 )
                     continue;
 
@@ -780,6 +1071,209 @@ public partial class PlotPage : Page
             FitY(limits.XMin, limits.XMax);
             Refresh();
         }
+    }
+
+    /// <summary>切换 X 轴刻度为时间/样本序号；只改标签，不改变当前视图。</summary>
+    private void SetTimeAxis(bool enabled)
+    {
+        _timeAxis = enabled;
+        Tools.Global.setting.plotTimeAxis = enabled;
+        if (_timeAxisMenuItem != null)
+            _timeAxisMenuItem.IsChecked = enabled;
+        ApplyXAxisMode();
+        Refresh();
+    }
+
+    private void PlotExportPng_Click(object sender, RoutedEventArgs e)
+    {
+        if (_buffer == null || !TryGetDataXRange(out _, out _))
+        {
+            ShowPlotExportEmpty();
+            return;
+        }
+
+        var dialog = new Microsoft.Win32.SaveFileDialog
+        {
+            Filter = "PNG image (*.png)|*.png",
+            DefaultExt = ".png",
+            AddExtension = true,
+            FileName = $"plot_{DateTime.Now:yyyyMMdd_HHmmss}.png",
+        };
+        var owner = Window.GetWindow(this);
+        var ok = owner == null ? dialog.ShowDialog() : dialog.ShowDialog(owner);
+        if (ok != true)
+            return;
+
+        try
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+            //导出时隐藏十字准线，避免把鼠标位置和坐标标签画进图片
+            var crosshairWasVisible = ch?.IsVisible ?? false;
+            if (ch != null)
+                ch.IsVisible = false;
+            try
+            {
+                //按当前绘图区尺寸的 2 倍导出，避免 SaveFig 缩放时坐标轴被裁切
+                var width = Math.Max(800, (int)Math.Round(Plot.ActualWidth * 2));
+                var height = Math.Max(600, (int)Math.Round(Plot.ActualHeight * 2));
+                Plot.Plot.SaveFig(dialog.FileName, width, height);
+            }
+            finally
+            {
+                if (ch != null)
+                    ch.IsVisible = crosshairWasVisible;
+            }
+            Plot.Render();
+        }
+        catch (Exception ex)
+        {
+            ReportPlotExportFailed(ex);
+        }
+        finally
+        {
+            Mouse.OverrideCursor = null;
+        }
+    }
+
+    private void PlotExportCsv_Click(object sender, RoutedEventArgs e)
+    {
+        if (_buffer == null || !TryGetDataXRange(out _, out _))
+        {
+            ShowPlotExportEmpty();
+            return;
+        }
+
+        var dialog = new Microsoft.Win32.SaveFileDialog
+        {
+            Filter = "CSV (*.csv)|*.csv",
+            DefaultExt = ".csv",
+            AddExtension = true,
+            FileName = $"plot_{DateTime.Now:yyyyMMdd_HHmmss}.csv",
+        };
+        var owner = Window.GetWindow(this);
+        var ok = owner == null ? dialog.ShowDialog() : dialog.ShowDialog(owner);
+        if (ok != true)
+            return;
+
+        try
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+            var activeLines = new List<int>();
+            for (var line = 0; line < PlotBuffer.LineCount; line++)
+            {
+                if (_buffer.Counts[line] > 0)
+                    activeLines.Add(line);
+            }
+
+            var startIndex = long.MaxValue;
+            var endIndex = long.MinValue;
+            var referenceLine = activeLines[0];
+            for (var i = 0; i < activeLines.Count; i++)
+            {
+                var line = activeLines[i];
+                startIndex = Math.Min(startIndex, _buffer.BaseX[line]);
+                endIndex = Math.Max(
+                    endIndex,
+                    _buffer.BaseX[line] + _buffer.Counts[line] - 1
+                );
+                if (_buffer.Counts[line] > _buffer.Counts[referenceLine])
+                    referenceLine = line;
+            }
+
+            using var sw = new StreamWriter(dialog.FileName, false, new UTF8Encoding(true));
+            sw.Write("index,elapsed_s,time");
+            foreach (var line in activeLines)
+            {
+                sw.Write(",line");
+                sw.Write(line);
+            }
+            sw.WriteLine();
+
+            for (var index = startIndex; index <= endIndex; index++)
+            {
+                double? elapsed = null;
+                //优先用点数最多的线作为时间参考；同一 index 的曲线在界面上也是对齐的
+                if (
+                    index >= _buffer.BaseX[referenceLine]
+                    && index < _buffer.BaseX[referenceLine] + _buffer.Counts[referenceLine]
+                )
+                {
+                    elapsed = _buffer.Times[referenceLine][
+                        (int)(index - _buffer.BaseX[referenceLine])
+                    ];
+                }
+                else
+                {
+                    foreach (var line in activeLines)
+                    {
+                        if (
+                            index >= _buffer.BaseX[line]
+                            && index < _buffer.BaseX[line] + _buffer.Counts[line]
+                        )
+                        {
+                            elapsed = _buffer.Times[line][(int)(index - _buffer.BaseX[line])];
+                            break;
+                        }
+                    }
+                }
+
+                sw.Write(index);
+                sw.Write(',');
+                if (elapsed.HasValue)
+                {
+                    sw.Write(elapsed.Value.ToString("0.000000", CultureInfo.InvariantCulture));
+                }
+                sw.Write(',');
+                if (elapsed.HasValue)
+                {
+                    sw.Write(
+                        _timeOrigin
+                            .AddSeconds(elapsed.Value)
+                            .ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture)
+                    );
+                }
+
+                foreach (var line in activeLines)
+                {
+                    sw.Write(',');
+                    if (
+                        index >= _buffer.BaseX[line]
+                        && index < _buffer.BaseX[line] + _buffer.Counts[line]
+                    )
+                    {
+                        sw.Write(
+                            _buffer.Values[line][(int)(index - _buffer.BaseX[line])]
+                                .ToString("R", CultureInfo.InvariantCulture)
+                        );
+                    }
+                }
+                sw.WriteLine();
+            }
+        }
+        catch (Exception ex)
+        {
+            ReportPlotExportFailed(ex);
+        }
+        finally
+        {
+            Mouse.OverrideCursor = null;
+        }
+    }
+
+    private void ShowPlotExportEmpty() =>
+        Tools.MessageBox.Show(
+            TryFindResource("PlotExportEmpty") as string
+                ?? "There is no curve data to export."
+        );
+
+    private void ReportPlotExportFailed(Exception ex)
+    {
+        Tools.Logger.Swallowed("plot export", ex);
+        Tools.MessageBox.Show(
+            (TryFindResource("PlotExportFailed") as string ?? "Export failed:")
+                + "\r\n"
+                + ex.Message
+        );
     }
 
     /// <summary>把当前 X 轴窗口同步到底部历史滑块（滑块表示已保留的全部数据）。</summary>
@@ -872,7 +1366,7 @@ public partial class PlotPage : Page
 
     private void ClearPlot()
     {
-        _pendingPoints = new ConcurrentQueue<(double Value, int Line)>();
+        _pendingPoints = new ConcurrentQueue<(double Value, int Line, double Time)>();
         _buffer?.Clear();
         for (var i = 0; i < PlotBuffer.LineCount; i++)
         {
@@ -890,9 +1384,11 @@ public partial class PlotPage : Page
             ch.Y = 0;
         }
 
+        _timeOrigin = DateTime.Now;
         _autoFollow = true;
         _followWindowPoints = ViewPoints;
         SetAutoFitY(true);
+        ApplyXAxisMode();
         FitLatestView();
         if (IsVisible && !_refreshTimer.IsEnabled)
             _refreshTimer.Start();
@@ -914,7 +1410,7 @@ public partial class PlotPage : Page
 
         if (enabled)
         {
-            _pendingPoints = new ConcurrentQueue<(double Value, int Line)>();
+            _pendingPoints = new ConcurrentQueue<(double Value, int Line, double Time)>();
             _acceptPoints = IsVisible;
             _autoFollow = true;
             if (IsVisible && !_refreshTimer.IsEnabled)
@@ -924,7 +1420,7 @@ public partial class PlotPage : Page
         else
         {
             _acceptPoints = false;
-            _pendingPoints = new ConcurrentQueue<(double Value, int Line)>();
+            _pendingPoints = new ConcurrentQueue<(double Value, int Line, double Time)>();
             _autoFollow = false;
             NeedRefresh = true;
         }
@@ -937,6 +1433,8 @@ public partial class PlotPage : Page
             StyleNow = 0;
         Plot.Plot.Style(Styles[StyleNow]);
         ConfigureAxes();
+        ConfigureLegend();
+        ApplyXAxisMode();
         Refresh();
     }
 

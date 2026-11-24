@@ -1202,6 +1202,34 @@
       "zh-CN": "Y 轴自动适配（点击切换手动/自动）",
       "en-US": "Auto-fit Y axis (click to toggle manual/auto)"
     },
+    "PlotLinesTip": {
+      "zh-CN": "曲线选项",
+      "en-US": "Plot options"
+    },
+    "PlotShowAllLines": {
+      "zh-CN": "全部显示",
+      "en-US": "Show all"
+    },
+    "PlotTimeAxisMenu": {
+      "zh-CN": "X 轴显示时间",
+      "en-US": "Show time on X axis"
+    },
+    "PlotExportPng": {
+      "zh-CN": "导出 PNG…",
+      "en-US": "Export PNG…"
+    },
+    "PlotExportCsv": {
+      "zh-CN": "导出 CSV…",
+      "en-US": "Export CSV…"
+    },
+    "PlotExportEmpty": {
+      "zh-CN": "当前没有可导出的曲线数据。",
+      "en-US": "There is no curve data to export."
+    },
+    "PlotExportFailed": {
+      "zh-CN": "导出失败：",
+      "en-US": "Export failed:"
+    },
     "RefreshIpList": {
       "zh-CN": "刷新IP",
       "en-US": "Refresh IP"

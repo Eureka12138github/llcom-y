@@ -25,6 +25,7 @@
         <ColumnDefinition Width="*" />
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
       </Grid.ColumnDefinitions>
       <Button Content="{DynamicResource PlotFit}" Margin="2" Click="RefreshButton_Click" />
       <Button
@@ -42,7 +43,7 @@
       <Button
         Name="PlotToggleButton"
         Grid.Column="3"
-        Margin="2,2,0,2"
+        Margin="2"
         AutomationProperties.Name="{DynamicResource PlotStop}"
         Click="PlotToggleButton_Click"
         Style="{StaticResource IconButton}"
@@ -53,7 +54,9 @@
       <ToggleButton
         Name="PlotAutoYButton"
         Grid.Column="4"
-        Margin="2,2,0,2"
+        Width="32"
+        Height="32"
+        Margin="2"
         AutomationProperties.Name="{DynamicResource PlotAutoYTip}"
         Checked="PlotAutoY_Checked"
         IsChecked="True"
@@ -63,6 +66,17 @@
       >
         <fa:FontAwesome FontSize="12" Icon="ArrowsV" />
       </ToggleButton>
+      <Button
+        Name="PlotLinesButton"
+        Grid.Column="5"
+        Margin="2"
+        AutomationProperties.Name="{DynamicResource PlotLinesTip}"
+        Click="PlotLinesButton_Click"
+        Style="{StaticResource IconButton}"
+        ToolTip="{DynamicResource PlotLinesTip}"
+      >
+        <fa:FontAwesome FontSize="14" Icon="Eye" />
+      </Button>
     </Grid>
     <Grid Grid.Row="1">
       <WpfPlot Name="Plot" MouseMove="Plot_MouseMove" />

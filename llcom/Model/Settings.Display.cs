@@ -152,6 +152,19 @@ partial class Settings
         }
     }
 
+    private bool _plotTimeAxis;
+
+    /// <summary>曲线 X 轴是否按时间显示（false = 样本序号）。</summary>
+    public bool plotTimeAxis
+    {
+        get => _plotTimeAxis;
+        set
+        {
+            if (SetProperty(ref _plotTimeAxis, value))
+                Save();
+        }
+    }
+
     private bool _recvShowHex = true;
 
     /// <summary>

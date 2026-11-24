@@ -302,6 +302,13 @@
     <system:String x:Key="PlotStop">Stop plotting</system:String>
     <system:String x:Key="PlotScrollTip">Scroll through buffered history</system:String>
     <system:String x:Key="PlotAutoYTip">Auto-fit Y axis (click to toggle manual/auto)</system:String>
+    <system:String x:Key="PlotLinesTip">Plot options</system:String>
+    <system:String x:Key="PlotShowAllLines">Show all</system:String>
+    <system:String x:Key="PlotTimeAxisMenu">Show time on X axis</system:String>
+    <system:String x:Key="PlotExportPng">Export PNG…</system:String>
+    <system:String x:Key="PlotExportCsv">Export CSV…</system:String>
+    <system:String x:Key="PlotExportEmpty">There is no curve data to export.</system:String>
+    <system:String x:Key="PlotExportFailed">Export failed:</system:String>
     <system:String x:Key="RefreshIpList">Refresh IP</system:String>
     <system:String x:Key="StartListen">Start listen</system:String>
     <system:String x:Key="StopListen">Stop listen</system:String>
