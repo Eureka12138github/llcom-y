@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Concurrent;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using llcom.Tools;
@@ -62,6 +64,19 @@ public partial class DataShowViewModel : ObservableObject
 
     //滚动请求是否已排队（合并同一帧内的多次滚动）
     private bool _scrollQueued;
+
+    //待显示数据队列：把原来“每条数据一个 Dispatcher 任务”改成“一批一个任务”。
+    //高频收发（如 200ms 轮询的 Modbus 脚本：发送+接收各一条 = 10 条/秒）时，
+    //逐条投递会把 UI 队列塞满，渲染速度跟不上产生速度，主日志/Lua 日志的显示
+    //会整体滞后（脚本早已跑完，界面还停在旧进度、提示却已弹出）。
+    private readonly ConcurrentQueue<(DataShow show, int generation)> _pendingShows = new();
+    private int _showFlushQueued; //0=当前没有待执行的刷新任务，1=已排队
+
+    /// <summary>单批最多处理多少条（时间预算之外的硬上限）。</summary>
+    private const int MaxShowsPerFlush = 200;
+
+    /// <summary>单批时间预算（毫秒）：到点先让出 UI 线程，剩余下一批继续。</summary>
+    private const int FlushBudgetMs = 10;
 
     /// <summary>分包模式变化事件（切换 MainList/MainTextBox 显示）</summary>
     public event Action<bool>? PackModeChanged;
@@ -166,56 +181,102 @@ public partial class DataShowViewModel : ObservableObject
     /// </summary>
     private void Logger_DataShowTask(object sender, DataShow e)
     {
-        //Logger 事件可能来自后台线程（串口接收线程）：
-        //异步投递到 UI 线程（Background 优先级，让拖拽/输入优先），避免阻塞接收线程
-        var generation = _generation;
-        Application.Current.Dispatcher.BeginInvoke(
-            new Action(() =>
+        //Logger 事件可能来自后台线程（串口接收线程 / Lua 定时器线程）：
+        //先入队，再确保只有一个刷新任务在 UI 队列里，避免逐条投递撑爆 Dispatcher
+        var dispatcher = Application.Current?.Dispatcher;
+        if (dispatcher == null)
+            return;
+
+        _pendingShows.Enqueue((e, _generation));
+        if (Interlocked.Exchange(ref _showFlushQueued, 1) == 0)
+        {
+            dispatcher.BeginInvoke(
+                System.Windows.Threading.DispatcherPriority.Background,
+                new Action(FlushPendingShows)
+            );
+        }
+    }
+
+    /// <summary>
+    /// 在 UI 线程分帧处理待显示数据：一批一个 Dispatcher 任务、限时限量，
+    /// 处理完仍有剩余就再排下一批（保持 Background 优先级，不抢输入/渲染）。
+    /// </summary>
+    private void FlushPendingShows()
+    {
+        try
+        {
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            var processed = 0;
+            while (
+                processed < MaxShowsPerFlush
+                && watch.ElapsedMilliseconds < FlushBudgetMs
+                && _pendingShows.TryDequeue(out var pending)
+            )
             {
+                processed++;
                 //期间已清空：丢弃排队中的旧数据
-                if (generation != _generation)
-                    return;
+                if (pending.generation != _generation)
+                    continue;
+                ShowPending(pending.show);
+            }
+        }
+        finally
+        {
+            Interlocked.Exchange(ref _showFlushQueued, 0);
 
-                //先判断下要不要清空/切换显示模式
-                var needPack = Setting.timeout >= 0;
-                if (_lastPackShowMode != needPack)
-                {
-                    _lastPackShowMode = needPack;
-                    Items.Clear();
-                    _payloadBytes = 0;
-                    _streamBuffer.Clear();
-                    PackModeChanged?.Invoke(needPack);
-                }
+            if (
+                !_pendingShows.IsEmpty
+                && Interlocked.Exchange(ref _showFlushQueued, 1) == 0
+            )
+            {
+                Application.Current?.Dispatcher.BeginInvoke(
+                    System.Windows.Threading.DispatcherPriority.Background,
+                    new Action(FlushPendingShows)
+                );
+            }
+        }
+    }
 
-                //如果不开回显，就别打印
-                if (!Setting.showSend && e is DataShowPara para && para.send)
-                    return;
+    /// <summary>显示一条数据（需在 UI 线程调用）。</summary>
+    private void ShowPending(DataShow e)
+    {
+        //先判断下要不要清空/切换显示模式
+        var needPack = Setting.timeout >= 0;
+        if (_lastPackShowMode != needPack)
+        {
+            _lastPackShowMode = needPack;
+            Items.Clear();
+            _payloadBytes = 0;
+            _streamBuffer.Clear();
+            PackModeChanged?.Invoke(needPack);
+        }
 
-                //显示到列表
-                if (!needPack && e is not DataShowRaw) //不分包模式
-                {
-                    var isSend = e is DataShowPara para2 && para2.send;
-                    var showHex = isSend ? Setting.hexSend : Setting.recvShowHex;
-                    var dataText = showHex
-                        ? Tools.Global.Byte2Hex(e.data, " ", e.data.Length) + " "
-                        : Tools.Global.Byte2Readable(e.data, e.data.Length);
-                    AppendStream(dataText);
-                }
-                else //分包模式
-                {
-                    var item = e is DataShowRaw raw
-                        ? new Model.DataShowItem(raw.title, e.data, e.time, raw.color)
-                        : new Model.DataShowItem(
-                            e.data,
-                            e.time,
-                            (e as DataShowPara)?.send ?? false
-                        );
-                    if (item != null)
-                        AppendPackItem(item);
-                }
-            }),
-            System.Windows.Threading.DispatcherPriority.Background
-        );
+        //如果不开回显，就别打印
+        if (!Setting.showSend && e is DataShowPara para && para.send)
+            return;
+
+        //显示到列表
+        if (!needPack && e is not DataShowRaw) //不分包模式
+        {
+            var isSend = e is DataShowPara para2 && para2.send;
+            var showHex = isSend ? Setting.hexSend : Setting.recvShowHex;
+            var dataText = showHex
+                ? Tools.Global.Byte2Hex(e.data, " ", e.data.Length) + " "
+                : Tools.Global.Byte2Readable(e.data, e.data.Length);
+            AppendStream(dataText);
+        }
+        else //分包模式
+        {
+            var item = e is DataShowRaw raw
+                ? new Model.DataShowItem(raw.title, e.data, e.time, raw.color)
+                : new Model.DataShowItem(
+                    e.data,
+                    e.time,
+                    (e as DataShowPara)?.send ?? false
+                );
+            if (item != null)
+                AppendPackItem(item);
+        }
     }
 
     /// <summary>分包模式追加一条日志并按上限裁剪（需在 UI 线程调用）。</summary>

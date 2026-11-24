@@ -208,7 +208,9 @@ namespace llcom.LuaEnv
             llcom.Services.NotificationService.NotifyLocalized(
                 "ScriptNotifyErrorTitle",
                 name + text,
-                isError: true
+                isError: true,
+                //记录错误发生的真实时刻（气泡可能因日志排队晚一点弹出）
+                eventTime: DateTime.Now
             );
         }
 

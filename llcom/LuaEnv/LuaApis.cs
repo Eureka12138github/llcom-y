@@ -170,7 +170,13 @@ namespace llcom.LuaEnv
         /// <param name="title">标题，留空显示 LLCOM-Y</param>
         /// <param name="message">内容，过长会自动截断</param>
         public static void Notify(string? title, string? message) =>
-            llcom.Services.NotificationService.Notify(title, message);
+            //在 Lua 线程调用时立即记录事件时间：气泡本身会排在日志后面弹出（保证顺序），
+            //但「最近提示」/状态栏显示的是脚本调用 apiNotify 的真实时刻。
+            llcom.Services.NotificationService.Notify(
+                title,
+                message,
+                eventTime: DateTime.Now
+            );
 
         /// <summary>
         /// 供 Lua 层上报脚本回调错误（core_script/head.lua 的 tiggerCB 使用），

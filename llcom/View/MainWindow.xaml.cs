@@ -1301,25 +1301,33 @@ public partial class MainWindow : Window
         get { return _luaLogPrintable; }
         set
         {
-            this.Dispatcher.Invoke(
-                new Action(
-                    delegate
-                    {
-                        if (value)
-                        {
-                            pauseLuaPrintButton.ToolTip =
-                                TryFindResource("LuaPause") as string ?? "?!";
-                            pauseLuaPrintIcon.Icon = FontAwesomeIcon.Pause;
-                        }
-                        else
-                        {
-                            pauseLuaPrintButton.ToolTip =
-                                TryFindResource("LuaContinue") as string ?? "?!";
-                            pauseLuaPrintIcon.Icon = FontAwesomeIcon.Play;
-                        }
-                    }
-                )
-            );
+            //暂停/继续按钮的图标必须在 UI 线程更新；但此属性也会被脚本线程设置
+            //（LuaRunEnv.StopLua 的报错回调），原来用 Dispatcher.Invoke 同步等 UI，
+            //主日志繁忙时会反过来拖住脚本收尾。改为：UI 线程直接改，其它线程异步投递。
+            void ApplyUi()
+            {
+                if (value)
+                {
+                    pauseLuaPrintButton.ToolTip =
+                        TryFindResource("LuaPause") as string ?? "?!";
+                    pauseLuaPrintIcon.Icon = FontAwesomeIcon.Pause;
+                }
+                else
+                {
+                    pauseLuaPrintButton.ToolTip =
+                        TryFindResource("LuaContinue") as string ?? "?!";
+                    pauseLuaPrintIcon.Icon = FontAwesomeIcon.Play;
+                }
+            }
+
+            if (Dispatcher.CheckAccess())
+                ApplyUi();
+            else
+                Dispatcher.BeginInvoke(
+                    System.Windows.Threading.DispatcherPriority.Background,
+                    new Action(ApplyUi)
+                );
+
             _luaLogPrintable = value;
             _luaLogPump.Printable = value;
         }

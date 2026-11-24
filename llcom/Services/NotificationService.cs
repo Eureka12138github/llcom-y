@@ -22,6 +22,7 @@ public sealed class Notice
         IsError = isError;
     }
 
+    /// <summary>事件发生时间（如脚本调用 apiNotify 的时刻），不是气泡弹出时间。</summary>
     public DateTime Time { get; }
 
     public string Title { get; }
@@ -115,7 +116,16 @@ public static class NotificationService
     /// <param name="title">标题，留空显示 LLCOM-Y</param>
     /// <param name="message">内容，过长会自动截断</param>
     /// <param name="isError">true = 红色（脚本报错），false = 绿色（正常完成）</param>
-    public static void Notify(string? title, string? message, bool isError = false)
+    /// <param name="eventTime">
+    /// 事件发生时间（如脚本调用 apiNotify 的那一刻）。留空则在当前调用线程立即取当前时间。
+    /// 提示记录的时间是「事件时间」，不是气泡真正弹出的时间（后者受 UI 队列影响会晚一点）。
+    /// </param>
+    public static void Notify(
+        string? title,
+        string? message,
+        bool isError = false,
+        DateTime? eventTime = null
+    )
     {
         if (!_started || !Tools.Global.setting.scriptNotifyEnabled)
             return;
@@ -126,16 +136,29 @@ public static class NotificationService
 
         if (!dispatcher.CheckAccess())
         {
-            dispatcher.BeginInvoke(new Action(() => Notify(title, message, isError)));
+            //事件时间在调用线程（脚本线程）立即取，而不是等 UI 线程执行时才取：
+            //这样记录的是“脚本真正调用 apiNotify 的时刻”，而不是排队后的显示时刻。
+            var stamp = eventTime ?? DateTime.Now;
+
+            //用 Background 优先级：与主日志/Lua 日志的渲染任务同一个队列、先来先处理，
+            //保证「界面上的日志先追平、完成提示再弹出」。用默认的 Normal 会插队到
+            //积压的日志渲染任务前面，看起来就是日志还停在旧进度、提示已经弹出。
+            dispatcher.BeginInvoke(
+                DispatcherPriority.Background,
+                new Action(() => Notify(title, message, isError, stamp))
+            );
             return;
         }
+
+        //走到这里一定已有事件时间（跨线程时已在调用线程取好）
+        var noticeTime = eventTime ?? DateTime.Now;
 
         EnsureIcon();
         if (_icon == null)
             return;
 
         var displayTitle = string.IsNullOrWhiteSpace(title) ? "LLCOM-Y" : title!.Trim();
-        var notice = new Notice(DateTime.Now, displayTitle, message ?? "", isError);
+        var notice = new Notice(noticeTime, displayTitle, message ?? "", isError);
 
         _recent.Insert(0, notice);
         while (_recent.Count > MaxRecentNotices)
@@ -168,10 +191,12 @@ public static class NotificationService
     /// <summary>
     /// 用本地化资源作为标题弹出气泡（资源查找在 UI 线程完成）。
     /// </summary>
+    /// <param name="eventTime">事件发生时间；留空则在当前调用线程立即取当前时间。</param>
     public static void NotifyLocalized(
         string titleResourceKey,
         string? message,
-        bool isError = false
+        bool isError = false,
+        DateTime? eventTime = null
     )
     {
         if (!_started || !Tools.Global.setting.scriptNotifyEnabled)
@@ -183,13 +208,18 @@ public static class NotificationService
 
         if (!dispatcher.CheckAccess())
         {
+            //同上：事件时间在调用线程先取，避免排队后的显示时刻被当成发生时间
+            var stamp = eventTime ?? DateTime.Now;
+
+            //与日志渲染任务同队列，避免提示抢在积压日志之前显示
             dispatcher.BeginInvoke(
-                new Action(() => NotifyLocalized(titleResourceKey, message, isError))
+                DispatcherPriority.Background,
+                new Action(() => NotifyLocalized(titleResourceKey, message, isError, stamp))
             );
             return;
         }
 
-        Notify(TryFindResource(titleResourceKey), message, isError);
+        Notify(TryFindResource(titleResourceKey), message, isError, eventTime);
     }
 
     /// <summary>
