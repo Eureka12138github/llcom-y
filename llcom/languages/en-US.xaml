@@ -305,18 +305,26 @@
     <system:String x:Key="PlotScrollTip">Scroll through buffered history</system:String>
     <system:String x:Key="PlotAutoYTip">Auto-fit Y axis (click to toggle manual/auto)</system:String>
     <system:String x:Key="PlotLinesTip">Plot options</system:String>
+    <system:String x:Key="PlotLineNameFormat">Line {0}</system:String>
     <system:String x:Key="PlotShowAllLines">Show all</system:String>
     <system:String x:Key="PlotTimeAxisMenu">Show time on X axis</system:String>
     <system:String x:Key="PlotMeasureAmplitude">Amplitude measurement</system:String>
     <system:String x:Key="PlotMeasureInterval">Interval measurement</system:String>
     <system:String x:Key="PlotMeasureSwap">Swap A/B</system:String>
     <system:String x:Key="PlotMeasureAlignExtremes">Align extremes</system:String>
-    <system:String x:Key="PlotMeasureAlignRange">Align range</system:String>
+    <system:String x:Key="PlotMeasureAlignPeaks">Align adjacent peaks</system:String>
+    <system:String x:Key="PlotMeasureAlignPeaksTip">Finds two adjacent peaks of the reference curve (the visible line with the most points) in the current view; if none are found, a hint is shown and the lines stay put. Best for periodic signals.</system:String>
     <system:String x:Key="PlotMeasureClose">Close</system:String>
     <system:String x:Key="PlotMeasureHoldHint">Measuring: view paused, data still recording</system:String>
+    <system:String x:Key="PlotMeasureHoldNoRecord">Measuring: view paused, data not recorded</system:String>
+    <system:String x:Key="PlotMeasureNoPeaks">No two adjacent peaks found in the visible range</system:String>
     <system:String x:Key="PlotMeasureYReadout">Amplitude: A={0}  B={1}  |Δ|={2}</system:String>
-    <system:String x:Key="PlotMeasureXReadout">Interval: A={0}  B={1}  Δ={2} samples / {3} s</system:String>
+    <system:String x:Key="PlotMeasureXReadout">Interval: A={0}  B={1}  Δ={2} samples / {3} s / {4} Hz</system:String>
+    <system:String x:Key="PlotCopyPng">Copy PNG</system:String>
+    <system:String x:Key="PlotCopyPngDone">Image copied to the clipboard</system:String>
+    <system:String x:Key="PlotCopyFailed">Failed to copy the image to the clipboard</system:String>
     <system:String x:Key="PlotExportPng">Export PNG…</system:String>
+    <system:String x:Key="PlotExportPngTitleCopied">PNG copied to the clipboard; choose where to save (or cancel)</system:String>
     <system:String x:Key="PlotExportCsv">Export CSV…</system:String>
     <system:String x:Key="PlotExportEmpty">There is no curve data to export.</system:String>
     <system:String x:Key="PlotExportFailed">Export failed:</system:String>

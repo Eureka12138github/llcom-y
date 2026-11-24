@@ -136,10 +136,11 @@
               Click="MeasureXSwap_Click"
             />
             <Button
-              Content="{DynamicResource PlotMeasureAlignRange}"
+              Content="{DynamicResource PlotMeasureAlignPeaks}"
               Margin="4,0,0,0"
               Padding="6,1"
-              Click="MeasureXAlign_Click"
+              Click="MeasureXAlignPeaks_Click"
+              ToolTip="{DynamicResource PlotMeasureAlignPeaksTip}"
             />
             <Button
               Content="{DynamicResource PlotMeasureClose}"

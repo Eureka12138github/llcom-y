@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using FontAwesomeIcon = FontAwesome.WPF.FontAwesomeIcon;
 using llcom.Model;
@@ -74,12 +75,14 @@ public partial class PlotPage : Page
     private readonly MenuItem[] _lineMenuItems = new MenuItem[PlotBuffer.LineCount];
     private MenuItem? _showAllLinesItem;
     private MenuItem? _timeAxisMenuItem;
+    private MenuItem? _copyPngItem;
     private MenuItem? _exportPngItem;
     private MenuItem? _exportCsvItem;
 
     //十字参考：一条竖直点线 + 每条可见线在交点处的圆点和数值
     private ScottPlot.Plottable.VLine? _crossLine;
     private ScottPlot.Plottable.Text? _crossXText;
+    private ScottPlot.Plottable.Text? _toastText;
     private readonly ScottPlot.Plottable.MarkerPlot?[] _crossMarkers =
         new ScottPlot.Plottable.MarkerPlot?[PlotBuffer.LineCount];
     private readonly ScottPlot.Plottable.Text?[] _crossTexts =
@@ -112,6 +115,13 @@ public partial class PlotPage : Page
         new System.Windows.Threading.DispatcherTimer
         {
             Interval = TimeSpan.FromMilliseconds(33),
+        };
+
+    //轻量提示（复制成功、未找到峰等）：画在 ScottPlot 内部，避免遮不住 WinForms 绘图区
+    private readonly DispatcherTimer _toastTimer =
+        new System.Windows.Threading.DispatcherTimer
+        {
+            Interval = TimeSpan.FromSeconds(2.2),
         };
 
     private bool first = true;
@@ -240,9 +250,14 @@ public partial class PlotPage : Page
         };
 
         _refreshTimer.Tick += (_, _) => RefreshTick();
+        _toastTimer.Tick += (_, _) => HidePlotToast();
         if (IsVisible)
             _refreshTimer.Start();
-        Unloaded += (_, _) => _refreshTimer.Stop();
+        Unloaded += (_, _) =>
+        {
+            _refreshTimer.Stop();
+            HidePlotToast();
+        };
 
         //只有曲线页可见且处于「开始绘制」状态时才记录；切走时丢弃排队点
         _acceptPoints = IsVisible && _plotEnabled;
@@ -267,6 +282,10 @@ public partial class PlotPage : Page
                 _acceptPoints = false;
                 _pendingPoints = new ConcurrentQueue<(double Value, int Line, double Time)>();
                 _refreshTimer.Stop();
+                //切到其他工具/串口设置时直接停止绘制；切回来需要用户手动点「开始绘制」。
+                //「更多设置」是独立窗口，不会让曲线页不可见，因此不会触发这里。
+                if (_plotEnabled)
+                    SetPlotEnabled(false);
             }
         };
 
@@ -309,13 +328,14 @@ public partial class PlotPage : Page
         for (var line = 0; line < PlotBuffer.LineCount; line++)
         {
             var signal = Plot.Plot.AddSignalXY(_xs, _buffer.Values[line]);
-            signal.Label = "Line " + line;
+            signal.Label = LineName(line);
             signal.IsVisible = false;
             _signals[line] = signal;
         }
 
         //十字参考：竖直点线 + 交点圆点/数值（水平线和左侧 Y 标签不再使用）
         InitializeCrosshair();
+        InitializeToast();
         InitializeMeasurementLines();
 
         //图例跟随线条颜色；隐藏的线由 ScottPlot 自动从图例中排除
@@ -347,6 +367,21 @@ public partial class PlotPage : Page
 
     private void PlotSettingChanged(object? sender, PropertyChangedEventArgs e)
     {
+        if (e.PropertyName == nameof(Model.Settings.language))
+        {
+            Dispatcher.BeginInvoke(
+                new Action(() =>
+                {
+                    UpdateLineLabels();
+                    ConfigureLegend();
+                    if (_measureYEnabled || _measureXEnabled)
+                        UpdateMeasurementPanel();
+                    Refresh();
+                })
+            );
+            return;
+        }
+
         if (e.PropertyName != nameof(Model.Settings.plotHistoryPoints))
             return;
 
@@ -371,7 +406,23 @@ public partial class PlotPage : Page
         );
     }
 
-    /// <summary>曲线工具栏的“显示/隐藏”菜单（Line 0~9）。</summary>
+    /// <summary>线名：界面显示用（Lua 里仍用 Line 0~9）。</summary>
+    private string LineName(int line)
+    {
+        var format = TryFindResource("PlotLineNameFormat") as string ?? "Line {0}";
+        return string.Format(CultureInfo.InvariantCulture, format, line);
+    }
+
+    private void UpdateLineLabels()
+    {
+        for (var line = 0; line < PlotBuffer.LineCount; line++)
+        {
+            if (_signals[line] != null)
+                _signals[line]!.Label = LineName(line);
+        }
+    }
+
+    /// <summary>曲线工具栏的“显示/隐藏”菜单（线 0~9）。</summary>
     private void BuildLineMenu()
     {
         var menu = new ContextMenu();
@@ -387,7 +438,7 @@ public partial class PlotPage : Page
         {
             var item = new MenuItem
             {
-                Header = "Line " + line,
+                Header = LineName(line),
                 IsCheckable = true,
                 IsChecked = true,
                 Tag = line,
@@ -429,6 +480,13 @@ public partial class PlotPage : Page
         menu.Items.Add(_measureXMenuItem);
 
         menu.Items.Add(new Separator());
+        _copyPngItem = new MenuItem
+        {
+            Header = TryFindResource("PlotCopyPng") as string ?? "Copy PNG",
+        };
+        _copyPngItem.Click += PlotCopyPng_Click;
+        menu.Items.Add(_copyPngItem);
+
         _exportPngItem = new MenuItem
         {
             Header = TryFindResource("PlotExportPng") as string ?? "Export PNG…",
@@ -474,10 +532,16 @@ public partial class PlotPage : Page
             _measureXMenuItem.IsChecked = _measureXEnabled;
 
         var hasAnyData = _buffer != null && TryGetDataXRange(out _, out _);
+        if (_copyPngItem != null)
+            _copyPngItem.IsEnabled = hasAnyData;
         if (_exportPngItem != null)
             _exportPngItem.IsEnabled = hasAnyData;
         if (_exportCsvItem != null)
             _exportCsvItem.IsEnabled = hasAnyData;
+
+        //运行时切换语言后，下一次打开菜单/图例时同步线名
+        UpdateLineLabels();
+        Refresh();
 
         menu.PlacementTarget = PlotLinesButton;
         menu.Placement = PlacementMode.Bottom;
@@ -783,6 +847,60 @@ public partial class PlotPage : Page
         }
     }
 
+    /// <summary>创建画在 ScottPlot 内部的轻量提示（复制成功、未找到峰等）。</summary>
+    private void InitializeToast()
+    {
+        _toastText = Plot.Plot.AddText("-", 0, 0, 12, System.Drawing.Color.White);
+        _toastText.Alignment = Alignment.LowerCenter;
+        _toastText.PixelOffsetY = 28;
+        _toastText.BackgroundFill = true;
+        _toastText.BorderSize = 1;
+        _toastText.FontBold = true;
+        _toastText.IsVisible = false;
+    }
+
+    private void ShowPlotToast(string text)
+    {
+        if (_toastText == null)
+            return;
+
+        var dark = llcom.Services.ThemeService.IsDark;
+        _toastText.Label = text;
+        _toastText.FontSize = Math.Max(12, PlotValueLabelFontSize());
+        _toastText.Color = dark
+            ? System.Drawing.Color.White
+            : System.Drawing.Color.Black;
+        _toastText.BackgroundColor = dark
+            ? System.Drawing.Color.FromArgb(240, 35, 35, 35)
+            : System.Drawing.Color.FromArgb(240, 255, 255, 255);
+        _toastText.BorderColor = dark
+            ? System.Drawing.Color.FromArgb(180, 230, 237, 243)
+            : System.Drawing.Color.FromArgb(180, 0, 0, 0);
+        _toastText.IsVisible = true;
+        UpdateToastPosition();
+        _toastTimer.Stop();
+        _toastTimer.Start();
+        Refresh();
+    }
+
+    private void UpdateToastPosition()
+    {
+        if (_toastText == null || !_toastText.IsVisible)
+            return;
+        var limits = Plot.Plot.GetAxisLimits();
+        _toastText.X = (limits.XMin + limits.XMax) / 2.0;
+        _toastText.Y = limits.YMin;
+    }
+
+    private void HidePlotToast()
+    {
+        _toastTimer.Stop();
+        if (_toastText == null || !_toastText.IsVisible)
+            return;
+        _toastText.IsVisible = false;
+        Refresh();
+    }
+
     /// <summary>创建示波器式测量线（默认隐藏，启用时再显示/允许拖动）。</summary>
     private void InitializeMeasurementLines()
     {
@@ -958,7 +1076,21 @@ public partial class PlotPage : Page
         if (MeasureXRow != null)
             MeasureXRow.Visibility = _measureXEnabled ? Visibility.Visible : Visibility.Collapsed;
         if (MeasureHint != null)
+        {
             MeasureHint.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+            if (visible)
+            {
+                MeasureHint.Text =
+                    TryFindResource(
+                        _plotEnabled ? "PlotMeasureHoldHint" : "PlotMeasureHoldNoRecord"
+                    ) as string
+                    ?? (
+                        _plotEnabled
+                            ? "Measuring: view paused, data still recording"
+                            : "Measuring: view paused, data not recorded"
+                    );
+            }
+        }
         UpdateMeasurementReadout();
     }
 
@@ -986,15 +1118,19 @@ public partial class PlotPage : Page
             var samples = Math.Abs(a - b);
             //与 X 轴标签使用同一套（测量开始时冻结的）时间映射，保证读数和视觉一致
             var seconds = samples * Math.Abs(_timeScale);
+            var frequency = seconds > 0
+                ? (1.0 / seconds).ToString("0.###", CultureInfo.InvariantCulture)
+                : "-";
             var format = TryFindResource("PlotMeasureXReadout") as string
-                ?? "Interval: A={0}  B={1}  Δ={2} samples / {3} s";
+                ?? "Interval: A={0}  B={1}  Δ={2} samples / {3} s / {4} Hz";
             MeasureXText.Text = string.Format(
                 CultureInfo.InvariantCulture,
                 format,
                 FormatMeasureX(a),
                 FormatMeasureX(b),
                 samples.ToString("0.###", CultureInfo.InvariantCulture),
-                seconds.ToString("0.000", CultureInfo.InvariantCulture)
+                seconds.ToString("0.000", CultureInfo.InvariantCulture),
+                frequency
             );
         }
     }
@@ -1093,16 +1229,68 @@ public partial class PlotPage : Page
         UpdateMeasurementReadout();
     }
 
-    private void AlignMeasurementXRange()
+    /// <summary>
+    /// 把间隔测量线对齐到可见范围内参考曲线的两个相邻峰。
+    /// 参考线取当前可见点数最多的一条可见曲线；找不到时给出提示，不改动原位置。
+    /// </summary>
+    private void AlignMeasurementXPeaks()
     {
-        if (_measureX1 == null || _measureX2 == null)
+        if (_buffer == null || _measureX1 == null || _measureX2 == null)
             return;
 
         var limits = Plot.Plot.GetAxisLimits();
-        _measureX1.X = Math.Round(limits.XMin);
-        _measureX2.X = Math.Round(limits.XMax);
-        if (_measureX2.X <= _measureX1.X)
-            _measureX2.X = _measureX1.X + 1;
+        var referenceLine = -1;
+        var bestCount = 0;
+        var rangeStart = 0;
+        var rangeEnd = -1;
+        for (var line = 0; line < PlotBuffer.LineCount; line++)
+        {
+            if (!_lineVisible[line] || _buffer.Counts[line] <= 0)
+                continue;
+            if (
+                !TryGetVisibleRange(line, limits.XMin, limits.XMax, out var start, out var end)
+            )
+                continue;
+            var count = end - start + 1;
+            if (count <= bestCount)
+                continue;
+            bestCount = count;
+            referenceLine = line;
+            rangeStart = start;
+            rangeEnd = end;
+        }
+
+        if (referenceLine < 0)
+        {
+            ShowPlotToast(
+                TryFindResource("PlotMeasureNoPeaks") as string
+                    ?? "No adjacent peaks in the visible range."
+            );
+            return;
+        }
+
+        var targetX = (_measureX1.X + _measureX2.X) / 2.0;
+        var targetIndex = (long)Math.Round(targetX) - _buffer.BaseX[referenceLine];
+        if (
+            !PlotPeaks.TryFindAdjacentPeaks(
+                _buffer.Values[referenceLine],
+                rangeStart,
+                rangeEnd,
+                targetIndex,
+                out var first,
+                out var second
+            )
+        )
+        {
+            ShowPlotToast(
+                TryFindResource("PlotMeasureNoPeaks") as string
+                    ?? "No adjacent peaks in the visible range."
+            );
+            return;
+        }
+
+        _measureX1.X = _buffer.BaseX[referenceLine] + first;
+        _measureX2.X = _buffer.BaseX[referenceLine] + second;
         UpdateMeasurementDragLimits();
         UpdateMeasurementReadout();
         Refresh();
@@ -1132,8 +1320,8 @@ public partial class PlotPage : Page
         Refresh();
     }
 
-    private void MeasureXAlign_Click(object sender, RoutedEventArgs e) =>
-        AlignMeasurementXRange();
+    private void MeasureXAlignPeaks_Click(object sender, RoutedEventArgs e) =>
+        AlignMeasurementXPeaks();
 
     private void MeasureXClose_Click(object sender, RoutedEventArgs e) =>
         SetMeasurementEnabled(_measureYEnabled, false);
@@ -1268,6 +1456,8 @@ public partial class PlotPage : Page
             //数据滚动时十字准星保持在鼠标当前像素位置，而不是停在旧的数据坐标
             if (_mouseOverPlot)
                 UpdateCrosshair();
+            if (_toastText != null && _toastText.IsVisible)
+                UpdateToastPosition();
             Plot.Render();
         }
         catch (Exception ex)
@@ -1731,6 +1921,34 @@ public partial class PlotPage : Page
         Refresh();
     }
 
+    private void PlotCopyPng_Click(object sender, RoutedEventArgs e)
+    {
+        if (_buffer == null || !TryGetDataXRange(out _, out _))
+        {
+            ShowPlotExportEmpty();
+            return;
+        }
+
+        try
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+            using var bitmap = RenderPlotBitmap();
+            var copied = TryCopyBitmapToClipboard(bitmap);
+            ShowPlotToast(
+                TryFindResource(copied ? "PlotCopyPngDone" : "PlotCopyFailed") as string
+                    ?? (copied ? "Copied to clipboard." : "Failed to copy the image.")
+            );
+        }
+        catch (Exception ex)
+        {
+            ReportPlotExportFailed(ex);
+        }
+        finally
+        {
+            Mouse.OverrideCursor = null;
+        }
+    }
+
     private void PlotExportPng_Click(object sender, RoutedEventArgs e)
     {
         if (_buffer == null || !TryGetDataXRange(out _, out _))
@@ -1746,30 +1964,33 @@ public partial class PlotPage : Page
             AddExtension = true,
             FileName = $"plot_{DateTime.Now:yyyyMMdd_HHmmss}.png",
         };
-        var owner = Window.GetWindow(this);
-        var ok = owner == null ? dialog.ShowDialog() : dialog.ShowDialog(owner);
-        if (ok != true)
-            return;
 
         try
         {
             Mouse.OverrideCursor = Cursors.Wait;
-            //导出时隐藏参考线和交点标签
-            var crosshairWasVisible = _crossLine?.IsVisible ?? false;
-            HideCrosshair();
-            try
+            //先生成图片并复制到剪贴板：即使下面取消保存，图片也已经在剪贴板里。
+            using var bitmap = RenderPlotBitmap();
+            var copied = TryCopyBitmapToClipboard(bitmap);
+            if (copied)
             {
-                //按当前绘图区尺寸的 2 倍导出，避免 SaveFig 缩放时坐标轴被裁切
-                var width = Math.Max(800, (int)Math.Round(Plot.ActualWidth * 2));
-                var height = Math.Max(600, (int)Math.Round(Plot.ActualHeight * 2));
-                Plot.Plot.SaveFig(dialog.FileName, width, height);
+                dialog.Title =
+                    TryFindResource("PlotExportPngTitleCopied") as string
+                    ?? "PNG copied to the clipboard. Choose where to save (or cancel).";
             }
-            finally
+
+            Mouse.OverrideCursor = null;
+            var owner = Window.GetWindow(this);
+            var ok = owner == null ? dialog.ShowDialog() : dialog.ShowDialog(owner);
+            if (ok == true)
             {
-                if (crosshairWasVisible)
-                    UpdateCrosshair();
+                Mouse.OverrideCursor = Cursors.Wait;
+                bitmap.Save(dialog.FileName, System.Drawing.Imaging.ImageFormat.Png);
             }
-            Plot.Render();
+
+            ShowPlotToast(
+                TryFindResource(copied ? "PlotCopyPngDone" : "PlotCopyFailed") as string
+                    ?? (copied ? "Copied to clipboard." : "Failed to copy the image.")
+            );
         }
         catch (Exception ex)
         {
@@ -1778,6 +1999,100 @@ public partial class PlotPage : Page
         finally
         {
             Mouse.OverrideCursor = null;
+        }
+    }
+
+    /// <summary>
+    /// 按当前绘图区 2 倍尺寸渲染一张图；测量开启时把读数画进图片，
+    /// 并临时隐藏十字准星/页面提示，避免导出无关内容。
+    /// </summary>
+    private System.Drawing.Bitmap RenderPlotBitmap()
+    {
+        var width = Math.Max(800, (int)Math.Round(Plot.ActualWidth * 2));
+        var height = Math.Max(600, (int)Math.Round(Plot.ActualHeight * 2));
+        HidePlotToast();
+        var crosshairWasVisible = _crossLine?.IsVisible ?? false;
+        HideCrosshair();
+        var annotations = new List<ScottPlot.Plottable.Text>();
+        try
+        {
+            if (_measureYEnabled || _measureXEnabled)
+            {
+                UpdateMeasurementReadout();
+                var row = 0;
+                if (_measureYEnabled && !string.IsNullOrEmpty(MeasureYText.Text))
+                    AddMeasurementAnnotation(annotations, MeasureYText.Text, row++);
+                if (_measureXEnabled && !string.IsNullOrEmpty(MeasureXText.Text))
+                    AddMeasurementAnnotation(annotations, MeasureXText.Text, row);
+            }
+
+            return Plot.Plot.Render(width, height, false, 1.0);
+        }
+        finally
+        {
+            foreach (var text in annotations)
+                Plot.Plot.Remove(text);
+            if (crosshairWasVisible)
+                UpdateCrosshair();
+            Plot.Render();
+        }
+    }
+
+    private void AddMeasurementAnnotation(
+        List<ScottPlot.Plottable.Text> annotations,
+        string label,
+        int row
+    )
+    {
+        var plot = Plot.Plot;
+        var limits = plot.GetAxisLimits();
+        var size = Math.Max(12, PlotValueLabelFontSize());
+        var dark = llcom.Services.ThemeService.IsDark;
+        var text = plot.AddText(
+            label,
+            limits.XMax,
+            limits.YMax,
+            size,
+            dark ? System.Drawing.Color.White : System.Drawing.Color.Black
+        );
+        text.Alignment = Alignment.UpperRight;
+        text.PixelOffsetX = -10;
+        //ScottPlot 的 PixelOffsetY 正值向上；UpperRight 锚在 YMax，正偏移会把文字推到图外
+        text.PixelOffsetY = -(10 + row * (size + 8));
+        text.FontBold = true;
+        text.BackgroundFill = true;
+        text.BackgroundColor = dark
+            ? System.Drawing.Color.FromArgb(235, 20, 20, 20)
+            : System.Drawing.Color.FromArgb(235, 255, 255, 255);
+        text.BorderSize = 1;
+        text.BorderColor = dark
+            ? System.Drawing.Color.FromArgb(160, 230, 237, 243)
+            : System.Drawing.Color.FromArgb(160, 0, 0, 0);
+        annotations.Add(text);
+    }
+
+    /// <summary>把位图以 PNG 写入剪贴板，其他软件可直接 Ctrl+V 粘贴。</summary>
+    private static bool TryCopyBitmapToClipboard(System.Drawing.Bitmap bitmap)
+    {
+        try
+        {
+            using var stream = new MemoryStream();
+            bitmap.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+            stream.Position = 0;
+
+            var image = new BitmapImage();
+            image.BeginInit();
+            image.CacheOption = BitmapCacheOption.OnLoad;
+            image.StreamSource = stream;
+            image.EndInit();
+            image.Freeze();
+            Clipboard.SetImage(image);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Tools.Logger.Swallowed("plot clipboard", ex);
+            return false;
         }
     }
 

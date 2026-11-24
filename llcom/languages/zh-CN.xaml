@@ -305,18 +305,26 @@
     <system:String x:Key="PlotScrollTip">拖动查看缓冲区中的历史曲线</system:String>
     <system:String x:Key="PlotAutoYTip">Y 轴自动适配（点击切换手动/自动）</system:String>
     <system:String x:Key="PlotLinesTip">曲线选项</system:String>
+    <system:String x:Key="PlotLineNameFormat">线 {0}</system:String>
     <system:String x:Key="PlotShowAllLines">全部显示</system:String>
     <system:String x:Key="PlotTimeAxisMenu">X 轴显示时间</system:String>
     <system:String x:Key="PlotMeasureAmplitude">幅值测量</system:String>
     <system:String x:Key="PlotMeasureInterval">间隔测量</system:String>
     <system:String x:Key="PlotMeasureSwap">交换 A/B</system:String>
     <system:String x:Key="PlotMeasureAlignExtremes">对齐极值</system:String>
-    <system:String x:Key="PlotMeasureAlignRange">对齐范围</system:String>
+    <system:String x:Key="PlotMeasureAlignPeaks">对齐相邻峰</system:String>
+    <system:String x:Key="PlotMeasureAlignPeaksTip">在当前可见范围内，找参考曲线（可见点数最多的一条）的两个相邻峰；找不到时给出提示，不改动原位置。适合周期信号测周期/频率。</system:String>
     <system:String x:Key="PlotMeasureClose">关闭</system:String>
     <system:String x:Key="PlotMeasureHoldHint">测量中：视图已暂停，数据仍在记录</system:String>
+    <system:String x:Key="PlotMeasureHoldNoRecord">测量中：视图已暂停，数据未记录</system:String>
+    <system:String x:Key="PlotMeasureNoPeaks">当前可见范围内没有找到两个相邻峰</system:String>
     <system:String x:Key="PlotMeasureYReadout">幅值：A={0}  B={1}  |Δ|={2}</system:String>
-    <system:String x:Key="PlotMeasureXReadout">间隔：A={0}  B={1}  Δ={2} 样本 / {3} s</system:String>
+    <system:String x:Key="PlotMeasureXReadout">间隔：A={0}  B={1}  Δ={2} 样本 / {3} s / {4} Hz</system:String>
+    <system:String x:Key="PlotCopyPng">复制 PNG</system:String>
+    <system:String x:Key="PlotCopyPngDone">图片已复制到剪贴板</system:String>
+    <system:String x:Key="PlotCopyFailed">复制图片到剪贴板失败</system:String>
     <system:String x:Key="PlotExportPng">导出 PNG…</system:String>
+    <system:String x:Key="PlotExportPngTitleCopied">PNG 已复制到剪贴板；选择保存位置（可取消）</system:String>
     <system:String x:Key="PlotExportCsv">导出 CSV…</system:String>
     <system:String x:Key="PlotExportEmpty">当前没有可导出的曲线数据。</system:String>
     <system:String x:Key="PlotExportFailed">导出失败：</system:String>
