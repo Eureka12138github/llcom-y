@@ -15,6 +15,7 @@
   <Grid TextElement.Foreground="{DynamicResource Brush.Foreground}">
     <Grid.RowDefinitions>
       <RowDefinition Height="auto" />
+      <RowDefinition Height="auto" />
       <RowDefinition Height="*" />
       <RowDefinition Height="auto" />
     </Grid.RowDefinitions>
@@ -78,12 +79,91 @@
         <fa:FontAwesome FontSize="14" Icon="Eye" />
       </Button>
     </Grid>
-    <Grid Grid.Row="1">
+    <Border
+      Name="MeasurePanel"
+      Grid.Row="1"
+      Margin="2,0,2,2"
+      Padding="8,4"
+      Background="{DynamicResource Brush.Surface.Muted}"
+      BorderBrush="{DynamicResource Brush.Border.Subtle}"
+      BorderThickness="1"
+      CornerRadius="4"
+      Visibility="Collapsed"
+    >
+      <StackPanel>
+        <StackPanel Name="MeasureYRow" Visibility="Collapsed">
+          <TextBlock
+            Name="MeasureYText"
+            FontSize="12"
+            TextWrapping="Wrap"
+          />
+          <WrapPanel Margin="0,2,0,0">
+            <Button
+              Content="{DynamicResource PlotMeasureSwap}"
+              Margin="0,0,0,0"
+              Padding="6,1"
+              Click="MeasureYSwap_Click"
+            />
+            <Button
+              Content="{DynamicResource PlotMeasureAlignExtremes}"
+              Margin="4,0,0,0"
+              Padding="6,1"
+              Click="MeasureYAlign_Click"
+            />
+            <Button
+              Content="{DynamicResource PlotMeasureClose}"
+              Margin="4,0,0,0"
+              Padding="6,1"
+              Click="MeasureYClose_Click"
+            />
+          </WrapPanel>
+        </StackPanel>
+        <StackPanel
+          Name="MeasureXRow"
+          Margin="0,3,0,0"
+          Visibility="Collapsed"
+        >
+          <TextBlock
+            Name="MeasureXText"
+            FontSize="12"
+            TextWrapping="Wrap"
+          />
+          <WrapPanel Margin="0,2,0,0">
+            <Button
+              Content="{DynamicResource PlotMeasureSwap}"
+              Margin="0,0,0,0"
+              Padding="6,1"
+              Click="MeasureXSwap_Click"
+            />
+            <Button
+              Content="{DynamicResource PlotMeasureAlignRange}"
+              Margin="4,0,0,0"
+              Padding="6,1"
+              Click="MeasureXAlign_Click"
+            />
+            <Button
+              Content="{DynamicResource PlotMeasureClose}"
+              Margin="4,0,0,0"
+              Padding="6,1"
+              Click="MeasureXClose_Click"
+            />
+          </WrapPanel>
+        </StackPanel>
+        <TextBlock
+          Name="MeasureHint"
+          Margin="0,3,0,0"
+          FontSize="11"
+          Foreground="{DynamicResource Brush.Foreground.Muted}"
+          Text="{DynamicResource PlotMeasureHoldHint}"
+        />
+      </StackPanel>
+    </Border>
+    <Grid Grid.Row="2">
       <WpfPlot Name="Plot" MouseMove="Plot_MouseMove" />
     </Grid>
     <ScrollBar
       Name="PlotScrollBar"
-      Grid.Row="2"
+      Grid.Row="3"
       Height="16"
       Margin="2,0,2,2"
       LargeChange="100"

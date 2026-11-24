@@ -1214,6 +1214,42 @@
       "zh-CN": "X 轴显示时间",
       "en-US": "Show time on X axis"
     },
+    "PlotMeasureAmplitude": {
+      "zh-CN": "幅值测量",
+      "en-US": "Amplitude measurement"
+    },
+    "PlotMeasureInterval": {
+      "zh-CN": "间隔测量",
+      "en-US": "Interval measurement"
+    },
+    "PlotMeasureSwap": {
+      "zh-CN": "交换 A/B",
+      "en-US": "Swap A/B"
+    },
+    "PlotMeasureAlignExtremes": {
+      "zh-CN": "对齐极值",
+      "en-US": "Align extremes"
+    },
+    "PlotMeasureAlignRange": {
+      "zh-CN": "对齐范围",
+      "en-US": "Align range"
+    },
+    "PlotMeasureClose": {
+      "zh-CN": "关闭",
+      "en-US": "Close"
+    },
+    "PlotMeasureHoldHint": {
+      "zh-CN": "测量中：视图已暂停，数据仍在记录",
+      "en-US": "Measuring: view paused, data still recording"
+    },
+    "PlotMeasureYReadout": {
+      "zh-CN": "幅值：A={0}  B={1}  |Δ|={2}",
+      "en-US": "Amplitude: A={0}  B={1}  |Δ|={2}"
+    },
+    "PlotMeasureXReadout": {
+      "zh-CN": "间隔：A={0}  B={1}  Δ={2} 样本 / {3} s",
+      "en-US": "Interval: A={0}  B={1}  Δ={2} samples / {3} s"
+    },
     "PlotExportPng": {
       "zh-CN": "导出 PNG…",
       "en-US": "Export PNG…"

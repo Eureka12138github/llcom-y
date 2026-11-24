@@ -305,6 +305,15 @@
     <system:String x:Key="PlotLinesTip">曲线选项</system:String>
     <system:String x:Key="PlotShowAllLines">全部显示</system:String>
     <system:String x:Key="PlotTimeAxisMenu">X 轴显示时间</system:String>
+    <system:String x:Key="PlotMeasureAmplitude">幅值测量</system:String>
+    <system:String x:Key="PlotMeasureInterval">间隔测量</system:String>
+    <system:String x:Key="PlotMeasureSwap">交换 A/B</system:String>
+    <system:String x:Key="PlotMeasureAlignExtremes">对齐极值</system:String>
+    <system:String x:Key="PlotMeasureAlignRange">对齐范围</system:String>
+    <system:String x:Key="PlotMeasureClose">关闭</system:String>
+    <system:String x:Key="PlotMeasureHoldHint">测量中：视图已暂停，数据仍在记录</system:String>
+    <system:String x:Key="PlotMeasureYReadout">幅值：A={0}  B={1}  |Δ|={2}</system:String>
+    <system:String x:Key="PlotMeasureXReadout">间隔：A={0}  B={1}  Δ={2} 样本 / {3} s</system:String>
     <system:String x:Key="PlotExportPng">导出 PNG…</system:String>
     <system:String x:Key="PlotExportCsv">导出 CSV…</system:String>
     <system:String x:Key="PlotExportEmpty">当前没有可导出的曲线数据。</system:String>

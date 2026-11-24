@@ -305,6 +305,15 @@
     <system:String x:Key="PlotLinesTip">Plot options</system:String>
     <system:String x:Key="PlotShowAllLines">Show all</system:String>
     <system:String x:Key="PlotTimeAxisMenu">Show time on X axis</system:String>
+    <system:String x:Key="PlotMeasureAmplitude">Amplitude measurement</system:String>
+    <system:String x:Key="PlotMeasureInterval">Interval measurement</system:String>
+    <system:String x:Key="PlotMeasureSwap">Swap A/B</system:String>
+    <system:String x:Key="PlotMeasureAlignExtremes">Align extremes</system:String>
+    <system:String x:Key="PlotMeasureAlignRange">Align range</system:String>
+    <system:String x:Key="PlotMeasureClose">Close</system:String>
+    <system:String x:Key="PlotMeasureHoldHint">Measuring: view paused, data still recording</system:String>
+    <system:String x:Key="PlotMeasureYReadout">Amplitude: A={0}  B={1}  |Δ|={2}</system:String>
+    <system:String x:Key="PlotMeasureXReadout">Interval: A={0}  B={1}  Δ={2} samples / {3} s</system:String>
     <system:String x:Key="PlotExportPng">Export PNG…</system:String>
     <system:String x:Key="PlotExportCsv">Export CSV…</system:String>
     <system:String x:Key="PlotExportEmpty">There is no curve data to export.</system:String>

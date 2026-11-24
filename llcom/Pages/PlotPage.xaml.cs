@@ -77,9 +77,32 @@ public partial class PlotPage : Page
     private MenuItem? _exportPngItem;
     private MenuItem? _exportCsvItem;
 
-    private ScottPlot.Plottable.Crosshair? ch = null;
+    //十字参考：一条竖直点线 + 每条可见线在交点处的圆点和数值
+    private ScottPlot.Plottable.VLine? _crossLine;
+    private ScottPlot.Plottable.Text? _crossXText;
+    private readonly ScottPlot.Plottable.MarkerPlot?[] _crossMarkers =
+        new ScottPlot.Plottable.MarkerPlot?[PlotBuffer.LineCount];
+    private readonly ScottPlot.Plottable.Text?[] _crossTexts =
+        new ScottPlot.Plottable.Text?[PlotBuffer.LineCount];
+
+    //示波器式测量线：幅值（水平）和间隔（垂直）
+    private static readonly System.Drawing.Color MeasureYColor =
+        System.Drawing.Color.FromArgb(0, 188, 212);
+    private static readonly System.Drawing.Color MeasureXColor =
+        System.Drawing.Color.FromArgb(213, 0, 249);
+    private ScottPlot.Plottable.HLine? _measureY1;
+    private ScottPlot.Plottable.HLine? _measureY2;
+    private ScottPlot.Plottable.VLine? _measureX1;
+    private ScottPlot.Plottable.VLine? _measureX2;
+    private bool _measureYEnabled;
+    private bool _measureXEnabled;
+    private bool _measureSavedAutoFollow;
+    private bool _measureSavedAutoFitY;
+    private MenuItem? _measureYMenuItem;
+    private MenuItem? _measureXMenuItem;
     private ScottPlot.Renderable.Legend? _legend;
     private bool _legendVisible = true;
+    private bool _mouseOverPlot;
     private readonly ScottPlot.Styles.IStyle[] Styles = ScottPlot.Style.GetStyles();
     private int StyleNow = -1;
 
@@ -136,6 +159,21 @@ public partial class PlotPage : Page
         Plot.ContextMenu = null;
         //右键直接切换图例显示/隐藏，不再弹菜单
         Plot.RightClicked += (_, _) => ToggleLegend();
+
+        //十字准星跟随鼠标像素：视图滚动时在 RefreshTick 里用当前鼠标位置重算，
+        //否则数据坐标固定会让竖线随曲线一起往左漂。
+        Plot.MouseEnter += (_, _) =>
+        {
+            _mouseOverPlot = true;
+            UpdateCrosshair();
+            Refresh();
+        };
+        Plot.MouseLeave += (_, _) =>
+        {
+            _mouseOverPlot = false;
+            HideCrosshair();
+            Refresh();
+        };
 
         _timeAxis = Tools.Global.setting.plotTimeAxis;
 
@@ -197,6 +235,7 @@ public partial class PlotPage : Page
         Plot.AxesChanged += (_, _) =>
         {
             SyncRightAxisLimits();
+            UpdateMeasurementDragLimits();
             UpdateScrollBarFromView();
         };
 
@@ -250,6 +289,8 @@ public partial class PlotPage : Page
     /// <summary>按当前设置创建/重建曲线数据与 ScottPlot 图元。</summary>
     private void InitializePlotData()
     {
+        ResetMeasurementState();
+
         var requested = Tools.Global.setting.plotHistoryPoints;
         var capacity = Math.Max(
             Model.Settings.PlotHistoryPointsMin,
@@ -273,9 +314,9 @@ public partial class PlotPage : Page
             _signals[line] = signal;
         }
 
-        ch = Plot.Plot.AddCrosshair(0, 0);
-        ch.Color = System.Drawing.Color.LightGray;
-        ch.LineWidth = 2;
+        //十字参考：竖直点线 + 交点圆点/数值（水平线和左侧 Y 标签不再使用）
+        InitializeCrosshair();
+        InitializeMeasurementLines();
 
         //图例跟随线条颜色；隐藏的线由 ScottPlot 自动从图例中排除
         ConfigureLegend();
@@ -367,6 +408,27 @@ public partial class PlotPage : Page
         menu.Items.Add(_timeAxisMenuItem);
 
         menu.Items.Add(new Separator());
+        _measureYMenuItem = new MenuItem
+        {
+            Header = TryFindResource("PlotMeasureAmplitude") as string ?? "Amplitude measurement",
+            IsCheckable = true,
+            IsChecked = _measureYEnabled,
+        };
+        _measureYMenuItem.Click += (_, _) =>
+            SetMeasurementEnabled(_measureYMenuItem.IsChecked, _measureXEnabled);
+        menu.Items.Add(_measureYMenuItem);
+
+        _measureXMenuItem = new MenuItem
+        {
+            Header = TryFindResource("PlotMeasureInterval") as string ?? "Interval measurement",
+            IsCheckable = true,
+            IsChecked = _measureXEnabled,
+        };
+        _measureXMenuItem.Click += (_, _) =>
+            SetMeasurementEnabled(_measureYEnabled, _measureXMenuItem.IsChecked);
+        menu.Items.Add(_measureXMenuItem);
+
+        menu.Items.Add(new Separator());
         _exportPngItem = new MenuItem
         {
             Header = TryFindResource("PlotExportPng") as string ?? "Export PNG…",
@@ -406,6 +468,10 @@ public partial class PlotPage : Page
             _showAllLinesItem.IsEnabled = hasHiddenWithData;
         if (_timeAxisMenuItem != null)
             _timeAxisMenuItem.IsChecked = _timeAxis;
+        if (_measureYMenuItem != null)
+            _measureYMenuItem.IsChecked = _measureYEnabled;
+        if (_measureXMenuItem != null)
+            _measureXMenuItem.IsChecked = _measureXEnabled;
 
         var hasAnyData = _buffer != null && TryGetDataXRange(out _, out _);
         if (_exportPngItem != null)
@@ -465,12 +531,7 @@ public partial class PlotPage : Page
         ConfigureAxes();
         ConfigureLegend();
         ApplyXAxisMode();
-        if (ch != null)
-        {
-            ch.Color = dark
-                ? System.Drawing.Color.FromArgb(140, 230, 237, 243)
-                : System.Drawing.Color.LightGray;
-        }
+        ConfigureCrosshair();
         try
         {
             Plot.Render();
@@ -512,15 +573,567 @@ public partial class PlotPage : Page
         _legend.IsVisible = _legendVisible;
     }
 
+    /// <summary>创建竖直参考线和每条线的交点圆点/数值（默认隐藏）。</summary>
+    private void InitializeCrosshair()
+    {
+        _crossLine = Plot.Plot.AddVerticalLine(
+            0,
+            System.Drawing.Color.Gray,
+            1,
+            LineStyle.Dot
+        );
+        _crossLine.IgnoreAxisAuto = true;
+        _crossLine.PositionLabel = false;
+        _crossLine.IsVisible = false;
+
+        //底部 X 标签：放在绘图区内部、贴近底边，比轴上的小灰字更醒目
+        _crossXText = Plot.Plot.AddText(
+            "-",
+            0,
+            0,
+            11,
+            System.Drawing.Color.White
+        );
+        _crossXText.BackgroundFill = true;
+        _crossXText.BackgroundColor = System.Drawing.Color.FromArgb(235, 0, 120, 215);
+        _crossXText.BorderSize = 1;
+        _crossXText.BorderColor = System.Drawing.Color.FromArgb(200, 255, 255, 255);
+        _crossXText.FontBold = true;
+        _crossXText.FontName = "Consolas";
+        _crossXText.Alignment = Alignment.LowerCenter;
+        _crossXText.PixelOffsetY = 6;
+        _crossXText.IsVisible = false;
+
+        for (var line = 0; line < PlotBuffer.LineCount; line++)
+        {
+            var color = _signals[line]?.Color ?? System.Drawing.Color.Gray;
+            var marker = Plot.Plot.AddMarker(
+                0,
+                0,
+                MarkerShape.filledCircle,
+                7,
+                color
+            );
+            marker.IsVisible = false;
+            _crossMarkers[line] = marker;
+
+            var text = Plot.Plot.AddText("-", 0, 0, 10, color);
+            text.BackgroundFill = true;
+            text.BorderSize = 1;
+            text.BorderColor = color;
+            text.IsVisible = false;
+            _crossTexts[line] = text;
+        }
+
+        ConfigureCrosshair();
+    }
+
+    /// <summary>参考线/交点标签的颜色跟随深浅主题。</summary>
+    private void ConfigureCrosshair()
+    {
+        var dark = llcom.Services.ThemeService.IsDark;
+        if (_crossLine != null)
+        {
+            _crossLine.Color = dark
+                ? System.Drawing.Color.FromArgb(170, 220, 220, 220)
+                : System.Drawing.Color.FromArgb(170, 60, 60, 60);
+            _crossLine.PositionLabelBackground = dark
+                ? System.Drawing.Color.FromArgb(220, 30, 30, 30)
+                : System.Drawing.Color.FromArgb(230, 255, 255, 255);
+            _crossLine.PositionLabelFont.Color = dark
+                ? System.Drawing.Color.WhiteSmoke
+                : System.Drawing.Color.Black;
+        }
+
+        for (var line = 0; line < PlotBuffer.LineCount; line++)
+        {
+            var color = _signals[line]?.Color ?? System.Drawing.Color.Gray;
+            if (_crossMarkers[line] != null)
+                _crossMarkers[line]!.Color = color;
+            if (_crossTexts[line] is { } text)
+            {
+                text.Color = color;
+                text.BorderColor = color;
+                text.BackgroundColor = dark
+                    ? System.Drawing.Color.FromArgb(200, 20, 20, 20)
+                    : System.Drawing.Color.FromArgb(220, 255, 255, 255);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 鼠标在数据区时：竖线吸附到最近样本点，并在每条可见线的交点处显示圆点和该点 Y 值。
+    /// </summary>
+    private void UpdateCrosshair()
+    {
+        if (_measureYEnabled || _measureXEnabled)
+        {
+            HideCrosshair();
+            return;
+        }
+
+        if (!_mouseOverPlot || _buffer == null || _crossLine == null)
+        {
+            HideCrosshair();
+            return;
+        }
+
+        var limits = Plot.Plot.GetAxisLimits();
+        var mouse = Plot.GetMouseCoordinates();
+        if (
+            mouse.x < limits.XMin
+            || mouse.x > limits.XMax
+            || mouse.y < limits.YMin
+            || mouse.y > limits.YMax
+        )
+        {
+            HideCrosshair();
+            return;
+        }
+
+        var snap = (long)Math.Round(mouse.x);
+        if (!TryGetDataXRange(out var dataMin, out var dataMax) || snap < dataMin || snap > dataMax)
+        {
+            HideCrosshair();
+            return;
+        }
+
+        _crossLine.X = snap;
+        _crossLine.IsVisible = true;
+
+        if (_crossXText != null)
+        {
+            _crossXText.Label = _timeAxis
+                ? FormatTimeLabel(snap)
+                : snap.ToString(CultureInfo.InvariantCulture);
+            _crossXText.X = snap;
+            _crossXText.Y = limits.YMin;
+            _crossXText.IsVisible = true;
+        }
+
+        var leftSide = snap > (limits.XMin + limits.XMax) / 2;
+        for (var line = 0; line < PlotBuffer.LineCount; line++)
+        {
+            var marker = _crossMarkers[line];
+            var text = _crossTexts[line];
+            if (marker == null || text == null)
+                continue;
+
+            var index = snap - _buffer.BaseX[line];
+            if (
+                !_lineVisible[line]
+                || _buffer.Counts[line] <= 0
+                || index < 0
+                || index >= _buffer.Counts[line]
+            )
+            {
+                marker.IsVisible = false;
+                text.IsVisible = false;
+                continue;
+            }
+
+            var value = _buffer.Values[line][(int)index];
+            marker.X = snap;
+            marker.Y = value;
+            marker.IsVisible = true;
+
+            text.Label = value.ToString("0.###", CultureInfo.InvariantCulture);
+            text.X = snap;
+            text.Y = value;
+            text.Alignment = leftSide ? Alignment.MiddleRight : Alignment.MiddleLeft;
+            text.PixelOffsetX = leftSide ? -8 : 8;
+            text.IsVisible = true;
+        }
+    }
+
+    private void HideCrosshair()
+    {
+        if (_crossLine != null)
+            _crossLine.IsVisible = false;
+        if (_crossXText != null)
+            _crossXText.IsVisible = false;
+        for (var line = 0; line < PlotBuffer.LineCount; line++)
+        {
+            if (_crossMarkers[line] != null)
+                _crossMarkers[line]!.IsVisible = false;
+            if (_crossTexts[line] != null)
+                _crossTexts[line]!.IsVisible = false;
+        }
+    }
+
+    /// <summary>创建示波器式测量线（默认隐藏，启用时再显示/允许拖动）。</summary>
+    private void InitializeMeasurementLines()
+    {
+        _measureY1 = Plot.Plot.AddHorizontalLine(
+            0,
+            MeasureYColor,
+            2,
+            LineStyle.Solid
+        );
+        _measureY2 = Plot.Plot.AddHorizontalLine(
+            0,
+            MeasureYColor,
+            2,
+            LineStyle.Dash
+        );
+        _measureX1 = Plot.Plot.AddVerticalLine(
+            0,
+            MeasureXColor,
+            2,
+            LineStyle.Solid
+        );
+        _measureX2 = Plot.Plot.AddVerticalLine(
+            0,
+            MeasureXColor,
+            2,
+            LineStyle.Dash
+        );
+
+        foreach (var line in new ScottPlot.Plottable.AxisLine?[]
+        {
+            _measureY1,
+            _measureY2,
+            _measureX1,
+            _measureX2,
+        })
+        {
+            if (line == null)
+                continue;
+            line.IgnoreAxisAuto = true;
+            line.DragEnabled = false;
+            line.IsVisible = false;
+        }
+
+        //间隔测量吸附到整数样本点
+        _measureX1.DragSnap = new SnapXToSample();
+        _measureX2.DragSnap = new SnapXToSample();
+    }
+
+    private sealed class SnapXToSample : ScottPlot.SnapLogic.ISnap2D
+    {
+        public ScottPlot.Coordinate Snap(ScottPlot.Coordinate original) =>
+            new(Math.Round(original.X), original.Y);
+    }
+
+    /// <summary>清空/重建时直接关闭测量，不恢复旧的跟随状态。</summary>
+    private void ResetMeasurementState()
+    {
+        _measureYEnabled = false;
+        _measureXEnabled = false;
+        foreach (var line in new ScottPlot.Plottable.AxisLine?[]
+        {
+            _measureY1,
+            _measureY2,
+            _measureX1,
+            _measureX2,
+        })
+        {
+            if (line == null)
+                continue;
+            line.IsVisible = false;
+            line.DragEnabled = false;
+        }
+
+        if (MeasurePanel != null)
+            MeasurePanel.Visibility = Visibility.Collapsed;
+        if (MeasureYRow != null)
+            MeasureYRow.Visibility = Visibility.Collapsed;
+        if (MeasureXRow != null)
+            MeasureXRow.Visibility = Visibility.Collapsed;
+        if (_measureYMenuItem != null)
+            _measureYMenuItem.IsChecked = false;
+        if (_measureXMenuItem != null)
+            _measureXMenuItem.IsChecked = false;
+    }
+
+    private void SetMeasurementEnabled(bool enableY, bool enableX)
+    {
+        var wasActive = _measureYEnabled || _measureXEnabled;
+        var turnOnY = enableY && !_measureYEnabled;
+        var turnOnX = enableX && !_measureXEnabled;
+
+        //第一次进入测量：冻结视图，但数据仍继续记录
+        if (!wasActive && (enableY || enableX))
+        {
+            //冻结时间映射：测量读数与 X 轴标签使用同一套换算，测量期间不再刷新，
+            //避免数据增长导致平均采样间隔变化、A/B 读数自己漂移。
+            UpdateTimeLabelMapping(force: true);
+            _measureSavedAutoFollow = _autoFollow;
+            _measureSavedAutoFitY = _autoFitY;
+            _autoFollow = false;
+            SetAutoFitY(false);
+        }
+
+        _measureYEnabled = enableY;
+        _measureXEnabled = enableX;
+
+        if (_measureY1 != null)
+        {
+            _measureY1.IsVisible = enableY;
+            _measureY1.DragEnabled = enableY;
+        }
+        if (_measureY2 != null)
+        {
+            _measureY2.IsVisible = enableY;
+            _measureY2.DragEnabled = enableY;
+        }
+        if (_measureX1 != null)
+        {
+            _measureX1.IsVisible = enableX;
+            _measureX1.DragEnabled = enableX;
+        }
+        if (_measureX2 != null)
+        {
+            _measureX2.IsVisible = enableX;
+            _measureX2.DragEnabled = enableX;
+        }
+
+        if (turnOnY)
+            AlignMeasurementYExtremes();
+        if (turnOnX)
+        {
+            AlignMeasurementXDefault();
+        }
+
+        UpdateMeasurementDragLimits();
+        UpdateMeasurementPanel();
+
+        if (!_measureYEnabled && !_measureXEnabled)
+        {
+            RestoreMeasurementView();
+            UpdateCrosshair();
+        }
+        else
+        {
+            HideCrosshair();
+        }
+
+        Refresh();
+    }
+
+    private void RestoreMeasurementView()
+    {
+        _autoFollow = _measureSavedAutoFollow;
+        SetAutoFitY(_measureSavedAutoFitY);
+        if (_autoFollow)
+        {
+            FitLatestView();
+            return;
+        }
+
+        UpdateRenderIndices();
+        UpdateScrollBarFromView();
+        Refresh();
+    }
+
+    private void UpdateMeasurementPanel()
+    {
+        var visible = _measureYEnabled || _measureXEnabled;
+        if (MeasurePanel != null)
+            MeasurePanel.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+        if (MeasureYRow != null)
+            MeasureYRow.Visibility = _measureYEnabled ? Visibility.Visible : Visibility.Collapsed;
+        if (MeasureXRow != null)
+            MeasureXRow.Visibility = _measureXEnabled ? Visibility.Visible : Visibility.Collapsed;
+        if (MeasureHint != null)
+            MeasureHint.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+        UpdateMeasurementReadout();
+    }
+
+    private void UpdateMeasurementReadout()
+    {
+        if (_measureYEnabled && _measureY1 != null && _measureY2 != null)
+        {
+            var a = _measureY1.Y;
+            var b = _measureY2.Y;
+            var format = TryFindResource("PlotMeasureYReadout") as string
+                ?? "Amplitude: A={0}  B={1}  |Δ|={2}";
+            MeasureYText.Text = string.Format(
+                CultureInfo.InvariantCulture,
+                format,
+                a.ToString("0.###", CultureInfo.InvariantCulture),
+                b.ToString("0.###", CultureInfo.InvariantCulture),
+                Math.Abs(a - b).ToString("0.###", CultureInfo.InvariantCulture)
+            );
+        }
+
+        if (_measureXEnabled && _measureX1 != null && _measureX2 != null)
+        {
+            var a = _measureX1.X;
+            var b = _measureX2.X;
+            var samples = Math.Abs(a - b);
+            //与 X 轴标签使用同一套（测量开始时冻结的）时间映射，保证读数和视觉一致
+            var seconds = samples * Math.Abs(_timeScale);
+            var format = TryFindResource("PlotMeasureXReadout") as string
+                ?? "Interval: A={0}  B={1}  Δ={2} samples / {3} s";
+            MeasureXText.Text = string.Format(
+                CultureInfo.InvariantCulture,
+                format,
+                FormatMeasureX(a),
+                FormatMeasureX(b),
+                samples.ToString("0.###", CultureInfo.InvariantCulture),
+                seconds.ToString("0.000", CultureInfo.InvariantCulture)
+            );
+        }
+    }
+
+    private string FormatMeasureX(double x)
+    {
+        if (_timeAxis)
+        {
+            return _timeOrigin
+                .AddSeconds(_timeAnchorTime + (x - _timeAnchorX) * _timeScale)
+                .ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture);
+        }
+        return x.ToString("0.###", CultureInfo.InvariantCulture);
+    }
+
+    private void UpdateMeasurementDragLimits()
+    {
+        var limits = Plot.Plot.GetAxisLimits();
+        if (_measureY1 != null)
+        {
+            _measureY1.DragLimitMin = limits.YMin;
+            _measureY1.DragLimitMax = limits.YMax;
+        }
+        if (_measureY2 != null)
+        {
+            _measureY2.DragLimitMin = limits.YMin;
+            _measureY2.DragLimitMax = limits.YMax;
+        }
+        if (_measureX1 != null)
+        {
+            _measureX1.DragLimitMin = limits.XMin;
+            _measureX1.DragLimitMax = limits.XMax;
+        }
+        if (_measureX2 != null)
+        {
+            _measureX2.DragLimitMin = limits.XMin;
+            _measureX2.DragLimitMax = limits.XMax;
+        }
+    }
+
+    /// <summary>把幅值测量线对齐到当前可见曲线的最高/最低点。</summary>
+    private void AlignMeasurementYExtremes()
+    {
+        if (_buffer == null || _measureY1 == null || _measureY2 == null)
+            return;
+
+        var limits = Plot.Plot.GetAxisLimits();
+        var min = double.MaxValue;
+        var max = double.MinValue;
+        for (var line = 0; line < PlotBuffer.LineCount; line++)
+        {
+            if (!_lineVisible[line] || _buffer.Counts[line] <= 0)
+                continue;
+            if (!TryGetVisibleRange(line, limits.XMin, limits.XMax, out var start, out var end))
+                continue;
+
+            var values = _buffer.Values[line];
+            for (var i = start; i <= end; i++)
+            {
+                if (values[i] < min)
+                    min = values[i];
+                if (values[i] > max)
+                    max = values[i];
+            }
+        }
+
+        if (min > max)
+        {
+            min = limits.YMin;
+            max = limits.YMax;
+        }
+        if (max <= min)
+            max = min + 1;
+
+        _measureY1.Y = max;
+        _measureY2.Y = min;
+        UpdateMeasurementDragLimits();
+        UpdateMeasurementReadout();
+        Refresh();
+    }
+
+    /// <summary>间隔测量默认放在可见 X 范围的 1/3 和 2/3。</summary>
+    private void AlignMeasurementXDefault()
+    {
+        if (_measureX1 == null || _measureX2 == null)
+            return;
+
+        var limits = Plot.Plot.GetAxisLimits();
+        var width = limits.XMax - limits.XMin;
+        if (width <= 0)
+            width = 1;
+        _measureX1.X = Math.Round(limits.XMin + width / 3.0);
+        _measureX2.X = Math.Round(limits.XMin + width * 2.0 / 3.0);
+        if (_measureX2.X <= _measureX1.X)
+            _measureX2.X = _measureX1.X + 1;
+        UpdateMeasurementReadout();
+    }
+
+    private void AlignMeasurementXRange()
+    {
+        if (_measureX1 == null || _measureX2 == null)
+            return;
+
+        var limits = Plot.Plot.GetAxisLimits();
+        _measureX1.X = Math.Round(limits.XMin);
+        _measureX2.X = Math.Round(limits.XMax);
+        if (_measureX2.X <= _measureX1.X)
+            _measureX2.X = _measureX1.X + 1;
+        UpdateMeasurementDragLimits();
+        UpdateMeasurementReadout();
+        Refresh();
+    }
+
+    private void MeasureYSwap_Click(object sender, RoutedEventArgs e)
+    {
+        if (_measureY1 == null || _measureY2 == null)
+            return;
+        (_measureY1.Y, _measureY2.Y) = (_measureY2.Y, _measureY1.Y);
+        UpdateMeasurementReadout();
+        Refresh();
+    }
+
+    private void MeasureYAlign_Click(object sender, RoutedEventArgs e) =>
+        AlignMeasurementYExtremes();
+
+    private void MeasureYClose_Click(object sender, RoutedEventArgs e) =>
+        SetMeasurementEnabled(false, _measureXEnabled);
+
+    private void MeasureXSwap_Click(object sender, RoutedEventArgs e)
+    {
+        if (_measureX1 == null || _measureX2 == null)
+            return;
+        (_measureX1.X, _measureX2.X) = (_measureX2.X, _measureX1.X);
+        UpdateMeasurementReadout();
+        Refresh();
+    }
+
+    private void MeasureXAlign_Click(object sender, RoutedEventArgs e) =>
+        AlignMeasurementXRange();
+
+    private void MeasureXClose_Click(object sender, RoutedEventArgs e) =>
+        SetMeasurementEnabled(_measureYEnabled, false);
+
     /// <summary>
     /// 切换 X 轴刻度：样本序号，或按平均采样间隔换算成时间。
     /// 只改刻度标签，几何仍按样本序号排布，避免批量投递的点在时间轴上挤成台阶。
     /// </summary>
     private void ApplyXAxisMode()
     {
+        if (_crossLine != null)
+        {
+            if (_timeAxis)
+                _crossLine.PositionFormatter = FormatTimeLabel;
+            else
+                _crossLine.PositionFormatter = x => x.ToString("0");
+        }
+
         if (_timeAxis)
         {
-            UpdateTimeLabelMapping();
+            if (!(_measureYEnabled || _measureXEnabled))
+                UpdateTimeLabelMapping();
             Plot.Plot.BottomAxis.TickLabelFormat(FormatTimeLabel);
         }
         else
@@ -544,8 +1157,11 @@ public partial class PlotPage : Page
     /// 用点数最多的线估算“每个样本多少秒”，把样本序号映射到时间标签。
     /// 采样间隔均匀时准确；批量投递/间隔变化时是近似值。
     /// </summary>
-    private void UpdateTimeLabelMapping()
+    private void UpdateTimeLabelMapping(bool force = false)
     {
+        //测量期间冻结映射：读数和 X 轴标签使用同一套换算，避免读数和视觉位置对不上
+        if (!force && (_measureYEnabled || _measureXEnabled))
+            return;
         if (_buffer == null)
             return;
 
@@ -614,13 +1230,22 @@ public partial class PlotPage : Page
             }
         }
 
+        if (_timeAxis && !(_measureYEnabled || _measureXEnabled))
+            UpdateTimeLabelMapping();
+        if (_measureYEnabled || _measureXEnabled)
+        {
+            UpdateMeasurementDragLimits();
+            UpdateMeasurementReadout();
+        }
+
         if (!NeedRefresh)
             return;
         NeedRefresh = false;
         try
         {
-            if (_timeAxis)
-                UpdateTimeLabelMapping();
+            //数据滚动时十字准星保持在鼠标当前像素位置，而不是停在旧的数据坐标
+            if (_mouseOverPlot)
+                UpdateCrosshair();
             Plot.Render();
         }
         catch (Exception ex)
@@ -1107,10 +1732,9 @@ public partial class PlotPage : Page
         try
         {
             Mouse.OverrideCursor = Cursors.Wait;
-            //导出时隐藏十字准线，避免把鼠标位置和坐标标签画进图片
-            var crosshairWasVisible = ch?.IsVisible ?? false;
-            if (ch != null)
-                ch.IsVisible = false;
+            //导出时隐藏参考线和交点标签
+            var crosshairWasVisible = _crossLine?.IsVisible ?? false;
+            HideCrosshair();
             try
             {
                 //按当前绘图区尺寸的 2 倍导出，避免 SaveFig 缩放时坐标轴被裁切
@@ -1120,8 +1744,8 @@ public partial class PlotPage : Page
             }
             finally
             {
-                if (ch != null)
-                    ch.IsVisible = crosshairWasVisible;
+                if (crosshairWasVisible)
+                    UpdateCrosshair();
             }
             Plot.Render();
         }
@@ -1378,11 +2002,8 @@ public partial class PlotPage : Page
             signal.MaxRenderIndex = 0;
         }
 
-        if (ch != null)
-        {
-            ch.X = 0;
-            ch.Y = 0;
-        }
+        HideCrosshair();
+        ResetMeasurementState();
 
         _timeOrigin = DateTime.Now;
         _autoFollow = true;
@@ -1400,6 +2021,14 @@ public partial class PlotPage : Page
 
     private void SetPlotEnabled(bool enabled)
     {
+        //停止/重新开始绘制时自动退出测量，避免旧测量线与新数据错位
+        if (_measureYEnabled || _measureXEnabled)
+        {
+            var restoreAutoY = _measureSavedAutoFitY;
+            ResetMeasurementState();
+            SetAutoFitY(restoreAutoY);
+        }
+
         _plotEnabled = enabled;
         var text =
             TryFindResource(enabled ? "PlotStop" : "PlotStart") as string
@@ -1449,17 +2078,17 @@ public partial class PlotPage : Page
 
     private void Plot_MouseMove(object sender, MouseEventArgs e)
     {
-        var zone = GetPlotZone(e.GetPosition(Plot));
-        Plot.Cursor =
-            zone == PlotZone.XAxis ? Cursors.SizeWE
-            : zone == PlotZone.YAxis ? Cursors.SizeNS
-            : Cursors.Arrow;
+        _mouseOverPlot = true;
+        if (!_measureYEnabled && !_measureXEnabled)
+        {
+            var zone = GetPlotZone(e.GetPosition(Plot));
+            Plot.Cursor =
+                zone == PlotZone.XAxis ? Cursors.SizeWE
+                : zone == PlotZone.YAxis ? Cursors.SizeNS
+                : Cursors.Arrow;
+        }
 
-        var p = Plot.GetMouseCoordinates();
-        if (ch == null)
-            return;
-        ch.X = p.x;
-        ch.Y = p.y;
+        UpdateCrosshair();
         Refresh();
     }
 
