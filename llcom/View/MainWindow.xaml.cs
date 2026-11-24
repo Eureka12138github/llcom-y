@@ -113,6 +113,7 @@ public partial class MainWindow : Window
     public MainWindow(MainViewModel vm)
     {
         InitializeComponent();
+        AttachSerialComboWheel();
         _vm = vm;
         DataContext = _vm;
         _toolIndexStore = ToolIndexStore.CreateDefault();
@@ -1719,6 +1720,47 @@ public partial class MainWindow : Window
     }
 
     // ===== “串口设置”页参数下拉 =====
+
+    /// <summary>
+    /// 串口设置里的下拉参数支持“鼠标悬停 + 滚轮”直接切换，不需要先展开下拉。
+    /// 字符编码不参与（不常改，滚轮容易误操作）；下拉展开时保持滚轮滚动列表的原行为。
+    /// </summary>
+    private void AttachSerialComboWheel()
+    {
+        ComboBox[] combos =
+        {
+            serialPortsListComboBox,
+            baudRateComboBox,
+            mainDataBitsComboBox,
+            mainDataCheckComboBox,
+            mainStopBitComboBox,
+        };
+        foreach (var combo in combos)
+            combo.PreviewMouseWheel += SerialCombo_PreviewMouseWheel;
+    }
+
+    private void SerialCombo_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+    {
+        if (
+            sender is not ComboBox combo
+            || !combo.IsEnabled
+            || combo.IsDropDownOpen
+            || combo.Items.Count == 0
+        )
+            return;
+
+        var step = e.Delta > 0 ? -1 : 1;
+        var index = combo.SelectedIndex;
+        if (index < 0)
+            index = step > 0 ? -1 : combo.Items.Count;
+
+        var next = index + step;
+        if (next >= 0 && next < combo.Items.Count)
+            combo.SelectedIndex = next;
+
+        // 滚轮已经用于切换选项，不再让它滚动外层的设置页
+        e.Handled = true;
+    }
 
     private void MainDataBitsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
