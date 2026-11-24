@@ -149,6 +149,8 @@
     <system:String x:Key="SettingStreamMaxCharsTip">流式模式（分包数据超时设为负数）最多保留多少字符，超过后自动丢弃最早的文本；范围 100000~10000000</system:String>
     <system:String x:Key="SettingPlotHistoryPoints">曲线保留点数：</system:String>
     <system:String x:Key="SettingPlotHistoryPointsTip">每条曲线保留的历史点数（10000~100000，默认 20000）；默认显示最近 1000 点，缩小后可查看更早的数据。修改后会清空当前曲线。</system:String>
+    <system:String x:Key="SettingPlotValueFontSize">曲线数值标签字号：</system:String>
+    <system:String x:Key="SettingPlotValueFontSizeTip">曲线交点数值标签的字体大小（12~20，默认 12）；底部 X 标签会随之略大。修改后即时生效，重启保留。</system:String>
     <system:String x:Key="SettingTerminal">终端模式（在日志区直接键盘发送）</system:String>
     <system:String x:Key="SettingTerminalTip">开启后，点击日志区并敲键盘，字符会直接发送到串口。终端模式下 Ctrl+C 会发送 0x03，与复制快捷键冲突；复制日志前建议先关闭。</system:String>
     <system:String x:Key="SettingScriptNotify">脚本结束提示（系统托盘气泡）</system:String>
@@ -302,6 +304,30 @@
     <system:String x:Key="PlotStop">停止绘制</system:String>
     <system:String x:Key="PlotScrollTip">拖动查看缓冲区中的历史曲线</system:String>
     <system:String x:Key="PlotAutoYTip">Y 轴自动适配（点击切换手动/自动）</system:String>
+    <system:String x:Key="PlotLinesTip">曲线选项</system:String>
+    <system:String x:Key="PlotLineNameFormat">线 {0}</system:String>
+    <system:String x:Key="PlotShowAllLines">全部显示</system:String>
+    <system:String x:Key="PlotTimeAxisMenu">X 轴显示时间</system:String>
+    <system:String x:Key="PlotMeasureAmplitude">幅值测量</system:String>
+    <system:String x:Key="PlotMeasureInterval">间隔测量</system:String>
+    <system:String x:Key="PlotMeasureSwap">交换 A/B</system:String>
+    <system:String x:Key="PlotMeasureAlignExtremes">对齐极值</system:String>
+    <system:String x:Key="PlotMeasureAlignPeaks">对齐相邻峰</system:String>
+    <system:String x:Key="PlotMeasureAlignPeaksTip">在当前可见范围内，找参考曲线（可见点数最多的一条）的两个相邻峰；找不到时给出提示，不改动原位置。适合周期信号测周期/频率。</system:String>
+    <system:String x:Key="PlotMeasureClose">关闭</system:String>
+    <system:String x:Key="PlotMeasureHoldHint">测量中：视图已暂停，数据仍在记录</system:String>
+    <system:String x:Key="PlotMeasureHoldNoRecord">测量中：视图已暂停，数据未记录</system:String>
+    <system:String x:Key="PlotMeasureNoPeaks">当前可见范围内没有找到两个相邻峰</system:String>
+    <system:String x:Key="PlotMeasureYReadout">幅值：A={0}  B={1}  |Δ|={2}</system:String>
+    <system:String x:Key="PlotMeasureXReadout">间隔：A={0}  B={1}  Δ={2} 样本 / {3} s / {4} Hz</system:String>
+    <system:String x:Key="PlotCopyPng">复制 PNG</system:String>
+    <system:String x:Key="PlotCopyPngDone">图片已复制到剪贴板</system:String>
+    <system:String x:Key="PlotCopyFailed">复制图片到剪贴板失败</system:String>
+    <system:String x:Key="PlotExportPng">导出 PNG…</system:String>
+    <system:String x:Key="PlotExportPngTitleCopied">PNG 已复制到剪贴板；选择保存位置（可取消）</system:String>
+    <system:String x:Key="PlotExportCsv">导出 CSV…</system:String>
+    <system:String x:Key="PlotExportEmpty">当前没有可导出的曲线数据。</system:String>
+    <system:String x:Key="PlotExportFailed">导出失败：</system:String>
     <system:String x:Key="RefreshIpList">刷新IP</system:String>
     <system:String x:Key="StartListen">开始监听</system:String>
     <system:String x:Key="StopListen">停止监听</system:String>

@@ -85,5 +85,18 @@ namespace llcom.Tests
         {
             Assert.False(new Settings().terminal);
         }
+
+        /// <summary>曲线交点数值标签字号：默认 12，夹取到 12~20。</summary>
+        [Fact]
+        public void PlotValueFontSize_IsClamped()
+        {
+            var s = new Settings();
+            Assert.Equal(12, s.plotValueFontSize);
+
+            s.plotValueFontSize = 1;
+            Assert.Equal(Settings.PlotValueFontSizeMin, s.plotValueFontSize);
+            s.plotValueFontSize = 99;
+            Assert.Equal(Settings.PlotValueFontSizeMax, s.plotValueFontSize);
+        }
     }
 }
