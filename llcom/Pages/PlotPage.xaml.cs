@@ -576,6 +576,7 @@ public partial class PlotPage : Page
     /// <summary>创建竖直参考线和每条线的交点圆点/数值（默认隐藏）。</summary>
     private void InitializeCrosshair()
     {
+        var valueSize = PlotValueLabelFontSize();
         _crossLine = Plot.Plot.AddVerticalLine(
             0,
             System.Drawing.Color.Gray,
@@ -591,7 +592,7 @@ public partial class PlotPage : Page
             "-",
             0,
             0,
-            11,
+            Math.Max(11, valueSize),
             System.Drawing.Color.White
         );
         _crossXText.BackgroundFill = true;
@@ -617,15 +618,27 @@ public partial class PlotPage : Page
             marker.IsVisible = false;
             _crossMarkers[line] = marker;
 
-            var text = Plot.Plot.AddText("-", 0, 0, 10, color);
+            var text = Plot.Plot.AddText("-", 0, 0, valueSize, color);
             text.BackgroundFill = true;
             text.BorderSize = 1;
             text.BorderColor = color;
+            text.FontBold = true;
+            text.FontName = "Consolas";
             text.IsVisible = false;
             _crossTexts[line] = text;
         }
 
         ConfigureCrosshair();
+    }
+
+    /// <summary>曲线数值标签字号（读取设置并夹到合法范围）。</summary>
+    private static int PlotValueLabelFontSize()
+    {
+        var setting = Tools.Global.setting;
+        return Math.Max(
+            Model.Settings.PlotValueFontSizeMin,
+            Math.Min(Model.Settings.PlotValueFontSizeMax, setting.plotValueFontSize)
+        );
     }
 
     /// <summary>参考线/交点标签的颜色跟随深浅主题。</summary>
@@ -655,8 +668,8 @@ public partial class PlotPage : Page
                 text.Color = color;
                 text.BorderColor = color;
                 text.BackgroundColor = dark
-                    ? System.Drawing.Color.FromArgb(200, 20, 20, 20)
-                    : System.Drawing.Color.FromArgb(220, 255, 255, 255);
+                    ? System.Drawing.Color.FromArgb(235, 20, 20, 20)
+                    : System.Drawing.Color.FromArgb(235, 255, 255, 255);
             }
         }
     }
@@ -701,6 +714,10 @@ public partial class PlotPage : Page
         _crossLine.X = snap;
         _crossLine.IsVisible = true;
 
+        var valueSize = PlotValueLabelFontSize();
+        if (_crossXText != null)
+            _crossXText.FontSize = Math.Max(11, valueSize);
+
         if (_crossXText != null)
         {
             _crossXText.Label = _timeAxis
@@ -718,6 +735,11 @@ public partial class PlotPage : Page
             var text = _crossTexts[line];
             if (marker == null || text == null)
                 continue;
+
+            //字号设置修改后即时应用（即使当前这条线不在交点也先同步，下一次显示就是新字号）
+            text.FontSize = valueSize;
+            text.FontBold = true;
+            text.FontName = "Consolas";
 
             var index = snap - _buffer.BaseX[line];
             if (
@@ -741,7 +763,7 @@ public partial class PlotPage : Page
             text.X = snap;
             text.Y = value;
             text.Alignment = leftSide ? Alignment.MiddleRight : Alignment.MiddleLeft;
-            text.PixelOffsetX = leftSide ? -8 : 8;
+            text.PixelOffsetX = leftSide ? -10 : 10;
             text.IsVisible = true;
         }
     }

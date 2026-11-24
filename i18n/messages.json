@@ -590,6 +590,14 @@
       "zh-CN": "每条曲线保留的历史点数（10000~100000，默认 20000）；默认显示最近 1000 点，缩小后可查看更早的数据。修改后会清空当前曲线。",
       "en-US": "History points kept per curve (10000~100000, default 20000); the view starts with the latest 1000 points and zooming out shows older data. Changing this clears the current curves."
     },
+    "SettingPlotValueFontSize": {
+      "zh-CN": "曲线数值标签字号：",
+      "en-US": "Chart value label size:"
+    },
+    "SettingPlotValueFontSizeTip": {
+      "zh-CN": "曲线交点数值标签的字体大小（12~20，默认 12）；底部 X 标签会随之略大。修改后即时生效，重启保留。",
+      "en-US": "Font size of the curve value labels at the cursor (12~20, default 12); the bottom X label grows with it. Changes apply immediately and are saved."
+    },
     "SettingTerminal": {
       "zh-CN": "终端模式（在日志区直接键盘发送）",
       "en-US": "Terminal mode (type directly in the log area)"
