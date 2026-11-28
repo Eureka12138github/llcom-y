@@ -19,6 +19,19 @@ public partial class HelpWindow : Window
         HelpContentEn.Visibility = english ? Visibility.Visible : Visibility.Collapsed;
     }
 
+    /// <summary>目录跳转：按钮的 Tag 是目标章节的 x:Name，滚动到该章节顶部。</summary>
+    private void SectionLink_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not FrameworkElement { Tag: string name })
+            return;
+        if (FindName(name) is not FrameworkElement target)
+            return;
+
+        //按章节相对滚动容器的位置计算偏移，留 8 像素避免标题贴边
+        var offset = target.TransformToAncestor(HelpScroll).Transform(new Point(0, 0)).Y;
+        HelpScroll.ScrollToVerticalOffset(Math.Max(0, HelpScroll.VerticalOffset + offset - 8));
+    }
+
     protected override void OnSourceInitialized(EventArgs e)
     {
         base.OnSourceInitialized(e);

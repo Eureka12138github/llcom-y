@@ -1,4 +1,4 @@
-<Window
+﻿<Window
   x:Class="llcom.HelpWindow"
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -20,13 +20,114 @@
     <Style x:Key="HelpTitle" TargetType="TextBlock">
       <Setter Property="FontSize" Value="22" />
       <Setter Property="FontWeight" Value="Bold" />
-      <Setter Property="Margin" Value="0,0,0,10" />
-    </Style>
-    <Style x:Key="HelpH" TargetType="TextBlock">
-      <Setter Property="FontSize" Value="16" />
-      <Setter Property="FontWeight" Value="Bold" />
-      <Setter Property="Margin" Value="0,16,0,6" />
       <Setter Property="Foreground" Value="{DynamicResource Brush.Foreground}" />
+      <Setter Property="Margin" Value="0,0,0,6" />
+    </Style>
+    <Style x:Key="HelpIntro" TargetType="TextBlock">
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="LineHeight" Value="19" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+      <Setter Property="Foreground" Value="{DynamicResource Brush.Foreground.Muted}" />
+      <Setter Property="Margin" Value="0,0,0,12" />
+    </Style>
+
+    <!--  目录卡片  -->
+    <Style x:Key="HelpTocCard" TargetType="Border">
+      <Setter Property="Background" Value="{DynamicResource Brush.Surface.Subtle}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border.Subtle}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="6" />
+      <Setter Property="Padding" Value="14,12,10,7" />
+      <Setter Property="Margin" Value="0,0,0,12" />
+    </Style>
+    <Style x:Key="HelpTocTitle" TargetType="TextBlock">
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="FontWeight" Value="Bold" />
+      <Setter Property="Foreground" Value="{DynamicResource Brush.Foreground.Muted}" />
+      <Setter Property="Margin" Value="0,0,0,8" />
+    </Style>
+    <Style x:Key="HelpTocButton" TargetType="Button">
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Margin" Value="0,0,6,6" />
+      <Setter Property="Foreground" Value="{DynamicResource Brush.Foreground}" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border
+              x:Name="TocButtonBorder"
+              Padding="9,3"
+              Background="{DynamicResource Brush.Surface}"
+              BorderBrush="{DynamicResource Brush.Border.Subtle}"
+              BorderThickness="1"
+              CornerRadius="10"
+            >
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter
+                  TargetName="TocButtonBorder"
+                  Property="Background"
+                  Value="{DynamicResource Brush.Surface.Muted}"
+                />
+                <Setter
+                  TargetName="TocButtonBorder"
+                  Property="BorderBrush"
+                  Value="{DynamicResource Brush.Border}"
+                />
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <!--  章节卡片：标题左侧色条 + 标题 + 内容  -->
+    <Style x:Key="HelpSection" TargetType="HeaderedContentControl">
+      <Setter Property="Margin" Value="0,0,0,10" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="HeaderedContentControl">
+            <Border
+              Padding="14,11,14,12"
+              Background="{DynamicResource Brush.Surface.Subtle}"
+              BorderBrush="{DynamicResource Brush.Border.Subtle}"
+              BorderThickness="1"
+              CornerRadius="6"
+            >
+              <StackPanel>
+                <StackPanel Margin="0,0,0,4" Orientation="Horizontal">
+                  <Border
+                    Width="3"
+                    Height="13"
+                    Margin="0,0,8,0"
+                    VerticalAlignment="Center"
+                    Background="{DynamicResource Brush.State.Info}"
+                    CornerRadius="1.5"
+                  />
+                  <TextBlock
+                    VerticalAlignment="Center"
+                    FontSize="15"
+                    FontWeight="Bold"
+                    Foreground="{DynamicResource Brush.Foreground}"
+                    Text="{Binding Header, RelativeSource={RelativeSource TemplatedParent}}"
+                  />
+                </StackPanel>
+                <ContentPresenter />
+              </StackPanel>
+            </Border>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <!--  章节内的小标题  -->
+    <Style x:Key="HelpH3" TargetType="TextBlock">
+      <Setter Property="FontSize" Value="13.5" />
+      <Setter Property="FontWeight" Value="Bold" />
+      <Setter Property="Foreground" Value="{DynamicResource Brush.Foreground}" />
+      <Setter Property="Margin" Value="0,10,0,1" />
     </Style>
     <Style x:Key="HelpP" TargetType="TextBlock">
       <Setter Property="FontSize" Value="13" />
@@ -34,349 +135,855 @@
       <Setter Property="Margin" Value="0,3,0,0" />
       <Setter Property="LineHeight" Value="20" />
     </Style>
-    <Style x:Key="HelpLi" TargetType="TextBlock" BasedOn="{StaticResource HelpP}">
+    <Style
+      x:Key="HelpLi"
+      BasedOn="{StaticResource HelpP}"
+      TargetType="TextBlock"
+    >
       <Setter Property="Margin" Value="14,2,0,0" />
+    </Style>
+    <Style
+      x:Key="HelpSub"
+      BasedOn="{StaticResource HelpP}"
+      TargetType="TextBlock"
+    >
+      <Setter Property="FontSize" Value="12.5" />
+      <Setter Property="Foreground" Value="{DynamicResource Brush.Foreground.Muted}" />
+      <Setter Property="Margin" Value="28,2,0,0" />
+    </Style>
+    <Style x:Key="HelpNote" TargetType="TextBlock">
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+      <Setter Property="LineHeight" Value="18.5" />
+      <Setter Property="Foreground" Value="{DynamicResource Brush.Foreground.Muted}" />
+      <Setter Property="Margin" Value="0,8,0,0" />
     </Style>
   </Window.Resources>
 
-  <ScrollViewer Padding="20,16,20,20" VerticalScrollBarVisibility="Auto">
+  <ScrollViewer
+    x:Name="HelpScroll"
+    Padding="20,16,20,20"
+    VerticalScrollBarVisibility="Auto"
+  >
     <StackPanel>
       <StackPanel x:Name="HelpContentZh">
-      <TextBlock Style="{StaticResource HelpTitle}" Text="LLCOM 使用说明" />
+        <TextBlock Style="{StaticResource HelpTitle}" Text="LLCOM 使用说明" />
+        <TextBlock
+          Style="{StaticResource HelpIntro}"
+          Text="下面按「串口 → 收发 → 发送 → 脚本 → 工具」的顺序介绍主要功能；点击目录可直接跳到对应章节。"
+        />
 
-      <TextBlock Style="{StaticResource HelpH}" Text="一、快速上手" />
-      <TextBlock Style="{StaticResource HelpP}" Text="1. 在右侧「串口设置」标签里：选择「串口」→ 选择「波特率」→ 点「打开串口」。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="2. 左侧为收发日志；底部输入要发送的内容，点「发送」或按 Ctrl+Enter（可在「发送选项」里改为按 Enter 发送）。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="3. 右侧标签页：串口设置 / 快捷发送 / 运行脚本 / 在线脚本 / 工具 / 关于。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="提示：未打开串口时点「发送」不会自动开串口，会提示先打开串口。" />
+        <Border Style="{StaticResource HelpTocCard}">
+          <StackPanel>
+            <TextBlock Style="{StaticResource HelpTocTitle}" Text="目录（点击跳转）" />
+            <WrapPanel>
+              <Button
+                Click="SectionLink_Click"
+                Content="1 快速上手"
+                Style="{StaticResource HelpTocButton}"
+                Tag="SecQuickStart"
+              />
+              <Button
+                Click="SectionLink_Click"
+                Content="2 快捷键"
+                Style="{StaticResource HelpTocButton}"
+                Tag="SecShortcuts"
+              />
+              <Button
+                Click="SectionLink_Click"
+                Content="3 串口设置"
+                Style="{StaticResource HelpTocButton}"
+                Tag="SecSerial"
+              />
+              <Button
+                Click="SectionLink_Click"
+                Content="4 收发显示区"
+                Style="{StaticResource HelpTocButton}"
+                Tag="SecLog"
+              />
+              <Button
+                Click="SectionLink_Click"
+                Content="5 发送区"
+                Style="{StaticResource HelpTocButton}"
+                Tag="SecSend"
+              />
+              <Button
+                Click="SectionLink_Click"
+                Content="6 快捷发送"
+                Style="{StaticResource HelpTocButton}"
+                Tag="SecQuickSend"
+              />
+              <Button
+                Click="SectionLink_Click"
+                Content="7 运行脚本"
+                Style="{StaticResource HelpTocButton}"
+                Tag="SecScript"
+              />
+              <Button
+                Click="SectionLink_Click"
+                Content="8 在线脚本"
+                Style="{StaticResource HelpTocButton}"
+                Tag="SecOnline"
+              />
+              <Button
+                Click="SectionLink_Click"
+                Content="9 工具"
+                Style="{StaticResource HelpTocButton}"
+                Tag="SecTools"
+              />
+              <Button
+                Click="SectionLink_Click"
+                Content="10 计算器详解"
+                Style="{StaticResource HelpTocButton}"
+                Tag="SecCalculator"
+              />
+              <Button
+                Click="SectionLink_Click"
+                Content="11 曲线工具详解"
+                Style="{StaticResource HelpTocButton}"
+                Tag="SecPlot"
+              />
+              <Button
+                Click="SectionLink_Click"
+                Content="12 更多设置"
+                Style="{StaticResource HelpTocButton}"
+                Tag="SecMore"
+              />
+              <Button
+                Click="SectionLink_Click"
+                Content="13 Lua 接口"
+                Style="{StaticResource HelpTocButton}"
+                Tag="SecLua"
+              />
+              <Button
+                Click="SectionLink_Click"
+                Content="14 其他"
+                Style="{StaticResource HelpTocButton}"
+                Tag="SecOther"
+              />
+              <Button
+                Click="SectionLink_Click"
+                Content="15 RTS / DTR"
+                Style="{StaticResource HelpTocButton}"
+                Tag="SecRtsDtr"
+              />
+            </WrapPanel>
+          </StackPanel>
+        </Border>
 
-      <TextBlock Style="{StaticResource HelpH}" Text="二、快捷键（主窗口内生效）" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+O：打开 / 关闭串口。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+L：把焦点移到发送框（光标停在末尾）。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+K：清空日志（与日志区垃圾桶按钮效果相同）。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+↑ / Ctrl+↓：切换上一个 / 下一个串口（串口已打开时列表锁定，不能切换）。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+← / Ctrl+→：在常用波特率之间切换：1200 / 2400 / 4800 / 9600 / 19200 / 38400 / 57600 / 115200。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+Shift+S：打开「更多设置」窗口。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· Alt+M：最小化窗口。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· F11：最大化 / 还原窗口（全屏显示）。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+Enter：发送发送框内容（可在「发送选项」里改为 Enter 发送）。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="说明：快捷键只在主窗口获得焦点时生效；打开使用说明 / 更多设置等弹窗时不起作用。终端模式开启且焦点在日志区时，Ctrl+A~Z 会优先作为控制字符发送（例如 Ctrl+O 发送 0x0F），此时请先关闭终端模式再使用快捷键。运行脚本页的代码编辑器里，Ctrl+←/→ 仍用于按词移动光标。" />
+        <HeaderedContentControl
+          x:Name="SecQuickStart"
+          Header="1 快速上手"
+          Style="{StaticResource HelpSection}"
+        >
+          <StackPanel>
+            <TextBlock Style="{StaticResource HelpP}" Text="1. 在右侧「串口设置」标签里：选择「串口」→ 选择「波特率」→ 点「打开串口」。" />
+            <TextBlock Style="{StaticResource HelpP}" Text="2. 左侧为收发日志；底部输入要发送的内容，点「发送」或按 Ctrl+Enter（可在「发送选项」里改为按 Enter 发送）。" />
+            <TextBlock Style="{StaticResource HelpP}" Text="3. 右侧标签页：串口设置 / 快捷发送 / 运行脚本 / 在线脚本 / 工具 / 关于。" />
+            <TextBlock Style="{StaticResource HelpNote}" Text="提示：未打开串口时点「发送」不会自动开串口，会提示先打开串口。" />
+          </StackPanel>
+        </HeaderedContentControl>
 
-      <TextBlock Style="{StaticResource HelpH}" Text="三、串口设置（右侧第一个标签）" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 刷新串口：重新扫描可用串口列表。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 串口：选择要打开的串口（显示设备描述）。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 波特率：常用波特率；末项「自定义」可手动输入任意值。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 数据位 / 校验位 / 停止位 / 字符编码：串口通信参数与文本编码。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="    - 校验位里的「高电平 / 低电平」是 Mark / Space 校验（校验位恒为 1 / 0），用于 9 位多机协议等；普通设备选「无校验」即可。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 自动重连：串口被拔出后自动恢复连接（只重连上次手动打开过的端口）。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· RTS / DTR：串口两根硬件控制信号线的电平（详见文末「RTS / DTR 详解」）。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 打开串口 / 关闭串口：打开成功后按钮变绿，状态栏显示 COM 与波特率。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 日志底栏右端（与「清空日志」同一行、靠右对齐）：鼠标移入该角落才显示「导出并打开当前日志」、? 使用说明、🌙/☀ 切换主题、☰ 更多设置、🌐 切换语言；移开自动隐藏。这组图标不随日志区变窄而折叠。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 导出并打开当前日志：左键把「当前主日志」导出为新文件（`logs/logYYYYMMDD_HHmmss.txt`，内容与界面逐行一致），再用你设置的默认编辑器打开（未设置时弹出程序选择框，只对本次生效）；右键可「用系统默认程序打开」「选择程序打开一次…」「设置默认编辑器…」「清除默认编辑器」。日志只在导出/保存时写入，平时不在后台持续写盘；导出内容跟随「发送 Hex / 接收 Hex」两个开关——界面显示什么，导出就是什么。" />
+        <HeaderedContentControl
+          x:Name="SecShortcuts"
+          Header="2 快捷键（主窗口内生效）"
+          Style="{StaticResource HelpSection}"
+        >
+          <StackPanel>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Ctrl+O</Run>：打开 / 关闭串口。</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Ctrl+L</Run>：把焦点移到发送框（光标停在末尾）。</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Ctrl+K</Run>：清空日志（与日志区垃圾桶按钮效果相同）。</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Ctrl+↑ / Ctrl+↓</Run>：切换上一个 / 下一个串口（串口已打开时列表锁定，不能切换）。</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Ctrl+← / Ctrl+→</Run>：在常用波特率之间切换：1200 / 2400 / 4800 / 9600 / 19200 / 38400 / 57600 / 115200。</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Ctrl+Shift+S</Run>：打开「更多设置」窗口。</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Alt+M</Run>：最小化窗口。</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">F11</Run>：最大化 / 还原窗口（全屏显示）。</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Ctrl+Enter</Run>：发送发送框内容（可在「发送选项」里改为 Enter 发送）。</TextBlock>
+            <TextBlock Style="{StaticResource HelpNote}" Text="说明：快捷键只在主窗口获得焦点时生效；打开使用说明 / 更多设置等弹窗时不起作用。终端模式开启且焦点在日志区时，Ctrl+A~Z 会优先作为控制字符发送（例如 Ctrl+O 发送 0x0F），此时请先关闭终端模式再使用快捷键。运行脚本页的代码编辑器里，Ctrl+←/→ 仍用于按词移动光标。" />
+          </StackPanel>
+        </HeaderedContentControl>
 
-      <TextBlock Style="{StaticResource HelpH}" Text="四、收发数据显示区（左侧）" />
-      <TextBlock Style="{StaticResource HelpP}" Text="每行显示：时间 + 方向（→ 发送 / ← 接收）+ 数据（十六进制或文本，单行）。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="底部图标按钮（从左到右，鼠标悬停均有提示）：" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· Abc/Hex（发送）：发送时的解析与显示方式，点击在 字符串 / 十六进制 之间切换。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· Abc/Hex（接收）：接收数据的显示方式，点击在 字符串 / 十六进制 之间切换。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 眼睛图标：替换不可见字符（把不可见字符显示为可见占位，仅 UTF-8 有效）。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 暂停/继续图标：停止打印 / 继续打印日志。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 锁图标：锁定视图禁止自动滚动（点一下切换，锁定时为绿色开锁图标）。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 垃圾桶图标：清空日志显示。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 保存图标：把当前日志保存为文件。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 日志区较窄时（例如把右侧栏向左拖），这一排底栏图标会自动折叠成一个「⋯」菜单，点开后提供同样的开关与操作；宽度恢复后自动展开。右下角悬停出现的 使用说明 / 主题 / 设置 / 语言 不受影响。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="多行复制：「分包」模式下日志列表支持 Ctrl+点击多选，按 Ctrl+C 或右键「复制选中行」即可复制；右键菜单还有「全选 / 复制全部」。复制的每一行都带时间与方向箭头，与界面显示一致。「流式」模式下右键可「复制全部」。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="终端模式（在「更多设置」中开启）：日志区可直接键盘输入并即时发送按键。" />
-      <TextBlock Style="{StaticResource HelpP}" FontWeight="Bold" Text="终端模式（键盘直发）详解" />
-      <TextBlock Style="{StaticResource HelpP}" Text="作用：开启后，点击上方日志/接收区域再敲键盘，字符会直接发送到串口，不需要经过发送框。适合 Bootloader、AT 命令、交互式命令行等需要“敲一个字符立刻发一个”的场景。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="控制字符：Ctrl+A ~ Ctrl+Z 会发送对应的 ASCII 控制码（1~26）。例如 Ctrl+C = 0x03、Ctrl+D = 0x04、Ctrl+Z = 0x1A。终端模式默认关闭（可在「更多设置」中开启）；开启后日志区获得焦点时边框会变绿。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="这不是完整终端：不模拟 Enter、Backspace、方向键和功能键；Ctrl+V 会被当作 0x16 发送，不能可靠粘贴；非 ASCII 字符按 ASCII 处理，可能变成 ?。它也不会自动打开串口。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="注意：终端模式下 Ctrl+C 的语义是发送 0x03，和“复制”快捷键冲突；需要复制日志时，建议先关闭终端模式。点击日志区后误触键盘也可能向设备发送数据。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="如果只是普通收发数据，建议关闭终端模式，使用下方发送框。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="日志很多时只渲染当前可见的行（虚拟化），滚动、拖拽分隔条、切换 字符串/Hex 都不会明显卡顿。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="日志有保留上限（见「更多设置」→ 日志保留上限 / 流式保留字符数）：达到上限后自动丢弃最早的记录，避免长时间挂机占满内存。" />
+        <HeaderedContentControl
+          x:Name="SecSerial"
+          Header="3 串口设置（右侧第一个标签）"
+          Style="{StaticResource HelpSection}"
+        >
+          <StackPanel>
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 刷新串口：重新扫描可用串口列表。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 串口：选择要打开的串口（显示设备描述）。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 波特率：常用波特率；末项「自定义」可手动输入任意值。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 数据位 / 校验位 / 停止位 / 字符编码：串口通信参数与文本编码。" />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· 校验位里的「高电平 / 低电平」是 Mark / Space 校验（校验位恒为 1 / 0），用于 9 位多机协议等；普通设备选「无校验」即可。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 自动重连：串口被拔出后自动恢复连接（只重连上次手动打开过的端口）。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· RTS / DTR：串口两根硬件控制信号线的电平（详见「15 RTS / DTR 详解」）。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 打开串口 / 关闭串口：打开成功后按钮变绿，状态栏显示 COM 与波特率。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 日志底栏右端（与「清空日志」同一行、靠右对齐）：鼠标移入该角落才显示下面这组入口，移开自动隐藏；它们不随日志区变窄而折叠。" />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· ? 使用说明、🌙 / ☀ 切换主题、☰ 更多设置、🌐 切换语言。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 导出并打开当前日志：左键把「当前主日志」导出为新文件（logs/logYYYYMMDD_HHmmss.txt，内容与界面逐行一致），再用你设置的默认编辑器打开（未设置时弹出程序选择框，只对本次生效）。" />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· 右键菜单：「用系统默认程序打开」「选择程序打开一次…」「设置默认编辑器…」「清除默认编辑器」。" />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· 日志只在导出 / 保存时写入，平时不在后台持续写盘；导出内容跟随「发送 Hex / 接收 Hex」两个开关——界面显示什么，导出就是什么。" />
+          </StackPanel>
+        </HeaderedContentControl>
 
-      <TextBlock Style="{StaticResource HelpH}" Text="五、发送区（底部）" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 输入内容后点「发送」，或按 Ctrl+Enter。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 发送按钮左侧：插头图标 = 开/关串口（绿色=未打开，红色=已打开；悬停提示「打开串口 / 关闭串口」），不用再切到「串口设置」页。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 插头图标左侧三个控件（从左到右）：" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="    - 橡皮图标：清空发送框内容。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="    - 记录图标：发送记录。左键点其中一条把该内容填回发送框，右键点则直接发送该条（弹层保持打开，可连续发多条；点其他地方失焦后才关闭；未开串口会提示）；弹层固定高度、列表可滚动（不会把底部设置挤掉）；底部「记录上限（条）」可直接键盘输入（5~200，回车或失焦生效），右侧「清空记录」一键清空（不可恢复）。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="    - 换行下拉：发送时在末尾追加的换行，可选 无追加 / \n / \r / \n\r / \r\n。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 发送按钮右侧的下拉（▾）是「发送选项」：连续发送（按「发送后延时」和「重复次数」周期性发送）、按 Enter 发送 / 按 Ctrl+Enter 发送。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="    - 关于「重复次数」：它表示在首次发送之后再重复几次。填 3 = 总共发 4 次；填 0 = 只发一次；填 -1 = 一直重复，直到再次点「发送」停止。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="    - 取值范围：「发送后延时」10~3600000 毫秒（每点一次 ± 增减 100）；「重复次数」-1~100000（-1 = 无限）。两者都可直接用键盘输入数字，失焦时校验、超范围自动夹取。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 是否按 HEX 发送由日志区底部的「Abc/Hex（发送）」开关决定。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 发送前可配置「发送脚本」（更多设置）对数据做变换。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 发送区高度可用上方分隔条上下拖拽调整（高度限制 40~240）。" />
+        <HeaderedContentControl
+          x:Name="SecLog"
+          Header="4 收发数据显示区（左侧）"
+          Style="{StaticResource HelpSection}"
+        >
+          <StackPanel>
+            <TextBlock Style="{StaticResource HelpP}" Text="每行显示：时间 + 方向（→ 发送 / ← 接收）+ 数据（十六进制或文本，单行）。" />
+            <TextBlock Style="{StaticResource HelpH3}" Text="底部图标按钮（从左到右，鼠标悬停均有提示）" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Abc/Hex（发送）：发送时的解析与显示方式，点击在 字符串 / 十六进制 之间切换。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Abc/Hex（接收）：接收数据的显示方式，点击在 字符串 / 十六进制 之间切换。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 眼睛图标：替换不可见字符（把不可见字符显示为可见占位，仅 UTF-8 有效）。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 暂停/继续图标：停止打印 / 继续打印日志。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 锁图标：锁定视图禁止自动滚动（点一下切换，锁定时为绿色开锁图标）。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 垃圾桶图标：清空日志显示。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 保存图标：把当前日志保存为文件。" />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· 日志区较窄时（例如把右侧栏向左拖），这一排底栏图标会自动折叠成一个「⋯」菜单，点开后提供同样的开关与操作；宽度恢复后自动展开。右下角悬停出现的 使用说明 / 主题 / 设置 / 语言 不受影响。" />
 
-      <TextBlock Style="{StaticResource HelpH}" Text="六、快捷发送（右侧第二个标签）" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 共 10 页：点标签里的便签图标切换页；右键页名可改名。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 每行：编号、内容、发送按钮、Hex 勾选、脚本图标、定时图标（点开设置定时）。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="    - 定时图标：点开可勾选「定时」并调整「间隔(ms)」，按该间隔周期性发送这一条；可多条同时定时（图标变绿表示已启用）。串口未打开时会提示并停止所有定时。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="    - 取值范围：「间隔(ms)」10~3600000（每点一次 ± 增减 100）；可直接键盘输入数字，失焦时校验、超范围自动夹取。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="    - 点行内「发送」按钮发送该条内容（会按行配置调用脚本）。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="    - Hex 勾选：该条按十六进制发送。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="    - 文件图标：为该条设置「接收脚本」（点选设置 / 右键清除）；齿轮图标设接收脚本参数。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="    - 右键「编号」可把该行移动到指定位置（留空则删除该行）。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 底部图标按钮（鼠标悬停有提示）：添加新项目 / 删除最后一项 / 导入数据到该页 / 导出该页数据 / 一键清空该页数据 / 一键导入 SSCOM 数据。" />
+            <TextBlock Style="{StaticResource HelpH3}" Text="复制与终端模式" />
+            <TextBlock Style="{StaticResource HelpP}" Text="多行复制：「分包」模式下日志列表支持 Ctrl+点击多选，按 Ctrl+C 或右键「复制选中行」即可复制；右键菜单还有「全选 / 复制全部」。复制的每一行都带时间与方向箭头，与界面显示一致。「流式」模式下右键可「复制全部」。" />
+            <TextBlock Style="{StaticResource HelpP}" Text="终端模式（在「更多设置」中开启）：开启后，点击上方日志/接收区域再敲键盘，字符会直接发送到串口，不需要经过发送框。适合 Bootloader、AT 命令、交互式命令行等需要「敲一个字符立刻发一个」的场景。" />
+            <TextBlock Style="{StaticResource HelpP}" Text="控制字符：Ctrl+A ~ Ctrl+Z 会发送对应的 ASCII 控制码（1~26）。例如 Ctrl+C = 0x03、Ctrl+D = 0x04、Ctrl+Z = 0x1A。终端模式默认关闭（可在「更多设置」中开启）；开启后日志区获得焦点时边框会变绿。" />
+            <TextBlock Style="{StaticResource HelpNote}" Text="这不是完整终端：不模拟 Enter、Backspace、方向键和功能键；Ctrl+V 会被当作 0x16 发送，不能可靠粘贴；非 ASCII 字符按 ASCII 处理，可能变成 ?。它也不会自动打开串口。终端模式下 Ctrl+C 的语义是发送 0x03，和「复制」快捷键冲突；需要复制日志时建议先关闭终端模式。点击日志区后误触键盘也可能向设备发送数据。只是普通收发数据时，建议关闭终端模式并使用下方发送框。" />
 
-      <TextBlock Style="{StaticResource HelpH}" Text="七、运行脚本（Lua）" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 文件下拉选择脚本（user_script_run 目录），或点新建图标创建。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 工具栏图标：新建 / 运行 / 打开脚本文件夹 / 刷新列表 / Lua API 文档 / 分享脚本。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 点「运行」后进入日志视图：显示 print 输出；可「停止/退出」「暂停/继续打印」，底部输入框可执行单行 Lua。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 脚本目录：程序目录下 user_script_run/。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 完成提示：脚本里调用 apiNotify(标题, 内容) 会弹系统托盘气泡；脚本报错时也会自动提示（正常完成=绿色，报错=红色）。气泡消失后托盘图标会显示对应颜色的角标并闪烁 30 秒；鼠标悬浮或点击图标、回到主窗口都会停止闪烁，角标保留到点击托盘 / 状态栏里的提示。开关在「更多设置 → 脚本结束提示 / 托盘图标闪烁提醒」。" />
+            <TextBlock Style="{StaticResource HelpH3}" Text="显示与性能" />
+            <TextBlock Style="{StaticResource HelpP}" Text="日志很多时只渲染当前可见的行（虚拟化），滚动、拖拽分隔条、切换 字符串/Hex 都不会明显卡顿。" />
+            <TextBlock Style="{StaticResource HelpP}" Text="日志有保留上限（见「更多设置」→ 日志保留上限 / 流式保留字符数）：达到上限后自动丢弃最早的记录，避免长时间挂机占满内存。" />
+          </StackPanel>
+        </HeaderedContentControl>
 
-      <TextBlock Style="{StaticResource HelpH}" Text="八、在线脚本" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 浏览社区脚本（作者 / 名称 / 版本 / 简介），点开查看，点「下载」保存到本地脚本目录。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 列表里过长的名称 / 简介会被截断，鼠标悬停可看完整内容。" />
+        <HeaderedContentControl
+          x:Name="SecSend"
+          Header="5 发送区（底部）"
+          Style="{StaticResource HelpSection}"
+        >
+          <StackPanel>
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 输入内容后点「发送」，或按 Ctrl+Enter。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 发送按钮左侧：插头图标 = 开/关串口（绿色=未打开，红色=已打开；悬停提示「打开串口 / 关闭串口」），不用再切到「串口设置」页。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 插头图标左侧三个控件（从左到右）：" />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· 橡皮图标：清空发送框内容。" />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· 记录图标：发送记录。左键点其中一条把该内容填回发送框，右键点则直接发送该条（弹层保持打开，可连续发多条；点其他地方失焦后才关闭；未开串口会提示）；弹层固定高度、列表可滚动（不会把底部设置挤掉）；底部「记录上限（条）」可直接键盘输入（5~200，回车或失焦生效），右侧「清空记录」一键清空（不可恢复）。" />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· 换行下拉：发送时在末尾追加的换行，可选 无追加 / \n / \r / \n\r / \r\n。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 发送按钮右侧的下拉（▾）是「发送选项」：连续发送（按「发送后延时」和「重复次数」周期性发送）、按 Enter 发送 / 按 Ctrl+Enter 发送。" />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· 关于「重复次数」：它表示在首次发送之后再重复几次。填 3 = 总共发 4 次；填 0 = 只发一次；填 -1 = 一直重复，直到再次点「发送」停止。" />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· 取值范围：「发送后延时」10~3600000 毫秒（每点一次 ± 增减 100）；「重复次数」-1~100000（-1 = 无限）。两者都可直接用键盘输入数字，失焦时校验、超范围自动夹取。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 是否按 HEX 发送由日志区底部的「Abc/Hex（发送）」开关决定。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 发送前可配置「发送脚本」（更多设置）对数据做变换。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 发送区高度可用上方分隔条上下拖拽调整（高度限制 40~240）。" />
+          </StackPanel>
+        </HeaderedContentControl>
 
-      <TextBlock Style="{StaticResource HelpH}" Text="九、工具（右侧「工具」标签，顶部下拉选择）" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· TCP测试：借助 netlab.luatos.com 创建公网 TCP/UDP/SSL 服务端供设备连接（地址会显示出来）；可给在线客户端发送、踢除。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· TCP本地监听：在本机 IP/端口上开 TCP 服务器，广播给所有已连接客户端。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· UDP本地监听：在本机 IP/端口上开 UDP 服务器接收数据。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· TCP客户端：以 TCP/UDP/SSL 连接远端；可选自动重连与重连间隔。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 编码转换工具：左侧「原始数据」，选转换任务并添加，右侧显示「转换结果」。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· MQTT：订阅 / 发布（含 QOS、Hex）；设置页配置 Broker、端口、客户端ID、用户名密码、保活、清理会话、TLS（含 CA 与客户端证书）、WebSocket。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 乱码修复：粘贴乱码文本，列表给出多种「原始→目标」编码的还原结果，可复制。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 串口监听：选择目标进程与其使用的串口后开始监听，旁路显示该进程的收发。使用要点：① 先点「开始监听」，再让目标程序打开串口（监听开始前已打开的串口捕获不到）；② 目标必须是 64 位程序（64 位版 LLCOM 只能监听 64 位目标；32 位目标的监听暂不可用）；③ 安全软件可能拦截注入，必要时以管理员身份运行。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 绘图：接收 Lua 通过接口上报的数据点并绘制曲线；可查看全图 / 清空图表 / 切换主题（详见下方「曲线工具详解」）。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· WinUSB：选择 USB 设备、读/写端点，连接后收发（可 Hex）。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 计算器：多进制同步显示 / 位运算 / IEEE-754 浮点解析 / 四则运算（详见下方「计算器详解」）。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· DL/T 645-2007：电表报文工具（开发者向，组帧后直接发送，写数据和自定义控制码不做二次确认）。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="    - 表地址：输入 1 / 123 后回车或失焦，自动补 0 成 12 位；地址右侧放大镜按钮可自动读取表地址，成功后按钮变绿，鼠标悬停显示地址；关闭串口后按钮恢复灰色。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="    - 操作：读数据 / 读通信地址 / 写数据 / 广播校时 / 写通信地址 / 冻结命令 / 更改通信速率 / 修改密码 / 最大需量清零 / 电表清零 / 事件清零 / 自定义控制码；写数据和自定义控制码才显示「附加数据」行，其它功能按需显示对应数据域输入框；新功能的数据域按帧内顺序（低位在前）输入，组帧时不做翻转。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="    - 写数据：默认勾选「自动添加密码/操作者代码」，可按 645 标准在 DI 后插入密码和操作者代码（密码默认留空，由厂家/供电局设定，需按现场表填写；操作者代码默认 12345678 仅为示例，可修改；两项都保存在配置里）；附加数据、密码、操作者代码都按正序输入，组帧时自动翻转为低位先行；取消勾选则只发 DI + 附加数据。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="    - 自定义控制码：控制码和数据域完全按用户输入原样发送，软件不做任何翻转或改写。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="    - 数据标识：上方为「DI 筛选」（搜索框带放大镜，输入即时过滤，按回车弹出下拉；切换分类后自动展开，列表超高可滚动），下方为常用下拉 + 4 字节 HEX 输入框；手动输入已有 DI 会自动选中对应项；支持右键删除当前 DI，齿轮按钮打开管理窗口（添加 / 删除 / 恢复默认 / 导入 / 导出）。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="    - 数据标识按低位先行组帧：界面按 02010100 输入和显示，帧里对应 33 34 34 35（减 33H 前的原始顺序为 00 01 01 02）。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="    - 勾选「主日志减 33H」后，仅在 645 工具页处于激活状态时生效：完整 645 帧的数据域减 33H 并重算 CS 后，作为一条记录写入左侧主日志；非 645 数据、半帧、坏帧原样显示。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="    - 帧预览下方三个操作：发送（直接从 645 页发送）、复制（复制帧文本）、发送到主发送框（把帧填入底部发送框，复用发送记录与定时发送；会自动切到 Hex 发送且不追加换行）。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="    - 「应答解析」：粘贴完整帧后显示原始帧、地址（AA 通配/广播标注）、控制码方向、功能码名称、长度、数据域、校验和；异常应答按位解释错误信息字 ERR；常用功能会拆分字段（读数据 DI+数据、写数据 DI+密码权限+密码+操作者代码+数据、读/写地址、广播校时、冻结、改速率/改密码/清零），DI 会附带目录中的名称；读地址应答解析后可一键把地址填回表地址。数据域全部为可打印 ASCII 时会额外显示「文本(ASCII)」和「复制文本」按钮，可直接复制文本，不需要再去编码转换工具粘贴 Hex；BCD/二进制数据不会显示这一行。" />
+        <HeaderedContentControl
+          x:Name="SecQuickSend"
+          Header="6 快捷发送（右侧第二个标签）"
+          Style="{StaticResource HelpSection}"
+        >
+          <StackPanel>
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 共 10 页：点标签里的便签图标切换页；右键页名可改名。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 每行：编号、内容、发送按钮、Hex 勾选、脚本图标、定时图标（点开设置定时）。" />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· 定时图标：点开可勾选「定时」并调整「间隔(ms)」，按该间隔周期性发送这一条；可多条同时定时（图标变绿表示已启用）。串口未打开时会提示并停止所有定时。" />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· 取值范围：「间隔(ms)」10~3600000（每点一次 ± 增减 100）；可直接键盘输入数字，失焦时校验、超范围自动夹取。" />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· 点行内「发送」按钮发送该条内容（会按行配置调用脚本）。" />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· Hex 勾选：该条按十六进制发送。" />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· 文件图标：为该条设置「接收脚本」（点选设置 / 右键清除）；齿轮图标设接收脚本参数。" />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· 右键「编号」可把该行移动到指定位置（留空则删除该行）。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 底部图标按钮（鼠标悬停有提示）：添加新项目 / 删除最后一项 / 导入数据到该页 / 导出该页数据 / 一键清空该页数据 / 一键导入 SSCOM 数据。" />
+          </StackPanel>
+        </HeaderedContentControl>
 
-      <TextBlock
-        Margin="0,14,0,0"
-        FontWeight="Bold"
-        Style="{StaticResource HelpP}"
-        Text="计算器详解（工具 → 计算器）"
-      />
-      <TextBlock Style="{StaticResource HelpP}" Text="输入：左侧下拉选择输入进制（HEX / DEC / OCT / BIN），右侧输入数值；四种进制会实时同步显示。输入内容按所选进制解析，出现非法字符时提示「输入格式无效」。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="位宽：可选 8 / 16 / 32 / 64 位；超出位宽的高位会被截掉，切换位宽时当前值也会按新位宽截断。DEC 按无符号数显示；HEX / OCT / BIN 会按位宽补零，并按 2 / 3 / 4 位分组方便按字节阅读。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="复制：每个进制结果右侧的复制按钮只复制该行文本（保留分组空格；需要连续数值时可粘贴到发送框后自行去空格）。复制成功后按钮会短暂变成绿色对勾，并提示「已复制」。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="位运算：在「操作数」里按当前输入进制填第二个数，再点 &lt;&lt; / &gt;&gt; / &amp; / | / ^ / ~ 对当前值运算，结果写回当前值并按位宽截断；~ 为按位取反，不需要操作数。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="浮点解析：FLOAT32 输入 8 位、FLOAT64 输入 16 位十六进制（只接受 0-9 / A-F，其他字符会被自动过滤）；用「大端 / 小端」切换字节序，下方直接显示对应的十进制浮点值。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="四则运算：与上面的位运算互不影响，支持 + - * / % ^、括号和小数，边输入边出结果；除数为 0 或表达式非法时会给出提示。" />
+        <HeaderedContentControl
+          x:Name="SecScript"
+          Header="7 运行脚本（Lua）"
+          Style="{StaticResource HelpSection}"
+        >
+          <StackPanel>
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 文件下拉选择脚本（user_script_run 目录），或点新建图标创建。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 工具栏图标：新建 / 运行 / 打开脚本文件夹 / 刷新列表 / Lua API 文档 / 分享脚本。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 点「运行」后进入日志视图：显示 print 输出；可「停止/退出」「暂停/继续打印」，底部输入框可执行单行 Lua。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 脚本目录：程序目录下 user_script_run/。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 完成提示：脚本里调用 apiNotify(标题, 内容) 会弹系统托盘气泡；脚本报错时也会自动提示（正常完成=绿色，报错=红色）。气泡消失后托盘图标会显示对应颜色的角标并闪烁 30 秒；鼠标悬浮或点击图标、回到主窗口都会停止闪烁，角标保留到点击托盘 / 状态栏里的提示。开关在「更多设置 → 脚本结束提示 / 托盘图标闪烁提醒」。" />
+          </StackPanel>
+        </HeaderedContentControl>
 
-      <TextBlock
-        Margin="0,14,0,0"
-        FontWeight="Bold"
-        Style="{StaticResource HelpP}"
-        Text="曲线工具详解（工具 → 曲线）"
-      />
-      <TextBlock Style="{StaticResource HelpP}" Text="数据来源：脚本里调用 apiAddPoint(值, 线号) 上报数据点；线号 0~9，最多同时显示 10 条曲线。每次调用把一个点追加到对应曲线的末端。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="X / Y 轴：X 轴默认是样本序号（可在「曲线选项」里切换为时间，时间标签按平均采样间隔换算），默认显示最近 1000 个点，最新点在右边缘并随数据滚动；左上角图例显示每条线的颜色和线号。Y 轴刻度在右侧，左侧只保留网格。每条线默认保留最近 20000 个点（更多设置「曲线保留点数」可改为 10000~100000）。鼠标滚轮按位置缩放：在绘图区滚轮默认只缩放 X 轴（仍保持跟随最新，最新点在右边缘）；在底部 X 轴刻度区滚轮只缩放 X；在右侧 Y 轴刻度区滚轮只缩放 Y。绘图区内按住 Ctrl 滚轮只缩放 Y，按住 Alt 滚轮同时缩放 X/Y。手动缩放 Y 会关闭 Y 自动适配；拖动图表或点「查看全局」会暂停跟随，双击图表或重新开始绘制可恢复跟随和 Y 自动适配。窗口最大化或调整右侧栏宽度时也会自动适配。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="按钮：查看全图 = 按当前实际数据同时适配 X/Y 轴；清空图表 = 把所有曲线数据归零；切换主题 = 循环切换绘图区配色，应用深/浅色主题时也会自动跟随；最右侧的暂停/播放图标 = 停止/开始绘制（只冻结画面，不影响脚本运行）；上下箭头按钮 = Y 轴自动适配开关（开启时 Y 范围随可见数据自动调整，手动缩放 Y 后自动关闭）；眼睛按钮 = 曲线选项（显示/隐藏线 0~9、全部显示、X 轴显示时间、复制 PNG、导出 PNG/CSV；CSV 为宽表，一行一个样本，每条线一列；导出 PNG 会先生成图片并自动复制到剪贴板，取消保存也仍可粘贴）。右键图表 = 直接隐藏/显示图例（再次右键恢复）。底部历史滑块 = 拖动查看当前显示窗之外、但仍在缓冲区中的历史曲线；滑块长度对应当前显示窗口，拖到最右端会恢复跟随最新。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="测量：曲线选项 → 幅值测量 / 间隔测量。幅值测量显示两条可拖水平线（自动对齐当前可见曲线的最高/最低点，读数栏显示 A、B、|Δ|），间隔测量显示两条可拖垂直线（吸附整数样本，显示 A、B、Δ样本、Δ秒和频率 Hz）。A/B 可交换、可交叉；「对齐相邻峰」会在当前可见范围内找参考曲线（可见点数最多的一条）的两个相邻峰，适合周期信号测周期/频率；找不到峰时底部会提示，测量线保持原位。测量时视图暂停但数据继续记录（已停止绘制时提示「数据未记录」），关闭后恢复跟随/Y 自动适配，测量期间十字参考线隐藏；读数与 X 轴时间标签使用同一套换算，并在测量期间冻结，不会自行漂移，和曲线上的位置一致；停止或重新开始绘制会自动关闭测量。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="交互与限制：只有「工具 → 曲线」页面可见且处于「开始绘制」状态时才记录数据。切到其他工具页或串口设置页会自动停止绘制（「更多设置」是独立窗口，不影响绘制），期间的点直接丢弃，不补画之前的数据；切回曲线页后需要手动点「开始绘制」。重新运行脚本会清空旧曲线，从空白开始；鼠标在图上移动时显示一条竖直点线（吸附到最近样本点），每条可见曲线在交点处显示彩色圆点和该点的 Y 值；底部显示 X（样本序号/时间），不再显示水平参考线和左侧 Y 标签；每条曲线默认保留最近 20000 个点（可配置），超出后丢弃最早的点；数据只保存在内存中，重启软件或重新加载工具页后清空，需要留档时用「曲线选项 → 复制/导出 PNG、导出 CSV」；时间轴标签按平均采样间隔近似换算，采样间隔剧烈变化时会与真实时间有偏差。" />
-      <TextBlock Style="{StaticResource HelpP}" Text="示例：默认脚本「绘制曲线演示.lua」会持续生成两条不同振幅的正弦/余弦波形，直到你手动停止脚本；只有切到曲线页后才开始绘制，适合边跑边看。也可以在自己的脚本里用 sys.taskInit + sys.wait(...) 周期调用 apiAddPoint，完整示例见 LuaApi.md 的 apiAddPoint 一节。" />
+        <HeaderedContentControl
+          x:Name="SecOnline"
+          Header="8 在线脚本"
+          Style="{StaticResource HelpSection}"
+        >
+          <StackPanel>
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 浏览社区脚本（作者 / 名称 / 版本 / 简介），点开查看，点「下载」保存到本地脚本目录。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 列表里过长的名称 / 简介会被截断，鼠标悬停可看完整内容。" />
+          </StackPanel>
+        </HeaderedContentControl>
 
-      <TextBlock Style="{StaticResource HelpH}" Text="十、更多设置（点日志区右下角 ☰ 直接打开，鼠标移入才显示）" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 分三个页签：「更多串口设置」（打开日志目录、显示发送、数据字号、窗口置顶、串口超时（分包）、按空行分包、终端模式、脚本结束提示、托盘图标闪烁提醒、日志保留上限、流式保留字符数、曲线保留点数、曲线数值标签字号）、「发送脚本」、「接收脚本」。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 日志保留上限（条）：分包模式最多保留多少条日志（1000~200000，默认 50000），超过后自动丢弃最早的记录；另有 32 MB 负载预算兜底（大包时会先按字节裁剪）。两者谁先到谁生效。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 流式保留字符数：把「串口超时」设为负数进入流式模式后，最多保留多少字符（100000~10000000，默认 2000000），超过后丢弃最早的文本。两个输入框都可直接键盘输入数字，回车或失焦生效。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 窗口保持置顶显示：让主窗口始终显示在其他程序窗口的最上层，不被别的窗口挡住（对「更多设置」窗口本身无影响）。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 发送脚本 / 接收脚本：编辑发送前、接收后触发的 Lua 脚本。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 接收数据以十六进制还是字符串显示，由左侧日志区底部的「接收显示Hex」控制。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 配置备份：「更多串口设置」底部可「导出配置 / 导入配置」，用于整份 settings.json 的备份与迁移；导入前会备份当前配置为 settings.json.import-bak，导入后需重启软件生效。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 串口的数据位/校验位/停止位/字符编码/自动重连等参数在「串口设置」标签。" />
+        <HeaderedContentControl
+          x:Name="SecTools"
+          Header="9 工具（右侧「工具」标签，顶部下拉选择）"
+          Style="{StaticResource HelpSection}"
+        >
+          <StackPanel>
+            <TextBlock Style="{StaticResource HelpLi}" Text="· TCP测试：借助 netlab.luatos.com 创建公网 TCP/UDP/SSL 服务端供设备连接（地址会显示出来）；可给在线客户端发送、踢除。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· TCP本地监听：在本机 IP/端口上开 TCP 服务器，广播给所有已连接客户端。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· UDP本地监听：在本机 IP/端口上开 UDP 服务器接收数据。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· TCP客户端：以 TCP/UDP/SSL 连接远端；可选自动重连与重连间隔。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 编码转换工具：左侧「原始数据」，选转换任务并添加，右侧显示「转换结果」。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· MQTT：订阅 / 发布（含 QOS、Hex）；设置页配置 Broker、端口、客户端ID、用户名密码、保活、清理会话、TLS（含 CA 与客户端证书）、WebSocket。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 乱码修复：粘贴乱码文本，列表给出多种「原始→目标」编码的还原结果，可复制。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 串口监听：选择目标进程与其使用的串口后开始监听，旁路显示该进程的收发。使用要点：① 先点「开始监听」，再让目标程序打开串口（监听开始前已打开的串口捕获不到）；② 目标必须是 64 位程序（64 位版 LLCOM 只能监听 64 位目标；32 位目标的监听暂不可用）；③ 安全软件可能拦截注入，必要时以管理员身份运行。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 绘图：接收 Lua 通过接口上报的数据点并绘制曲线；可查看全图 / 清空图表 / 切换主题（详见「11 曲线工具详解」）。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· WinUSB：选择 USB 设备、读/写端点，连接后收发（可 Hex）。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 计算器：多进制同步显示 / 位运算 / IEEE-754 浮点解析 / 四则运算（详见「10 计算器详解」）。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· DL/T 645-2007：电表报文工具（开发者向，组帧后直接发送，写数据和自定义控制码不做二次确认）。" />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· 表地址：输入 1 / 123 后回车或失焦，自动补 0 成 12 位；地址右侧放大镜按钮可自动读取表地址，成功后按钮变绿，鼠标悬停显示地址；关闭串口后按钮恢复灰色。" />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· 操作：读数据 / 读通信地址 / 写数据 / 广播校时 / 写通信地址 / 冻结命令 / 更改通信速率 / 修改密码 / 最大需量清零 / 电表清零 / 事件清零 / 自定义控制码；写数据和自定义控制码才显示「附加数据」行，其它功能按需显示对应数据域输入框；新功能的数据域按帧内顺序（低位在前）输入，组帧时不做翻转。" />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· 写数据：默认勾选「自动添加密码/操作者代码」，可按 645 标准在 DI 后插入密码和操作者代码（密码默认留空，由厂家/供电局设定，需按现场表填写；操作者代码默认 12345678 仅为示例，可修改；两项都保存在配置里）；附加数据、密码、操作者代码都按正序输入，组帧时自动翻转为低位先行；取消勾选则只发 DI + 附加数据。" />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· 自定义控制码：控制码和数据域完全按用户输入原样发送，软件不做任何翻转或改写。" />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· 数据标识：上方为「DI 筛选」（搜索框带放大镜，输入即时过滤，按回车弹出下拉；切换分类后自动展开，列表超高可滚动），下方为常用下拉 + 4 字节 HEX 输入框；手动输入已有 DI 会自动选中对应项；支持右键删除当前 DI，齿轮按钮打开管理窗口（添加 / 删除 / 恢复默认 / 导入 / 导出）。" />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· 数据标识按低位先行组帧：界面按 02010100 输入和显示，帧里对应 33 34 34 35（减 33H 前的原始顺序为 00 01 01 02）。" />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· 勾选「主日志减 33H」后，仅在 645 工具页处于激活状态时生效：完整 645 帧的数据域减 33H 并重算 CS 后，作为一条记录写入左侧主日志；非 645 数据、半帧、坏帧原样显示。" />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· 帧预览下方三个操作：发送（直接从 645 页发送）、复制（复制帧文本）、发送到主发送框（把帧填入底部发送框，复用发送记录与定时发送；会自动切到 Hex 发送且不追加换行）。" />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· 「应答解析」：粘贴完整帧后显示原始帧、地址（AA 通配/广播标注）、控制码方向、功能码名称、长度、数据域、校验和；异常应答按位解释错误信息字 ERR；常用功能会拆分字段（读数据 DI+数据、写数据 DI+密码权限+密码+操作者代码+数据、读/写地址、广播校时、冻结、改速率/改密码/清零），DI 会附带目录中的名称；读地址应答解析后可一键把地址填回表地址。数据域全部为可打印 ASCII 时会额外显示「文本(ASCII)」和「复制文本」按钮，可直接复制文本，不需要再去编码转换工具粘贴 Hex；BCD/二进制数据不会显示这一行。" />
+          </StackPanel>
+        </HeaderedContentControl>
 
-      <TextBlock Style="{StaticResource HelpH}" Text="十一、Lua 接口" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 接口文档见程序目录 LuaApi.md，或「运行脚本」工具栏的「Lua API 文档」按钮。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 串口与各网络工具都作为「通用通道」，Lua 用 apiSend / apiSetCb 收发。" />
+        <HeaderedContentControl
+          x:Name="SecCalculator"
+          Header="10 计算器详解（工具 → 计算器）"
+          Style="{StaticResource HelpSection}"
+        >
+          <StackPanel>
+            <TextBlock Style="{StaticResource HelpP}"><Run FontWeight="Bold">输入：</Run>左侧下拉选择输入进制（HEX / DEC / OCT / BIN），右侧输入数值；四种进制会实时同步显示。输入内容按所选进制解析，出现非法字符时提示「输入格式无效」。</TextBlock>
+            <TextBlock Style="{StaticResource HelpP}"><Run FontWeight="Bold">位宽：</Run>可选 8 / 16 / 32 / 64 位；超出位宽的高位会被截掉，切换位宽时当前值也会按新位宽截断。DEC 按无符号数显示；HEX / OCT / BIN 会按位宽补零，并按 2 / 3 / 4 位分组方便按字节阅读。</TextBlock>
+            <TextBlock Style="{StaticResource HelpP}"><Run FontWeight="Bold">复制：</Run>每个进制结果右侧的复制按钮只复制该行文本（保留分组空格；需要连续数值时可粘贴到发送框后自行去空格）。复制成功后按钮会短暂变成绿色对勾，并提示「已复制」。</TextBlock>
+            <TextBlock Style="{StaticResource HelpP}"><Run FontWeight="Bold">位运算：</Run>在「操作数」里按当前输入进制填第二个数，再点 &lt;&lt; / &gt;&gt; / &amp; / | / ^ / ~ 对当前值运算，结果写回当前值并按位宽截断；~ 为按位取反，不需要操作数。</TextBlock>
+            <TextBlock Style="{StaticResource HelpP}"><Run FontWeight="Bold">浮点解析：</Run>FLOAT32 输入 8 位、FLOAT64 输入 16 位十六进制（只接受 0-9 / A-F，其他字符会被自动过滤）；用「大端 / 小端」切换字节序，下方直接显示对应的十进制浮点值。</TextBlock>
+            <TextBlock Style="{StaticResource HelpP}"><Run FontWeight="Bold">四则运算：</Run>与上面的位运算互不影响，支持 + - * / % ^、括号和小数，边输入边出结果；除数为 0 或表达式非法时会给出提示。</TextBlock>
+          </StackPanel>
+        </HeaderedContentControl>
 
-      <TextBlock Style="{StaticResource HelpH}" Text="十二、其他" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 语言：日志区右下角 🌐 切换中/英（与 ? 使用说明、☰ 更多设置同一行的右端，鼠标移入才显示）。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 外观：日志区右下角 🌙/☀ 图标切换深色 / 浅色主题（鼠标移入才显示；切换立即生效并保存）。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 日志文件：主日志只在导出时生成到程序目录 logs/（`logYYYYMMDD_HHmmss.txt`）；崩溃日志为 logs/fatal.log；Lua 日志在 user_script_run/logs/。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 配置与脚本均保存在程序目录。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 程序遇到错误时会弹出一个只有「关闭程序」按钮的窗口，并把错误详情写入 logs/fatal.log。" />
+        <HeaderedContentControl
+          x:Name="SecPlot"
+          Header="11 曲线工具详解（工具 → 曲线）"
+          Style="{StaticResource HelpSection}"
+        >
+          <StackPanel>
+            <TextBlock Style="{StaticResource HelpH3}" Text="数据来源" />
+            <TextBlock Style="{StaticResource HelpP}" Text="脚本里调用 apiAddPoint(值, 线号) 上报数据点；线号 0~9，最多同时显示 10 条曲线。每次调用把一个点追加到对应曲线的末端。" />
 
-      <TextBlock Style="{StaticResource HelpH}" Text="十三、RTS / DTR 详解" />
-      <TextBlock Style="{StaticResource HelpP}" Text="RTS 与 DTR 是串口上两根「控制信号线」（输出电平），不是数据线；它们的电平由本软件输出给对端设备。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· RTS（Request To Send，请求发送）：勾选=拉高，取消=拉低。原本用于硬件流控（告诉对端「我准备好接收了」），也常被当作一根通用输出脚，控制继电器、指示灯、外部复位脚等。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· DTR（Data Terminal Ready，数据终端就绪）：勾选=拉高，取消=拉低。原本表示「本机已就绪」；最常见的用法是让开发板（Arduino、ESP 等）复位或进入下载/Bootloader 模式——很多下载电路正是靠 DTR/RTS 的电平组合去拉复位脚与 BOOT 脚。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 生效时机：只有在串口已打开时才会真正作用到硬件；打开串口时会按当前勾选状态设置一次。" />
-      <TextBlock Style="{StaticResource HelpLi}" Text="· 注意：不同设备对这两根线的定义不同，随意改动电平可能误触发设备复位或进入下载模式；不确定时保持默认（RTS 不勾选、DTR 勾选）即可。" />
+            <TextBlock Style="{StaticResource HelpH3}" Text="坐标轴与显示范围" />
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">X 轴</Run>：默认是样本序号，可在「曲线选项」里切换为时间（时间标签按平均采样间隔换算）；默认显示最近 1000 个点，最新点固定在右边缘并随数据滚动。</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Y 轴</Run>：刻度在右侧，左侧只保留网格；范围跟随 Y 自动适配，或由手动缩放决定（见下文「快捷操作（鼠标）」与「工具栏按钮」）。</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">图例</Run>：左上角显示每条线的颜色和线号；右键图表可显示 / 隐藏。</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">数据保留</Run>：每条线默认保留最近 20000 个点（更多设置「曲线保留点数」可改为 10000~100000），超出后丢弃最早的点。</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">跟随状态</Run>：手动缩放 Y、拖动图表或点「查看全局」会暂停跟随并关闭 Y 自动适配；双击图表或重新开始绘制可恢复；窗口最大化或调整右侧栏宽度时也会自动适配。</TextBlock>
+
+            <TextBlock Style="{StaticResource HelpH3}" Text="快捷操作（鼠标）" />
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">滚轮（绘图区）</Run>：只缩放 X 轴；正在跟随最新数据时窗口宽度变化，最新点仍固定在右边缘。</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Ctrl+滚轮（绘图区）</Run>：只缩放 Y 轴。</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Alt+滚轮（绘图区）</Run>：同时缩放 X / Y 轴。</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">滚轮在底部 X 轴刻度区</Run>：只缩放 X 轴。</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">滚轮在右侧 Y 轴刻度区</Run>：只缩放 Y 轴，并关闭 Y 自动适配。</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">按住左键拖动（移动超过 3 像素）</Run>：平移查看历史数据，同时暂停跟随并关闭 Y 自动适配（只是单击不会改变跟随状态）。</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">双击图表</Run>：恢复跟随最新数据、重新开启 Y 自动适配，并结束正在进行的测量。</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">右键图表</Run>：直接显示 / 隐藏图例，再次右键恢复。</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">拖动底部历史滑块</Run>：查看当前显示窗口之外、但仍在缓冲区中的历史曲线；滑块长度对应当前显示窗口，拖到最右端会恢复跟随最新。</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">鼠标在图上移动</Run>：显示一条吸附到最近样本点的竖直点线，每条可见曲线在交点处显示彩色圆点和该点的 Y 值，底部显示 X（样本序号 / 时间）。</TextBlock>
+            <TextBlock Style="{StaticResource HelpNote}" Text="曲线页没有专属的键盘快捷键；主窗口快捷键（见「2 快捷键」）在这一页同样有效，例如 Ctrl+L 回到发送框、Ctrl+K 清空主日志。" />
+
+            <TextBlock Style="{StaticResource HelpH3}" Text="工具栏按钮" />
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">查看全局</Run>：按当前实际数据同时适配 X / Y 轴。</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">清空图像</Run>：把所有曲线数据归零。</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">切换主题</Run>：循环切换绘图区配色；应用深 / 浅色主题时绘图区也会自动跟随。</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">暂停 / 播放</Run>（最右侧）：停止 / 开始绘制，只冻结画面，不影响脚本运行。</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">上下箭头</Run>：Y 轴自动适配开关，开启时 Y 范围随可见数据自动调整，手动缩放 Y 后自动关闭。</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">眼睛（曲线选项）</Run>：显示 / 隐藏线 0~9、全部显示、X 轴显示时间、复制 PNG、导出 PNG / CSV。</TextBlock>
+            <TextBlock Style="{StaticResource HelpSub}">· CSV 为宽表：一行一个样本，每条线一列。导出 PNG 会先生成图片并自动复制到剪贴板，取消保存也仍可粘贴。</TextBlock>
+
+            <TextBlock Style="{StaticResource HelpH3}" Text="测量" />
+            <TextBlock Style="{StaticResource HelpP}" Text="在「曲线选项 → 幅值测量 / 间隔测量」中开启；两种测量各自都有两条可拖动的测量线。" />
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">幅值测量</Run>：两条可拖水平线，自动对齐当前可见曲线的最高 / 最低点；读数栏显示 A、B、|Δ|。</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">间隔测量</Run>：两条可拖垂直线，吸附整数样本；显示 A、B、Δ样本、Δ秒和频率 Hz。</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">A / B</Run>：可交换、可交叉。</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">对齐相邻峰</Run>：在当前可见范围内找参考曲线（可见点数最多的一条）的两个相邻峰，适合周期信号测周期 / 频率；找不到峰时底部会提示，测量线保持原位。</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">视图与数据</Run>：测量时视图暂停但数据继续记录（已停止绘制时提示「数据未记录」），测量期间十字参考线隐藏；关闭测量后恢复跟随与 Y 自动适配。</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">读数</Run>：与 X 轴时间标签使用同一套换算，测量期间冻结、不自行漂移，与曲线上的位置一致；停止或重新开始绘制会自动关闭测量。</TextBlock>
+
+            <TextBlock Style="{StaticResource HelpH3}" Text="记录条件与限制" />
+            <TextBlock Style="{StaticResource HelpP}" Text="只有「工具 → 曲线」页面可见且处于「开始绘制」状态时才记录数据。切到其他工具页或串口设置页会自动停止绘制（「更多设置」是独立窗口，不影响绘制），期间的点直接丢弃，不补画之前的数据；切回曲线页后需要手动点「开始绘制」。重新运行脚本会清空旧曲线，从空白开始。" />
+            <TextBlock Style="{StaticResource HelpP}" Text="每条曲线默认保留最近 20000 个点（可配置），超出后丢弃最早的点。数据只保存在内存中，重启软件或重新加载工具页后清空，需要留档时用「曲线选项 → 复制/导出 PNG、导出 CSV」。时间轴标签按平均采样间隔近似换算，采样间隔剧烈变化时会与真实时间有偏差。" />
+
+            <TextBlock Style="{StaticResource HelpH3}" Text="示例" />
+            <TextBlock Style="{StaticResource HelpP}" Text="默认脚本「绘制曲线演示.lua」会持续生成两条不同振幅的正弦/余弦波形，直到你手动停止脚本；只有切到曲线页后才开始绘制，适合边跑边看。也可以在自己的脚本里用 sys.taskInit + sys.wait(...) 周期调用 apiAddPoint，完整示例见 LuaApi.md 的 apiAddPoint 一节。" />
+          </StackPanel>
+        </HeaderedContentControl>
+
+        <HeaderedContentControl
+          x:Name="SecMore"
+          Header="12 更多设置（点日志区右下角 ☰ 直接打开，鼠标移入才显示）"
+          Style="{StaticResource HelpSection}"
+        >
+          <StackPanel>
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 分三个页签：「更多串口设置」（打开日志目录、显示发送、数据字号、窗口置顶、串口超时（分包）、按空行分包、终端模式、脚本结束提示、托盘图标闪烁提醒、日志保留上限、流式保留字符数、曲线保留点数、曲线数值标签字号）、「发送脚本」、「接收脚本」。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 日志保留上限（条）：分包模式最多保留多少条日志（1000~200000，默认 50000），超过后自动丢弃最早的记录；另有 32 MB 负载预算兜底（大包时会先按字节裁剪）。两者谁先到谁生效。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 流式保留字符数：把「串口超时」设为负数进入流式模式后，最多保留多少字符（100000~10000000，默认 2000000），超过后丢弃最早的文本。两个输入框都可直接键盘输入数字，回车或失焦生效。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 窗口保持置顶显示：让主窗口始终显示在其他程序窗口的最上层，不被别的窗口挡住（对「更多设置」窗口本身无影响）。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 发送脚本 / 接收脚本：编辑发送前、接收后触发的 Lua 脚本。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 接收数据以十六进制还是字符串显示，由左侧日志区底部的「接收显示Hex」控制。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 配置备份：「更多串口设置」底部可「导出配置 / 导入配置」，用于整份 settings.json 的备份与迁移；导入前会备份当前配置为 settings.json.import-bak，导入后需重启软件生效。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 串口的数据位/校验位/停止位/字符编码/自动重连等参数在「串口设置」标签。" />
+          </StackPanel>
+        </HeaderedContentControl>
+
+        <HeaderedContentControl
+          x:Name="SecLua"
+          Header="13 Lua 接口"
+          Style="{StaticResource HelpSection}"
+        >
+          <StackPanel>
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 接口文档见程序目录 LuaApi.md，或「运行脚本」工具栏的「Lua API 文档」按钮。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 串口与各网络工具都作为「通用通道」，Lua 用 apiSend / apiSetCb 收发。" />
+          </StackPanel>
+        </HeaderedContentControl>
+
+        <HeaderedContentControl
+          x:Name="SecOther"
+          Header="14 其他"
+          Style="{StaticResource HelpSection}"
+        >
+          <StackPanel>
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 语言：日志区右下角 🌐 切换中/英（与 ? 使用说明、☰ 更多设置同一行的右端，鼠标移入才显示）。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 外观：日志区右下角 🌙/☀ 图标切换深色 / 浅色主题（鼠标移入才显示；切换立即生效并保存）。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 日志文件：主日志只在导出时生成到程序目录 logs/（logYYYYMMDD_HHmmss.txt）；崩溃日志为 logs/fatal.log；Lua 日志在 user_script_run/logs/。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 配置与脚本均保存在程序目录。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 程序遇到错误时会弹出一个只有「关闭程序」按钮的窗口，并把错误详情写入 logs/fatal.log。" />
+          </StackPanel>
+        </HeaderedContentControl>
+
+        <HeaderedContentControl
+          x:Name="SecRtsDtr"
+          Header="15 RTS / DTR 详解"
+          Style="{StaticResource HelpSection}"
+        >
+          <StackPanel>
+            <TextBlock Style="{StaticResource HelpP}" Text="RTS 与 DTR 是串口上两根「控制信号线」（输出电平），不是数据线；它们的电平由本软件输出给对端设备。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· RTS（Request To Send，请求发送）：勾选=拉高，取消=拉低。原本用于硬件流控（告诉对端「我准备好接收了」），也常被当作一根通用输出脚，控制继电器、指示灯、外部复位脚等。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· DTR（Data Terminal Ready，数据终端就绪）：勾选=拉高，取消=拉低。原本表示「本机已就绪」；最常见的用法是让开发板（Arduino、ESP 等）复位或进入下载/Bootloader 模式——很多下载电路正是靠 DTR/RTS 的电平组合去拉复位脚与 BOOT 脚。" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 生效时机：只有在串口已打开时才会真正作用到硬件；打开串口时会按当前勾选状态设置一次。" />
+            <TextBlock Style="{StaticResource HelpNote}" Text="注意：不同设备对这两根线的定义不同，随意改动电平可能误触发设备复位或进入下载模式；不确定时保持默认（RTS 不勾选、DTR 勾选）即可。" />
+          </StackPanel>
+        </HeaderedContentControl>
       </StackPanel>
 
       <StackPanel x:Name="HelpContentEn" Visibility="Collapsed">
         <TextBlock Style="{StaticResource HelpTitle}" Text="LLCOM User Guide" />
-
-        <TextBlock Style="{StaticResource HelpH}" Text="1. Quick start" />
-        <TextBlock Style="{StaticResource HelpP}" Text="1. In the Serial Port tab on the right: select Port → select Baud rate → click Open port." />
-        <TextBlock Style="{StaticResource HelpP}" Text="2. The left side is the send/receive log. Type the content to send at the bottom, then click Send or press Ctrl+Enter (you can change Send options to send with Enter)." />
-        <TextBlock Style="{StaticResource HelpP}" Text="3. Right-side tabs: Serial Port / Quick send / Run script / Online scripts / Tools / About." />
-        <TextBlock Style="{StaticResource HelpP}" Text="Tip: sending while the port is closed does not open it automatically; LLCOM asks you to open the port first." />
-
-        <TextBlock Style="{StaticResource HelpH}" Text="2. Shortcuts (active in the main window)" />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+O: open / close the serial port." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+L: move focus to the send box (caret at the end)." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+K: clear the log (same as the trash button in the log area)." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+Up / Ctrl+Down: previous / next serial port (the list is locked while the port is open)." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+Left / Ctrl+Right: cycle common baud rates: 1200 / 2400 / 4800 / 9600 / 19200 / 38400 / 57600 / 115200." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+Shift+S: open the More settings window." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Alt+M: minimize the window." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· F11: maximize / restore the window (fullscreen)." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Ctrl+Enter: send the send-box content (can be changed to Enter in Send options)." />
-        <TextBlock Style="{StaticResource HelpP}" Text="Shortcuts only work while the main window is focused; they do not work while the Help / More settings dialogs are open. When terminal mode is on and the log area has focus, Ctrl+A~Z are sent as control characters first (for example Ctrl+O sends 0x0F); turn off terminal mode before using these shortcuts. In the code editor on the Run script page, Ctrl+Left/Right still moves the caret by word." />
-
-        <TextBlock Style="{StaticResource HelpH}" Text="3. Serial settings (first tab on the right)" />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Refresh serial ports: rescan the list of available ports." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Port: select the port to open (device description is shown)." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Baud rate: common rates; the last item Custom lets you type any value." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Data bits / parity / stop bits / character encoding: serial parameters and text encoding." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="    - The High / Low parity options are Mark / Space parity (parity bit fixed at 1 / 0), used by 9-bit multi-drop protocols; for normal devices choose None." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Auto reconnect: reconnect automatically after the serial cable is unplugged (only the port last opened manually)." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· RTS / DTR: levels of the two hardware control lines (see RTS / DTR details at the end)." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Open port / Close port: after a successful open the button turns green; the status bar shows the COM port and baud rate." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Bottom-right end of the log (same row as Clear log, right-aligned): hover over that corner to show Export and open current log, ? Help, 🌙/☀ Theme, ☰ More settings, 🌐 Change language; they hide when the mouse leaves. This group does not collapse when the log area is narrow." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Export and open current log: left-click exports the current main log to a new file (`logs/logYYYYMMDD_HHmmss.txt`, line-by-line identical to the view) and opens it with your default editor (a program picker opens if none is set, applying only this time); right-click offers Open with system default, Open once with…, Set default editor…, Clear default editor. The file is written only when you export or save — nothing is written in the background; the exported content follows the Send Hex / Receive Hex toggles, i.e. exactly what the view shows." />
-
-        <TextBlock Style="{StaticResource HelpH}" Text="4. Send/receive data area (left side)" />
-        <TextBlock Style="{StaticResource HelpP}" Text="Each row shows: time + direction (→ send / ← receive) + data (hex or text, one line)." />
-        <TextBlock Style="{StaticResource HelpP}" Text="Bottom icon buttons (left to right; each has a tooltip):" />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Abc/Hex (send): how sent data is parsed and displayed; click to switch between text / hexadecimal." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Abc/Hex (receive): how received data is displayed; click to switch between text / hexadecimal." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Eye icon: replace invisible characters (show invisible characters as visible placeholders; UTF-8 only)." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Pause/resume icon: stop / resume log printing." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Lock icon: lock the view to prevent auto-scroll (click to toggle; when locked it shows a green unlocked icon)." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Trash icon: clear the log display." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Save icon: save the current log to a file." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· When the log area is narrow (for example, dragging the right sidebar left), this bottom row of icons collapses into a single ⋯ menu with the same switches and actions; it expands again when there is room. The hover-only Help / Theme / Settings / Language group at the bottom-right is unaffected." />
-        <TextBlock Style="{StaticResource HelpP}" Text="Multi-line copy: in Packet mode, Ctrl+click to select multiple rows, then Ctrl+C or right-click Copy selected lines; the context menu also has Select all / Copy all. Each copied line includes the time and direction arrow, matching the display. In Stream mode, right-click Copy all." />
-        <TextBlock Style="{StaticResource HelpP}" Text="Terminal mode (enable in More settings): type directly in the log area and send keys immediately." />
-        <TextBlock Style="{StaticResource HelpP}" FontWeight="Bold" Text="Terminal mode (direct keyboard input) details" />
-        <TextBlock Style="{StaticResource HelpP}" Text="Purpose: when enabled, click the log/receive area above and type; characters are sent directly to the serial port without going through the send box. Suitable for bootloaders, AT commands, interactive command lines, etc., where one keystroke must be sent immediately." />
-        <TextBlock Style="{StaticResource HelpP}" Text="Control characters: Ctrl+A ~ Ctrl+Z send the corresponding ASCII control codes (1~26). For example Ctrl+C = 0x03, Ctrl+D = 0x04, Ctrl+Z = 0x1A. Terminal mode is off by default (enable it in More settings); when enabled and the log area has focus, its border turns green." />
-        <TextBlock Style="{StaticResource HelpP}" Text="This is not a full terminal: it does not emulate Enter, Backspace, arrow keys or function keys; Ctrl+V is sent as 0x16 and cannot reliably paste; non-ASCII characters are treated as ASCII and may become ?. It also does not open the serial port automatically." />
-        <TextBlock Style="{StaticResource HelpP}" Text="Note: in terminal mode Ctrl+C means send 0x03, which conflicts with the Copy shortcut; turn off terminal mode before copying the log. Accidentally pressing keys after clicking the log area may also send data to the device." />
-        <TextBlock Style="{StaticResource HelpP}" Text="If you only need normal send/receive, turn off terminal mode and use the send box below." />
-        <TextBlock Style="{StaticResource HelpP}" Text="When there are many log entries, only visible rows are rendered (virtualization); scrolling, dragging splitters and switching Text/Hex remain smooth." />
-        <TextBlock Style="{StaticResource HelpP}" Text="The log has a retention limit (see More settings → Log retention limit / Stream retention characters): once reached, the oldest records are discarded automatically to avoid running out of memory during long sessions." />
-
-        <TextBlock Style="{StaticResource HelpH}" Text="5. Send area (bottom)" />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Type content, then click Send or press Ctrl+Enter." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Left of the Send button: plug icon = open/close port (green = closed, red = open; hover shows Open port / Close port), no need to switch to the Serial Port tab." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Three controls left of the plug icon (left to right):" />
-        <TextBlock Style="{StaticResource HelpLi}" Text="    - Eraser icon: clear the send box." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="    - History icon: send history. Click an entry to put it back into the send box; the popup has a fixed height and a scrollable list (it will not push the bottom settings away); the bottom History limit (entries) can be typed directly (5~200, applied on Enter or focus loss), and Clear history on the right clears everything (cannot be undone)." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="    - Newline dropdown: newline appended when sending; options are none / \n / \r / \n\r / \r\n." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· The dropdown (▾) right of the Send button is Send options: continuous send (periodically send using Delay after send and Repeat count), send with Enter / send with Ctrl+Enter." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="    - About Repeat count: it means how many extra times to repeat after the first send. 3 = 4 sends total; 0 = send once; -1 = repeat until Send is clicked again to stop." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="    - Value ranges: Delay after send 10~3600000 ms (each click ±100); Repeat count -1~100000 (-1 = infinite). Both accept direct keyboard input; values are validated on focus loss and clamped when out of range." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Whether to send as HEX is controlled by the Abc/Hex (send) switch at the bottom of the log area." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· A Send script can be configured in More settings to transform the data before sending." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· The send area height can be adjusted by dragging the splitter above it (40~240)." />
-
-        <TextBlock Style="{StaticResource HelpH}" Text="6. Quick send (second tab on the right)" />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· 10 pages: click the sticky-note icon in the tab to switch pages; right-click a page name to rename it." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Each row: ID, content, send button, Hex checkbox, script icon, timer icon (click to configure the timer)." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="    - Timer icon: click to enable Timer and adjust Interval (ms) to send this row periodically; multiple rows can be timed at once (a green icon means enabled). If the port is not open, LLCOM prompts and stops all timers." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="    - Value range: Interval (ms) 10~3600000 (each click ±100); you can type a number directly; it is validated on focus loss and clamped when out of range." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="    - Click the row's Send button to send that row (the per-row script is called)." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="    - Hex checkbox: send this row as hexadecimal." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="    - File icon: set a Receive script for this row (click to set / right-click to clear); the gear icon sets receive-script parameters." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="    - Right-click the ID to move the row to a specified position (leave it empty to delete the row)." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Bottom icon buttons (hover for tooltips): add new item / remove last item / import data into this page / export this page's data / clear this page's data / import SSCOM data." />
-
-        <TextBlock Style="{StaticResource HelpH}" Text="7. Run script (Lua)" />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Choose a script from the file dropdown (user_script_run folder), or click the New icon to create one." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Toolbar icons: New / Run / Open script folder / Refresh list / Lua API documentation / Share script." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· After clicking Run, the log view opens: it shows print output; you can Stop/Exit and Pause/Resume printing; the input box at the bottom runs a single line of Lua." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Script folder: user_script_run/ under the program folder." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Completion notification: call apiNotify(title, message) in a script to show a tray balloon; script errors also notify automatically (green = done, red = error). After the balloon disappears, the tray icon shows a matching colored badge and flashes for 30 seconds; hovering or clicking the icon, or returning to the main window, stops the flashing, and the badge stays until you click the tray or the status-bar notice. Toggle it in More settings → Script completion notification / Flash the tray icon." />
-
-        <TextBlock Style="{StaticResource HelpH}" Text="8. Online scripts" />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Browse community scripts (author / name / version / description), click to view, and click Download to save to the local script folder." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Long names/descriptions in the list are truncated; hover to see the full text." />
-
-        <TextBlock Style="{StaticResource HelpH}" Text="9. Tools (right-side Tools tab; choose from the dropdown at the top)" />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· TCP test: creates a public TCP/UDP/SSL server via netlab.luatos.com for devices to connect to (the address is shown); you can send to and kick online clients." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Local TCP listener: opens a TCP server on a local IP/port and broadcasts to all connected clients." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Local UDP listener: opens a UDP server on a local IP/port to receive data." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· TCP client: connects to a remote host over TCP/UDP/SSL; auto reconnect and reconnect interval are optional." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Encoding converter: Raw data on the left; choose a conversion task and add it; Conversion result appears on the right." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· MQTT: subscribe / publish (including QOS and Hex); the settings page configures Broker, port, client ID, username/password, keep-alive, clean session, TLS (including CA and client certificate) and WebSocket." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Mojibake fix: paste garbled text; the list shows restoration results for several source → target encodings; results can be copied." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Serial monitor: choose the target process and its serial port, then start monitoring; the target's send/receive data is shown in a side channel. Key points: ① click Start monitoring first, then let the target program open the port (ports already open before monitoring starts cannot be captured); ② the target must be a 64-bit program (the 64-bit LLCOM can only monitor 64-bit targets; monitoring 32-bit targets is not available yet); ③ security software may block injection; run as administrator if necessary." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Plot: receives data points reported by Lua through the API and draws curves; view the full chart / clear the chart / switch theme (see Plot details below)." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· WinUSB: select a USB device, read/write endpoints, connect and send/receive (Hex supported)." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Calculator: multi-base display / bitwise operations / IEEE-754 float decoding / arithmetic (see Calculator details below)." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· DL/T 645-2007: meter frame tool (developer-oriented; frames are sent directly after assembly; write-data and custom control codes are not confirmed again)." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="    - Meter address: type 1 / 123 and press Enter or leave the field; it is padded with zeros to 12 digits. The magnifier button to the right of the address reads the meter address automatically; on success the button turns green and hovering shows the address; after closing the port the button returns to gray." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="    - Operations: read data / read communication address / write data / broadcast time calibration / write communication address / freeze command / change baud rate / change password / maximum demand reset / meter reset / event reset / custom control code; only write data and custom control code show the extra data row; other functions show the corresponding data-field input as needed; data fields for new functions are entered in frame order (low byte first) and are not reversed when assembling." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="    - Write data: Automatically add password/operator code is checked by default; per the 645 standard, password and operator code are inserted after the DI (the password is empty by default—it is set by the manufacturer/utility and must be filled in for the actual meter; the default operator code 12345678 is only an example and can be changed; both are saved in the configuration); extra data, password and operator code are entered in normal order and automatically reversed to low-byte-first when assembling; uncheck the option to send only DI + extra data." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="    - Custom control code: the control code and data field are sent exactly as entered; the software does not reverse or rewrite them." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="    - Data identifier: above is the DI filter (search box with a magnifier; typing filters immediately; press Enter to open the dropdown; switching category expands it automatically; the list scrolls when too tall); below is the common dropdown + 4-byte HEX input. Typing an existing DI automatically selects the matching item; right-click to delete the current DI; the gear button opens the manager window (add / delete / restore defaults / import / export)." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="    - Data identifiers are assembled low-byte-first: the UI enters and displays 02010100, which corresponds to 33 34 34 35 in the frame (the original order before subtracting 33H is 00 01 01 02)." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="    - With Main log -33H checked, only while the 645 tool page is active: complete 645 frames have 33H subtracted from the data field and the CS recalculated, then are written to the left main log as one record; non-645 data, partial frames and bad frames are shown as-is." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="    - The three actions below the frame preview: Send (send directly from the 645 page), Copy (copy the frame text), Send to main send box (put the frame into the bottom send box, reusing send history and timed sending; automatically switches to Hex send and appends no newline)." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="    - Response parsing: paste a complete frame to show the raw frame, address (with AA wildcard/broadcast annotation), control-code direction, function-code name, length, data field and checksum; exception responses explain the ERR error word bit by bit; common functions split fields (read data DI+data; write data DI+password permission+password+operator code+data; read/write address; broadcast time calibration; freeze; change baud rate/password/reset), and DI includes the catalog name; after parsing a read-address response, the address can be filled back into the meter address with one click. When the data field is entirely printable ASCII, a Text (ASCII) line and a Copy text button are shown, so the text can be copied without switching to the encoding tool; BCD/binary data does not show this line." />
-
         <TextBlock
-          Margin="0,14,0,0"
-          FontWeight="Bold"
-          Style="{StaticResource HelpP}"
-          Text="Calculator details (Tools → Calculator)"
+          Style="{StaticResource HelpIntro}"
+          Text="The guide follows the order Serial → Log → Send → Scripts → Tools. Click an entry below to jump to that section."
         />
-        <TextBlock Style="{StaticResource HelpP}" Text="Input: choose the input base (HEX / DEC / OCT / BIN) on the left and type a value on the right; all four bases update live. Input is parsed in the selected base and invalid characters show Invalid input." />
-        <TextBlock Style="{StaticResource HelpP}" Text="Width: 8 / 16 / 32 / 64 bits. Bits above the selected width are dropped, and switching width truncates the current value too. DEC is shown unsigned; HEX / OCT / BIN are zero-padded to the width and grouped by 2 / 3 / 4 digits for easier byte reading." />
-        <TextBlock Style="{StaticResource HelpP}" Text="Copy: the copy button next to each base copies only that line (grouping spaces are kept; paste into the send box and remove spaces if you need a continuous value). After a successful copy the button briefly turns into a green check and shows Copied." />
-        <TextBlock Style="{StaticResource HelpP}" Text="Bitwise: type the second value in Operand using the current input base, then click &lt;&lt; / &gt;&gt; / &amp; / | / ^ / ~ to apply it to the current value; the result is written back and masked to the width. ~ is bitwise NOT and needs no operand." />
-        <TextBlock Style="{StaticResource HelpP}" Text="Float decoding: FLOAT32 takes 8 hex digits and FLOAT64 takes 16 (only 0-9 / A-F; other characters are filtered out). Use Big-endian / Little-endian to switch byte order; the decimal float value is shown below." />
-        <TextBlock Style="{StaticResource HelpP}" Text="Arithmetic: independent of the bitwise section; supports + - * / % ^, parentheses and decimals, evaluating as you type; division by zero or an invalid expression shows a hint." />
 
-        <TextBlock
-          Margin="0,14,0,0"
-          FontWeight="Bold"
-          Style="{StaticResource HelpP}"
-          Text="Plot details (Tools → Chart)"
-        />
-        <TextBlock Style="{StaticResource HelpP}" Text="Data source: call apiAddPoint(value, line) from Lua; line is 0-9 (up to 10 curves). Each call appends one point to the end of that curve." />
-        <TextBlock Style="{StaticResource HelpP}" Text="Axes: X is the sample index by default (switch to time in Plot options; time labels are estimated from the average sample interval); a legend in the upper-left shows each line's color and number. Y tick labels are on the right and the left side keeps only the grid. The view shows the latest 1000 points by default and scrolls with new data; each curve retains 20000 points by default (10000~100000 in More settings → Chart history points). The mouse wheel zooms by position: over the plot it zooms X only by default (keeping the newest point at the right edge); over the bottom X tick area it zooms X; over the right Y tick area it zooms Y. Over the plot, Ctrl+wheel zooms Y only and Alt+wheel zooms both X and Y. Manually zooming Y turns off Y auto-fit; dragging the chart or clicking Fit pauses following, and double-clicking or restarting plotting resumes following and Y auto-fit. Maximizing or resizing also refits the view." />
-        <TextBlock Style="{StaticResource HelpP}" Text="Buttons: Fit = rescale X and Y to the current data; Clear = set all curve data to zero; Theme = cycle the chart color styles, and the chart also follows the app light/dark theme; the pause/play icon stops/starts plotting (it only freezes the view, the script keeps running); the up/down arrows button is the Y auto-fit toggle (Y follows the visible data while on, and turns off automatically after a manual Y zoom); the eye button opens Plot options (show/hide lines 0-9, show all, show time on the X axis, copy PNG, export PNG/CSV; CSV is a wide table with one row per sample and one column per line; export PNG also copies the image to the clipboard first, so it can still be pasted after cancelling the save dialog). Right-click the plot to toggle the legend. The bottom history slider scrolls through data outside the current view but still in the buffer; drag it to the far right to resume following the latest data." />
-        <TextBlock Style="{StaticResource HelpP}" Text="Measurement: Plot options → Amplitude / Interval. Amplitude shows two draggable horizontal lines (auto-aligned to the visible max/min; the readout shows A, B, |Δ|). Interval shows two draggable vertical lines snapped to integer samples (the readout shows A, B, Δ samples, Δ seconds and frequency in Hz). A/B can be swapped or crossed. Align adjacent peaks finds two adjacent peaks of the reference curve (the visible line with the most points) in the current view, which is handy for measuring the period/frequency of periodic signals; if none are found, a hint is shown and the lines stay put. Measuring pauses the view but keeps recording data (when plotting is stopped, the hint says data is not recorded); closing restores following/Y auto-fit and hides the measurement lines. The crosshair is hidden while measuring. Measurement values use the same time mapping as the X axis and freeze it while measuring, so A/B values match the on-screen positions and do not drift; stopping or restarting plotting closes measurements." />
-        <TextBlock Style="{StaticResource HelpP}" Text="Interaction and limits: data is recorded only while the Chart page is visible and plotting is started. Switching to another tool page or the serial settings tab stops plotting automatically (the More settings window is separate and does not stop it); points received while away are discarded and not replayed, and you need to click Start plotting after returning. Re-running a script clears the old curves and starts from blank. A vertical guide line snaps to the nearest sample and follows the mouse; each visible curve shows a colored dot and its Y value at the intersection; the bottom shows X (sample index/time), with no horizontal line or left Y label. Each curve keeps 20000 points by default (configurable, oldest points are dropped); data lives in memory only and is cleared when the app restarts or the tool page reloads; use Plot options → copy/export PNG or export CSV to keep a copy. Time labels are approximate (average sample interval) and may drift if the sampling rate changes sharply." />
-        <TextBlock Style="{StaticResource HelpP}" Text="Example: the default script 绘制曲线演示.lua keeps generating two sine/cosine curves until you stop it; it starts drawing only after you switch to the Chart page, so you can watch it live. You can also call apiAddPoint periodically in your own script (see the apiAddPoint section in LuaApi.md)." />
+        <Border Style="{StaticResource HelpTocCard}">
+          <StackPanel>
+            <TextBlock Style="{StaticResource HelpTocTitle}" Text="Contents (click to jump)" />
+            <WrapPanel>
+              <Button
+                Click="SectionLink_Click"
+                Content="1 Quick start"
+                Style="{StaticResource HelpTocButton}"
+                Tag="EnSec1"
+              />
+              <Button
+                Click="SectionLink_Click"
+                Content="2 Shortcuts"
+                Style="{StaticResource HelpTocButton}"
+                Tag="EnSec2"
+              />
+              <Button
+                Click="SectionLink_Click"
+                Content="3 Serial"
+                Style="{StaticResource HelpTocButton}"
+                Tag="EnSec3"
+              />
+              <Button
+                Click="SectionLink_Click"
+                Content="4 Log area"
+                Style="{StaticResource HelpTocButton}"
+                Tag="EnSec4"
+              />
+              <Button
+                Click="SectionLink_Click"
+                Content="5 Send area"
+                Style="{StaticResource HelpTocButton}"
+                Tag="EnSec5"
+              />
+              <Button
+                Click="SectionLink_Click"
+                Content="6 Quick send"
+                Style="{StaticResource HelpTocButton}"
+                Tag="EnSec6"
+              />
+              <Button
+                Click="SectionLink_Click"
+                Content="7 Run script"
+                Style="{StaticResource HelpTocButton}"
+                Tag="EnSec7"
+              />
+              <Button
+                Click="SectionLink_Click"
+                Content="8 Online scripts"
+                Style="{StaticResource HelpTocButton}"
+                Tag="EnSec8"
+              />
+              <Button
+                Click="SectionLink_Click"
+                Content="9 Tools"
+                Style="{StaticResource HelpTocButton}"
+                Tag="EnSec9"
+              />
+              <Button
+                Click="SectionLink_Click"
+                Content="10 Calculator"
+                Style="{StaticResource HelpTocButton}"
+                Tag="EnSec10"
+              />
+              <Button
+                Click="SectionLink_Click"
+                Content="11 Plot"
+                Style="{StaticResource HelpTocButton}"
+                Tag="EnSec11"
+              />
+              <Button
+                Click="SectionLink_Click"
+                Content="12 More settings"
+                Style="{StaticResource HelpTocButton}"
+                Tag="EnSec12"
+              />
+              <Button
+                Click="SectionLink_Click"
+                Content="13 Lua API"
+                Style="{StaticResource HelpTocButton}"
+                Tag="EnSec13"
+              />
+              <Button
+                Click="SectionLink_Click"
+                Content="14 Other"
+                Style="{StaticResource HelpTocButton}"
+                Tag="EnSec14"
+              />
+              <Button
+                Click="SectionLink_Click"
+                Content="15 RTS / DTR"
+                Style="{StaticResource HelpTocButton}"
+                Tag="EnSec15"
+              />
+            </WrapPanel>
+          </StackPanel>
+        </Border>
 
-        <TextBlock Style="{StaticResource HelpH}" Text="10. More settings (click ☰ at the bottom-right of the log area; shown on hover)" />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Three tabs: More serial settings (open log folder, show sent data, data font size, keep window on top, serial timeout (packet), split by blank line, terminal mode, script completion notification, flash the tray icon, log retention limit, stream retention characters, chart history points, chart value label size), Send script, Receive script." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Log retention limit (entries): the maximum number of log entries kept in Packet mode (1000~200000, default 50000); older entries are discarded automatically; a 32 MB payload budget also applies (large packets are trimmed by bytes first). Whichever limit is reached first takes effect." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Stream retention characters: after setting Serial timeout to a negative value to enter Stream mode, the maximum number of characters kept (100000~10000000, default 2000000); older text is discarded. Both input boxes accept direct keyboard input; Enter or focus loss applies the value." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Keep window on top: keeps the main window above other application windows so it is not covered (does not affect the More settings window itself)." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Send script / Receive script: edit the Lua scripts triggered before sending and after receiving." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Whether received data is shown as hex or text is controlled by Receive display Hex at the bottom of the left log area." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Configuration backup: at the bottom of More serial settings you can Export configuration / Import configuration to back up and migrate the whole settings.json; before import the current configuration is backed up as settings.json.import-bak; a restart is required after import." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Serial data bits/parity/stop bits/encoding/auto reconnect are configured in the Serial Port tab." />
+        <HeaderedContentControl
+          x:Name="EnSec1"
+          Header="1 Quick start"
+          Style="{StaticResource HelpSection}"
+        >
+          <StackPanel>
+            <TextBlock Style="{StaticResource HelpP}" Text="1. In the Serial Port tab on the right: select Port → select Baud rate → click Open port." />
+            <TextBlock Style="{StaticResource HelpP}" Text="2. The left side is the send/receive log. Type the content to send at the bottom, then click Send or press Ctrl+Enter (you can change Send options to send with Enter)." />
+            <TextBlock Style="{StaticResource HelpP}" Text="3. Right-side tabs: Serial Port / Quick send / Run script / Online scripts / Tools / About." />
+            <TextBlock Style="{StaticResource HelpNote}" Text="Tip: sending while the port is closed does not open it automatically; LLCOM asks you to open the port first." />
+          </StackPanel>
+        </HeaderedContentControl>
 
-        <TextBlock Style="{StaticResource HelpH}" Text="11. Lua API" />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· The API documentation is LuaApi.md in the program folder, or the Lua API documentation button in the Run script toolbar." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· The serial port and all network tools are exposed as common channels; Lua uses apiSend / apiSetCb to send and receive." />
+        <HeaderedContentControl
+          x:Name="EnSec2"
+          Header="2 Shortcuts (active in the main window)"
+          Style="{StaticResource HelpSection}"
+        >
+          <StackPanel>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Ctrl+O</Run>: open / close the serial port.</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Ctrl+L</Run>: move focus to the send box (caret at the end).</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Ctrl+K</Run>: clear the log (same as the trash button in the log area).</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Ctrl+Up / Ctrl+Down</Run>: previous / next serial port (the list is locked while the port is open).</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Ctrl+Left / Ctrl+Right</Run>: cycle common baud rates: 1200 / 2400 / 4800 / 9600 / 19200 / 38400 / 57600 / 115200.</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Ctrl+Shift+S</Run>: open the More settings window.</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Alt+M</Run>: minimize the window.</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">F11</Run>: maximize / restore the window (fullscreen).</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Ctrl+Enter</Run>: send the send-box content (can be changed to Enter in Send options).</TextBlock>
+            <TextBlock Style="{StaticResource HelpNote}" Text="Shortcuts only work while the main window is focused; they do not work while the Help / More settings dialogs are open. When terminal mode is on and the log area has focus, Ctrl+A~Z are sent as control characters first (for example Ctrl+O sends 0x0F); turn off terminal mode before using these shortcuts. In the code editor on the Run script page, Ctrl+Left/Right still moves the caret by word." />
+          </StackPanel>
+        </HeaderedContentControl>
 
-        <TextBlock Style="{StaticResource HelpH}" Text="12. Other" />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Language: use the 🌐 icon at the bottom-right of the log area to switch Chinese/English (same right-aligned row as ? Help and ☰ More settings; shown on hover)." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Appearance: use the 🌙/☀ icon at the bottom-right of the log area to switch dark / light theme (shown on hover; applied immediately and saved)." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Log files: the main log is written only when you export it, to logs/logYYYYMMDD_HHmmss.txt; the crash log is logs/fatal.log; the Lua log is in user_script_run/logs/." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Configuration and scripts are stored in the program folder." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· On a fatal error LLCOM opens a window with only a Close program button and writes details to logs/fatal.log." />
+        <HeaderedContentControl
+          x:Name="EnSec3"
+          Header="3 Serial settings (first tab on the right)"
+          Style="{StaticResource HelpSection}"
+        >
+          <StackPanel>
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Refresh serial ports: rescan the list of available ports." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Port: select the port to open (device description is shown)." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Baud rate: common rates; the last item Custom lets you type any value." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Data bits / parity / stop bits / character encoding: serial parameters and text encoding." />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· The High / Low parity options are Mark / Space parity (parity bit fixed at 1 / 0), used by 9-bit multi-drop protocols; for normal devices choose None." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Auto reconnect: reconnect automatically after the serial cable is unplugged (only the port last opened manually)." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· RTS / DTR: levels of the two hardware control lines (see section 15 for details)." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Open port / Close port: after a successful open the button turns green; the status bar shows the COM port and baud rate." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Bottom-right end of the log (same row as Clear log, right-aligned): hover over that corner to reveal these entries; they hide when the mouse leaves and do not collapse when the log area is narrow." />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· ? Help, 🌙 / ☀ Theme, ☰ More settings, 🌐 Change language." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Export and open current log: left-click exports the current main log to a new file (logs/logYYYYMMDD_HHmmss.txt, line-by-line identical to the view) and opens it with your default editor (a program picker opens if none is set, applying only this time)." />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· Right-click offers: Open with system default, Open once with…, Set default editor…, Clear default editor." />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· The file is written only when you export or save — nothing is written in the background; the exported content follows the Send Hex / Receive Hex toggles, i.e. exactly what the view shows." />
+          </StackPanel>
+        </HeaderedContentControl>
 
-        <TextBlock Style="{StaticResource HelpH}" Text="13. RTS / DTR details" />
-        <TextBlock Style="{StaticResource HelpP}" Text="RTS and DTR are two control signal lines (output levels) on the serial port, not data lines; their levels are output by this software to the connected device." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· RTS (Request To Send): checked = high, unchecked = low. Originally used for hardware flow control (telling the peer I am ready to receive); it is also often used as a general-purpose output pin to control relays, LEDs, external reset pins, etc." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· DTR (Data Terminal Ready): checked = high, unchecked = low. Originally meant this terminal is ready; its most common use is to reset a development board (Arduino, ESP, etc.) or put it into download/Bootloader mode—many download circuits use the DTR/RTS level combination to pull the reset and BOOT pins." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· When it takes effect: only when the serial port is open does it actually affect the hardware; when the port is opened, the current checkbox states are applied once." />
-        <TextBlock Style="{StaticResource HelpLi}" Text="· Note: different devices define these two lines differently; changing the levels at random may accidentally reset the device or enter download mode; if unsure, keep the defaults (RTS unchecked, DTR checked)." />
+        <HeaderedContentControl
+          x:Name="EnSec4"
+          Header="4 Send/receive data area (left side)"
+          Style="{StaticResource HelpSection}"
+        >
+          <StackPanel>
+            <TextBlock Style="{StaticResource HelpP}" Text="Each row shows: time + direction (→ send / ← receive) + data (hex or text, one line)." />
+            <TextBlock Style="{StaticResource HelpH3}" Text="Bottom icon buttons (left to right; each has a tooltip)" />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Abc/Hex (send): how sent data is parsed and displayed; click to switch between text / hexadecimal." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Abc/Hex (receive): how received data is displayed; click to switch between text / hexadecimal." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Eye icon: replace invisible characters (show invisible characters as visible placeholders; UTF-8 only)." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Pause/resume icon: stop / resume log printing." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Lock icon: lock the view to prevent auto-scroll (click to toggle; when locked it shows a green unlocked icon)." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Trash icon: clear the log display." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Save icon: save the current log to a file." />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· When the log area is narrow (for example, dragging the right sidebar left), this bottom row of icons collapses into a single ⋯ menu with the same switches and actions; it expands again when there is room. The hover-only Help / Theme / Settings / Language group at the bottom-right is unaffected." />
+
+            <TextBlock Style="{StaticResource HelpH3}" Text="Copying and terminal mode" />
+            <TextBlock Style="{StaticResource HelpP}" Text="Multi-line copy: in Packet mode, Ctrl+click to select multiple rows, then Ctrl+C or right-click Copy selected lines; the context menu also has Select all / Copy all. Each copied line includes the time and direction arrow, matching the display. In Stream mode, right-click Copy all." />
+            <TextBlock Style="{StaticResource HelpP}" Text="Terminal mode (enable in More settings): click the log/receive area above and type; characters are sent directly to the serial port without going through the send box. Suitable for bootloaders, AT commands, interactive command lines, etc., where one keystroke must be sent immediately." />
+            <TextBlock Style="{StaticResource HelpP}" Text="Control characters: Ctrl+A ~ Ctrl+Z send the corresponding ASCII control codes (1~26). For example Ctrl+C = 0x03, Ctrl+D = 0x04, Ctrl+Z = 0x1A. Terminal mode is off by default (enable it in More settings); when enabled and the log area has focus, its border turns green." />
+            <TextBlock Style="{StaticResource HelpNote}" Text="This is not a full terminal: it does not emulate Enter, Backspace, arrow keys or function keys; Ctrl+V is sent as 0x16 and cannot reliably paste; non-ASCII characters are treated as ASCII and may become ?. It also does not open the serial port automatically. In terminal mode Ctrl+C means send 0x03, which conflicts with the Copy shortcut; turn off terminal mode before copying the log. Accidentally pressing keys after clicking the log area may also send data to the device. If you only need normal send/receive, turn off terminal mode and use the send box below." />
+
+            <TextBlock Style="{StaticResource HelpH3}" Text="Display and performance" />
+            <TextBlock Style="{StaticResource HelpP}" Text="When there are many log entries, only visible rows are rendered (virtualization); scrolling, dragging splitters and switching Text/Hex remain smooth." />
+            <TextBlock Style="{StaticResource HelpP}" Text="The log has a retention limit (see More settings → Log retention limit / Stream retention characters): once reached, the oldest records are discarded automatically to avoid running out of memory during long sessions." />
+          </StackPanel>
+        </HeaderedContentControl>
+
+        <HeaderedContentControl
+          x:Name="EnSec5"
+          Header="5 Send area (bottom)"
+          Style="{StaticResource HelpSection}"
+        >
+          <StackPanel>
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Type content, then click Send or press Ctrl+Enter." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Left of the Send button: plug icon = open/close port (green = closed, red = open; hover shows Open port / Close port), no need to switch to the Serial Port tab." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Three controls left of the plug icon (left to right):" />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· Eraser icon: clear the send box." />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· History icon: send history. Click an entry to put it back into the send box; the popup has a fixed height and a scrollable list (it will not push the bottom settings away); the bottom History limit (entries) can be typed directly (5~200, applied on Enter or focus loss), and Clear history on the right clears everything (cannot be undone)." />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· Newline dropdown: newline appended when sending; options are none / \n / \r / \n\r / \r\n." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· The dropdown (▾) right of the Send button is Send options: continuous send (periodically send using Delay after send and Repeat count), send with Enter / send with Ctrl+Enter." />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· About Repeat count: it means how many extra times to repeat after the first send. 3 = 4 sends total; 0 = send once; -1 = repeat until Send is clicked again to stop." />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· Value ranges: Delay after send 10~3600000 ms (each click ±100); Repeat count -1~100000 (-1 = infinite). Both accept direct keyboard input; values are validated on focus loss and clamped when out of range." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Whether to send as HEX is controlled by the Abc/Hex (send) switch at the bottom of the log area." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· A Send script can be configured in More settings to transform the data before sending." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· The send area height can be adjusted by dragging the splitter above it (40~240)." />
+          </StackPanel>
+        </HeaderedContentControl>
+
+        <HeaderedContentControl
+          x:Name="EnSec6"
+          Header="6 Quick send (second tab on the right)"
+          Style="{StaticResource HelpSection}"
+        >
+          <StackPanel>
+            <TextBlock Style="{StaticResource HelpLi}" Text="· 10 pages: click the sticky-note icon in the tab to switch pages; right-click a page name to rename it." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Each row: ID, content, send button, Hex checkbox, script icon, timer icon (click to configure the timer)." />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· Timer icon: click to enable Timer and adjust Interval (ms) to send this row periodically; multiple rows can be timed at once (a green icon means enabled). If the port is not open, LLCOM prompts and stops all timers." />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· Value range: Interval (ms) 10~3600000 (each click ±100); you can type a number directly; it is validated on focus loss and clamped when out of range." />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· Click the row's Send button to send that row (the per-row script is called)." />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· Hex checkbox: send this row as hexadecimal." />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· File icon: set a Receive script for this row (click to set / right-click to clear); the gear icon sets receive-script parameters." />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· Right-click the ID to move the row to a specified position (leave it empty to delete the row)." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Bottom icon buttons (hover for tooltips): add new item / remove last item / import data into this page / export this page's data / clear this page's data / import SSCOM data." />
+          </StackPanel>
+        </HeaderedContentControl>
+
+        <HeaderedContentControl
+          x:Name="EnSec7"
+          Header="7 Run script (Lua)"
+          Style="{StaticResource HelpSection}"
+        >
+          <StackPanel>
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Choose a script from the file dropdown (user_script_run folder), or click the New icon to create one." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Toolbar icons: New / Run / Open script folder / Refresh list / Lua API documentation / Share script." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· After clicking Run, the log view opens: it shows print output; you can Stop/Exit and Pause/Resume printing; the input box at the bottom runs a single line of Lua." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Script folder: user_script_run/ under the program folder." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Completion notification: call apiNotify(title, message) in a script to show a tray balloon; script errors also notify automatically (green = done, red = error). After the balloon disappears, the tray icon shows a matching colored badge and flashes for 30 seconds; hovering or clicking the icon, or returning to the main window, stops the flashing, and the badge stays until you click the tray or the status-bar notice. Toggle it in More settings → Script completion notification / Flash the tray icon." />
+          </StackPanel>
+        </HeaderedContentControl>
+
+        <HeaderedContentControl
+          x:Name="EnSec8"
+          Header="8 Online scripts"
+          Style="{StaticResource HelpSection}"
+        >
+          <StackPanel>
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Browse community scripts (author / name / version / description), click to view, and click Download to save to the local script folder." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Long names/descriptions in the list are truncated; hover to see the full text." />
+          </StackPanel>
+        </HeaderedContentControl>
+
+        <HeaderedContentControl
+          x:Name="EnSec9"
+          Header="9 Tools (right-side Tools tab; choose from the dropdown at the top)"
+          Style="{StaticResource HelpSection}"
+        >
+          <StackPanel>
+            <TextBlock Style="{StaticResource HelpLi}" Text="· TCP test: creates a public TCP/UDP/SSL server via netlab.luatos.com for devices to connect to (the address is shown); you can send to and kick online clients." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Local TCP listener: opens a TCP server on a local IP/port and broadcasts to all connected clients." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Local UDP listener: opens a UDP server on a local IP/port to receive data." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· TCP client: connects to a remote host over TCP/UDP/SSL; auto reconnect and reconnect interval are optional." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Encoding converter: Raw data on the left; choose a conversion task and add it; Conversion result appears on the right." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· MQTT: subscribe / publish (including QOS and Hex); the settings page configures Broker, port, client ID, username/password, keep-alive, clean session, TLS (including CA and client certificate) and WebSocket." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Mojibake fix: paste garbled text; the list shows restoration results for several source → target encodings; results can be copied." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Serial monitor: choose the target process and its serial port, then start monitoring; the target's send/receive data is shown in a side channel. Key points: ① click Start monitoring first, then let the target program open the port (ports already open before monitoring starts cannot be captured); ② the target must be a 64-bit program (the 64-bit LLCOM can only monitor 64-bit targets; monitoring 32-bit targets is not available yet); ③ security software may block injection; run as administrator if necessary." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Plot: receives data points reported by Lua through the API and draws curves; view the full chart / clear the chart / switch theme (see section 11 for details)." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· WinUSB: select a USB device, read/write endpoints, connect and send/receive (Hex supported)." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Calculator: multi-base display / bitwise operations / IEEE-754 float decoding / arithmetic (see section 10 for details)." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· DL/T 645-2007: meter frame tool (developer-oriented; frames are sent directly after assembly; write-data and custom control codes are not confirmed again)." />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· Meter address: type 1 / 123 and press Enter or leave the field; it is padded with zeros to 12 digits. The magnifier button to the right of the address reads the meter address automatically; on success the button turns green and hovering shows the address; after closing the port the button returns to gray." />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· Operations: read data / read communication address / write data / broadcast time calibration / write communication address / freeze command / change baud rate / change password / maximum demand reset / meter reset / event reset / custom control code; only write data and custom control code show the extra data row; other functions show the corresponding data-field input as needed; data fields for new functions are entered in frame order (low byte first) and are not reversed when assembling." />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· Write data: Automatically add password/operator code is checked by default; per the 645 standard, password and operator code are inserted after the DI (the password is empty by default—it is set by the manufacturer/utility and must be filled in for the actual meter; the default operator code 12345678 is only an example and can be changed; both are saved in the configuration); extra data, password and operator code are entered in normal order and automatically reversed to low-byte-first when assembling; uncheck the option to send only DI + extra data." />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· Custom control code: the control code and data field are sent exactly as entered; the software does not reverse or rewrite them." />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· Data identifier: above is the DI filter (search box with a magnifier; typing filters immediately; press Enter to open the dropdown; switching category expands it automatically; the list scrolls when too tall); below is the common dropdown + 4-byte HEX input. Typing an existing DI automatically selects the matching item; right-click to delete the current DI; the gear button opens the manager window (add / delete / restore defaults / import / export)." />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· Data identifiers are assembled low-byte-first: the UI enters and displays 02010100, which corresponds to 33 34 34 35 in the frame (the original order before subtracting 33H is 00 01 01 02)." />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· With Main log -33H checked, only while the 645 tool page is active: complete 645 frames have 33H subtracted from the data field and the CS recalculated, then are written to the left main log as one record; non-645 data, partial frames and bad frames are shown as-is." />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· The three actions below the frame preview: Send (send directly from the 645 page), Copy (copy the frame text), Send to main send box (put the frame into the bottom send box, reusing send history and timed sending; automatically switches to Hex send and appends no newline)." />
+            <TextBlock Style="{StaticResource HelpSub}" Text="· Response parsing: paste a complete frame to show the raw frame, address (with AA wildcard/broadcast annotation), control-code direction, function-code name, length, data field and checksum; exception responses explain the ERR error word bit by bit; common functions split fields (read data DI+data; write data DI+password permission+password+operator code+data; read/write address; broadcast time calibration; freeze; change baud rate/password/reset), and DI includes the catalog name; after parsing a read-address response, the address can be filled back into the meter address with one click. When the data field is entirely printable ASCII, a Text (ASCII) line and a Copy text button are shown, so the text can be copied without switching to the encoding tool; BCD/binary data does not show this line." />
+          </StackPanel>
+        </HeaderedContentControl>
+
+        <HeaderedContentControl
+          x:Name="EnSec10"
+          Header="10 Calculator details (Tools → Calculator)"
+          Style="{StaticResource HelpSection}"
+        >
+          <StackPanel>
+            <TextBlock Style="{StaticResource HelpP}"><Run FontWeight="Bold">Input: </Run>choose the input base (HEX / DEC / OCT / BIN) on the left and type a value on the right; all four bases update live. Input is parsed in the selected base and invalid characters show Invalid input.</TextBlock>
+            <TextBlock Style="{StaticResource HelpP}"><Run FontWeight="Bold">Width: </Run>8 / 16 / 32 / 64 bits. Bits above the selected width are dropped, and switching width truncates the current value too. DEC is shown unsigned; HEX / OCT / BIN are zero-padded to the width and grouped by 2 / 3 / 4 digits for easier byte reading.</TextBlock>
+            <TextBlock Style="{StaticResource HelpP}"><Run FontWeight="Bold">Copy: </Run>the copy button next to each base copies only that line (grouping spaces are kept; paste into the send box and remove spaces if you need a continuous value). After a successful copy the button briefly turns into a green check and shows Copied.</TextBlock>
+            <TextBlock Style="{StaticResource HelpP}"><Run FontWeight="Bold">Bitwise: </Run>type the second value in Operand using the current input base, then click &lt;&lt; / &gt;&gt; / &amp; / | / ^ / ~ to apply it to the current value; the result is written back and masked to the width. ~ is bitwise NOT and needs no operand.</TextBlock>
+            <TextBlock Style="{StaticResource HelpP}"><Run FontWeight="Bold">Float decoding: </Run>FLOAT32 takes 8 hex digits and FLOAT64 takes 16 (only 0-9 / A-F; other characters are filtered out). Use Big-endian / Little-endian to switch byte order; the decimal float value is shown below.</TextBlock>
+            <TextBlock Style="{StaticResource HelpP}"><Run FontWeight="Bold">Arithmetic: </Run>independent of the bitwise section; supports + - * / % ^, parentheses and decimals, evaluating as you type; division by zero or an invalid expression shows a hint.</TextBlock>
+          </StackPanel>
+        </HeaderedContentControl>
+
+        <HeaderedContentControl
+          x:Name="EnSec11"
+          Header="11 Plot details (Tools → Chart)"
+          Style="{StaticResource HelpSection}"
+        >
+          <StackPanel>
+            <TextBlock Style="{StaticResource HelpH3}" Text="Data source" />
+            <TextBlock Style="{StaticResource HelpP}" Text="Call apiAddPoint(value, line) from Lua; line is 0-9 (up to 10 curves). Each call appends one point to the end of that curve." />
+
+            <TextBlock Style="{StaticResource HelpH3}" Text="Axes and visible range" />
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">X axis</Run>: sample index by default; switch to time in Plot options (time labels are estimated from the average sample interval). The view shows the latest 1000 points by default, with the newest point pinned to the right edge and scrolling with new data.</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Y axis</Run>: tick labels are on the right and the left side keeps only the grid; the range follows Y auto-fit or your manual zoom (see Mouse shortcuts and Toolbar buttons below).</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Legend</Run>: upper-left, showing each line's color and number; right-click the plot to show / hide it.</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Retention</Run>: each curve keeps 20000 points by default (10000~100000 in More settings → Chart history points); the oldest points are dropped.</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Following</Run>: manually zooming Y, dragging the chart or clicking Fit pauses following and turns off Y auto-fit; double-clicking the plot or restarting plotting resumes both; maximizing or resizing also refits the view.</TextBlock>
+
+            <TextBlock Style="{StaticResource HelpH3}" Text="Mouse shortcuts" />
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Wheel over the plot</Run>: zooms the X axis only; while following the latest data the window width changes and the newest point stays at the right edge.</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Ctrl+wheel over the plot</Run>: zooms the Y axis only.</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Alt+wheel over the plot</Run>: zooms both X and Y.</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Wheel over the bottom X tick area</Run>: zooms the X axis only.</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Wheel over the right Y tick area</Run>: zooms the Y axis only and turns off Y auto-fit.</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Left-drag (moving more than 3 pixels)</Run>: pans through history, pauses following and turns off Y auto-fit (a plain click does not change following).</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Double-click the plot</Run>: resumes following the latest data and Y auto-fit, and ends any active measurement.</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Right-click the plot</Run>: shows / hides the legend; right-click again to restore it.</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Drag the bottom history slider</Run>: browses history outside the current view but still in the buffer; its length matches the visible window, and dragging it to the far right resumes following.</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Hover the plot</Run>: a vertical line snaps to the nearest sample; each visible curve shows a colored dot and its Y value at the intersection, and the bottom shows X (sample index / time).</TextBlock>
+            <TextBlock Style="{StaticResource HelpNote}" Text="The Chart page has no dedicated keyboard shortcuts; the main-window shortcuts (see section 2) still work here, for example Ctrl+L to return to the send box and Ctrl+K to clear the main log." />
+
+            <TextBlock Style="{StaticResource HelpH3}" Text="Toolbar buttons" />
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Fit</Run>: rescales X and Y to the current data.</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Clear</Run>: sets all curve data to zero.</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Theme</Run>: cycles the chart color styles; the chart also follows the app light / dark theme.</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Pause / Play</Run> (far right): stops / starts plotting; it only freezes the view and the script keeps running.</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Up / down arrows</Run>: Y auto-fit toggle; Y follows the visible data while on and turns off automatically after a manual Y zoom.</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Eye (Plot options)</Run>: show / hide lines 0-9, show all, show time on the X axis, copy PNG, export PNG / CSV.</TextBlock>
+            <TextBlock Style="{StaticResource HelpSub}">· CSV is a wide table with one row per sample and one column per line. Export PNG also copies the image to the clipboard first, so it can still be pasted after cancelling the save dialog.</TextBlock>
+
+            <TextBlock Style="{StaticResource HelpH3}" Text="Measurement" />
+            <TextBlock Style="{StaticResource HelpP}" Text="Enable it in Plot options → Amplitude / Interval; each mode has two draggable measurement lines." />
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Amplitude</Run>: two draggable horizontal lines, auto-aligned to the visible max / min; the readout shows A, B, |Δ|.</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Interval</Run>: two draggable vertical lines snapped to integer samples; the readout shows A, B, Δ samples, Δ seconds and frequency in Hz.</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">A / B</Run>: can be swapped or crossed.</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Align adjacent peaks</Run>: finds two adjacent peaks of the reference curve (the visible line with the most points) in the current view, handy for measuring the period / frequency of periodic signals; if none are found, a hint is shown and the lines stay put.</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">View and data</Run>: measuring pauses the view but keeps recording data (when plotting is stopped the hint says data is not recorded), and the crosshair is hidden while measuring; closing restores following and Y auto-fit.</TextBlock>
+            <TextBlock Style="{StaticResource HelpLi}">· <Run FontWeight="Bold">Readouts</Run>: use the same time mapping as the X axis and freeze while measuring, so they match the on-screen positions and do not drift; stopping or restarting plotting closes measurements.</TextBlock>
+
+            <TextBlock Style="{StaticResource HelpH3}" Text="Recording rules and limits" />
+            <TextBlock Style="{StaticResource HelpP}" Text="Data is recorded only while the Chart page is visible and plotting is started. Switching to another tool page or the serial settings tab stops plotting automatically (the More settings window is separate and does not stop it); points received while away are discarded and not replayed, and you need to click Start plotting after returning. Re-running a script clears the old curves and starts from blank." />
+            <TextBlock Style="{StaticResource HelpP}" Text="Each curve keeps 20000 points by default (configurable, oldest points are dropped). Data lives in memory only and is cleared when the app restarts or the tool page reloads; use Plot options → copy/export PNG or export CSV to keep a copy. Time labels are approximate (average sample interval) and may drift if the sampling rate changes sharply." />
+
+            <TextBlock Style="{StaticResource HelpH3}" Text="Example" />
+            <TextBlock Style="{StaticResource HelpP}" Text="The default script 绘制曲线演示.lua keeps generating two sine/cosine curves until you stop it; it starts drawing only after you switch to the Chart page, so you can watch it live. You can also call apiAddPoint periodically in your own script (see the apiAddPoint section in LuaApi.md)." />
+          </StackPanel>
+        </HeaderedContentControl>
+
+        <HeaderedContentControl
+          x:Name="EnSec12"
+          Header="12 More settings (click ☰ at the bottom-right of the log area; shown on hover)"
+          Style="{StaticResource HelpSection}"
+        >
+          <StackPanel>
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Three tabs: More serial settings (open log folder, show sent data, data font size, keep window on top, serial timeout (packet), split by blank line, terminal mode, script completion notification, flash the tray icon, log retention limit, stream retention characters, chart history points, chart value label size), Send script, Receive script." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Log retention limit (entries): the maximum number of log entries kept in Packet mode (1000~200000, default 50000); older entries are discarded automatically; a 32 MB payload budget also applies (large packets are trimmed by bytes first). Whichever limit is reached first takes effect." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Stream retention characters: after setting Serial timeout to a negative value to enter Stream mode, the maximum number of characters kept (100000~10000000, default 2000000); older text is discarded. Both input boxes accept direct keyboard input; Enter or focus loss applies the value." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Keep window on top: keeps the main window above other application windows so it is not covered (does not affect the More settings window itself)." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Send script / Receive script: edit the Lua scripts triggered before sending and after receiving." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Whether received data is shown as hex or text is controlled by Receive display Hex at the bottom of the left log area." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Configuration backup: at the bottom of More serial settings you can Export configuration / Import configuration to back up and migrate the whole settings.json; before import the current configuration is backed up as settings.json.import-bak; a restart is required after import." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Serial data bits/parity/stop bits/encoding/auto reconnect are configured in the Serial Port tab." />
+          </StackPanel>
+        </HeaderedContentControl>
+
+        <HeaderedContentControl
+          x:Name="EnSec13"
+          Header="13 Lua API"
+          Style="{StaticResource HelpSection}"
+        >
+          <StackPanel>
+            <TextBlock Style="{StaticResource HelpLi}" Text="· The API documentation is LuaApi.md in the program folder, or the Lua API documentation button in the Run script toolbar." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· The serial port and all network tools are exposed as common channels; Lua uses apiSend / apiSetCb to send and receive." />
+          </StackPanel>
+        </HeaderedContentControl>
+
+        <HeaderedContentControl
+          x:Name="EnSec14"
+          Header="14 Other"
+          Style="{StaticResource HelpSection}"
+        >
+          <StackPanel>
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Language: use the 🌐 icon at the bottom-right of the log area to switch Chinese/English (same right-aligned row as ? Help and ☰ More settings; shown on hover)." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Appearance: use the 🌙/☀ icon at the bottom-right of the log area to switch dark / light theme (shown on hover; applied immediately and saved)." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Log files: the main log is written only when you export it, to logs/logYYYYMMDD_HHmmss.txt; the crash log is logs/fatal.log; the Lua log is in user_script_run/logs/." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· Configuration and scripts are stored in the program folder." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· On a fatal error LLCOM opens a window with only a Close program button and writes details to logs/fatal.log." />
+          </StackPanel>
+        </HeaderedContentControl>
+
+        <HeaderedContentControl
+          x:Name="EnSec15"
+          Header="15 RTS / DTR details"
+          Style="{StaticResource HelpSection}"
+        >
+          <StackPanel>
+            <TextBlock Style="{StaticResource HelpP}" Text="RTS and DTR are two control signal lines (output levels) on the serial port, not data lines; their levels are output by this software to the connected device." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· RTS (Request To Send): checked = high, unchecked = low. Originally used for hardware flow control (telling the peer I am ready to receive); it is also often used as a general-purpose output pin to control relays, LEDs, external reset pins, etc." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· DTR (Data Terminal Ready): checked = high, unchecked = low. Originally meant this terminal is ready; its most common use is to reset a development board (Arduino, ESP, etc.) or put it into download/Bootloader mode—many download circuits use the DTR/RTS level combination to pull the reset and BOOT pins." />
+            <TextBlock Style="{StaticResource HelpLi}" Text="· When it takes effect: only when the serial port is open does it actually affect the hardware; when the port is opened, the current checkbox states are applied once." />
+            <TextBlock Style="{StaticResource HelpNote}" Text="Note: different devices define these two lines differently; changing the levels at random may accidentally reset the device or enter download mode; if unsure, keep the defaults (RTS unchecked, DTR checked)." />
+          </StackPanel>
+        </HeaderedContentControl>
       </StackPanel>
     </StackPanel>
   </ScrollViewer>
