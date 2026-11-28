@@ -1731,6 +1731,18 @@
       "zh-CN": "传输数据域",
       "en-US": "Encoded data"
     },
+    "Dlt645AsciiText": {
+      "zh-CN": "文本(ASCII)",
+      "en-US": "Text (ASCII)"
+    },
+    "Dlt645CopyText": {
+      "zh-CN": "复制文本",
+      "en-US": "Copy text"
+    },
+    "Dlt645TextCopied": {
+      "zh-CN": "文本已复制",
+      "en-US": "Text copied"
+    },
     "Dlt645SelectOperation": {
       "zh-CN": "请选择操作",
       "en-US": "Select an operation"

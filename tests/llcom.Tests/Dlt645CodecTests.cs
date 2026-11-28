@@ -291,5 +291,39 @@ namespace llcom.Tests
                 () => Dlt645Codec.BuildFrame("bad-address", 0x11)
             );
         }
+
+        [Fact]
+        public void PrintableAscii_DecodesTextAndTrailingNul()
+        {
+            var data = Hex("31 32 33 20 41 42 43 00 00");
+
+            Assert.True(Dlt645Codec.TryDecodePrintableAscii(data, out var text));
+            Assert.Equal("123 ABC", text);
+        }
+
+        [Fact]
+        public void PrintableAscii_AcceptsTabsAndNewlines()
+        {
+            var data = Hex("41 09 42 0A 43 0D 44");
+
+            Assert.True(Dlt645Codec.TryDecodePrintableAscii(data, out var text));
+            Assert.Equal("A\tB\nC\rD", text);
+        }
+
+        [Fact]
+        public void PrintableAscii_RejectsBinaryData()
+        {
+            Assert.False(Dlt645Codec.TryDecodePrintableAscii(Hex("31 32 00 33"), out _));
+            Assert.False(Dlt645Codec.TryDecodePrintableAscii(Hex("12 34 56 78"), out _));
+            Assert.False(Dlt645Codec.TryDecodePrintableAscii(Hex("7F"), out _));
+        }
+
+        [Fact]
+        public void PrintableAscii_RejectsEmptyOrNulOnly()
+        {
+            Assert.False(Dlt645Codec.TryDecodePrintableAscii(null, out _));
+            Assert.False(Dlt645Codec.TryDecodePrintableAscii(Array.Empty<byte>(), out _));
+            Assert.False(Dlt645Codec.TryDecodePrintableAscii(Hex("00 00"), out _));
+        }
     }
 }

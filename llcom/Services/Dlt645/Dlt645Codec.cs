@@ -460,6 +460,39 @@ public static class Dlt645Codec
         return result;
     }
 
+    /// <summary>
+    /// 尝试把数据域按可打印 ASCII 解码成文本，供 645 解析结果直接显示。
+    /// 只接受 0x20~0x7E 以及制表/换行；含其它字节时返回 false，
+    /// 避免把 BCD/二进制数据误显示成乱码。末尾的 NUL 会被忽略。
+    /// </summary>
+    public static bool TryDecodePrintableAscii(byte[]? data, out string text)
+    {
+        text = "";
+        if (data == null || data.Length == 0)
+            return false;
+
+        var length = data.Length;
+        while (length > 0 && data[length - 1] == 0)
+            length--;
+        if (length == 0)
+            return false;
+
+        var builder = new StringBuilder(length);
+        for (var i = 0; i < length; i++)
+        {
+            var value = data[i];
+            if (value != 0x09 && value != 0x0A && value != 0x0D)
+            {
+                if (value < 0x20 || value > 0x7E)
+                    return false;
+            }
+            builder.Append((char)value);
+        }
+
+        text = builder.ToString();
+        return !string.IsNullOrWhiteSpace(text);
+    }
+
     /// <summary>解析带空格/连字符/冒号的十六进制文本。</summary>
     public static bool TryParseHex(string? text, out byte[] bytes, out string error)
     {
