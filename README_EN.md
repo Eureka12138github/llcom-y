@@ -11,7 +11,7 @@
 
 [中文说明](/README.md)
 
-![LLCOM-Y main window](image/shot-main.png)
+![LLCOM-Y main window](image/shot-main.webp)
 
 A serial port debugger with Lua scripting (personal refactor).
 
@@ -19,39 +19,50 @@ A serial port debugger with Lua scripting (personal refactor).
 
 - Personal learning / personal-use project: the main goal was refactoring and everyday usability.
 - **Not** an official upstream branch, and behavior may differ from the original.
-- **Verified**: x64/x86 builds, 108 unit tests, serial send/receive and log display, send history, quick-send/timers, serial settings, keyboard shortcuts, config export/import.
-- **Not fully regression-tested**: TCP/UDP/MQTT, WinUSB, serial monitor, plot, online scripts, terminal mode. Most of these are inherited from upstream and were only refactored/deduplicated here, so regressions are possible.
-- **DL/T 645-2007 tool**: framing, sending, address read, DI management and response parsing are implemented, but it has **not been tested against a real meter yet** (auto address read, exception responses, main-log -33H, etc.).
+- **Verified**: x64/x86 builds, 241 unit tests, serial send/receive and log display, send history, quick-send/timers, serial settings, keyboard shortcuts, config export/import, chart tool and 645 ASCII parsing.
+- **Not fully regression-tested**: TCP/UDP/MQTT, WinUSB, serial monitor, online scripts, terminal mode. Most of these are inherited from upstream and were only refactored/deduplicated here, so regressions are possible.
+- **DL/T 645-2007 tool**: framing, sending, address read, DI management and response parsing are implemented, and printable ASCII data can now be shown/copied directly; exception responses and write operations from different vendors should still be verified on site.
 - **Not recommended for production or critical work.** Back up your settings; verify important operations against the original version.
 - Maintenance is best-effort; issues are welcome but response time is not guaranteed.
 
 ## Features
 
 - Serial send/receive with a configurable log (Abc/Hex per direction, font size, pause / lock / clear / save)
-- Virtualized log list; log retention limit (50k entries / 32 MB payload by default; 2M chars in stream mode)
-- Send history (limit 5~200, keyboard input, one-click clear)
-- Quick-send panel (10 pages, per-item timer)
-- **DL/T 645-2007 meter tool**: frame builder, address read, write data, custom control code, DI management with import/export, main-log -33H, and "send to main send box"
+- Virtualized log list; log retention limit (50k entries / 32 MB payload by default; 2M chars in stream mode); multi-select copy and export to file
+- Send history (limit 5~200, keyboard input, right-click direct send, one-click clear)
+- Quick-send panel (10 pages, per-item timer; import / export / clear / SSCOM data import)
+- **Chart tool**: legend / per-line visibility, time axis, wheel zoom regions, history slider, amplitude / interval / frequency measurement, adjacent-peak alignment, PNG/CSV export and copy PNG
+- **DL/T 645-2007 meter tool**: frame builder, address read, write data, custom control code, DI management with import/export, main-log -33H, "send to main send box", and response parsing with direct printable-ASCII display/copy
+- **Calculator**: HEX/DEC/OCT/BIN sync, bitwise operations, IEEE-754 float decoding, arithmetic
 - **Keyboard shortcuts**: toggle port, focus send box, clear log, switch port, cycle common baud rates, open settings, `Alt+M` minimize, `F11` maximize/restore
 - **Config export / import**: back up or migrate the whole `settings.json`
 - **Multi-line log copy**: multi-select in packet mode + copy via `Ctrl+C` / context menu (with time and direction)
 - **Dark mode**: OpenCode-style dark palette, switch instantly with the 🌙/☀ icon at the bottom-right of the log area
+- **Help window**: card-based chapters, table-of-contents jumps and Chinese/English guides
 - Dedicated serial-settings tab (port / baud / data bits / parity / stop bits / encoding / auto-reconnect / RTS / DTR / open-close)
 - Lua scripting via XLua (send/receive processing and standalone scripts; see [LuaApi.md](LuaApi.md))
 - Community scripts: switch between upstream (chenxuuu) and this project (Eureka12138github); project scripts are saved to the right folder (no category labels in the UI) and can be submitted via Discussions
-- Inherited tools: TCP/UDP/MQTT, WinUSB, serial monitor, plot, encoding converter (see the risk note above)
+- Inherited tools: TCP/UDP/MQTT, WinUSB, serial monitor, encoding converter (see the risk note above)
 
 ## Screenshots
 
-| Main window | Quick send |
+| Chart tool (light) | Quick send |
 |---|---|
-| ![Main window](image/shot-main.png) | ![Quick send](image/shot-quick.png) |
+| ![Chart tool](image/shot-main.webp) | ![Quick send](image/shot-quick.webp) |
 
-![About](image/shot-about.png)
+| Dark mode | Chart tool (dark) |
+|---|---|
+| ![Dark mode](image/shot-dark.webp) | ![Chart tool dark](image/shot-plot.webp) |
+
+| 645 text parsing | Help |
+|---|---|
+| ![645 text parsing](image/shot-645.webp) | ![Help](image/shot-help.webp) |
+
+![About](image/shot-about.webp)
 
 ## Download
 
-- **Latest version**: `v2.0.0.5` (2026-11-11, adds dark mode and fixes 645, serial and layout issues)
+- **Latest version**: `v2.0.0.6` (2026-11-28, adds chart-tool improvements, 645 ASCII parsing, log/script notifications, calculator and help-window updates)
 - **Portable exe**: [GitHub Releases](https://github.com/Eureka12138github/llcom-y/releases) (`llcom-y-x64.zip` / `llcom-y-x86.zip`)
 - **Auto-update**: x64 uses `autoUpdate.xml`, x86 uses `autoUpdate-x86.xml`; versions `2.0.0.3` and older require a one-time manual update to `2.0.0.4` or newer, after which auto-update works normally
 - **CI snapshot**: [GitHub Actions](https://github.com/Eureka12138github/llcom-y/actions)
