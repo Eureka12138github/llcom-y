@@ -429,6 +429,9 @@
     <system:String x:Key="Dlt645DiEnergyCombined">Combined active energy</system:String>
     <system:String x:Key="Dlt645DataDomain">Data</system:String>
     <system:String x:Key="Dlt645EncodedData">Encoded data</system:String>
+    <system:String x:Key="Dlt645AsciiText">Text (ASCII)</system:String>
+    <system:String x:Key="Dlt645CopyText">Copy text</system:String>
+    <system:String x:Key="Dlt645TextCopied">Text copied</system:String>
     <system:String x:Key="Dlt645SelectOperation">Select an operation</system:String>
     <system:String x:Key="Dlt645UnsupportedOperation">This operation is not implemented yet</system:String>
     <system:String x:Key="Dlt645InvalidDi">DI must be 4 bytes of hex</system:String>

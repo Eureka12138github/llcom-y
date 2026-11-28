@@ -429,6 +429,9 @@
     <system:String x:Key="Dlt645DiEnergyCombined">组合有功总电能</system:String>
     <system:String x:Key="Dlt645DataDomain">数据域</system:String>
     <system:String x:Key="Dlt645EncodedData">传输数据域</system:String>
+    <system:String x:Key="Dlt645AsciiText">文本(ASCII)</system:String>
+    <system:String x:Key="Dlt645CopyText">复制文本</system:String>
+    <system:String x:Key="Dlt645TextCopied">文本已复制</system:String>
     <system:String x:Key="Dlt645SelectOperation">请选择操作</system:String>
     <system:String x:Key="Dlt645UnsupportedOperation">当前操作暂未实现</system:String>
     <system:String x:Key="Dlt645InvalidDi">DI 必须是 4 字节 HEX</system:String>

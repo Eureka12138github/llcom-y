@@ -22,6 +22,7 @@ public partial class Dlt645Page : Page
     private bool _updatingUi;
     private string _lastManualAddress = DefaultAddress;
     private string? _lastParsedAddress;
+    private string _lastAsciiText = "";
     private Dlt645Session? _session;
     private List<Dlt645DataIdentifier> _allIdentifiers = new List<Dlt645DataIdentifier>();
 
@@ -1116,6 +1117,27 @@ public partial class Dlt645Page : Page
         }
     }
 
+    /// <summary>复制解析结果中的 ASCII 文本（仅当数据域可打印时显示按钮）。</summary>
+    private void CopyTextButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (string.IsNullOrEmpty(_lastAsciiText))
+            return;
+
+        try
+        {
+            Clipboard.SetText(_lastAsciiText);
+            SetStatus(
+                ParseStatusText,
+                Localize("Dlt645TextCopied", "文本已复制"),
+                false
+            );
+        }
+        catch (Exception ex)
+        {
+            SetStatus(ParseStatusText, ex.Message, true);
+        }
+    }
+
     /// <summary>语言切换后刷新预览与解析结果里的本地化文本。</summary>
     internal void RefreshLocalization()
     {
@@ -1128,7 +1150,9 @@ public partial class Dlt645Page : Page
     private void ParseButton_Click(object sender, RoutedEventArgs e)
     {
         _lastParsedAddress = null;
+        _lastAsciiText = "";
         UseAddressButton.Visibility = Visibility.Collapsed;
+        CopyTextButton.Visibility = Visibility.Collapsed;
         ParseResultTextBox.Text = "";
 
         if (!Dlt645Codec.TryParseHex(ResponseTextBox.Text, out var bytes, out var hexError))
@@ -1184,6 +1208,13 @@ public partial class Dlt645Page : Page
         builder.AppendLine(
             $"{Localize("Dlt645EncodedData", "传输数据域")}: {Dlt645Codec.ToHex(Dlt645Codec.EncodeData(frame.Data))}"
         );
+        if (Dlt645Codec.TryDecodePrintableAscii(frame.Data, out var asciiText))
+        {
+            _lastAsciiText = asciiText;
+            builder.AppendLine(
+                $"{Localize("Dlt645AsciiText", "文本(ASCII)")}: {asciiText}"
+            );
+        }
         builder.AppendLine(
             $"{Localize("Dlt645Checksum", "校验和")}: 0x{frame.Checksum:X2} ({Localize("Dlt645ChecksumOk", "校验通过")})"
         );
@@ -1228,6 +1259,9 @@ public partial class Dlt645Page : Page
         }
 
         ParseResultTextBox.Text = builder.ToString();
+        CopyTextButton.Visibility = string.IsNullOrEmpty(_lastAsciiText)
+            ? Visibility.Collapsed
+            : Visibility.Visible;
         SetStatus(
             ParseStatusText,
             Localize("Dlt645ParseOk", "解析成功"),
